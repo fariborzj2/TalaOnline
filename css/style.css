@@ -489,6 +489,11 @@ body {
   flex-grow: 1;
 }
 
+.chart {
+  height: 250px;
+  width: 100%;
+}
+
 /* mode-toggle */
 .mode-toggle {
   height: 38px;
