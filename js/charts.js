@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return str.toString().replace(/\d/g, x => persianDigits[x]);
     };
 
+    const persianMonths = [
+        'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+        'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+    ];
+
     /**
      * Mock data generation for daily prices.
      * Generates a continuous stream of daily data.
@@ -27,19 +32,20 @@ document.addEventListener('DOMContentLoaded', function() {
             date.setDate(today.getDate() - i);
 
             // Simplified Jalali date mock for display
-            // We use a simple offset from Gregorian for this demo
             let jYear = date.getFullYear() - 621;
             let jMonth = date.getMonth() + 1;
             let jDay = date.getDate();
 
-            // Adjust year if we wrap around Gregorian year but haven't reached Norouz
-            // (Very simplified, just for visual mock)
-            if (date.getMonth() < 2 || (date.getMonth() === 2 && date.getDate() < 21)) {
-                // Before Norouz, it's still the previous Jalali year
-                // but for our mock we'll just keep it simple.
+            // Basic adjustment for Jalali months shift (approximate)
+            // Gregorian Jan (1) is approx Dey (10) in Jalali
+            let adjustedMonth = jMonth + 9;
+            if (adjustedMonth > 12) {
+                adjustedMonth -= 12;
+            } else {
+                jYear--;
             }
 
-            let dateStr = `${jYear}/${jMonth.toString().padStart(2, '0')}/${jDay.toString().padStart(2, '0')}`;
+            let dateStr = `${jYear}/${adjustedMonth.toString().padStart(2, '0')}/${jDay.toString().padStart(2, '0')}`;
 
             currentPrice += (Math.random() - 0.5) * volatility;
             data.push({ x: dateStr, y: Math.floor(currentPrice) });
@@ -66,7 +72,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return aggregateByInterval(slicedData, 3, 10);
         } else if (rangeDays === 365) {
             // Requirement: Aggregate data monthly (12 points total)
-            // We use 30/31 day intervals to get exactly 12 points from a year
             const interval = Math.ceil(slicedData.length / 12);
             return aggregateByInterval(slicedData, interval, 12);
         }
@@ -81,13 +86,11 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     const aggregateByInterval = (data, interval, targetCount) => {
         let result = [];
-        // We iterate backwards to ensure the most recent data is included
         for (let i = data.length - 1; i >= 0; i -= interval) {
             let chunk = data.slice(Math.max(0, i - interval + 1), i + 1);
             if (chunk.length === 0) continue;
 
             const avgY = chunk.reduce((sum, p) => sum + p.y, 0) / chunk.length;
-            // Use the most recent date in the chunk as the label
             const labelX = chunk[chunk.length - 1].x;
 
             result.unshift({ x: labelX, y: Math.floor(avgY) });
@@ -101,7 +104,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentAsset = 'gold';
     let currentPeriodDays = 7;
 
-    // Pre-generate 1 year (plus some buffer) of daily data
     const goldDaily = generateDailyData(19400000, 370, 200000);
     const silverDaily = generateDailyData(18400000, 370, 150000);
 
@@ -125,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 easing: 'easeinout',
                 speed: 800,
             },
-            rtl: false // Data flows LTR as per requirement
+            rtl: false
         },
         dataLabels: { enabled: false },
         stroke: {
@@ -155,6 +157,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 rotate: 0,
                 hideOverlappingLabels: true,
                 formatter: function(val) {
+                    if (currentPeriodDays === 365 && typeof val === 'string') {
+                        const parts = val.split('/');
+                        if (parts.length >= 2) {
+                            const monthIdx = parseInt(parts[1]) - 1;
+                            if (monthIdx >= 0 && monthIdx < 12) {
+                                return persianMonths[monthIdx];
+                            }
+                        }
+                    }
                     return toPersianDigits(val);
                 }
             },
@@ -173,12 +184,20 @@ document.addEventListener('DOMContentLoaded', function() {
             x: {
                 show: true,
                 formatter: function(val) {
+                    if (currentPeriodDays === 365 && typeof val === 'string') {
+                        const parts = val.split('/');
+                        if (parts.length >= 2) {
+                            const monthIdx = parseInt(parts[1]) - 1;
+                            if (monthIdx >= 0 && monthIdx < 12) {
+                                return persianMonths[monthIdx] + ' ' + toPersianDigits(parts[0]);
+                            }
+                        }
+                    }
                     return toPersianDigits(val);
                 }
             },
             y: {
                 formatter: function (val) {
-                    // RTL presentation for the tooltip value
                     return toPersianDigits(val.toLocaleString()) + ' تومان';
                 }
             },
@@ -190,9 +209,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
 
-    /**
-     * Synchronizes chart appearance with current state.
-     */
     const updateChart = () => {
         const data = getProcessedData();
         const name = currentAsset === 'gold' ? 'قیمت طلا' : 'قیمت نقره';
