@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             yaxis: {
                 show: true,
                 labels: {
-                    offsetX: -10,
+                    offsetX: 0,
                     formatter: (val) => toPersianDigits(val.toLocaleString()),
                     style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '10px' }
                 }
@@ -160,8 +160,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 xaxis: { lines: { show: false } },
                 yaxis: { lines: { show: true } },
                 padding: {
-                    left: -5,
-                    right: -5,
+                    left: 0,
+                    right: -10,
                     top: 0,
                     bottom: 0
                 }
