@@ -131,8 +131,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             xaxis: {
                 type: 'category',
                 labels: {
-                    style: { colors: '#596486', fontFamily: 'Vazirmatn' },
+                    style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '10px' },
                     rotate: 0,
+                    rotateAlways: false,
+                    hideOverlappingLabels: true,
                     formatter: function(val) {
                         if (!val) return '';
                         if (currentPeriodDays === 365) {
@@ -147,15 +149,22 @@ document.addEventListener('DOMContentLoaded', async function() {
             yaxis: {
                 show: true,
                 labels: {
+                    offsetX: -10,
                     formatter: (val) => toPersianDigits(val.toLocaleString()),
-                    style: { colors: '#596486', fontFamily: 'Vazirmatn' }
+                    style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '10px' }
                 }
             },
             grid: {
                 show: true,
                 borderColor: '#f1f1f1',
                 xaxis: { lines: { show: false } },
-                yaxis: { lines: { show: true } }
+                yaxis: { lines: { show: true } },
+                padding: {
+                    left: -10,
+                    right: -5,
+                    top: 0,
+                    bottom: 0
+                }
             },
             tooltip: {
                 theme: 'light',
@@ -175,7 +184,18 @@ document.addEventListener('DOMContentLoaded', async function() {
                     }
                 }
             },
-            colors: ['#e29b21']
+            colors: ['#e29b21'],
+            responsive: [{
+                breakpoint: 768,
+                options: {
+                    xaxis: {
+                        labels: {
+                            rotate: -45,
+                            rotateAlways: true
+                        }
+                    }
+                }
+            }]
         };
 
         const chartElement = document.querySelector("#chart");

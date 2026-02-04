@@ -489,6 +489,11 @@ body {
   flex-grow: 1;
 }
 
+.chartbox {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .chart {
   height: 250px;
   width: 100%;
