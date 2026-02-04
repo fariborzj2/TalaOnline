@@ -1,3 +1,0 @@
-## 2026-02-04 - [Accessibility & Ultra-Wide Responsiveness]
-**Learning:** In RTL dashboards with high data density, standard container widths (like 1200px) often leave excessive whitespace on 4K monitors, while `:focus { outline: 0 }` is a common but detrimental anti-pattern for keyboard accessibility.
-**Action:** Always use `max-width: 1440px` for modern dashboards and replace destructive focus resets with `:focus-visible` to balance aesthetics with accessibility. Ensure interactive components (like chart toggles) are semantic `button` elements rather than `div`s to ensure screen reader compatibility.
