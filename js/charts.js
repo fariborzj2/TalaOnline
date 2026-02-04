@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 xaxis: { lines: { show: false } },
                 yaxis: { lines: { show: true } },
                 padding: {
-                    left: -10,
+                    left: -5,
                     right: -5,
                     top: 0,
                     bottom: 0
