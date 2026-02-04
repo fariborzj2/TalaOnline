@@ -461,6 +461,10 @@ body {
     align-items: flex-start;
     gap: 15px;
   }
+  .chartbox .d-flex.gap-10 {
+    flex-direction: column;
+    width: 100%;
+  }
   .chartbox .mode-toggle {
     width: 100%;
   }
