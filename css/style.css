@@ -214,7 +214,7 @@ input::-webkit-inner-spin-button {
 input,
 button,
 textarea {
-  font-family: Poppins, Tahoma;
+  font-family: inherit;
 }
 button {
   border: none;
@@ -393,20 +393,49 @@ a {
   text-decoration: none;
 }
 body {
-  font: 13px/28px "Vazirmatn", Tahoma, sans-serif;
+  font: clamp(13px, 1vw, 18px)/1.6 "Vazirmatn", Tahoma, sans-serif;
   font-optical-sizing: auto;
   background: var(--color-body);
   color: var(--color-text);
-  letter-spacing: -4%
+  letter-spacing: -4%;
+}
+@media screen and (min-width: 2500px) {
+  body {
+    font-size: 18px;
+  }
+  .center {
+    max-width: 1800px;
+  }
 }
 .center {
   width: 100%;
-  max-width: 1300px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 30px;
 }
 .main {
   padding: 40px 0
+}
+.live-pulse {
+  width: 10px;
+  height: 10px;
+  background: var(--color-green);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+}
+.live-pulse::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  border-radius: inherit;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(3); opacity: 0; }
 }
 .section {
   padding: 10px 0
@@ -416,7 +445,28 @@ body {
     padding: 0 15px;
   }
   .section {
-    padding: 25px 0
+    padding: 10px 0
+  }
+  .basis500.d-flex {
+    flex-direction: column;
+  }
+  .gap-20 {
+    gap: 15px;
+  }
+  .mb-20 {
+    margin-bottom: 15px;
+  }
+  .chartbox .d-flex.just-between {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .chartbox .mode-toggle {
+    width: 100%;
+  }
+  .chartbox .d-flex.gap-20 {
+    width: 100%;
+    justify-content: space-between;
   }
 }
 .menu a {
@@ -430,6 +480,8 @@ body {
   border: 1px solid var(--color-border);
   flex-grow: 1;
   border-radius: 25px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* mode-toggle */
@@ -461,13 +513,40 @@ body {
   color: var(--color-title)
 }
 /*  */
-.tabe-box {
+.table-box {
   border: 1px solid var(--color-border);
   border-radius: 20px;
+  overflow-x: auto;
+  background: var(--color-white);
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
 }
-td , th {
-  padding: 10px 12px;
-  text-align: right
+.table-box table {
+  border-collapse: collapse;
+  min-width: 700px;
+}
+th {
+  background: #fcfcfc;
+  font-weight: 600;
+  color: var(--color-title);
+  border-bottom: 1px solid var(--color-border);
+}
+td {
+  vertical-align: middle;
+}
+tr {
+  transition: background 0.2s;
+  border-bottom: 1px solid var(--color-border);
+}
+tr:last-child {
+  border-bottom: none;
+}
+tbody tr:hover {
+  background: #f9f9f9;
+}
+td, th {
+  padding: 16px 20px;
+  text-align: right;
 }
 
 /*  */
@@ -483,4 +562,24 @@ td , th {
 .coin-item:last-child {
   border: none;
   padding-bottom: 0
+}
+
+/* ApexCharts RTL Tooltip */
+.apexcharts-tooltip {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: 'Vazirmatn', Tahoma, sans-serif !important;
+}
+.apexcharts-tooltip-title {
+  text-align: right !important;
+  direction: rtl !important;
+}
+.apexcharts-tooltip-series-group {
+  text-align: right !important;
+  direction: rtl !important;
+  justify-content: flex-start !important;
+}
+.apexcharts-tooltip-marker {
+  margin-left: 10px;
+  margin-right: 0 !important;
 }

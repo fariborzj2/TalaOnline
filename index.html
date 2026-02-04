@@ -9,12 +9,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body>
     <div class="main">
         <div class="top-bar mb-20">
             <div class="center d-flex just-between align-center">
-                <div class="logo"><img src="images/logo.svg" alt=""></div>
+                <div class="logo"><img src="images/logo.svg" alt="طلا آنلاین"></div>
                 <div class="">
                     <span class="live-pulse"></span>
                     <span>۱۲ اردیبهشت ۱۴۰۴</span>
@@ -28,7 +29,7 @@
 
                         <div class="block-card">
                             <div class="mb-10 pd-d-10 border-b">
-                                <div class="d-flex gap-5"><img src="images/gold.svg" alt=""> <span>قیمت طلا امروز</span></div>
+                                <div class="d-flex gap-5"><img src="images/gold.svg" alt="طلای ۱۸ عیار"> <span>قیمت طلا امروز</span></div>
                                 <div class=""><span class="color-title font-size-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div class="mb-10">
@@ -47,7 +48,7 @@
 
                         <div class="block-card">
                             <div class="mb-10 pd-d-10 border-b">
-                                <div class="d-flex gap-5"><img src="images/silver.svg" alt=""> <span>قیمت طلا امروز</span></div>
+                                <div class="d-flex gap-5"><img src="images/silver.svg" alt="نقره"> <span>قیمت نقره امروز</span></div>
                                 <div class=""><span class="color-title font-size-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div class="mb-10">
@@ -66,10 +67,10 @@
 
                     </div>
                     <div class="block-card basis500 chartbox">
-                        <div class="d-flex just-between">
+                        <div class="d-flex just-between align-center mb-10">
                             <div class="mode-toggle">
-                                <div class="mode-btn active">نمودار طلا</div>
-                                <div class="mode-btn">نمودار نقره</div>
+                                <button id="gold-chart-btn" class="mode-btn active" aria-label="نمایش نمودار طلا">نمودار طلا</button>
+                                <button id="silver-chart-btn" class="mode-btn" aria-label="نمایش نمودار نقره">نمودار نقره</button>
                             </div>
 
                             <div class="d-flex gap-20">
@@ -102,7 +103,7 @@
                             <span>با بررسی قیمت ها بهترین پتلفرم را برای معامله انتخاب کنید</span>
                         </div>
                     </div>
-                    <div class="tabe-box">
+                    <div class="table-box">
                         <table class="full-width">
                             <thead>
                                 <tr>
@@ -352,5 +353,6 @@
             </div>
         </div>
     </div>
+    <script src="js/charts.js"></script>
 </body>
 </html>
