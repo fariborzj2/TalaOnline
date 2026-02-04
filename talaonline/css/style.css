@@ -1,0 +1,486 @@
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  /* letter-spacing: -4%; */
+}
+:root {
+  -webkit-writing-mode: horizontal-tb;
+  -ms-writing-mode: rl-tb;
+  writing-mode: horizontal-tb;
+  /*! direction: ltr; */
+  text-orientation: mixed;
+
+  --sidemenu-size: 250px;
+  --sidemenu-close-size: 90px;
+  --transition-speed: 0.3s ease;
+}
+:root { 
+    --color-body: #f9f9f9;
+    --color-text: #596486;
+    --color-title: #1C274C;
+    --color-border: #eeeeee;
+    --color-primary: #e29b21;
+    --color-green: #179364;
+    --color-red: #a81b1b;
+    --color-white: #ffffff;
+    --color-block: #ffffff;
+}
+.color-primary {
+    color: var(--color-primary);
+}
+.color-title {
+    color: var(--color-title);
+}
+.color-green {
+    color: var(--color-green);
+}
+.color-red {
+    color: var(--color-red);
+}
+@font-face {
+    font-family: "poppins";
+    src: url("../fonts/poppins/Poppins-Medium.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+    
+}
+@font-face {
+    font-family: "poppins";
+    src: url("../fonts/poppins/Poppins-Bold.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+    
+}
+@font-face {
+    font-family: "poppins";
+    src: url("../fonts/poppins/Poppins-ExtraBold.woff") format("woff");
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+    
+}
+@font-face {
+    font-family: "icon";
+    src: url("../fonts/icon/icon.woff2") format("woff2"),
+        url("../fonts/icon/icon.ttf") format("truetype"),
+        url("../fonts/icon/icon.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+    
+}
+
+.icon {
+    /* Use !important to prevent extensions from overriding this font. */
+    font-family: "icon" !important;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: middle;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+@font-palette-values --primary {
+    font-family: "icon";
+    base-palette: 0;
+    override-colors: 0 #497FFF;
+}
+.icon-color-primary {
+    font-palette: --primary;
+}
+@font-palette-values --green {
+    font-family: "icon";
+    base-palette: 0;
+    override-colors: 0 #179364;
+}
+.icon-color-green {
+    font-palette: --green;
+}
+
+@font-palette-values --white {
+    font-family: "icon";
+    base-palette: 0;
+    override-colors: 0 white;
+}
+.icon-color-white {
+    font-palette: --white;
+}
+.icon-size-16 {
+  font-size: 16px;
+}
+.icon-size-18 {
+  font-size: 18px;
+}
+.icon-size-22 {
+  font-size: 22px;
+}
+.icon-size-24 {
+  font-size: 24px;
+}
+.icon-size-32 {
+  font-size: 32px;
+}
+.icon-size-48 {
+  font-size: 48px;
+}
+:focus {
+  outline: 0;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+}
+html,
+body,
+div,
+ul,
+ol,
+li,
+dl,
+dt,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+hr,
+blockquote,
+fieldset,
+input {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+h1,
+h2 {
+
+  line-height: 140%;
+  font-weight: 700;
+
+}
+h3,
+h4,
+h5 {
+  line-height: normal;
+  font-weight: 600;
+}
+ol {
+  list-style: decimal;
+  padding-right: 20px;
+  margin: 10px 0;
+}
+.hide-h {
+  line-height: 0;
+  text-indent: 0;
+  color: transparent;
+}
+i {
+  font-style: normal
+}
+a {
+  color: #217fdb;
+  text-decoration: none;
+  -webkit-transition: 0.2s;
+  -o-transition: 0.2s;
+  transition: 0.2s;
+}
+label {
+  cursor: pointer;
+}
+p {
+  margin: 0;
+  padding: 0;
+}
+b {
+  font-weight: 700;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input,
+button,
+textarea {
+  font-family: Poppins, Tahoma;
+}
+button {
+  border: none;
+  cursor: pointer;
+  background: transparent;
+}
+input {
+  background: 0 0;
+}
+input[type="radio"],
+input[type="checkbox"] {
+  width: 18px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 50%;
+  width: 20px !important;
+  min-width: 20px;
+  height: 20px !important;
+  min-height: 20px;
+  border: 2px solid var(--color-border);
+  -webkit-transition: 0.3s all linear;
+  -o-transition: 0.3s all linear;
+  transition: 0.3s all linear;
+  margin-left: 5px;
+  position: relative;
+  top: 6px;
+  cursor: pointer;
+  padding: 2px;
+}
+input[type="checkbox"] {
+  border-radius: 6px;
+}
+input[type="radio"]:active,
+input[type="radio"]:checked,
+input[type="checkbox"]:active,
+input[type="checkbox"]:checked {
+  color: var(--limon);
+  border-color: var(--limon);
+}
+input[type="radio"]:active:before,
+input[type="radio"]:checked:before,
+input[type="checkbox"]:active:before,
+input[type="checkbox"]:checked:before {
+  content: "";
+  height: 12px;
+  width: 12px;
+  background: var(--limon);
+  display: block;
+  border-radius: 100px;
+}
+input[type="checkbox"]:active:before,
+input[type="checkbox"]:checked:before {
+  border-radius: 3px;
+}
+.checkboxs label {
+  margin-left: 15px;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input,
+select {
+  font-size: inherit;
+}
+@media screen and (device-aspect-ratio: 2/3) {
+  select,
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"] {
+    font-size: 16px;
+  }
+}
+@media screen and (device-aspect-ratio: 40/71) {
+  select,
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"] {
+    font-size: 16px;
+  }
+}
+@media screen and (device-aspect-ratio: 375/667) {
+  select,
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="url"] {
+    font-size: 16px;
+  }
+}
+@media screen and (device-aspect-ratio: 9/16) {
+  select,
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="url"] {
+    font-size: 16px;
+  }
+}
+::-webkit-input-placeholder {
+  color: #9c9c9c;
+  font-size: 0.8em;
+}
+::-moz-placeholder {
+  color: #9c9c9c;
+  font-size: 0.8em;
+}
+:-ms-input-placeholder {
+  color: #9c9c9c;
+  font-size: 0.8em;
+}
+::-ms-input-placeholder {
+  color: #9c9c9c;
+  font-size: 0.8em;
+}
+::placeholder {
+  color: #9c9c9c;
+  font-size: 0.8em;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  color: transparent;
+}
+img[src=""],
+img:not([src]) {
+  visibility: hidden;
+}
+i.rotate {
+  transform: rotate(45deg);
+  display: inline-block;
+}
+input[type="text"],
+textarea {
+  color: #444444;
+}
+a {
+  text-decoration: none;
+}
+body {
+  font: 13px/28px "Vazirmatn", Tahoma, sans-serif;
+  font-optical-sizing: auto;
+  background: var(--color-body);
+  color: var(--color-text);
+  letter-spacing: -4%
+}
+.center {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+.main {
+  padding: 40px 0
+}
+.section {
+  padding: 10px 0
+}
+@media screen and (max-width: 768px) {
+  .center {
+    padding: 0 15px;
+  }
+  .section {
+    padding: 25px 0
+  }
+}
+.menu a {
+  margin: 0 20px;
+  color: var(--color-title)
+}
+
+.block-card {
+  padding: 20px;
+  background: var(--color-block);
+  border: 1px solid var(--color-border);
+  flex-grow: 1;
+  border-radius: 25px;
+}
+
+/* mode-toggle */
+.mode-toggle {
+  height: 38px;
+  background: #f5f5f5;
+  border-radius: 10px;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  display: flex;
+}
+.mode-toggle .mode-btn {
+  background: transparent;
+  height: 100%;
+  border-radius: 8px;
+  padding: 0 10px;
+  flex-grow: 1
+    
+}
+.mode-toggle .mode-btn.active {
+  background: var(--color-white);
+  box-shadow: 0 0 4px rgba(0,0,0,0.1)
+}
+.btn {
+  height: 38px;
+  border: 1px solid #ddd;
+  padding: 7px 20px;
+  border-radius: 100px;
+  color: var(--color-title)
+}
+/*  */
+.tabe-box {
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+}
+td , th {
+  padding: 10px 12px;
+  text-align: right
+}
+
+/*  */
+.coin-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border) 
+}
+.coin-item:first-child {
+  padding-top: 0
+}
+.coin-item:last-child {
+  border: none;
+  padding-bottom: 0
+}
