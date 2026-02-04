@@ -1,27 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const goldData = [
-        { x: '1404/02/01', y: 19400000 },
-        { x: '1404/02/02', y: 19420000 },
-        { x: '1404/02/03', y: 19410000 },
-        { x: '1404/02/04', y: 19450000 },
-        { x: '1404/02/05', y: 19480000 },
-        { x: '1404/02/06', y: 19470000 },
-        { x: '1404/02/07', y: 19495719 }
-    ];
+    const generateData = (base, count, volatility) => {
+        let data = [];
+        let currentPrice = base;
+        for (let i = count; i >= 0; i--) {
+            let date = new Date();
+            date.setDate(date.getDate() - i);
+            let year = 1404; // Simplified Jalali mock
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+            let dateStr = `${year}/${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}`;
 
-    const silverData = [
-        { x: '1404/02/01', y: 18400000 },
-        { x: '1404/02/02', y: 18450000 },
-        { x: '1404/02/03', y: 18430000 },
-        { x: '1404/02/04', y: 18470000 },
-        { x: '1404/02/05', y: 18490000 },
-        { x: '1404/02/06', y: 18480000 },
-        { x: '1404/02/07', y: 18495719 }
-    ];
+            currentPrice += (Math.random() - 0.5) * volatility;
+            data.push({ x: dateStr, y: Math.floor(currentPrice) });
+        }
+        return data;
+    };
+
+    const goldData = generateData(19400000, 60, 200000);
+    const silverData = generateData(18400000, 60, 150000);
 
     const options = {
         series: [{
-            name: 'قیمت',
+            name: 'قیمت طلا',
             data: goldData
         }],
         chart: {
@@ -69,7 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
         xaxis: {
             labels: {
                 style: {
-                    colors: '#596486'
+                    colors: '#596486',
+                    fontFamily: 'Vazirmatn'
                 },
                 rotate: -45,
                 rotateAlways: false,
@@ -93,6 +94,10 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         tooltip: {
             theme: 'light',
+            style: {
+                fontSize: '12px',
+                fontFamily: 'Vazirmatn'
+            },
             x: {
                 show: true
             },
@@ -100,6 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 formatter: function (val) {
                     return val.toLocaleString() + ' تومان'
                 }
+            },
+            marker: {
+                show: true
             }
         },
         colors: ['#e29b21']

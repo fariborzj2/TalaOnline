@@ -393,7 +393,7 @@ a {
   text-decoration: none;
 }
 body {
-  font: 13px/28px "Vazirmatn", Tahoma, sans-serif;
+  font: clamp(13px, 1vw, 18px)/1.6 "Vazirmatn", Tahoma, sans-serif;
   font-optical-sizing: auto;
   background: var(--color-body);
   color: var(--color-text);
@@ -563,4 +563,24 @@ td, th {
 .coin-item:last-child {
   border: none;
   padding-bottom: 0
+}
+
+/* ApexCharts RTL Tooltip */
+.apexcharts-tooltip {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: 'Vazirmatn', Tahoma, sans-serif !important;
+}
+.apexcharts-tooltip-title {
+  text-align: right !important;
+  direction: rtl !important;
+}
+.apexcharts-tooltip-series-group {
+  text-align: right !important;
+  direction: rtl !important;
+  justify-content: flex-start !important;
+}
+.apexcharts-tooltip-marker {
+  margin-left: 10px;
+  margin-right: 0 !important;
 }
