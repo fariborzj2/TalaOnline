@@ -214,7 +214,7 @@ input::-webkit-inner-spin-button {
 input,
 button,
 textarea {
-  font-family: Poppins, Tahoma;
+  font-family: inherit;
 }
 button {
   border: none;
@@ -401,7 +401,10 @@ body {
 }
 @media screen and (min-width: 2500px) {
   body {
-    font-size: 16px;
+    font-size: 18px;
+  }
+  .center {
+    max-width: 1800px;
   }
 }
 .center {
@@ -453,6 +456,18 @@ body {
   .mb-20 {
     margin-bottom: 15px;
   }
+  .chartbox .d-flex.just-between {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .chartbox .mode-toggle {
+    width: 100%;
+  }
+  .chartbox .d-flex.gap-20 {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 .menu a {
   margin: 0 20px;
@@ -465,6 +480,8 @@ body {
   border: 1px solid var(--color-border);
   flex-grow: 1;
   border-radius: 25px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* mode-toggle */
@@ -496,14 +513,15 @@ body {
   color: var(--color-title)
 }
 /*  */
-.tabe-box {
+.table-box {
   border: 1px solid var(--color-border);
   border-radius: 20px;
   overflow-x: auto;
   background: var(--color-white);
   -webkit-overflow-scrolling: touch;
+  max-width: 100%;
 }
-.tabe-box table {
+.table-box table {
   border-collapse: collapse;
   min-width: 700px;
 }
