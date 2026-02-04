@@ -482,6 +482,7 @@ body {
   border-radius: 25px;
   max-width: 100%;
   overflow: hidden;
+  flex-grow: 1;
 }
 
 /* mode-toggle */
