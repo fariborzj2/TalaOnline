@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const toPersianDigits = (str) => {
+        if (str === null || str === undefined) return '';
+        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        return str.toString().replace(/\d/g, x => persianDigits[x]);
+    };
+
     const generateData = (base, count, volatility) => {
         let data = [];
         let currentPrice = base;
@@ -16,13 +22,21 @@ document.addEventListener('DOMContentLoaded', function() {
         return data;
     };
 
-    const goldData = generateData(19400000, 60, 200000);
-    const silverData = generateData(18400000, 60, 150000);
+    let currentAsset = 'gold';
+    let currentPeriod = 7;
+
+    const goldDataFull = generateData(19400000, 365, 200000);
+    const silverDataFull = generateData(18400000, 365, 150000);
+
+    const getFilteredData = (asset, days) => {
+        const fullData = asset === 'gold' ? goldDataFull : silverDataFull;
+        return fullData.slice(-days);
+    };
 
     const options = {
         series: [{
             name: 'قیمت طلا',
-            data: goldData
+            data: getFilteredData('gold', 7)
         }],
         chart: {
             type: 'area',
@@ -35,7 +49,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 enabled: true,
                 easing: 'easeinout',
                 speed: 800,
-            }
+            },
+            rtl: false // Force LTR for the chart itself
         },
         dataLabels: {
             enabled: false
@@ -75,6 +90,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 rotate: -45,
                 rotateAlways: false,
                 hideOverlappingLabels: true,
+                formatter: function(val) {
+                    return toPersianDigits(val);
+                }
             },
             axisBorder: {
                 show: false
@@ -99,11 +117,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 fontFamily: 'Vazirmatn'
             },
             x: {
-                show: true
+                show: true,
+                formatter: function(val) {
+                    return toPersianDigits(val);
+                }
             },
             y: {
                 formatter: function (val) {
-                    return val.toLocaleString() + ' تومان'
+                    return toPersianDigits(val.toLocaleString()) + ' تومان'
                 }
             },
             marker: {
@@ -116,53 +137,75 @@ document.addEventListener('DOMContentLoaded', function() {
     const chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
 
-    // Toggle logic
+    const updateChart = () => {
+        const data = getFilteredData(currentAsset, currentPeriod);
+        const name = currentAsset === 'gold' ? 'قیمت طلا' : 'قیمت نقره';
+        const color = currentAsset === 'gold' ? '#e29b21' : '#9ca3af';
+
+        chart.updateSeries([{
+            name: name,
+            data: data
+        }]);
+
+        chart.updateOptions({
+            colors: [color],
+            fill: {
+                gradient: {
+                    colorStops: [
+                        { offset: 0, color: color, opacity: 0.4 },
+                        { offset: 100, color: color, opacity: 0 }
+                    ]
+                }
+            },
+            stroke: {
+                colors: [color]
+            }
+        });
+    };
+
+    // Asset Toggle logic
     const goldBtn = document.querySelector('#gold-chart-btn');
     const silverBtn = document.querySelector('#silver-chart-btn');
 
     goldBtn.addEventListener('click', function() {
         goldBtn.classList.add('active');
         silverBtn.classList.remove('active');
-        chart.updateSeries([{
-            name: 'قیمت طلا',
-            data: goldData
-        }]);
-        chart.updateOptions({
-            colors: ['#e29b21'],
-            fill: {
-                gradient: {
-                    colorStops: [
-                        { offset: 0, color: '#e29b21', opacity: 0.4 },
-                        { offset: 100, color: '#e29b21', opacity: 0 }
-                    ]
-                }
-            },
-            stroke: {
-                colors: ['#e29b21']
-            }
-        });
+        currentAsset = 'gold';
+        updateChart();
     });
 
     silverBtn.addEventListener('click', function() {
         silverBtn.classList.add('active');
         goldBtn.classList.remove('active');
-        chart.updateSeries([{
-            name: 'قیمت نقره',
-            data: silverData
-        }]);
-        chart.updateOptions({
-            colors: ['#9ca3af'],
-            fill: {
-                gradient: {
-                    colorStops: [
-                        { offset: 0, color: '#9ca3af', opacity: 0.4 },
-                        { offset: 100, color: '#9ca3af', opacity: 0 }
-                    ]
-                }
-            },
-            stroke: {
-                colors: ['#9ca3af']
-            }
-        });
+        currentAsset = 'silver';
+        updateChart();
+    });
+
+    // Period Toggle logic
+    const period7d = document.querySelector('#period-7d');
+    const period30d = document.querySelector('#period-30d');
+    const period1y = document.querySelector('#period-1y');
+
+    const periodBtns = [period7d, period30d, period1y];
+
+    period7d.addEventListener('click', function() {
+        periodBtns.forEach(btn => btn.classList.remove('active'));
+        period7d.classList.add('active');
+        currentPeriod = 7;
+        updateChart();
+    });
+
+    period30d.addEventListener('click', function() {
+        periodBtns.forEach(btn => btn.classList.remove('active'));
+        period30d.classList.add('active');
+        currentPeriod = 30;
+        updateChart();
+    });
+
+    period1y.addEventListener('click', function() {
+        periodBtns.forEach(btn => btn.classList.remove('active'));
+        period1y.classList.add('active');
+        currentPeriod = 365;
+        updateChart();
     });
 });
