@@ -1,8 +1,9 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('Charts script initialized');
+
     /**
      * Utility to convert English digits to Persian digits.
-     * @param {string|number} str
-     * @returns {string}
+     * (Though Intl.DateTimeFormat 'fa-IR' does this automatically)
      */
     const toPersianDigits = (str) => {
         if (str === null || str === undefined) return '';
@@ -10,215 +11,188 @@ document.addEventListener('DOMContentLoaded', function() {
         return str.toString().replace(/\d/g, x => persianDigits[x]);
     };
 
-    const persianMonths = [
-        'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
-        'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
-    ];
+    // Formatters using native Intl
+    const jalaliDateFormatter = new Intl.DateTimeFormat('fa-IR', { calendar: 'persian', year: 'numeric', month: '2-digit', day: '2-digit' });
+    const jalaliMonthFormatter = new Intl.DateTimeFormat('fa-IR', { calendar: 'persian', month: 'long' });
+    const jalaliYearFormatter = new Intl.DateTimeFormat('fa-IR', { calendar: 'persian', year: 'numeric' });
+
+    const formatJalali = (dateStr) => {
+        const date = new Date(dateStr);
+        return jalaliDateFormatter.format(date);
+    };
+
+    const getJalaliMonth = (dateStr) => {
+        const date = new Date(dateStr);
+        return jalaliMonthFormatter.format(date);
+    };
+
+    const getJalaliYear = (dateStr) => {
+        const date = new Date(dateStr);
+        return jalaliYearFormatter.format(date);
+    };
+
+    // --- State ---
+    let currentAsset = 'gold';
+    let currentPeriodDays = 7;
+    let allData = { gold: [], silver: [] };
+    let chart = null;
 
     /**
-     * Mock data generation for daily prices.
-     * Generates a continuous stream of daily data.
-     * @param {number} base - Starting price
-     * @param {number} count - Number of days
-     * @param {number} volatility - Random price fluctuation
+     * Fetch raw data from JSON file
      */
-    const generateDailyData = (base, count, volatility) => {
-        let data = [];
-        let currentPrice = base;
-        const today = new Date();
-
-        for (let i = count; i >= 0; i--) {
-            let date = new Date(today);
-            date.setDate(today.getDate() - i);
-
-            // Simplified Jalali date mock for display
-            let jYear = date.getFullYear() - 621;
-            let jMonth = date.getMonth() + 1;
-            let jDay = date.getDate();
-
-            // Basic adjustment for Jalali months shift (approximate)
-            // Gregorian Jan (1) is approx Dey (10) in Jalali
-            let adjustedMonth = jMonth + 9;
-            if (adjustedMonth > 12) {
-                adjustedMonth -= 12;
-            } else {
-                jYear--;
-            }
-
-            let dateStr = `${jYear}/${adjustedMonth.toString().padStart(2, '0')}/${jDay.toString().padStart(2, '0')}`;
-
-            currentPrice += (Math.random() - 0.5) * volatility;
-            data.push({ x: dateStr, y: Math.floor(currentPrice) });
+    const fetchData = async () => {
+        try {
+            console.log('Fetching data...');
+            const response = await fetch('data/prices.json');
+            if (!response.ok) throw new Error('Failed to fetch price data');
+            allData = await response.json();
+            console.log('Data fetched successfully', {
+                gold: allData.gold?.length,
+                silver: allData.silver?.length
+            });
+            return true;
+        } catch (error) {
+            console.error('Error loading chart data:', error);
+            return false;
         }
-        return data;
     };
 
     /**
-     * Aggregates daily data into specific intervals based on the selected range.
-     * 7 days -> Daily (7 points)
-     * 30 days -> 3-day intervals (~10 points)
-     * 1 year -> Monthly intervals (12 points)
-     * @param {Array} data - Array of {x, y} daily data
-     * @param {number} rangeDays - The total range in days
+     * Aggregates raw data into specific intervals based on range.
      */
-    const getAggregatedData = (data, rangeDays) => {
-        const slicedData = data.slice(-rangeDays);
+    const getProcessedData = () => {
+        const rawData = allData[currentAsset] || [];
+        const slicedData = rawData.slice(-currentPeriodDays);
 
-        if (rangeDays === 7) {
-            // Requirement: Show daily data (7 points)
-            return slicedData;
-        } else if (rangeDays === 30) {
-            // Requirement: Aggregate data into 3-day intervals (10 points total)
-            return aggregateByInterval(slicedData, 3, 10);
-        } else if (rangeDays === 365) {
-            // Requirement: Aggregate data monthly (12 points total)
-            const interval = Math.ceil(slicedData.length / 12);
-            return aggregateByInterval(slicedData, interval, 12);
+        if (currentPeriodDays === 7) {
+            return slicedData.map(d => ({
+                x: d.date, // Use raw date for logic, format in formatter
+                y: d.price
+            }));
+        } else if (currentPeriodDays === 30) {
+            return aggregateData(slicedData, 3, 10);
+        } else if (currentPeriodDays === 365) {
+            return aggregateData(slicedData, 30, 12);
         }
-        return slicedData;
+        return slicedData.map(d => ({
+            x: d.date,
+            y: d.price
+        }));
     };
 
     /**
-     * Core aggregation logic: groups data by interval and calculates average price.
-     * @param {Array} data - The daily data to aggregate
-     * @param {number} interval - Number of days per point
-     * @param {number} targetCount - Final number of points desired
+     * Aggregates data by interval and calculates average price.
      */
-    const aggregateByInterval = (data, interval, targetCount) => {
+    const aggregateData = (data, interval, targetCount) => {
         let result = [];
         for (let i = data.length - 1; i >= 0; i -= interval) {
             let chunk = data.slice(Math.max(0, i - interval + 1), i + 1);
             if (chunk.length === 0) continue;
 
-            const avgY = chunk.reduce((sum, p) => sum + p.y, 0) / chunk.length;
-            const labelX = chunk[chunk.length - 1].x;
+            const avgY = chunk.reduce((sum, p) => sum + p.price, 0) / chunk.length;
+            const lastDate = chunk[chunk.length - 1].date;
 
-            result.unshift({ x: labelX, y: Math.floor(avgY) });
-
+            result.unshift({ x: lastDate, y: Math.floor(avgY) });
             if (result.length === targetCount) break;
         }
         return result;
     };
 
-    // --- Chart State ---
-    let currentAsset = 'gold';
-    let currentPeriodDays = 7;
+    const initChart = () => {
+        const processedData = getProcessedData();
 
-    const goldDaily = generateDailyData(19400000, 370, 200000);
-    const silverDaily = generateDailyData(18400000, 370, 150000);
-
-    const getProcessedData = () => {
-        const rawData = currentAsset === 'gold' ? goldDaily : silverDaily;
-        return getAggregatedData(rawData, currentPeriodDays);
-    };
-
-    const options = {
-        series: [{
-            name: 'قیمت طلا',
-            data: getProcessedData()
-        }],
-        chart: {
-            type: 'area',
-            height: 250,
-            toolbar: { show: false },
-            fontFamily: 'Vazirmatn, Tahoma, sans-serif',
-            animations: {
-                enabled: true,
-                easing: 'easeinout',
-                speed: 800,
+        const options = {
+            series: [{
+                name: currentAsset === 'gold' ? 'قیمت طلا' : 'قیمت نقره',
+                data: processedData
+            }],
+            chart: {
+                type: 'area',
+                height: 250,
+                toolbar: { show: false },
+                fontFamily: 'Vazirmatn, Tahoma, sans-serif',
+                animations: { enabled: true },
+                rtl: false
             },
-            rtl: false
-        },
-        dataLabels: { enabled: false },
-        stroke: {
-            curve: 'smooth',
-            width: 3,
-            colors: ['#e29b21']
-        },
-        fill: {
-            type: 'gradient',
-            gradient: {
-                shadeIntensity: 1,
-                opacityFrom: 0.45,
-                opacityTo: 0.05,
-                stops: [50, 100],
-                colorStops: [
-                    { offset: 0, color: '#e29b21', opacity: 0.4 },
-                    { offset: 100, color: '#e29b21', opacity: 0 }
-                ]
-            }
-        },
-        xaxis: {
-            labels: {
-                style: {
-                    colors: '#596486',
-                    fontFamily: 'Vazirmatn'
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 3, colors: ['#e29b21'] },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.4,
+                    opacityTo: 0.05,
+                    colorStops: [
+                        { offset: 0, color: '#e29b21', opacity: 0.4 },
+                        { offset: 100, color: '#e29b21', opacity: 0 }
+                    ]
+                }
+            },
+            xaxis: {
+                type: 'category',
+                labels: {
+                    style: { colors: '#596486', fontFamily: 'Vazirmatn' },
+                    rotate: 0,
+                    formatter: function(val) {
+                        if (!val) return '';
+                        if (currentPeriodDays === 365) {
+                            return getJalaliMonth(val);
+                        }
+                        return formatJalali(val);
+                    }
                 },
-                rotate: 0,
-                hideOverlappingLabels: true,
-                formatter: function(val) {
-                    if (currentPeriodDays === 365 && typeof val === 'string') {
-                        const parts = val.split('/');
-                        if (parts.length >= 2) {
-                            const monthIdx = parseInt(parts[1]) - 1;
-                            if (monthIdx >= 0 && monthIdx < 12) {
-                                return persianMonths[monthIdx];
-                            }
-                        }
-                    }
-                    return toPersianDigits(val);
-                }
+                axisBorder: { show: false },
+                axisTicks: { show: false }
             },
-            axisBorder: { show: false },
-            axisTicks: { show: false },
-            tooltip: { enabled: false }
-        },
-        yaxis: { show: false },
-        grid: { show: false },
-        tooltip: {
-            theme: 'light',
-            style: {
-                fontSize: '12px',
-                fontFamily: 'Vazirmatn'
-            },
-            x: {
+            yaxis: {
                 show: true,
-                formatter: function(val) {
-                    if (currentPeriodDays === 365 && typeof val === 'string') {
-                        const parts = val.split('/');
-                        if (parts.length >= 2) {
-                            const monthIdx = parseInt(parts[1]) - 1;
-                            if (monthIdx >= 0 && monthIdx < 12) {
-                                return persianMonths[monthIdx] + ' ' + toPersianDigits(parts[0]);
-                            }
+                labels: {
+                    formatter: (val) => toPersianDigits(val.toLocaleString()),
+                    style: { colors: '#596486', fontFamily: 'Vazirmatn' }
+                }
+            },
+            grid: {
+                show: true,
+                borderColor: '#f1f1f1',
+                xaxis: { lines: { show: false } },
+                yaxis: { lines: { show: true } }
+            },
+            tooltip: {
+                theme: 'light',
+                x: {
+                    show: true,
+                    formatter: function(val) {
+                        if (!val) return '';
+                        if (currentPeriodDays === 365) {
+                            return getJalaliMonth(val) + ' ' + getJalaliYear(val);
                         }
+                        return formatJalali(val);
                     }
-                    return toPersianDigits(val);
+                },
+                y: {
+                    formatter: function (val) {
+                        return toPersianDigits(val.toLocaleString()) + ' تومان';
+                    }
                 }
             },
-            y: {
-                formatter: function (val) {
-                    return toPersianDigits(val.toLocaleString()) + ' تومان';
-                }
-            },
-            marker: { show: true }
-        },
-        colors: ['#e29b21']
-    };
+            colors: ['#e29b21']
+        };
 
-    const chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+        const chartElement = document.querySelector("#chart");
+        if (chartElement) {
+            chart = new ApexCharts(chartElement, options);
+            chart.render();
+        }
+    };
 
     const updateChart = () => {
+        if (!chart) return;
+
         const data = getProcessedData();
-        const name = currentAsset === 'gold' ? 'قیمت طلا' : 'قیمت نقره';
         const color = currentAsset === 'gold' ? '#e29b21' : '#9ca3af';
+        const name = currentAsset === 'gold' ? 'قیمت طلا' : 'قیمت نقره';
 
-        chart.updateSeries([{
-            name: name,
-            data: data
-        }]);
-
+        chart.updateSeries([{ name: name, data: data }]);
         chart.updateOptions({
             colors: [color],
             fill: {
@@ -233,46 +207,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    // --- UI Listeners ---
-    const goldBtn = document.querySelector('#gold-chart-btn');
-    const silverBtn = document.querySelector('#silver-chart-btn');
+    // --- Bootstrapping ---
+    const success = await fetchData();
+    if (success) {
+        initChart();
+    }
 
-    goldBtn.addEventListener('click', function() {
-        goldBtn.classList.add('active');
-        silverBtn.classList.remove('active');
+    // --- UI Listeners ---
+    document.querySelector('#gold-chart-btn')?.addEventListener('click', function() {
+        this.classList.add('active');
+        document.querySelector('#silver-chart-btn')?.classList.remove('active');
         currentAsset = 'gold';
         updateChart();
     });
 
-    silverBtn.addEventListener('click', function() {
-        silverBtn.classList.add('active');
-        goldBtn.classList.remove('active');
+    document.querySelector('#silver-chart-btn')?.addEventListener('click', function() {
+        this.classList.add('active');
+        document.querySelector('#gold-chart-btn')?.classList.remove('active');
         currentAsset = 'silver';
         updateChart();
     });
 
-    const period7d = document.querySelector('#period-7d');
-    const period30d = document.querySelector('#period-30d');
-    const period1y = document.querySelector('#period-1y');
-    const periodBtns = [period7d, period30d, period1y];
-
-    period7d.addEventListener('click', function() {
-        periodBtns.forEach(btn => btn.classList.remove('active'));
-        period7d.classList.add('active');
+    document.querySelector('#period-7d')?.addEventListener('click', function() {
+        document.querySelectorAll('.period-toggle .mode-btn').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
         currentPeriodDays = 7;
         updateChart();
     });
 
-    period30d.addEventListener('click', function() {
-        periodBtns.forEach(btn => btn.classList.remove('active'));
-        period30d.classList.add('active');
+    document.querySelector('#period-30d')?.addEventListener('click', function() {
+        document.querySelectorAll('.period-toggle .mode-btn').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
         currentPeriodDays = 30;
         updateChart();
     });
 
-    period1y.addEventListener('click', function() {
-        periodBtns.forEach(btn => btn.classList.remove('active'));
-        period1y.classList.add('active');
+    document.querySelector('#period-1y')?.addEventListener('click', function() {
+        document.querySelectorAll('.period-toggle .mode-btn').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
         currentPeriodDays = 365;
         updateChart();
     });
