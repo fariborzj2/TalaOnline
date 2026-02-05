@@ -1064,3 +1064,6 @@ th.sort-desc .sort-icon::before {
 .skip-link:focus {
   top: 0;
 }
+.apexcharts-xaxis {
+  direction: rtl
+}
