@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                       }
                     }
                 }
-            }
+            },
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 3, colors: ['#e29b21'] },
             fill: {
