@@ -652,8 +652,8 @@ body {
 }
 @media screen and (max-width: 768px) {
   .chart {
-    height: 380px;
-    min-height: 380px !important;
+    
+    min-height: 250px !important;
     margin-top: 10px;
     margin-bottom: 10px;
   }
