@@ -659,46 +659,62 @@ body {
 .table-box {
   border: 1px solid var(--color-border);
   border-radius: 20px;
-  overflow: auto;
+  overflow: hidden; /* Prevent container from scrolling vertically */
+  overflow-x: auto; /* Allow horizontal scroll for mobile */
   background: var(--color-white);
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
-  max-height: 450px;
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
 }
-.table-box::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.table-box::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 10px;
-}
-.table-box::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-  border: 2px solid #f1f5f9;
-  transition: background 0.3s;
-}
-.table-box::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+
 .table-box table {
   border-collapse: separate;
   border-spacing: 0;
   min-width: 700px;
+  display: block; /* Change to block to allow tbody scrolling independently */
+}
+.table-box thead {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.table-box thead tr {
+  display: flex;
+  width: 100%;
+}
+.table-box tbody {
+  display: block;
+  max-height: 450px;
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scroll on tbody itself */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+.table-box tbody::-webkit-scrollbar {
+  width: 8px;
+}
+.table-box tbody::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.table-box tbody::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+  border: 2px solid #f1f5f9;
+}
+.table-box tbody::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+.table-box tbody tr {
+  display: flex;
+  width: 100%;
 }
 th {
   background: #fcfcfc;
   font-weight: 600;
   color: var(--color-title);
   border-bottom: 1px solid var(--color-border);
-  position: sticky;
-  top: 0;
   z-index: 10;
-  backdrop-filter: blur(8px);
-  background: rgba(252, 252, 252, 0.9) !important;
+  background: rgba(252, 252, 252, 1) !important;
   white-space: nowrap;
 }
 th:first-child {
@@ -837,6 +853,14 @@ th {
 td {
   padding: 18px 20px;
 }
+
+/* Define column widths for flex table layout */
+.table-box th:nth-child(1), .table-box td:nth-child(1) { width: 25%; flex-shrink: 0; }
+.table-box th:nth-child(2), .table-box td:nth-child(2) { width: 18%; flex-shrink: 0; }
+.table-box th:nth-child(3), .table-box td:nth-child(3) { width: 18%; flex-shrink: 0; }
+.table-box th:nth-child(4), .table-box td:nth-child(4) { width: 12%; flex-shrink: 0; }
+.table-box th:nth-child(5), .table-box td:nth-child(5) { width: 15%; flex-shrink: 0; }
+.table-box th:nth-child(6), .table-box td:nth-child(6) { width: 12%; flex-shrink: 0; }
 
 /* Coin Item Enhancements */
 .coin-item {

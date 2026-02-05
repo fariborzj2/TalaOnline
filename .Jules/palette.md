@@ -17,5 +17,5 @@
 - Action: Implemented professional sorting functionality with visual indicators and enabled internal table scrolling with a fixed max-height.
 
 ## 2025-05-14 - Aesthetic Scrollbar Integration
-- Learning: Default browser scrollbars often clash with modern, minimalist dashboard designs. Customizing them with subtle colors and rounded corners enhances the premium feel.
-- Action: Added a custom-styled scrollbar for the platforms table container, using theme-consistent colors and hover effects for a better micro-UX.
+- Learning: Default browser scrollbars often clash with modern, minimalist dashboard designs. Customizing them with subtle colors and rounded corners enhances the premium feel. Moving the scrollbar from the container to the `tbody` specifically (using a flex-based table layout) provides a cleaner interface where the header remains perfectly stationary while the content scrolls.
+- Action: Added a custom-styled scrollbar specifically for the `tbody` of the platforms table, using theme-consistent colors and hover effects for a better micro-UX.
