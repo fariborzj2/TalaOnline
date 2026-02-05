@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     rotate: 0,
                     rotateAlways: false,
                     hideOverlappingLabels: true,
-                    offsetY: 10,
+                    offsetY: 5,
                     trim: false
                 },
                 axisBorder: { show: false },
@@ -200,13 +200,13 @@ document.addEventListener('DOMContentLoaded', async function() {
             responsive: [{
                 breakpoint: 768,
                 options: {
-                    chart: { height: 180 },
+                    chart: { height: 200 },
                     xaxis: {
                         labels: {
                             rotate: -45,
                             rotateAlways: false,
                             fontSize: '9px',
-                            offsetY: 0
+                            offsetY: 10
                         }
                     },
                     grid: {
