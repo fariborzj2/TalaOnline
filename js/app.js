@@ -78,6 +78,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         const tbody = document.getElementById('platforms-table-body');
         if (!tbody) return;
 
+        if (platforms.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="padding: 40px; color: var(--color-bright);">
+                <div class="mb-10 font-size-1-5">🔍</div>
+                نتیجه‌ای برای جستجوی شما یافت نشد.
+            </td></tr>`;
+            return;
+        }
+
         tbody.innerHTML = platforms.map(p => `
             <tr>
                 <td>
@@ -94,7 +102,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td class="font-size-1-2 color-title">${formatPrice(p.buy_price)}</td>
                 <td class="font-size-1-2 color-title">${formatPrice(p.sell_price)}</td>
                 <td class="font-size-1-2" dir="ltr">${toPersianDigits(p.fee)}٪</td>
-                <td class="color-${p.status_color}">${p.status}</td>
+                <td>
+                    <span class="status-badge ${p.status === 'مناسب خرید' ? 'buy' : 'sell'}">
+                        ${p.status}
+                    </span>
+                </td>
                 <td>
                     <a href="${p.link}" class="btn" target="_blank" rel="noopener noreferrer" aria-label="خرید طلا از ${p.name} (در پنجره جدید)">خرید طلا</a>
                 </td>
@@ -113,8 +125,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 // Update UI classes
                 document.querySelectorAll('th.sortable').forEach(el => {
                     el.classList.remove('active-sort', 'sort-asc', 'sort-desc');
+                    el.removeAttribute('aria-sort');
                 });
                 th.classList.add('active-sort', `sort-${direction}`);
+                th.setAttribute('aria-sort', direction === 'asc' ? 'ascending' : 'descending');
 
                 // Sort data
                 state.platforms.sort((a, b) => {
@@ -157,6 +171,30 @@ document.addEventListener('DOMContentLoaded', async function() {
         `).join('');
     };
 
+    const initSearch = () => {
+        const searchInput = document.getElementById('platform-search');
+        if (!searchInput) return;
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = state.platforms.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                p.en_name.toLowerCase().includes(query)
+            );
+            populatePlatforms(filtered);
+
+            // Announce result count to screen readers
+            const announcement = document.getElementById('search-announcement');
+            if (announcement) {
+                if (filtered.length > 0) {
+                    announcement.textContent = `${toPersianDigits(filtered.length)} مورد یافت شد.`;
+                } else {
+                    announcement.textContent = 'موردی یافت نشد.';
+                }
+            }
+        });
+    };
+
     const data = await fetchData();
     if (data) {
         state.platforms = data.platforms;
@@ -165,6 +203,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         populatePlatforms(state.platforms);
         populateCoins(data.coins);
         initSorting();
+        initSearch();
     } else {
         const banner = document.getElementById('error-banner');
         if (banner) banner.classList.remove('d-none');

@@ -12,7 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body>
-    <div class="main">
+    <a href="#main-content" class="skip-link">رفتن به محتوای اصلی</a>
+    <div class="main" id="main-content">
         <div id="error-banner" class="center mb-20 d-none">
             <div class="block-card" style="background: #fee2e2; border-color: #ef4444; color: #b91c1c;">
                 خطا در دریافت اطلاعات. لطفا صفحه را دوباره بارگذاری کنید.
@@ -110,11 +111,20 @@
             <div class="center d-flex-wrap gap-20 just-center">
 
                 <div class="block-card">
-                    <div class="d-flex gap-10 align-center mb-10">
-                        <div class="height-40 width-40 radius-100 border d-flex just-center align-center"><img src="images/road-wayside.svg" alt="مقایسه پلتفرم‌ها"></div>
-                        <div>
-                            <h2 class="color-title">مقایسه پلتفرم های طلا آنلاین</h2>
-                            <span>با بررسی قیمت ها بهترین پتلفرم را برای معامله انتخاب کنید</span>
+                    <div class="d-flex-wrap just-between align-center mb-20 gap-15">
+                        <div class="d-flex gap-10 align-center">
+                            <div class="height-40 width-40 radius-100 border d-flex just-center align-center"><img src="images/road-wayside.svg" alt="مقایسه پلتفرم‌ها"></div>
+                            <div>
+                                <h2 class="color-title">مقایسه پلتفرم های طلا آنلاین</h2>
+                                <span class="font-size-0-9">با بررسی قیمت ها بهترین پتلفرم را برای معامله انتخاب کنید</span>
+                            </div>
+                        </div>
+                        <div class="search-box" role="search">
+                            <input type="text" id="platform-search" placeholder="جستجوی پلتفرم..." class="search-input" aria-label="جستجوی نام پلتفرم طلا">
+                            <span class="search-icon-wrapper" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </span>
+                            <div id="search-announcement" class="sr-only" aria-live="polite"></div>
                         </div>
                     </div>
                     <div class="table-box">
