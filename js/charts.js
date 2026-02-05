@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (currentPeriodDays === 7) {
             return slicedData.map(d => ({
-                x: d.date, // Use raw date for logic, format in formatter
+                x: new Date(d.date).getTime(),
                 y: d.price
             }));
         } else if (currentPeriodDays === 30) {
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             return aggregateData(slicedData, 30, 12);
         }
         return slicedData.map(d => ({
-            x: d.date,
+            x: new Date(d.date).getTime(),
             y: d.price
         }));
     };
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             const avgY = chunk.reduce((sum, p) => sum + p.price, 0) / chunk.length;
             const lastDate = chunk[chunk.length - 1].date;
 
-            result.unshift({ x: lastDate, y: Math.floor(avgY) });
+            result.unshift({ x: new Date(lastDate).getTime(), y: Math.floor(avgY) });
             if (result.length === targetCount) break;
         }
         return result;
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 hover: { size: 5, sizeOffset: 3 }
             },
             xaxis: {
-                type: 'category',
+                type: 'datetime',
                 labels: {
                     style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '10px' },
                     rotate: 0,
