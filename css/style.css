@@ -445,13 +445,10 @@ body {
     padding: 0 15px;
   }
   .section {
-    padding: 10px 0
-  }
-  .basis500.d-flex {
-    flex-direction: column;
+    padding: 5px 0
   }
   .gap-20 {
-    gap: 15px;
+    gap: 10px;
   }
   .mb-20 {
     margin-bottom: 15px;
