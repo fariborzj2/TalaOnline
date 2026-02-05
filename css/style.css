@@ -891,11 +891,11 @@ td, th {
   transform: translateY(-5px);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
-.price-card#gold-summary {
-  border-right: 4px solid #f59e0b;
-}
+/* .price-card#gold-summary {
+  border-right: 1px solid #f59e0b;
+} */
 .price-card#silver-summary {
-  border-right: 4px solid #94a3b8;
+  /*! border-right: 4px solid #94a3b8; */
 }
 .price-card::before {
   content: "";
@@ -918,8 +918,8 @@ td, th {
   background: white;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-.gold-icon { background: #fffbeb; }
-.silver-icon { background: #f1f5f9; }
+.gold-icon { background: #fffbeb; border: 1px solid #f59e0b}
+.silver-icon { background: #f1f5f9; border: 1px solid #94a3b8}
 
 .asset-icon img {
   width: 28px;
