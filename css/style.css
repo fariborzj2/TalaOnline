@@ -601,8 +601,8 @@ body {
 }
 
 .chart {
-  height: 250px;
-  min-height: 250px !important;
+  height: 200px;
+  min-height: 200px !important;
   width: 100%;
 }
 
