@@ -488,6 +488,7 @@ body {
 
 .chart {
   height: 250px;
+  min-height: 250px !important;
   width: 100%;
 }
 
