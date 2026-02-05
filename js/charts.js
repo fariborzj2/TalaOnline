@@ -208,18 +208,31 @@ document.addEventListener('DOMContentLoaded', async function() {
             responsive: [{
                 breakpoint: 768,
                 options: {
-                    chart: { height: 200 },
+                    chart: {
+                        height: 340
+                    },
                     xaxis: {
                         labels: {
                             rotate: -45,
-                            rotateAlways: false,
-                            fontSize: '9px',
-                            offsetY: 5
+                            rotateAlways: true,
+                            fontSize: '10px',
+                            offsetY: 0,
+                            style: { colors: '#64748b' },
+                            maxHeight: 100
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: (val) => toPersianDigits(val),
+                            style: { fontSize: '9px', colors: '#64748b' },
+                            offsetX: -10
                         }
                     },
                     grid: {
                         padding: {
-                            right: 35
+                            left: 10,
+                            right: 45,
+                            bottom: 80
                         }
                     }
                 }
