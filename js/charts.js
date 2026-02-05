@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 breakpoint: 768,
                 options: {
                     chart: {
-                        height: 340
+                        height: 200
                     },
                     xaxis: {
                         labels: {
