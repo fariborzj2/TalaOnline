@@ -604,8 +604,13 @@ body {
   height: 200px;
   min-height: 200px !important;
   width: 100%;
+  position: relative
 }
-
+@media screen and (max-width: 465px) {
+  .chart {
+    bottom: -40px;
+  }
+}
 /* mode-toggle */
 .mode-toggle {
   height: 38px;
