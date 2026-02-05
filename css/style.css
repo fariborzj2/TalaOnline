@@ -597,7 +597,6 @@ body {
 }
 
 .chart {
-  height: 200px;
   min-height: 200px !important;
   width: 100%;
   position: relative;
