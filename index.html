@@ -13,6 +13,11 @@
 </head>
 <body>
     <div class="main">
+        <div id="error-banner" class="center mb-20 d-none">
+            <div class="block-card" style="background: #fee2e2; border-color: #ef4444; color: #b91c1c;">
+                خطا در دریافت اطلاعات. لطفا صفحه را دوباره بارگذاری کنید.
+            </div>
+        </div>
         <div class="top-bar mb-20">
             <div class="center d-flex just-between align-center">
                 <div class="logo"><img src="images/logo.svg" alt="طلا آنلاین"></div>
@@ -31,19 +36,19 @@
                         <div class="block-card" id="gold-summary">
                             <div class="mb-10 pd-d-10 border-b">
                                 <div class="d-flex gap-5"><img src="images/gold.svg" alt="طلای ۱۸ عیار"> <span>قیمت طلا امروز</span></div>
-                                <div class=""><span class="color-title font-size-2 font-bold current-price">---</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-2 font-bold current-price skeleton">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div class="mb-10">
                                 <div class="">تغییرات لحظه ای</div>
-                                <div class=""><span class="color-title font-size-1-5 price-change">---</span>  <span class="color-green change-percent">---</span></div>
+                                <div class=""><span class="color-title font-size-1-5 price-change skeleton">---</span>  <span class="color-green change-percent skeleton">---</span></div>
                             </div>
                             <div class="mb-10">
                                 <div class="">بالاترین قیمت امروز</div>
-                                <div class=""><span class="color-title font-size-1-5 high-price">---</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-1-5 high-price skeleton">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div>
                                 <div class="">پایین‌ترین قیمت امروز</div>
-                                <div class=""><span class="color-title font-size-1-5 low-price">---</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-1-5 low-price skeleton">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                         </div>
 
@@ -51,19 +56,19 @@
                         <div class="block-card" id="silver-summary">
                             <div class="mb-10 pd-d-10 border-b">
                                 <div class="d-flex gap-5"><img src="images/silver.svg" alt="نقره"> <span>قیمت نقره امروز</span></div>
-                                <div class=""><span class="color-title font-size-2 font-bold current-price">---</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-2 font-bold current-price skeleton">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div class="mb-10">
                                 <div class="">تغییرات لحظه ای</div>
-                                <div class=""><span class="color-title font-size-1-5 price-change">---</span>  <span class="color-green change-percent">---</span></div>
+                                <div class=""><span class="color-title font-size-1-5 price-change skeleton">---</span>  <span class="color-green change-percent skeleton">---</span></div>
                             </div>
                             <div class="mb-10">
                                 <div class="">بالاترین قیمت امروز</div>
-                                <div class=""><span class="color-title font-size-1-5 high-price">---</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-1-5 high-price skeleton">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div>
                                 <div class="">پایین‌ترین قیمت امروز</div>
-                                <div class=""><span class="color-title font-size-1-5 low-price">---</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-1-5 low-price skeleton">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                         </div>
 
@@ -85,11 +90,11 @@
                             <div class="d-flex gap-20">
                                 <div class="">
                                     <div class="font-size-0-9">بالاترین قیمت</div>
-                                    <div class=""><span class="font-size-1-2 color-title chart-high-price">---</span> <span class="color-bright">تومان</span></div>
+                                    <div class=""><span class="font-size-1-2 color-title chart-high-price skeleton">---</span> <span class="color-bright">تومان</span></div>
                                 </div>
                                 <div class="">
                                     <div class="font-size-0-9">پایین‌ترین قیمت</div>
-                                    <div class=""><span class="font-size-1-2 color-title chart-low-price">---</span> <span class="color-bright">تومان</span></div>
+                                    <div class=""><span class="font-size-1-2 color-title chart-low-price skeleton">---</span> <span class="color-bright">تومان</span></div>
                                 </div>
                             </div>
                         </div>
@@ -106,9 +111,9 @@
 
                 <div class="block-card">
                     <div class="d-flex gap-10 align-center mb-10">
-                        <div class="height-40 width-40 radius-100 border d-flex just-center align-center"><img src="images/road-wayside.svg" alt=""></div>
+                        <div class="height-40 width-40 radius-100 border d-flex just-center align-center"><img src="images/road-wayside.svg" alt="مقایسه پلتفرم‌ها"></div>
                         <div>
-                            <h2 class="color-title">مقاسیه پلتفرم های طلا آنلاین</h2>
+                            <h2 class="color-title">مقایسه پلتفرم های طلا آنلاین</h2>
                             <span>با بررسی قیمت ها بهترین پتلفرم را برای معامله انتخاب کنید</span>
                         </div>
                     </div>
@@ -125,7 +130,22 @@
                                 </tr>
                             </thead>
                             <tbody id="platforms-table-body">
-                                <!-- Will be populated by JS -->
+                                <tr>
+                                    <td><div class="skeleton" style="height: 40px; width: 120px;"></div></td>
+                                    <td><div class="skeleton" style="height: 24px; width: 80px;"></div></td>
+                                    <td><div class="skeleton" style="height: 24px; width: 80px;"></div></td>
+                                    <td><div class="skeleton" style="height: 24px; width: 50px;"></div></td>
+                                    <td><div class="skeleton" style="height: 24px; width: 60px;"></div></td>
+                                    <td><div class="skeleton" style="height: 38px; width: 100px; border-radius: 100px;"></div></td>
+                                </tr>
+                                <tr>
+                                    <td><div class="skeleton" style="height: 40px; width: 120px;"></div></td>
+                                    <td><div class="skeleton" style="height: 24px; width: 80px;"></div></td>
+                                    <td><div class="skeleton" style="height: 24px; width: 80px;"></div></td>
+                                    <td><div class="skeleton" style="height: 24px; width: 50px;"></div></td>
+                                    <td><div class="skeleton" style="height: 24px; width: 60px;"></div></td>
+                                    <td><div class="skeleton" style="height: 38px; width: 100px; border-radius: 100px;"></div></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -133,7 +153,9 @@
 
                 <div class="block-card">
                     <div id="coins-list">
-                        <!-- Will be populated by JS -->
+                        <div class="coin-item skeleton" style="height: 60px; margin-bottom: 10px;"></div>
+                        <div class="coin-item skeleton" style="height: 60px; margin-bottom: 10px;"></div>
+                        <div class="coin-item skeleton" style="height: 60px;"></div>
                     </div>
                 </div>
             </div>
