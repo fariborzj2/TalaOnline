@@ -37,10 +37,28 @@
     color: var(--color-title);
 }
 .color-green {
-    color: var(--color-green);
+    color: #0d9488;
 }
 .color-red {
-    color: var(--color-red);
+    color: #dc2626;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8em;
+    font-weight: 600;
+    display: inline-block;
+}
+.status-badge.buy {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+.status-badge.sell {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
 }
 @font-face {
     font-family: "poppins";
@@ -485,6 +503,83 @@ body {
     width: 100%;
     justify-content: space-between;
   }
+
+  /* Stack top price cards on mobile */
+  .section .d-flex.gap-20,
+  .section .d-flex-wrap {
+    flex-direction: column;
+  }
+
+  .section .d-flex.gap-20 > *,
+  .section .d-flex-wrap > * {
+    width: 100% !important;
+    flex-basis: auto !important;
+  }
+
+  /* Ensure block cards don't overflow */
+  .block-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  /* Responsive table hint */
+  .table-box {
+    margin: 0 -15px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    position: relative;
+  }
+
+  .table-box table {
+    min-width: 650px; /* Adjusted for better mobile density */
+  }
+
+  /* Sticky first column on mobile for context */
+  .table-box td:first-child,
+  .table-box th:first-child {
+    position: sticky;
+    right: 0;
+    background: var(--color-white);
+    z-index: 5;
+    border-left: 2px solid #f1f5f9;
+  }
+
+  .table-box::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 120px;
+    width: 20px;
+    background: linear-gradient(to left, rgba(0,0,0,0.05), transparent);
+    pointer-events: none;
+    z-index: 4;
+  }
+  .table-box th:first-child {
+    z-index: 15;
+    background: rgba(252, 252, 252, 1) !important;
+  }
+
+  .title-size-3 {
+    font-size: 1.4rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .chartbox .d-flex.just-between.align-center.mb-10 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chartbox .d-flex.gap-20 {
+    justify-content: space-between;
+    padding-top: 15px;
+    border-top: 1px solid var(--color-border);
+    margin-top: 10px;
+  }
 }
 .menu a {
   margin: 0 20px;
@@ -556,6 +651,10 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(226, 155, 33, 0.2);
 }
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(226, 155, 33, 0.1);
+}
 /*  */
 .table-box {
   border: 1px solid var(--color-border);
@@ -602,6 +701,12 @@ th {
   background: rgba(252, 252, 252, 0.9) !important;
   white-space: nowrap;
 }
+th:first-child {
+  border-top-right-radius: 20px;
+}
+th:last-child {
+  border-top-left-radius: 20px;
+}
 td {
   vertical-align: middle;
 }
@@ -612,8 +717,14 @@ tr {
 tr:last-child {
   border-bottom: none;
 }
+tbody tr {
+  cursor: pointer;
+}
 tbody tr:hover {
-  background: #f9f9f9;
+  background: #f8fafc !important;
+}
+tbody tr:active {
+  background: #f1f5f9 !important;
 }
 td, th {
   padding: 16px 20px;
@@ -738,6 +849,48 @@ td {
   background: #f1f5f9;
 }
 
+/* Search Box */
+.search-box {
+  position: relative;
+  min-width: 250px;
+}
+.search-input {
+  width: 100%;
+  height: 42px;
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 0 40px 0 15px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.search-icon-wrapper {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+.search-input:focus {
+  background: var(--color-white);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(226, 155, 33, 0.1);
+}
+
 /* Sorting Indicators */
 th.sortable {
   cursor: pointer;
@@ -773,4 +926,21 @@ th.sort-asc .sort-icon::after {
 }
 th.sort-desc .sort-icon::before {
   display: none;
+}
+
+/* Accessibility */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  right: 50%;
+  transform: translateX(50%);
+  background: var(--color-primary);
+  color: white;
+  padding: 10px 20px;
+  z-index: 2000;
+  border-radius: 0 0 10px 10px;
+  transition: top 0.3s;
+}
+.skip-link:focus {
+  top: 0;
 }
