@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     rotate: 0,
                     rotateAlways: false,
                     hideOverlappingLabels: true,
-                    offsetY: -40,
+                    offsetY: 20,
                     trim: false
                 },
                 axisBorder: { show: false },
