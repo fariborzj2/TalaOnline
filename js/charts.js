@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             },
             dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 3, colors: ['#e29b21'] },
+            stroke: { curve: 'smooth', width: 2, colors: ['#e29b21'] },
             fill: {
                 type: 'gradient',
                 gradient: {
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             },
             markers: {
                 size: 0,
-                hover: { size: 5, sizeOffset: 3 }
+                hover: { size: 5, sizeOffset: 2 }
             },
             xaxis: {
                 type: 'category',
