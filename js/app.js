@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 </td>
                 <td class="font-size-1-2 color-title">${formatPrice(p.buy_price)}</td>
                 <td class="font-size-1-2 color-title">${formatPrice(p.sell_price)}</td>
-                <td class="font-size-1-2" dir="ltr">${toPersianDigits(p.fee)}</td>
+                <td class="font-size-1-2" dir="ltr">${toPersianDigits(p.fee)}٪</td>
                 <td class="color-${p.status_color}">${p.status}</td>
                 <td>
                     <a href="${p.link}" class="btn" target="_blank" rel="noopener noreferrer" aria-label="خرید طلا از ${p.name} (در پنجره جدید)">خرید طلا</a>

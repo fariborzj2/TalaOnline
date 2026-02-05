@@ -11,11 +11,11 @@
       "low": 19495719
     },
     "silver": {
-      "current": 19495719,
-      "change": 795719,
-      "change_percent": 3.85,
-      "high": 19495719,
-      "low": 19495719
+      "current": 85719,
+      "change": 1719,
+      "change_percent": 2.05,
+      "high": 86500,
+      "low": 84200
     }
   },
   "platforms": [
@@ -25,10 +25,10 @@
       "logo": "images/platforms/gerami.png",
       "buy_price": 19849500,
       "sell_price": 19749500,
-      "fee": "۰.۵ ٪",
+      "fee": 0.5,
       "status": "مناسب خرید",
       "status_color": "green",
-      "link": "#"
+      "link": "https://gerami.ir"
     },
     {
       "name": "میلی",
@@ -36,10 +36,10 @@
       "logo": "images/platforms/milli.png",
       "buy_price": 19849500,
       "sell_price": 19749500,
-      "fee": "۰.۵ ٪",
+      "fee": 0.3,
       "status": "مناسب خرید",
       "status_color": "green",
-      "link": "#"
+      "link": "https://milli.gold"
     },
     {
       "name": "زرپاد",
@@ -47,10 +47,10 @@
       "logo": "images/platforms/zarpad.png",
       "buy_price": 19849500,
       "sell_price": 19749500,
-      "fee": "۰.۵ ٪",
+      "fee": 0.45,
       "status": "مناسب فروش",
       "status_color": "red",
-      "link": "#"
+      "link": "https://zarpad.com"
     },
     {
       "name": "وال گلد",
@@ -58,10 +58,10 @@
       "logo": "images/platforms/wallgold.png",
       "buy_price": 19849500,
       "sell_price": 19749500,
-      "fee": "۰.۵ ٪",
+      "fee": 0.5,
       "status": "مناسب خرید",
       "status_color": "green",
-      "link": "#"
+      "link": "https://wallgold.ir"
     },
     {
       "name": "طلاین",
@@ -69,10 +69,10 @@
       "logo": "images/platforms/taline.png",
       "buy_price": 19849500,
       "sell_price": 19749500,
-      "fee": "۰.۵ ٪",
+      "fee": 0.6,
       "status": "مناسب فروش",
       "status_color": "red",
-      "link": "#"
+      "link": "https://tlyn.ir"
     }
   ],
   "coins": [
@@ -87,43 +87,43 @@
       "name": "طلای 20 عیار",
       "en_name": "20k Gold",
       "logo": "images/coin/gold-18.png",
-      "price": 19495719,
-      "change_percent": 5
+      "price": 21661910,
+      "change_percent": 3.2
     },
     {
       "name": "طلای 21 عیار",
       "en_name": "21k Gold",
       "logo": "images/coin/gold-18.png",
-      "price": 19495719,
-      "change_percent": 5
+      "price": 22745000,
+      "change_percent": 2.1
     },
     {
       "name": "سکه بهار آزادی",
       "en_name": "Bahar Coin",
       "logo": "images/coin/tamam.png",
-      "price": 19495719,
-      "change_percent": 5
+      "price": 45600000,
+      "change_percent": 1.5
     },
     {
       "name": "نیم سکه",
       "en_name": "Half Coin",
       "logo": "images/coin/nim.png",
-      "price": 19495719,
-      "change_percent": 5
+      "price": 25200000,
+      "change_percent": -0.5
     },
     {
       "name": "رب سکه",
       "en_name": "Quarter Coin",
-      "logo": "images/coin/nim.png",
-      "price": 19495719,
-      "change_percent": 5
+      "logo": "images/coin/rob.png",
+      "price": 15400000,
+      "change_percent": -1.2
     },
     {
       "name": "سکه گرمی",
       "en_name": "Gram Coin",
-      "logo": "images/coin/nim.png",
-      "price": 19495719,
-      "change_percent": 5
+      "logo": "images/coin/gerami.png",
+      "price": 7200000,
+      "change_percent": 0.8
     }
   ]
 }

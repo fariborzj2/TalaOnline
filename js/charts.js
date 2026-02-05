@@ -125,6 +125,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                     ]
                 }
             },
+            markers: {
+                size: 0,
+                hover: { size: 5, sizeOffset: 3 }
+            },
             xaxis: {
                 type: 'category',
                 labels: {
@@ -153,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             },
             grid: {
                 show: true,
-                borderColor: '#f1f1f1',
+                borderColor: '#f1f5f9',
                 xaxis: { lines: { show: false } },
                 yaxis: { lines: { show: true } },
                 padding: {
