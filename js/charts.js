@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             rotate: -45,
                             rotateAlways: false,
                             fontSize: '9px',
-                            offsetY: 10
+                            offsetY: 5
                         }
                     },
                     grid: {
