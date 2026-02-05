@@ -47,20 +47,21 @@ document.addEventListener('DOMContentLoaded', async function() {
             currentPriceEl.classList.remove('skeleton');
 
             const priceChangeEl = container.querySelector('.price-change');
-            priceChangeEl.textContent = formatPrice(data.change);
+            const sign = data.change > 0 ? '+' : '';
+            priceChangeEl.textContent = `(${sign}${formatPrice(data.change)})`;
             priceChangeEl.classList.remove('skeleton');
 
             const percentEl = container.querySelector('.change-percent');
             percentEl.innerHTML = getTrendArrow(data.change) + toPersianDigits(data.change_percent) + '٪';
-            percentEl.className = data.change >= 0 ? 'color-green change-percent' : 'color-red change-percent';
+            percentEl.className = `trend-badge change-percent ${data.change >= 0 ? 'color-green' : 'color-red'}`;
             percentEl.classList.remove('skeleton');
 
             const highPriceEl = container.querySelector('.high-price');
-            highPriceEl.textContent = formatPrice(data.high);
+            highPriceEl.innerHTML = `${formatPrice(data.high)} <span class="font-size-0-7 color-bright">تومان</span>`;
             highPriceEl.classList.remove('skeleton');
 
             const lowPriceEl = container.querySelector('.low-price');
-            lowPriceEl.textContent = formatPrice(data.low);
+            lowPriceEl.innerHTML = `${formatPrice(data.low)} <span class="font-size-0-7 color-bright">تومان</span>`;
             lowPriceEl.classList.remove('skeleton');
         });
 
