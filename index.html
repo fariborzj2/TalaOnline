@@ -18,7 +18,7 @@
                 <div class="logo"><img src="images/logo.svg" alt="طلا آنلاین"></div>
                 <div class="">
                     <span class="live-pulse"></span>
-                    <span>۱۲ اردیبهشت ۱۴۰۴</span>
+                    <span id="current-date">...</span>
                 </div>
             </div>
         </div>
@@ -27,41 +27,43 @@
                 <div class="d-flex-wrap gap-20">
                     <div class="grow-1 d-flex gap-20">
 
-                        <div class="block-card">
+                        <!-- Gold Summary -->
+                        <div class="block-card" id="gold-summary">
                             <div class="mb-10 pd-d-10 border-b">
                                 <div class="d-flex gap-5"><img src="images/gold.svg" alt="طلای ۱۸ عیار"> <span>قیمت طلا امروز</span></div>
-                                <div class=""><span class="color-title font-size-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-2 font-bold current-price">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div class="mb-10">
                                 <div class="">تغییرات لحظه ای</div>
-                                <div class=""><span class="color-title font-size-1-5">۷۹۵،۷۱۹</span>  <span class="color-green">۳.۸۵٪</span></div>
+                                <div class=""><span class="color-title font-size-1-5 price-change">---</span>  <span class="color-green change-percent">---</span></div>
                             </div>
                             <div class="mb-10">
                                 <div class="">بالاترین قیمت امروز</div>
-                                <div class=""><span class="color-title font-size-1-5">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-1-5 high-price">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div>
                                 <div class="">پایین‌ترین قیمت امروز</div>
-                                <div class=""><span class="color-title font-size-1-5">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-1-5 low-price">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                         </div>
 
-                        <div class="block-card">
+                        <!-- Silver Summary -->
+                        <div class="block-card" id="silver-summary">
                             <div class="mb-10 pd-d-10 border-b">
                                 <div class="d-flex gap-5"><img src="images/silver.svg" alt="نقره"> <span>قیمت نقره امروز</span></div>
-                                <div class=""><span class="color-title font-size-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-2 font-bold current-price">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div class="mb-10">
                                 <div class="">تغییرات لحظه ای</div>
-                                <div class=""><span class="color-title font-size-1-5">۷۹۵،۷۱۹</span>  <span class="color-green">۳.۸۵٪</span></div>
+                                <div class=""><span class="color-title font-size-1-5 price-change">---</span>  <span class="color-green change-percent">---</span></div>
                             </div>
                             <div class="mb-10">
                                 <div class="">بالاترین قیمت امروز</div>
-                                <div class=""><span class="color-title font-size-1-5">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-1-5 high-price">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                             <div>
                                 <div class="">پایین‌ترین قیمت امروز</div>
-                                <div class=""><span class="color-title font-size-1-5">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
+                                <div class=""><span class="color-title font-size-1-5 low-price">---</span> <span class="color-bright">تومان</span></div>
                             </div>
                         </div>
 
@@ -83,11 +85,11 @@
                             <div class="d-flex gap-20">
                                 <div class="">
                                     <div class="font-size-0-9">بالاترین قیمت</div>
-                                    <div class=""><span class="font-size-1-2 color-title">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
+                                    <div class=""><span class="font-size-1-2 color-title chart-high-price">---</span> <span class="color-bright">تومان</span></div>
                                 </div>
                                 <div class="">
                                     <div class="font-size-0-9">پایین‌ترین قیمت</div>
-                                    <div class=""><span class="font-size-1-2 color-title">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
+                                    <div class=""><span class="font-size-1-2 color-title chart-low-price">---</span> <span class="color-bright">تومان</span></div>
                                 </div>
                             </div>
                         </div>
@@ -122,244 +124,22 @@
                                     <th>عملیات</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-center gap-10">
-                                            <div class="brand-logo">
-                                                <img src="images/platforms/gerami.png" alt="">
-                                            </div>
-                                            <div class="line20">
-                                                <div class="color-title">گرمی</div>
-                                                <div class="font-size-0-8">Gerami</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="font-size-1-2 color-title">۱۹،۸۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2 color-title">۱۹،۷۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2" dir="ltr">۰.۵ ٪</td>
-                                    <td class="color-green">مناسب خرید</td>
-                                    <td>
-                                        <a href="#" class="btn" aria-label="خرید طلا از گرمی">خرید طلا</a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-center gap-10">
-                                            <div class="brand-logo">
-                                                <img src="images/platforms/milli.png" alt="">
-                                            </div>
-                                            <div class="line20">
-                                                <div class="color-title">میلی</div>
-                                                <div class="font-size-0-8">Milli</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="font-size-1-2 color-title">۱۹،۸۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2 color-title">۱۹،۷۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2" dir="ltr">۰.۵ ٪</td>
-                                    <td class="color-green">مناسب خرید</td>
-                                    <td>
-                                        <a href="#" class="btn" aria-label="خرید طلا از میلی">خرید طلا</a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-center gap-10">
-                                            <div class="brand-logo">
-                                                <img src="images/platforms/zarpad.png" alt="">
-                                            </div>
-                                            <div class="line20">
-                                                <div class="color-title">زرپاد</div>
-                                                <div class="font-size-0-8">Zarpad</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="font-size-1-2 color-title">۱۹،۸۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2 color-title">۱۹،۷۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2" dir="ltr">۰.۵ ٪</td>
-                                    <td class="color-red">مناسب فروش</td>
-                                    <td>
-                                        <a href="#" class="btn" aria-label="خرید طلا از میلی">خرید طلا</a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-center gap-10">
-                                            <div class="brand-logo">
-                                                <img src="images/platforms/wallgold.png" alt="">
-                                            </div>
-                                            <div class="line20">
-                                                <div class="color-title">وال گلد</div>
-                                                <div class="font-size-0-8">wallGold</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="font-size-1-2 color-title">۱۹،۸۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2 color-title">۱۹،۷۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2" dir="ltr">۰.۵ ٪</td>
-                                    <td class="color-green">مناسب خرید</td>
-                                    <td>
-                                        <a href="#" class="btn" aria-label="خرید طلا از میلی">خرید طلا</a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>
-                                        <div class="d-flex align-center gap-10">
-                                            <div class="brand-logo">
-                                                <img src="images/platforms/taline.png" alt="">
-                                            </div>
-                                            <div class="line20">
-                                                <div class="color-title">طلاین</div>
-                                                <div class="font-size-0-8">Tlyn</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="font-size-1-2 color-title">۱۹،۸۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2 color-title">۱۹،۷۴۹،۵۰۰</td>
-                                    <td class="font-size-1-2" dir="ltr">۰.۵ ٪</td>
-                                    <td class="color-red">مناسب فروش</td>
-                                    <td>
-                                        <a href="#" class="btn" aria-label="خرید طلا از میلی">خرید طلا</a>
-                                    </td>
-                                </tr>
-
+                            <tbody id="platforms-table-body">
+                                <!-- Will be populated by JS -->
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <div class="block-card">
-                    <div class="">
-
-                        <div class="coin-item">
-                            <div class="d-flex align-center gap-10">
-                                <div class="brand-logo">
-                                    <img src="images/coin/gold-18.png" alt="">
-                                </div>
-                                <div class="line24">
-                                    <div class="color-title">طلای ۱۸ عیار</div>
-                                    <div class="">18k Gold</div>
-                                </div>
-                            </div>
-
-                            <div class="line24 text-left">
-                                <div class=""><span class="color-title font-size-1-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
-                                <div class="color-green">۵%</div>
-                            </div>
-                        </div>
-
-                        <div class="coin-item">
-                            <div class="d-flex align-center gap-10">
-                                <div class="brand-logo">
-                                    <img src="images/coin/gold-18.png" alt="">
-                                </div>
-                                <div class="line24">
-                                    <div class="color-title">طلای 20 عیار</div>
-                                    <div class="">20k Gold</div>
-                                </div>
-                            </div>
-
-                            <div class="line24 text-left">
-                                <div class=""><span class="color-title font-size-1-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
-                                <div class="color-green">۵%</div>
-                            </div>
-                        </div>
-
-                        <div class="coin-item">
-                            <div class="d-flex align-center gap-10">
-                                <div class="brand-logo">
-                                    <img src="images/coin/gold-18.png" alt="">
-                                </div>
-                                <div class="line24">
-                                    <div class="color-title">طلای 21 عیار</div>
-                                    <div class="">21k Gold</div>
-                                </div>
-                            </div>
-
-                            <div class="line20 text-left">
-                                <div class=""><span class="color-title font-size-1-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
-                                <div class="color-green">۵%</div>
-                            </div>
-                        </div>
-
-                        <div class="coin-item">
-                            <div class="d-flex align-center gap-10">
-                                <div class="brand-logo">
-                                    <img src="images/coin/tamam.png" alt="">
-                                </div>
-                                <div class="line24">
-                                    <div class="color-title">سکه بهار آزادی</div>
-                                    <div class="">Bahar Coin</div>
-                                </div>
-                            </div>
-
-                            <div class="line20 text-left">
-                                <div class=""><span class="color-title font-size-1-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
-                                <div class="color-green">۵%</div>
-                            </div>
-                        </div>
-
-                        <div class="coin-item">
-                            <div class="d-flex align-center gap-10">
-                                <div class="brand-logo">
-                                    <img src="images/coin/nim.png" alt="">
-                                </div>
-                                <div class="line24">
-                                    <div class="color-title">نیم سکه</div>
-                                    <div class="">Half Coin</div>
-                                </div>
-                            </div>
-
-                            <div class="line24 text-left">
-                                <div class=""><span class="color-title font-size-1-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
-                                <div class="color-green">۵%</div>
-                            </div>
-                        </div>
-
-                        <div class="coin-item">
-                            <div class="d-flex align-center gap-10">
-                                <div class="brand-logo">
-                                    <img src="images/coin/nim.png" alt="">
-                                </div>
-                                <div class="line24">
-                                    <div class="color-title">رب سکه</div>
-                                    <div class="">Quarter Coin</div>
-                                </div>
-                            </div>
-
-                            <div class="line24 text-left">
-                                <div class=""><span class="color-title font-size-1-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
-                                <div class="color-green">۵%</div>
-                            </div>
-                        </div>
-
-                        <div class="coin-item">
-                            <div class="d-flex align-center gap-10">
-                                <div class="brand-logo">
-                                    <img src="images/coin/nim.png" alt="">
-                                </div>
-                                <div class="line24">
-                                    <div class="color-title">سکه گرمی</div>
-                                    <div class="">Gram Coin</div>
-                                </div>
-                            </div>
-
-                            <div class="line24 text-left">
-                                <div class=""><span class="color-title font-size-1-2 font-bold">۱۹،۴۹۵،۷۱۹</span> <span class="color-bright">تومان</span></div>
-                                <div class="color-green">۵%</div>
-                            </div>
-                        </div>
-
+                    <div id="coins-list">
+                        <!-- Will be populated by JS -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

@@ -225,6 +225,19 @@ document.addEventListener('DOMContentLoaded', async function() {
             },
             stroke: { colors: [color] }
         });
+
+        // Update High/Low labels in chart box
+        if (data.length > 0) {
+            const prices = data.map(d => d.y);
+            const high = Math.max(...prices);
+            const low = Math.min(...prices);
+
+            const highEl = document.querySelector('.chart-high-price');
+            const lowEl = document.querySelector('.chart-low-price');
+
+            if (highEl) highEl.textContent = toPersianDigits(high.toLocaleString());
+            if (lowEl) lowEl.textContent = toPersianDigits(low.toLocaleString());
+        }
     };
 
     // --- Bootstrapping ---
