@@ -782,6 +782,11 @@ td, th {
   margin-right: 0 !important;
 }
 
+.apexcharts-xaxistooltip,
+.apexcharts-yaxistooltip {
+  display: none !important;
+}
+
 /* Skeleton Loading */
 .skeleton {
   background: #eee;

@@ -157,7 +157,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                     trim: false
                 },
                 axisBorder: { show: false },
-                axisTicks: { show: false }
+                axisTicks: { show: false },
+                tooltip: { enabled: false }
             },
             yaxis: {
                 show: true,
@@ -165,7 +166,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                     offsetX: 0,
             formatter: (val) => toPersianDigits(val),
                     style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '10px' }
-                }
+                },
+                tooltip: { enabled: false }
             },
             grid: {
                 show: true,
