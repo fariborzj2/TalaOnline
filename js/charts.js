@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             rotate: -45,
                             rotateAlways: true,
                             fontSize: '10px',
-                            offsetY: 0,
+                            offsetY: 10,
                             style: { colors: '#64748b' },
                             maxHeight: 80,
                             hideOverlappingLabels: true
