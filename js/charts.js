@@ -138,9 +138,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                     hideOverlappingLabels: true,
                     formatter: function(val) {
                         if (!val) return '';
-                        if (currentPeriodDays === 365) {
-                            return getJalaliMonth(val);
-                        }
                         return formatJalali(val);
                     }
                 },
@@ -173,9 +170,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                     show: true,
                     formatter: function(val) {
                         if (!val) return '';
-                        if (currentPeriodDays === 365) {
-                            return getJalaliMonth(val) + ' ' + getJalaliYear(val);
-                        }
                         return formatJalali(val);
                     }
                 },
