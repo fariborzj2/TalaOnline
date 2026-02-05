@@ -73,6 +73,50 @@
       "status": "مناسب فروش",
       "status_color": "red",
       "link": "https://tlyn.ir"
+    },
+    {
+      "name": "گلدزینو",
+      "en_name": "Goldzino",
+      "logo": "images/platforms/wallgold.png",
+      "buy_price": 19855000,
+      "sell_price": 19755000,
+      "fee": 0.25,
+      "status": "مناسب خرید",
+      "status_color": "green",
+      "link": "#"
+    },
+    {
+      "name": "آی طلا",
+      "en_name": "iTala",
+      "logo": "images/platforms/milli.png",
+      "buy_price": 19860000,
+      "sell_price": 19760000,
+      "fee": 0.35,
+      "status": "مناسب خرید",
+      "status_color": "green",
+      "link": "#"
+    },
+    {
+      "name": "دیجی گلد",
+      "en_name": "DigiGold",
+      "logo": "images/platforms/zarpad.png",
+      "buy_price": 19840000,
+      "sell_price": 19740000,
+      "fee": 0.55,
+      "status": "مناسب فروش",
+      "status_color": "red",
+      "link": "#"
+    },
+    {
+      "name": "پارس زرین",
+      "en_name": "ParsZarrin",
+      "logo": "images/platforms/gerami.png",
+      "buy_price": 19870000,
+      "sell_price": 19770000,
+      "fee": 0.4,
+      "status": "مناسب خرید",
+      "status_color": "green",
+      "link": "#"
     }
   ],
   "coins": [

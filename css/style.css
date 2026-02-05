@@ -560,13 +560,15 @@ body {
 .table-box {
   border: 1px solid var(--color-border);
   border-radius: 20px;
-  overflow-x: auto;
+  overflow: auto;
   background: var(--color-white);
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
+  max-height: 450px;
 }
 .table-box table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   min-width: 700px;
 }
 th {
@@ -574,6 +576,12 @@ th {
   font-weight: 600;
   color: var(--color-title);
   border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  background: rgba(252, 252, 252, 0.9) !important;
+  white-space: nowrap;
 }
 td {
   vertical-align: middle;
@@ -709,4 +717,41 @@ td {
 }
 .coin-item:hover {
   background: #f1f5f9;
+}
+
+/* Sorting Indicators */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+th.sortable:hover {
+  background: #f1f5f9 !important;
+}
+.sort-icon {
+  display: inline-flex;
+  flex-direction: column;
+  margin-right: 8px;
+  vertical-align: middle;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+th.active-sort .sort-icon {
+  opacity: 1;
+}
+.sort-icon::before {
+  content: "▲";
+  font-size: 8px;
+  line-height: 8px;
+}
+.sort-icon::after {
+  content: "▼";
+  font-size: 8px;
+  line-height: 8px;
+}
+th.sort-asc .sort-icon::after {
+  display: none;
+}
+th.sort-desc .sort-icon::before {
+  display: none;
 }
