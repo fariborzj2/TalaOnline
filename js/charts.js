@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     },
                     grid: {
                         padding: {
-                            right: 20
+                            right: 35
                         }
                     }
                 }
