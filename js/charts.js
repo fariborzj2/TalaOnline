@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (currentPeriodDays === 7) {
             return slicedData.map(d => ({
-                x: '\u200f' + jalaliMonthDayFormatter.format(new Date(d.date)),
+                x: jalaliMonthDayFormatter.format(new Date(d.date)),
                 y: d.price,
                 fullDate: formatJalali(d.date)
             }));
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             result.unshift({
-                x: '\u200f' + label,
+                x: label,
                 y: Math.floor(avgY),
                 fullDate: formatJalali(lastDate)
             });
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     left: 20,
                     right: 0,
                     top: 0,
-                    bottom: 0
+                    bottom: 10
                 }
             },
             tooltip: {
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 breakpoint: 768,
                 options: {
                     chart: {
-                        height: '100%'
+                        height: 380
                     },
                     xaxis: {
                         labels: {
@@ -220,21 +220,23 @@ document.addEventListener('DOMContentLoaded', async function() {
                             fontSize: '10px',
                             offsetY: 0,
                             style: { colors: '#64748b' },
-                            maxHeight: 100
-                        }
+                            maxHeight: 80,
+                            hideOverlappingLabels: false
+                        },
+                        axisBorder: { show: true, color: '#f1f5f9' }
                     },
                     yaxis: {
                         labels: {
                             formatter: (val) => toPersianDigits(val),
                             style: { fontSize: '9px', colors: '#64748b' },
-                            offsetX: -10
+                            offsetX: -5
                         }
                     },
                     grid: {
                         padding: {
                             left: 10,
                             right: 45,
-                            bottom: 0
+                            bottom: 60
                         }
                     }
                 }
