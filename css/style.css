@@ -532,11 +532,15 @@ body {
   /* Sticky first column on mobile for context */
   .table-box td:first-child,
   .table-box th:first-child {
+    position: -webkit-sticky;
     position: sticky;
     right: 0;
+    left: auto;
     background: var(--color-white);
-    z-index: 5;
+    z-index: 20;
     border-left: 2px solid #f1f5f9;
+    transform: translateZ(0); /* Force GPU acceleration */
+    -webkit-transform: translateZ(0);
   }
 
   .table-box::after {
@@ -548,10 +552,10 @@ body {
     width: 20px;
     background: linear-gradient(to left, rgba(0,0,0,0.05), transparent);
     pointer-events: none;
-    z-index: 4;
+    z-index: 15;
   }
   .table-box th:first-child {
-    z-index: 15;
+    z-index: 40;
     background: rgba(252, 252, 252, 1) !important;
   }
 
@@ -653,24 +657,27 @@ body {
 .table-box {
   border: 1px solid var(--color-border);
   border-radius: 20px;
-  overflow: hidden; /* Prevent container from scrolling vertically */
-  overflow-x: auto; /* Allow horizontal scroll for mobile */
+  overflow: auto; /* Allow both horizontal and vertical scroll */
+  max-height: 500px; /* Limit height and allow vertical scroll */
   background: var(--color-white);
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
 .table-box table {
   border-collapse: separate;
   border-spacing: 0;
   min-width: max-content;
-  display: block; /* Change to block to allow tbody scrolling independently */
+  display: block;
 }
 .table-box thead {
   display: block;
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 30;
 }
 .table-box thead tr {
   display: flex;
@@ -678,24 +685,20 @@ body {
 }
 .table-box tbody {
   display: block;
-  max-height: 450px;
-  overflow-y: auto;
-  overflow-x: hidden; /* Prevent horizontal scroll on tbody itself */
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
 }
-.table-box tbody::-webkit-scrollbar {
+.table-box::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
-.table-box tbody::-webkit-scrollbar-track {
+.table-box::-webkit-scrollbar-track {
   background: #f1f5f9;
 }
-.table-box tbody::-webkit-scrollbar-thumb {
+.table-box::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
   border: 2px solid #f1f5f9;
 }
-.table-box tbody::-webkit-scrollbar-thumb:hover {
+.table-box::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 .table-box tbody tr {
@@ -829,6 +832,8 @@ td, th {
   border: 1px solid var(--color-border);
   flex-shrink: 0;
   overflow: hidden;
+  position: relative;
+  z-index: 2;
 }
 .brand-logo img {
   width: 32px;
@@ -852,7 +857,7 @@ td {
 }
 
 /* Define column widths for flex table layout */
-.table-box th:nth-child(1), .table-box td:nth-child(1) { width: 80px; flex-shrink: 0; }
+.table-box th:nth-child(1), .table-box td:nth-child(1) { width: 80px; flex-shrink: 0; padding-left: 10px; padding-right: 10px; }
 .table-box th:nth-child(2), .table-box td:nth-child(2) { width: 140px; flex-shrink: 0; }
 .table-box th:nth-child(3), .table-box td:nth-child(3) { flex: 1; min-width: 150px; }
 .table-box th:nth-child(4), .table-box td:nth-child(4) { flex: 1; min-width: 150px; }
