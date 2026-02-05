@@ -952,6 +952,50 @@ th.sort-desc .sort-icon::before {
   display: none;
 }
 
+/* Error Banner */
+.error-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 20px 30px;
+}
+.error-icon {
+  color: #dc2626;
+  flex-shrink: 0;
+}
+.error-content {
+  flex-grow: 1;
+}
+.error-title {
+  color: #991b1b;
+  margin-bottom: 4px;
+  font-size: 1.1rem;
+}
+.error-message {
+  color: #b91c1c;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+.btn-error {
+  border-color: #fca5a5;
+  color: #b91c1c;
+  background: white;
+}
+.btn-error:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+}
+@media screen and (max-width: 640px) {
+  .error-container {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+}
+
 /* Accessibility */
 .skip-link {
   position: absolute;

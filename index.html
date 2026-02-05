@@ -15,8 +15,15 @@
     <a href="#main-content" class="skip-link">رفتن به محتوای اصلی</a>
     <div class="main" id="main-content">
         <div id="error-banner" class="center mb-20 d-none">
-            <div class="block-card" style="background: #fee2e2; border-color: #ef4444; color: #b91c1c;">
-                خطا در دریافت اطلاعات. لطفا صفحه را دوباره بارگذاری کنید.
+            <div class="error-container block-card">
+                <div class="error-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <div class="error-content">
+                    <h3 class="error-title">خطا در دریافت اطلاعات</h3>
+                    <p class="error-message">متأسفانه در حال حاضر قادر به دریافت اطلاعات از سرور نیستیم. لطفا اتصال اینترنت خود را بررسی کنید.</p>
+                </div>
+                <button id="reload-btn" class="btn btn-error" aria-label="تلاش مجدد برای بارگذاری اطلاعات">تلاش مجدد</button>
             </div>
         </div>
         <div class="top-bar mb-30">
