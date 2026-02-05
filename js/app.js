@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('App script initialized');
 
+    let state = {
+        platforms: [],
+        currentSort: { column: null, direction: 'asc' }
+    };
+
     const persianNumberFormatter = new Intl.NumberFormat('fa-IR');
 
     const toPersianDigits = (num) => {
@@ -97,6 +102,37 @@ document.addEventListener('DOMContentLoaded', async function() {
         `).join('');
     };
 
+    const initSorting = () => {
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const column = th.dataset.sort;
+                const direction = state.currentSort.column === column && state.currentSort.direction === 'asc' ? 'desc' : 'asc';
+
+                state.currentSort = { column, direction };
+
+                // Update UI classes
+                document.querySelectorAll('th.sortable').forEach(el => {
+                    el.classList.remove('active-sort', 'sort-asc', 'sort-desc');
+                });
+                th.classList.add('active-sort', `sort-${direction}`);
+
+                // Sort data
+                state.platforms.sort((a, b) => {
+                    let valA = a[column];
+                    let valB = b[column];
+
+                    if (column === 'name') {
+                        return direction === 'asc' ? valA.localeCompare(valB, 'fa') : valB.localeCompare(valA, 'fa');
+                    }
+
+                    return direction === 'asc' ? valA - valB : valB - valA;
+                });
+
+                populatePlatforms(state.platforms);
+            });
+        });
+    };
+
     const populateCoins = (coins) => {
         const container = document.getElementById('coins-list');
         if (!container) return;
@@ -123,10 +159,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const data = await fetchData();
     if (data) {
+        state.platforms = data.platforms;
         document.getElementById('current-date').textContent = data.meta.date;
         populateSummary(data.summary);
-        populatePlatforms(data.platforms);
+        populatePlatforms(state.platforms);
         populateCoins(data.coins);
+        initSorting();
     } else {
         const banner = document.getElementById('error-banner');
         if (banner) banner.classList.remove('d-none');

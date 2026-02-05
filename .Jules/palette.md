@@ -10,3 +10,8 @@
 - Learning: Maintaining realistic mock data (like silver vs gold prices) is crucial for trust and professional presentation, even in development stages.
 - Action: Converted all fixed line-heights to relative values and corrected silver prices across the dataset.
 - Action: Enhanced UI depth with soft shadows and refined sticky navigation for better focus.
+
+## 2025-05-14 - Advanced Table Interactivity
+- Learning: For long comparison tables, vertical scrolling with sticky headers is essential to maintain column context without losing the page's overall structure.
+- Learning: Client-side sorting for Persian content requires careful handling of numeric vs. string data, using 'localeCompare' for strings and standard arithmetic for numeric types.
+- Action: Implemented professional sorting functionality with visual indicators and enabled internal table scrolling with a fixed max-height.
