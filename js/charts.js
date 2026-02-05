@@ -130,7 +130,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             },
             options: {
                 layout: {
-                    padding: 50
+                    padding: {
+                        left: 100,
+                        bottom: -100
+                    }
                 }
             },
             dataLabels: { enabled: false },
