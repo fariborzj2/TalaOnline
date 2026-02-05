@@ -504,12 +504,6 @@ body {
     justify-content: space-between;
   }
 
-  /* Stack top price cards on mobile */
-  .section .d-flex.gap-20,
-  .section .d-flex-wrap {
-    flex-direction: column;
-  }
-
   .section .d-flex.gap-20 > *,
   .section .d-flex-wrap > * {
     width: 100% !important;
@@ -524,7 +518,7 @@ body {
 
   /* Responsive table hint */
   .table-box {
-    margin: 0 -15px;
+    /*! margin: 0 -15px; */
     border-radius: 0;
     border-left: none;
     border-right: none;
@@ -865,17 +859,6 @@ td {
 .table-box th:nth-child(5), .table-box td:nth-child(5) { width: 100px; flex-shrink: 0; }
 .table-box th:nth-child(6), .table-box td:nth-child(6) { width: 140px; flex-shrink: 0; }
 .table-box th:nth-child(7), .table-box td:nth-child(7) { width: 140px; flex-shrink: 0; }
-
-/* Coin Item Enhancements */
-.coin-item {
-  transition: all 0.2s;
-  padding: 12px 10px;
-  border-radius: 12px;
-  margin: 0 -10px;
-}
-.coin-item:hover {
-  background: #f1f5f9;
-}
 
 /* Search Box */
 .search-box {
