@@ -1,14 +1,11 @@
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Charts script initialized');
 
-    /**
-     * Utility to convert English digits to Persian digits.
-     * (Though Intl.DateTimeFormat 'fa-IR' does this automatically)
-     */
-    const toPersianDigits = (str) => {
-        if (str === null || str === undefined) return '';
-        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-        return str.toString().replace(/\d/g, x => persianDigits[x]);
+    const persianNumberFormatter = new Intl.NumberFormat('fa-IR');
+
+    const toPersianDigits = (num) => {
+        if (num === null || num === undefined) return '';
+        return persianNumberFormatter.format(num);
     };
 
     // Formatters using native Intl
@@ -150,7 +147,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 show: true,
                 labels: {
                     offsetX: 0,
-                    formatter: (val) => toPersianDigits(val.toLocaleString()),
+            formatter: (val) => toPersianDigits(val),
                     style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '10px' }
                 }
             },
@@ -180,7 +177,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 },
                 y: {
                     formatter: function (val) {
-                        return toPersianDigits(val.toLocaleString()) + ' تومان';
+            return toPersianDigits(val) + ' تومان';
                     }
                 }
             },
@@ -235,8 +232,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             const highEl = document.querySelector('.chart-high-price');
             const lowEl = document.querySelector('.chart-low-price');
 
-            if (highEl) highEl.textContent = toPersianDigits(high.toLocaleString());
-            if (lowEl) lowEl.textContent = toPersianDigits(low.toLocaleString());
+            if (highEl) {
+                highEl.textContent = toPersianDigits(high);
+                highEl.classList.remove('skeleton');
+            }
+            if (lowEl) {
+                lowEl.textContent = toPersianDigits(low);
+                lowEl.classList.remove('skeleton');
+            }
         }
     };
 
@@ -244,6 +247,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     const success = await fetchData();
     if (success) {
         initChart();
+    } else {
+        const chartEl = document.getElementById('chart');
+        if (chartEl) chartEl.innerHTML = '<div class="d-flex align-center just-center" style="height: 100%;">خطا در بارگذاری نمودار</div>';
     }
 
     // --- UI Listeners ---

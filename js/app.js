@@ -1,14 +1,15 @@
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('App script initialized');
 
-    const toPersianDigits = (str) => {
-        if (str === null || str === undefined) return '';
-        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-        return str.toString().replace(/\d/g, x => persianDigits[x]);
+    const persianNumberFormatter = new Intl.NumberFormat('fa-IR');
+
+    const toPersianDigits = (num) => {
+        if (num === null || num === undefined) return '';
+        return persianNumberFormatter.format(num);
     };
 
     const formatPrice = (price) => {
-        return toPersianDigits(price.toLocaleString());
+        return toPersianDigits(price);
     };
 
     const fetchData = async () => {
@@ -22,6 +23,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     };
 
+    const getTrendArrow = (change) => {
+        if (change > 0) return '<span class="trend-arrow trend-up"></span>';
+        if (change < 0) return '<span class="trend-arrow trend-down"></span>';
+        return '';
+    };
+
     const populateSummary = (summary) => {
         const assets = ['gold', 'silver'];
         assets.forEach(asset => {
@@ -29,22 +36,37 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (!container) return;
 
             const data = summary[asset];
-            container.querySelector('.current-price').textContent = formatPrice(data.current);
-            container.querySelector('.price-change').textContent = formatPrice(data.change);
+
+            const currentPriceEl = container.querySelector('.current-price');
+            currentPriceEl.textContent = formatPrice(data.current);
+            currentPriceEl.classList.remove('skeleton');
+
+            const priceChangeEl = container.querySelector('.price-change');
+            priceChangeEl.textContent = formatPrice(data.change);
+            priceChangeEl.classList.remove('skeleton');
 
             const percentEl = container.querySelector('.change-percent');
-            percentEl.textContent = toPersianDigits(data.change_percent) + '٪';
+            percentEl.innerHTML = getTrendArrow(data.change) + toPersianDigits(data.change_percent) + '٪';
             percentEl.className = data.change >= 0 ? 'color-green change-percent' : 'color-red change-percent';
+            percentEl.classList.remove('skeleton');
 
-            container.querySelector('.high-price').textContent = formatPrice(data.high);
-            container.querySelector('.low-price').textContent = formatPrice(data.low);
+            const highPriceEl = container.querySelector('.high-price');
+            highPriceEl.textContent = formatPrice(data.high);
+            highPriceEl.classList.remove('skeleton');
+
+            const lowPriceEl = container.querySelector('.low-price');
+            lowPriceEl.textContent = formatPrice(data.low);
+            lowPriceEl.classList.remove('skeleton');
         });
 
-        // Also update the chart high/low placeholders if needed,
-        // but charts.js might handle its own.
-        // For now let's sync them with the dashboard summary or let charts.js do its thing.
-        document.querySelector('.chart-high-price').textContent = formatPrice(summary.gold.high);
-        document.querySelector('.chart-low-price').textContent = formatPrice(summary.gold.low);
+        // Also update the chart high/low placeholders if needed
+        const chartHighEl = document.querySelector('.chart-high-price');
+        chartHighEl.textContent = formatPrice(summary.gold.high);
+        chartHighEl.classList.remove('skeleton');
+
+        const chartLowEl = document.querySelector('.chart-low-price');
+        chartLowEl.textContent = formatPrice(summary.gold.low);
+        chartLowEl.classList.remove('skeleton');
     };
 
     const populatePlatforms = (platforms) => {
@@ -69,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td class="font-size-1-2" dir="ltr">${toPersianDigits(p.fee)}</td>
                 <td class="color-${p.status_color}">${p.status}</td>
                 <td>
-                    <a href="${p.link}" class="btn" aria-label="خرید طلا از ${p.name}">خرید طلا</a>
+                    <a href="${p.link}" class="btn" target="_blank" rel="noopener noreferrer" aria-label="خرید طلا از ${p.name} (در پنجره جدید)">خرید طلا</a>
                 </td>
             </tr>
         `).join('');
@@ -93,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                 <div class="line24 text-left">
                     <div class=""><span class="color-title font-size-1-2 font-bold">${formatPrice(c.price)}</span> <span class="color-bright">تومان</span></div>
-                    <div class="color-green">${toPersianDigits(c.change_percent)}%</div>
+                    <div class="${c.change_percent >= 0 ? 'color-green' : 'color-red'}">${getTrendArrow(c.change_percent)}${toPersianDigits(c.change_percent)}%</div>
                 </div>
             </div>
         `).join('');
@@ -105,5 +127,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         populateSummary(data.summary);
         populatePlatforms(data.platforms);
         populateCoins(data.coins);
+    } else {
+        const banner = document.getElementById('error-banner');
+        if (banner) banner.classList.remove('d-none');
+        // Hide skeletons if error
+        document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
     }
 });
