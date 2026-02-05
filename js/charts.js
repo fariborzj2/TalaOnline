@@ -128,6 +128,17 @@ document.addEventListener('DOMContentLoaded', async function() {
                 rtl: false,
                 sparkline: { enabled: false }
             },
+            options: {
+                scales: {
+                  r: {
+                    ticks: {
+                      backdropPadding: {
+                          x: 40,
+                          y: 20
+                      }
+                    }
+                }
+            }
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 3, colors: ['#e29b21'] },
             fill: {
