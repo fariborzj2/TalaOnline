@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             options: {
                 layout: {
                     padding: {
-                        left: 50
+                        left: 250
                     }
                 }
             },
