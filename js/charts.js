@@ -129,14 +129,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 sparkline: { enabled: false }
             },
             options: {
-                scales: {
-                  r: {
-                    ticks: {
-                      backdropPadding: {
-                          x: 20,
-                          y: 20
-                      }
-                    }
+                layout: {
+                    padding: 20
                 }
             },
             dataLabels: { enabled: false },
