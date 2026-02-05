@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Formatters using native Intl
     const jalaliDateFormatter = new Intl.DateTimeFormat('fa-IR', { calendar: 'persian', year: 'numeric', month: 'long', day: 'numeric' });
+    const jalaliMonthDayFormatter = new Intl.DateTimeFormat('fa-IR', { calendar: 'persian', month: 'long', day: 'numeric' });
     const jalaliMonthFormatter = new Intl.DateTimeFormat('fa-IR', { calendar: 'persian', month: 'long' });
     const jalaliYearFormatter = new Intl.DateTimeFormat('fa-IR', { calendar: 'persian', year: 'numeric' });
 
@@ -63,24 +64,26 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (currentPeriodDays === 7) {
             return slicedData.map(d => ({
-                x: new Date(d.date).getTime(),
-                y: d.price
+                x: jalaliMonthDayFormatter.format(new Date(d.date)),
+                y: d.price,
+                fullDate: formatJalali(d.date)
             }));
         } else if (currentPeriodDays === 30) {
-            return aggregateData(slicedData, 3, 10);
+            return aggregateData(slicedData, 3, 10, 'short');
         } else if (currentPeriodDays === 365) {
-            return aggregateData(slicedData, 30, 12);
+            return aggregateData(slicedData, 30, 12, 'month');
         }
         return slicedData.map(d => ({
-            x: new Date(d.date).getTime(),
-            y: d.price
+            x: jalaliDateFormatter.format(new Date(d.date)),
+            y: d.price,
+            fullDate: formatJalali(d.date)
         }));
     };
 
     /**
      * Aggregates data by interval and calculates average price.
      */
-    const aggregateData = (data, interval, targetCount) => {
+    const aggregateData = (data, interval, targetCount, labelType) => {
         let result = [];
         for (let i = data.length - 1; i >= 0; i -= interval) {
             let chunk = data.slice(Math.max(0, i - interval + 1), i + 1);
@@ -89,7 +92,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             const avgY = chunk.reduce((sum, p) => sum + p.price, 0) / chunk.length;
             const lastDate = chunk[chunk.length - 1].date;
 
-            result.unshift({ x: new Date(lastDate).getTime(), y: Math.floor(avgY) });
+            let label = '';
+            if (labelType === 'month') {
+                label = jalaliMonthFormatter.format(new Date(lastDate));
+            } else if (labelType === 'short') {
+                label = jalaliMonthDayFormatter.format(new Date(lastDate));
+            } else {
+                label = formatJalali(lastDate);
+            }
+
+            result.unshift({
+                x: label,
+                y: Math.floor(avgY),
+                fullDate: formatJalali(lastDate)
+            });
             if (result.length === targetCount) break;
         }
         return result;
@@ -130,16 +146,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                 hover: { size: 5, sizeOffset: 3 }
             },
             xaxis: {
-                type: 'datetime',
+                type: 'category',
                 labels: {
                     style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '10px' },
-                    rotate: 0,
-                    rotateAlways: false,
-                    hideOverlappingLabels: true,
-                    formatter: function(val) {
-                        if (!val) return '';
-                        return formatJalali(val);
-                    }
+                    rotate: -45,
+                    rotateAlways: true,
+                    hideOverlappingLabels: false
                 },
                 axisBorder: { show: false },
                 axisTicks: { show: false }
@@ -168,9 +180,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                 theme: 'light',
                 x: {
                     show: true,
-                    formatter: function(val) {
-                        if (!val) return '';
-                        return formatJalali(val);
+                    formatter: function(val, { series, seriesIndex, dataPointIndex, w }) {
+                        const data = w.config.series[seriesIndex].data[dataPointIndex];
+                        return data ? data.fullDate : val;
                     }
                 },
                 y: {
