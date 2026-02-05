@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         if (currentPeriodDays === 7) {
             return slicedData.map(d => ({
-                x: jalaliMonthDayFormatter.format(new Date(d.date)),
+                x: '\u200f' + jalaliMonthDayFormatter.format(new Date(d.date)),
                 y: d.price,
                 fullDate: formatJalali(d.date)
             }));
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             result.unshift({
-                x: label,
+                x: '\u200f' + label,
                 y: Math.floor(avgY),
                 fullDate: formatJalali(lastDate)
             });
@@ -121,11 +121,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             }],
             chart: {
                 type: 'area',
-                height: 250,
+                height: 200,
                 toolbar: { show: false },
                 fontFamily: 'Vazirmatn, Tahoma, sans-serif',
                 animations: { enabled: true },
-                rtl: false
+                rtl: false,
+                sparkline: { enabled: false }
             },
             dataLabels: { enabled: false },
             stroke: { curve: 'smooth', width: 3, colors: ['#e29b21'] },
@@ -148,10 +149,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             xaxis: {
                 type: 'category',
                 labels: {
-                    style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '10px' },
-                    rotate: -45,
-                    rotateAlways: true,
-                    hideOverlappingLabels: false
+                    style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '11px' },
+                    rotate: 0,
+                    rotateAlways: false,
+                    hideOverlappingLabels: true,
+                    offsetY: -5,
+                    trim: false
                 },
                 axisBorder: { show: false },
                 axisTicks: { show: false }
@@ -171,7 +174,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 yaxis: { lines: { show: true } },
                 padding: {
                     left: 5,
-                    right: 0,
+                    right: 25,
                     top: 0,
                     bottom: 0
                 }
@@ -195,10 +198,18 @@ document.addEventListener('DOMContentLoaded', async function() {
             responsive: [{
                 breakpoint: 768,
                 options: {
+                    chart: { height: 180 },
                     xaxis: {
                         labels: {
                             rotate: -45,
-                            rotateAlways: true
+                            rotateAlways: false,
+                            fontSize: '9px',
+                            offsetY: 0
+                        }
+                    },
+                    grid: {
+                        padding: {
+                            right: 35
                         }
                     }
                 }
