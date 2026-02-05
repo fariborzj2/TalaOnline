@@ -27,3 +27,7 @@
 ## 2025-05-14 - Professional Error Handling
 - Learning: Error states should be as polished as the rest of the application. A simple red banner is often too aggressive or jarring. A well-designed error card with an icon and a clear call-to-action (like a 'Reload' button) reduces user frustration.
 - Action: Refactored the error banner into a professional centered container with a reload mechanism in 'js/app.js'.
+
+## 2025-02-01 - Sticky Table Columns in RTL
+- **Learning:** Using 'overflow-y: auto' on 'tbody' breaks 'position: sticky' on table cells ('th'/'td') because 'sticky' requires the scrolling ancestor to contain the entire table structure. In RTL layouts, 'right: 0' must be used for horizontal stickiness.
+- **Action:** Refactored the table to use a single container ('.table-box') for both horizontal and vertical scrolling, and converted table rows to flexbox ('display: flex') to maintain alignment when cells are sticky.
