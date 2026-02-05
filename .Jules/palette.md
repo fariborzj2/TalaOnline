@@ -15,3 +15,7 @@
 - Learning: For long comparison tables, vertical scrolling with sticky headers is essential to maintain column context without losing the page's overall structure.
 - Learning: Client-side sorting for Persian content requires careful handling of numeric vs. string data, using 'localeCompare' for strings and standard arithmetic for numeric types.
 - Action: Implemented professional sorting functionality with visual indicators and enabled internal table scrolling with a fixed max-height.
+
+## 2025-05-14 - Aesthetic Scrollbar Integration
+- Learning: Default browser scrollbars often clash with modern, minimalist dashboard designs. Customizing them with subtle colors and rounded corners enhances the premium feel.
+- Action: Added a custom-styled scrollbar for the platforms table container, using theme-consistent colors and hover effects for a better micro-UX.
