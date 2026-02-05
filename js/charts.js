@@ -121,19 +121,21 @@ document.addEventListener('DOMContentLoaded', async function() {
             }],
             chart: {
                 type: 'area',
-                height: 200,
+                height: '100%',
                 toolbar: { show: false },
                 fontFamily: 'Vazirmatn, Tahoma, sans-serif',
                 animations: { enabled: true },
                 rtl: false,
-                sparkline: { enabled: false }
+                sparkline: { enabled: false },
+                redrawOnWindowResize: true,
+                redrawOnParentResize: true
             },
-            options: {
-                layout: {
-                    padding: {
-                        left: 0,
-                        bottom: -10
-                    }
+            layout: {
+                padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
                 }
             },
             dataLabels: { enabled: false },
@@ -209,7 +211,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 breakpoint: 768,
                 options: {
                     chart: {
-                        height: 230
+                        height: '100%'
                     },
                     xaxis: {
                         labels: {
@@ -330,5 +332,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         this.classList.add('active');
         currentPeriodDays = 365;
         updateChart();
+    });
+
+    // Handle dynamic resize to ensure chart fills container correctly
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        if (!chart) return;
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            console.log('Resizing chart...');
+            chart.render();
+        }, 250);
     });
 });
