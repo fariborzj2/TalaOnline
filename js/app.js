@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!tbody) return;
 
         if (platforms.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center" style="padding: 40px; color: var(--color-bright);">
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding: 40px; color: var(--color-bright);">
                 <div class="mb-10 font-size-1-5">🔍</div>
                 نتیجه‌ای برای جستجوی شما یافت نشد.
             </td></tr>`;
@@ -89,14 +89,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         tbody.innerHTML = platforms.map(p => `
             <tr>
                 <td>
-                    <div class="d-flex align-center gap-10">
-                        <div class="brand-logo">
-                            <img src="${p.logo}" alt="${p.name}">
-                        </div>
-                        <div class="line20">
-                            <div class="color-title">${p.name}</div>
-                            <div class="font-size-0-8">${p.en_name}</div>
-                        </div>
+                    <div class="brand-logo">
+                        <img src="${p.logo}" alt="${p.name}">
+                    </div>
+                </td>
+                <td>
+                    <div class="line20">
+                        <div class="color-title">${p.name}</div>
+                        <div class="font-size-0-8">${p.en_name}</div>
                     </div>
                 </td>
                 <td class="font-size-1-2 color-title">${formatPrice(p.buy_price)}</td>

@@ -550,7 +550,7 @@ body {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 120px;
+    right: 80px;
     width: 20px;
     background: linear-gradient(to left, rgba(0,0,0,0.05), transparent);
     pointer-events: none;
@@ -669,7 +669,7 @@ body {
 .table-box table {
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 700px;
+  min-width: 900px;
   display: block; /* Change to block to allow tbody scrolling independently */
 }
 .table-box thead {
@@ -680,7 +680,7 @@ body {
 }
 .table-box thead tr {
   display: flex;
-  width: 100%;
+  min-width: 100%;
 }
 .table-box tbody {
   display: block;
@@ -706,7 +706,7 @@ body {
 }
 .table-box tbody tr {
   display: flex;
-  width: 100%;
+  min-width: 100%;
 }
 th {
   background: #fcfcfc;
@@ -743,8 +743,11 @@ tbody tr:active {
 }
 td, th {
   padding: 16px 20px;
-  text-align: right;
+  text-align: center;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /*  */
@@ -855,12 +858,13 @@ td {
 }
 
 /* Define column widths for flex table layout */
-.table-box th:nth-child(1), .table-box td:nth-child(1) { width: 25%; flex-shrink: 0; }
-.table-box th:nth-child(2), .table-box td:nth-child(2) { width: 18%; flex-shrink: 0; }
-.table-box th:nth-child(3), .table-box td:nth-child(3) { width: 18%; flex-shrink: 0; }
-.table-box th:nth-child(4), .table-box td:nth-child(4) { width: 12%; flex-shrink: 0; }
-.table-box th:nth-child(5), .table-box td:nth-child(5) { width: 15%; flex-shrink: 0; }
-.table-box th:nth-child(6), .table-box td:nth-child(6) { width: 12%; flex-shrink: 0; }
+.table-box th:nth-child(1), .table-box td:nth-child(1) { width: 80px; flex-shrink: 0; }
+.table-box th:nth-child(2), .table-box td:nth-child(2) { width: 140px; flex-shrink: 0; }
+.table-box th:nth-child(3), .table-box td:nth-child(3) { flex: 1; min-width: 150px; }
+.table-box th:nth-child(4), .table-box td:nth-child(4) { flex: 1; min-width: 150px; }
+.table-box th:nth-child(5), .table-box td:nth-child(5) { width: 100px; flex-shrink: 0; }
+.table-box th:nth-child(6), .table-box td:nth-child(6) { width: 140px; flex-shrink: 0; }
+.table-box th:nth-child(7), .table-box td:nth-child(7) { width: 140px; flex-shrink: 0; }
 
 /* Coin Item Enhancements */
 .coin-item {
