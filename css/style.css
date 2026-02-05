@@ -565,6 +565,25 @@ body {
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
   max-height: 450px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+.table-box::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.table-box::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+.table-box::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+  border: 2px solid #f1f5f9;
+  transition: background 0.3s;
+}
+.table-box::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 .table-box table {
   border-collapse: separate;
