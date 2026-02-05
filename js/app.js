@@ -199,6 +199,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         const banner = document.getElementById('error-banner');
         if (banner) banner.classList.add('d-none');
 
+        // Update current date
+        const updateDate = () => {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = new Intl.DateTimeFormat('fa-IR', options).format(now);
+            const dateEl = document.getElementById('current-date');
+            if (dateEl) dateEl.textContent = formattedDate;
+        };
+        updateDate();
+
         // Add skeletons back if they were removed
         document.querySelectorAll('.current-price, .price-change, .change-percent, .high-price, .low-price, .chart-high-price, .chart-low-price').forEach(el => {
             if (el.textContent === '---' || el.textContent === '') {
@@ -209,7 +219,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         const data = await fetchData();
         if (data) {
             state.platforms = data.platforms;
-            document.getElementById('current-date').textContent = data.meta.date;
             populateSummary(data.summary);
             populatePlatforms(state.platforms);
             populateCoins(data.coins);
