@@ -121,11 +121,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             }],
             chart: {
                 type: 'area',
-                height: 250,
+                height: 280,
                 toolbar: { show: false },
                 fontFamily: 'Vazirmatn, Tahoma, sans-serif',
                 animations: { enabled: true },
-                rtl: false,
+                rtl: true,
                 sparkline: { enabled: false },
                 redrawOnWindowResize: true,
                 redrawOnParentResize: true
@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             },
             xaxis: {
                 type: 'category',
+                tickAmount: 10,
                 labels: {
                     style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '11px' },
                     rotate: 0,
@@ -211,9 +212,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 breakpoint: 768,
                 options: {
                     chart: {
-                        height: 250
+                        height: 380
                     },
                     xaxis: {
+                        tickAmount: 6,
                         labels: {
                             rotate: -45,
                             rotateAlways: true,
@@ -221,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             offsetY: 0,
                             style: { colors: '#64748b' },
                             maxHeight: 80,
-                            hideOverlappingLabels: false
+                            hideOverlappingLabels: true
                         },
                         axisBorder: { show: true, color: '#f1f5f9' }
                     },
@@ -235,7 +237,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     grid: {
                         padding: {
                             left: 10,
-                            right: 45,
+                            right: 35,
                             bottom: 60
                         }
                     }
@@ -295,6 +297,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const success = await fetchData();
     if (success) {
         initChart();
+        updateChart();
     } else {
         const chartEl = document.getElementById('chart');
         if (chartEl) chartEl.innerHTML = '<div class="d-flex align-center just-center" style="height: 100%;">خطا در بارگذاری نمودار</div>';
