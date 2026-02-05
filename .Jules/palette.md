@@ -23,3 +23,7 @@
 ## 2025-05-14 - Table Layout Precision
 - Learning: In data-dense comparison tables, allowing text to wrap can lead to vertically bloated rows that break alignment and scanning efficiency. Forcing 'white-space: nowrap' ensures a clean, predictable layout.
 - Action: Applied 'white-space: nowrap' to all table cells to maintain single-line data integrity.
+
+## 2025-05-14 - Professional Error Handling
+- Learning: Error states should be as polished as the rest of the application. A simple red banner is often too aggressive or jarring. A well-designed error card with an icon and a clear call-to-action (like a 'Reload' button) reduces user frustration.
+- Action: Refactored the error banner into a professional centered container with a reload mechanism in 'js/app.js'.

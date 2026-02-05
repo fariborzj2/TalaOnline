@@ -195,19 +195,40 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     };
 
-    const data = await fetchData();
-    if (data) {
-        state.platforms = data.platforms;
-        document.getElementById('current-date').textContent = data.meta.date;
-        populateSummary(data.summary);
-        populatePlatforms(state.platforms);
-        populateCoins(data.coins);
-        initSorting();
-        initSearch();
-    } else {
+    const initApp = async () => {
         const banner = document.getElementById('error-banner');
-        if (banner) banner.classList.remove('d-none');
-        // Hide skeletons if error
-        document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
+        if (banner) banner.classList.add('d-none');
+
+        // Add skeletons back if they were removed
+        document.querySelectorAll('.current-price, .price-change, .change-percent, .high-price, .low-price, .chart-high-price, .chart-low-price').forEach(el => {
+            if (el.textContent === '---' || el.textContent === '') {
+                el.classList.add('skeleton');
+            }
+        });
+
+        const data = await fetchData();
+        if (data) {
+            state.platforms = data.platforms;
+            document.getElementById('current-date').textContent = data.meta.date;
+            populateSummary(data.summary);
+            populatePlatforms(state.platforms);
+            populateCoins(data.coins);
+            initSorting();
+            initSearch();
+        } else {
+            if (banner) banner.classList.remove('d-none');
+            // Hide skeletons if error
+            document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
+        }
+    };
+
+    // Reload button handler
+    const reloadBtn = document.getElementById('reload-btn');
+    if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+            initApp();
+        });
     }
+
+    await initApp();
 });
