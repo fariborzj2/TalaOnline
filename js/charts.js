@@ -129,9 +129,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 sparkline: { enabled: false }
             },
             options: {
-                layout: {
-                    padding: {
-                        left: 250
+                scales: {
+                  r: {
+                    ticks: {
+                      backdropPadding: {
+                          x: 20,
+                          y: 20
+                      }
                     }
                 }
             },
