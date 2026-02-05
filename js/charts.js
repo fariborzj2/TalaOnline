@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }],
             chart: {
                 type: 'area',
-                height: 200,
+                height: 250,
                 toolbar: { show: false },
                 fontFamily: 'Vazirmatn, Tahoma, sans-serif',
                 animations: { enabled: true },
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 breakpoint: 768,
                 options: {
                     chart: {
-                        height: 200
+                        height: 250
                     },
                     xaxis: {
                         labels: {
