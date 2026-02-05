@@ -715,7 +715,6 @@ th {
   border-bottom: 1px solid var(--color-border);
   z-index: 10;
   background: rgba(252, 252, 252, 1) !important;
-  white-space: nowrap;
 }
 th:first-child {
   border-top-right-radius: 20px;
@@ -745,6 +744,7 @@ tbody tr:active {
 td, th {
   padding: 16px 20px;
   text-align: right;
+  white-space: nowrap;
 }
 
 /*  */

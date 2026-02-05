@@ -19,3 +19,7 @@
 ## 2025-05-14 - Aesthetic Scrollbar Integration
 - Learning: Default browser scrollbars often clash with modern, minimalist dashboard designs. Customizing them with subtle colors and rounded corners enhances the premium feel. Moving the scrollbar from the container to the `tbody` specifically (using a flex-based table layout) provides a cleaner interface where the header remains perfectly stationary while the content scrolls.
 - Action: Added a custom-styled scrollbar specifically for the `tbody` of the platforms table, using theme-consistent colors and hover effects for a better micro-UX.
+
+## 2025-05-14 - Table Layout Precision
+- Learning: In data-dense comparison tables, allowing text to wrap can lead to vertically bloated rows that break alignment and scanning efficiency. Forcing 'white-space: nowrap' ensures a clean, predictable layout.
+- Action: Applied 'white-space: nowrap' to all table cells to maintain single-line data integrity.
