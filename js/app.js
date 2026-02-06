@@ -157,8 +157,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <img src="${c.logo}" alt="${c.name}">
                     </div>
                     <div class="line24">
-                        <div class="color-title">${c.name}</div>
-                        <div class="">${c.en_name}</div>
+                        <div class="color-title font-size-1">${c.name}</div>
+                        <div class="font-size-0-8">${c.en_name}</div>
                     </div>
                 </div>
 
