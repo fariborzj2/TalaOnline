@@ -768,6 +768,17 @@
   display: none;
 }
 
+@media (max-width: 768 ) {
+  .mob-scroll {
+    overflow: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .mob-scroll::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 :root,
 .scorllstyle {
   overflow: -moz-scrollbars-vertical;
