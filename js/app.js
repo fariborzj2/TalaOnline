@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const fetchData = async () => {
         try {
-            const response = await fetch('data/dashboard.json');
+            const response = await fetch('api/dashboard.php');
             if (!response.ok) throw new Error('Failed to fetch dashboard data');
             return await response.json();
         } catch (error) {
@@ -248,6 +248,11 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const data = await fetchData();
         if (data) {
+            // Update Site Title
+            if (data.meta && data.meta.site_title) {
+                document.title = data.meta.site_title + ' | قیمت لحظه‌ای طلا، سکه و ارز';
+            }
+
             state.platforms = data.platforms;
             populateSummary(data.summary);
             populatePlatforms(state.platforms);
