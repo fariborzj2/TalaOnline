@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     hideOverlappingLabels: true,
                     align: 'right',
                     offsetY: 10,
-                    offsetX: -10,
+                    offsetX: -5,
                     trim: false
                 },
                 axisBorder: { show: false },
@@ -223,7 +223,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                             rotate: -45,
                             rotateAlways: true,
                             fontSize: '10px',
-                            offsetY: 5,
+                            offsetY: -5,
+                            offsetY: -10,
                             style: { colors: '#64748b' },
                             maxHeight: 80,
                             hideOverlappingLabels: true
