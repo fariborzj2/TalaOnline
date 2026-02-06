@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     hideOverlappingLabels: true,
                     align: 'right',
                     offsetY: 10,
-                    offsetY: 10,
+                    offsetX: -10,
                     trim: false
                 },
                 axisBorder: { show: false },
