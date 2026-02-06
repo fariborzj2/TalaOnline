@@ -139,17 +139,14 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             },
             dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 2, colors: ['#e29b21'] },
+            stroke: { curve: 'smooth', width: 3, colors: ['#e29b21'] },
             fill: {
                 type: 'gradient',
                 gradient: {
                     shadeIntensity: 1,
-                    opacityFrom: 0.4,
+                    opacityFrom: 0.45,
                     opacityTo: 0.05,
-                    colorStops: [
-                        { offset: 0, color: '#e29b21', opacity: 0.4 },
-                        { offset: 100, color: '#e29b21', opacity: 0 }
-                    ]
+                    stops: [0, 100]
                 }
             },
             markers: {
@@ -160,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 type: 'category',
                 tickAmount: 10,
                 labels: {
-                    style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '11px' },
+                    style: { colors: 'var(--color-bright)', fontFamily: 'Vazirmatn', fontSize: '11px' },
                     rotate: 0,
                     rotateAlways: false,
                     hideOverlappingLabels: true,
@@ -175,16 +172,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                 show: true,
                 labels: {
                     offsetX: 0,
-            formatter: (val) => toPersianDigits(val),
-                    style: { colors: '#596486', fontFamily: 'Vazirmatn', fontSize: '10px' }
+                    formatter: (val) => toPersianDigits(val),
+                    style: { colors: 'var(--color-bright)', fontFamily: 'Vazirmatn', fontSize: '10px' }
                 },
                 tooltip: { enabled: false }
             },
             grid: {
                 show: true,
-                borderColor: '#f1f5f9',
+                borderColor: 'var(--color-border)',
                 xaxis: { lines: { show: false } },
-                yaxis: { lines: { show: true } },
+                yaxis: { lines: { show: true, strokeDashArray: 4 } },
                 padding: {
                     left: 20,
                     right: 0,
@@ -256,12 +253,18 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (!chart) return;
 
         const data = getProcessedData();
-        const color = currentAsset === 'gold' ? '#e29b21' : '#9ca3af';
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const goldColor = '#e29b21';
+        const silverColor = isDark ? '#94a3b8' : '#64748b';
+        const color = currentAsset === 'gold' ? goldColor : silverColor;
         const name = currentAsset === 'gold' ? 'قیمت طلا' : 'قیمت نقره';
 
         chart.updateSeries([{ name: name, data: data }]);
         chart.updateOptions({
             colors: [color],
+            chart: {
+                foreColor: isDark ? '#94a3b8' : '#64748b'
+            },
             fill: {
                 gradient: {
                     colorStops: [
@@ -270,7 +273,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                     ]
                 }
             },
-            stroke: { colors: [color] }
+            stroke: { colors: [color] },
+            grid: {
+                borderColor: isDark ? '#1e293b' : '#e2e8f0'
+            },
+            tooltip: {
+                theme: isDark ? 'dark' : 'light'
+            }
         });
 
         // Update High/Low labels in chart box
@@ -348,5 +357,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log('Resizing chart...');
             chart.render();
         }, 250);
+    });
+
+    window.addEventListener('themechanged', () => {
+        updateChart();
     });
 });

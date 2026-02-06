@@ -196,7 +196,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     };
 
+    const initTheme = () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = themeToggle.querySelector('.sun-icon');
+        const moonIcon = themeToggle.querySelector('.moon-icon');
+
+        const setTheme = (theme) => {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+            // Dispatch event for charts to update if needed
+            window.dispatchEvent(new CustomEvent('themechanged', { detail: { theme } }));
+        };
+
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        setTheme(currentTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+    };
+
     const initApp = async () => {
+        initTheme();
         const banner = document.getElementById('error-banner');
         if (banner) banner.classList.add('d-none');
 
