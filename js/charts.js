@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 show: true,
                 labels: {
                     align: 'left',
-                    offsetX: -10,
+                    offsetX: -20,
                     formatter: (val) => toPersianDigits(val),
                     style: { colors: 'var(--color-bright)', fontFamily: 'Vazirmatn', fontSize: '10px' }
                 },
@@ -231,10 +231,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                     yaxis: {
                         labels: {
                             align: 'left',
-                            offsetX: -10,
+                            offsetX: -20,
                             formatter: (val) => toPersianDigits(val),
                             style: { fontSize: '9px', colors: '#64748b' },
-                            offsetX: -5
                         }
                     },
                     grid: {
