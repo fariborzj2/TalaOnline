@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     align: 'left',
                     offsetX: -20,
                     formatter: (val) => toPersianDigits(val),
-                    style: { colors: 'var(--color-bright)', fontFamily: 'Vazirmatn', fontSize: '10px' }
+                    style: { colors: 'var(--color-bright)', fontFamily: 'Vazirmatn', fontSize: '11px' }
                 },
                 tooltip: { enabled: false }
             },
