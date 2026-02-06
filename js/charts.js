@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             rotate: -45,
                             rotateAlways: true,
                             fontSize: '10px',
-                            offsetY: 10,
+                            offsetY: 15,
                             offsetX: -15,
                             style: { colors: '#64748b' },
                             maxHeight: 80,
