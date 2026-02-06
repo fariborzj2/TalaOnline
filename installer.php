@@ -143,22 +143,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Seed some initial items based on current data
                 $initial_items = [
-                    ['gold_18k', '18ayar', 'طلای ۱۸ عیار', '18 Karat Gold', 'images/gold.png', 'gold', 1],
-                    ['sekkeh_emami', 'sekkeh', 'سکه امامی', 'Emami Coin', 'images/coin.png', 'gold', 2],
-                    ['abshodeh', 'abshodeh', 'مثقال طلا', 'Melted Gold', 'images/melted.png', 'gold', 3],
-                    ['silver', 'silver', 'نقره', 'Silver', 'images/silver.png', 'silver', 4]
+                    ['gold_18k', '18ayar', 'طلای ۱۸ عیار', '18 Karat Gold', 'site/assets/images/gold.png', 'gold', 1],
+                    ['sekkeh_emami', 'sekkeh', 'سکه امامی', 'Emami Coin', 'site/assets/images/coin.png', 'gold', 2],
+                    ['abshodeh', 'abshodeh', 'مثقال طلا', 'Melted Gold', 'site/assets/images/melted.png', 'gold', 3],
+                    ['silver', 'silver', 'نقره', 'Silver', 'site/assets/images/silver.png', 'silver', 4]
                 ];
 
                 $stmt = $pdo->prepare("INSERT IGNORE INTO items (symbol, name, en_name, logo, category, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
                 // Note: adjusted symbols to match Navasan if known, else placeholders
                 // Using Navasan symbols from NAVASAN_API.md
                 $seed_data = [
-                    ['18ayar', 'طلای ۱۸ عیار', '18 Karat Gold', 'images/gold.png', 'gold', 1],
-                    ['sekkeh', 'سکه امامی', 'Emami Coin', 'images/coin.png', 'gold', 2],
-                    ['abshodeh', 'آبشده (مثقال)', 'Melted Gold', 'images/melted.png', 'gold', 3],
-                    ['silver', 'نقره', 'Silver', 'images/silver.png', 'silver', 4],
-                    ['usd_sell', 'دلار تهران', 'US Dollar', 'images/flags/usd.png', 'currency', 5],
-                    ['eur', 'یورو', 'Euro', 'images/flags/eur.png', 'currency', 6]
+                    ['18ayar', 'طلای ۱۸ عیار', '18 Karat Gold', 'site/assets/images/gold.png', 'gold', 1],
+                    ['sekkeh', 'سکه امامی', 'Emami Coin', 'site/assets/images/coin.png', 'gold', 2],
+                    ['abshodeh', 'آبشده (مثقال)', 'Melted Gold', 'site/assets/images/melted.png', 'gold', 3],
+                    ['silver', 'نقره', 'Silver', 'site/assets/images/silver.png', 'silver', 4],
+                    ['usd_sell', 'دلار تهران', 'US Dollar', 'site/assets/images/flags/usd.png', 'currency', 5],
+                    ['eur', 'یورو', 'Euro', 'site/assets/images/flags/eur.png', 'currency', 6]
                 ];
                 foreach ($seed_data as $item) {
                     $stmt->execute($item);
@@ -166,11 +166,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Seed Platforms
                 $platforms_data = [
-                    ['گرمی', 'Gerami', 'images/platforms/gerami.png', '19849500', '19749500', '0.5', 'مناسب خرید', 'https://gerami.ir', 1],
-                    ['میلی', 'Milli', 'images/platforms/milli.png', '19849500', '19749500', '0.3', 'مناسب خرید', 'https://milli.gold', 2],
-                    ['زرپاد', 'Zarpad', 'images/platforms/zarpad.png', '19849500', '19749500', '0.45', 'مناسب فروش', 'https://zarpad.com', 3],
-                    ['وال گلد', 'wallGold', 'images/platforms/wallgold.png', '19849500', '19749500', '0.5', 'مناسب خرید', 'https://wallgold.ir', 4],
-                    ['طلاین', 'Tlyn', 'images/platforms/taline.png', '19849500', '19749500', '0.6', 'مناسب فروش', 'https://tlyn.ir', 5]
+                    ['گرمی', 'Gerami', 'site/assets/images/platforms/gerami.png', '19849500', '19749500', '0.5', 'مناسب خرید', 'https://gerami.ir', 1],
+                    ['میلی', 'Milli', 'site/assets/images/platforms/milli.png', '19849500', '19749500', '0.3', 'مناسب خرید', 'https://milli.gold', 2],
+                    ['زرپاد', 'Zarpad', 'site/assets/images/platforms/zarpad.png', '19849500', '19749500', '0.45', 'مناسب فروش', 'https://zarpad.com', 3],
+                    ['وال گلد', 'wallGold', 'site/assets/images/platforms/wallgold.png', '19849500', '19749500', '0.5', 'مناسب خرید', 'https://wallgold.ir', 4],
+                    ['طلاین', 'Tlyn', 'site/assets/images/platforms/taline.png', '19849500', '19749500', '0.6', 'مناسب فروش', 'https://tlyn.ir', 5]
                 ];
                 $stmt = $pdo->prepare("INSERT IGNORE INTO platforms (name, en_name, logo, buy_price, sell_price, fee, status, link, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 foreach ($platforms_data as $platform) {
