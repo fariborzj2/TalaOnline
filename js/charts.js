@@ -174,7 +174,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             yaxis: {
                 show: true,
                 labels: {
-                    offsetX: 0,
+                    align: 'left',
+                    offsetX: -10,
                     formatter: (val) => toPersianDigits(val),
                     style: { colors: 'var(--color-bright)', fontFamily: 'Vazirmatn', fontSize: '10px' }
                 },
