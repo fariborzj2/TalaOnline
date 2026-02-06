@@ -596,6 +596,7 @@ body {
   .block-card {
     padding: 16px;
     border-radius: 16px;
+    box-shadow: none !important;
   }
 
   .chartbox {
@@ -1066,7 +1067,6 @@ td, th {
   .block-card {
     padding: 16px 12px;
     border-radius: 20px;
-    box-shadow: unset
   }
   .coin-item {
     padding: 10px 8px;
