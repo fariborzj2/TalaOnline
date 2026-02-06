@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 xaxis: { lines: { show: false } },
                 yaxis: { lines: { show: true, strokeDashArray: 4 } },
                 padding: {
-                    left: 20,
+                    left: 5,
                     right: 0,
                     top: 0,
                     bottom: 10
