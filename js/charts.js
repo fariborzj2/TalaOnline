@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         padding: {
                             left: -15,
                             right: -5,
-                            bottom: 80
+                            bottom: 70
                         }
                     }
                 }
