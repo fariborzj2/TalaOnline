@@ -775,24 +775,15 @@ body {
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
   position: relative;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-scroll-thumb) var(--color-scroll-track);
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Global Minimalist Scrollbar */
-::-webkit-scrollbar {
+.table-box::-webkit-scrollbar {
   width: 6px;
   height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-scroll-track);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-scroll-thumb);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-scroll-thumb-hover);
+  display: none
 }
 
 .table-box table {
