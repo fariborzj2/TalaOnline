@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     rotate: 0,
                     rotateAlways: false,
                     hideOverlappingLabels: true,
+                    align: 'right',
                     offsetY: 10,
                     trim: false
                 },
