@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             },
             stroke: { colors: [color] },
             grid: {
-                borderColor: isDark ? '#1e293b' : '#e2e8f0'
+                borderColor: isDark ? '#1e293b' : '#f7f7f7'
             },
             tooltip: {
                 theme: isDark ? 'dark' : 'light'
