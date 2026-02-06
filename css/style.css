@@ -28,6 +28,9 @@
     --color-bright: #64748b;
     --color-card-shadow: rgba(0, 0, 0, 0.05);
     --color-hover: #f1f5f9;
+    --color-scroll-track: #f1f5f9;
+    --color-scroll-thumb: #cbd5e1;
+    --color-scroll-thumb-hover: #94a3b8;
     --limon: #e29b21;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -45,6 +48,9 @@
     --color-bright: #64748b;
     --color-card-shadow: rgba(0, 0, 0, 0.3);
     --color-hover: #334155;
+    --color-scroll-track: #1e293b;
+    --color-scroll-thumb: #334155;
+    --color-scroll-thumb-hover: #475569;
 }
 .color-bright {
     color: var(--color-bright);
@@ -538,7 +544,10 @@ body {
 }
 @media screen and (max-width: 768px) {
   .center {
-    padding: 0 15px;
+    padding: 0 12px;
+  }
+  .top-bar {
+    padding: 8px 0;
   }
   .section {
     padding: 5px 0
@@ -786,7 +795,23 @@ body {
   max-width: 100%;
   position: relative;
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
+  scrollbar-color: var(--color-scroll-thumb) var(--color-scroll-track);
+}
+
+/* Global Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-scroll-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-scroll-thumb);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scroll-thumb-hover);
 }
 
 .table-box table {
@@ -807,21 +832,6 @@ body {
 }
 .table-box tbody {
   display: block;
-}
-.table-box::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.table-box::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-.table-box::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-  border: 2px solid #f1f5f9;
-}
-.table-box::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
 }
 .table-box tbody tr {
   display: flex;
@@ -876,15 +886,23 @@ td, th {
 .coin-item {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--color-border) 
+  align-items: center;
+  padding: 12px;
+  margin: 0 -12px;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.coin-item:first-child {
-  padding-top: 0
+.coin-item:not(:last-child) {
+  border-bottom: 1px solid var(--color-border);
 }
-.coin-item:last-child {
-  border: none;
-  padding-bottom: 0
+.coin-item:hover {
+  background: var(--color-hover);
+  transform: translateX(-4px);
+}
+.coin-item .brand-logo {
+  width: 40px;
+  height: 40px;
+  background: var(--color-white);
 }
 
 /* ApexCharts RTL Tooltip */
@@ -954,7 +972,10 @@ td, th {
 .price-card {
   position: relative;
   overflow: hidden;
-  background: var(--color-block);
+  background: rgba(var(--color-white-rgb), 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(var(--color-white-rgb), 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .price-card:hover {
@@ -1031,21 +1052,24 @@ td, th {
 .font-size-2-5 { font-size: 2.2rem; }
 
 .trend-badge {
-  padding: 6px 14px;
-  border-radius: 12px;
+  padding: 4px 10px;
+  border-radius: 100px;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  transition: all 0.3s;
 }
 .trend-badge.color-green {
-  background: #ecfdf5;
-  color: #059669 !important;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981 !important;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 .trend-badge.color-red {
-  background: #fef2f2;
-  color: #dc2626 !important;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 .price-change-val {
   font-size: 0.85rem;
@@ -1071,7 +1095,18 @@ td, th {
 }
 
 @media screen and (max-width: 480px) {
+  .center {
+    padding: 0 10px;
+  }
   .font-size-2-5 { font-size: 1.8rem !important; }
+  .block-card {
+    padding: 16px 12px;
+    border-radius: 20px;
+  }
+  .coin-item {
+    padding: 10px 8px;
+    margin: 0 -8px;
+  }
 }
 
 /* Brand Logo Styling */
