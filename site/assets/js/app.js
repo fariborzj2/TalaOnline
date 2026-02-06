@@ -229,40 +229,37 @@ document.addEventListener('DOMContentLoaded', async function() {
         const banner = document.getElementById('error-banner');
         if (banner) banner.classList.add('d-none');
 
-        // Update current date
-        const updateDate = () => {
+        // Update current date (only if not already set by SSR)
+        const dateEl = document.getElementById('current-date');
+        if (dateEl && (dateEl.textContent === '...' || dateEl.textContent === '')) {
             const now = new Date();
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             const formattedDate = new Intl.DateTimeFormat('fa-IR', options).format(now);
-            const dateEl = document.getElementById('current-date');
-            if (dateEl) dateEl.textContent = formattedDate;
-        };
-        updateDate();
+            dateEl.textContent = formattedDate;
+        }
 
-        // Add skeletons back if they were removed
-        document.querySelectorAll('.current-price, .price-change, .change-percent, .high-price, .low-price, .chart-high-price, .chart-low-price').forEach(el => {
-            if (el.textContent === '---' || el.textContent === '') {
-                el.classList.add('skeleton');
-            }
-        });
-
-        const data = await fetchData();
-        if (data) {
-            // Update Site Title
-            if (data.meta && data.meta.site_title) {
-                document.title = data.meta.site_title + ' | قیمت لحظه‌ای طلا، سکه و ارز';
-            }
-
+        // Use initial state if available to avoid redundant fetch on load
+        if (window.__INITIAL_STATE__) {
+            const data = window.__INITIAL_STATE__;
             state.platforms = data.platforms;
-            populateSummary(data.summary);
-            populatePlatforms(state.platforms);
-            populateCoins(data.coins);
             initSorting();
             initSearch();
+            console.log('Initialized from SSR state');
         } else {
-            if (banner) banner.classList.remove('d-none');
-            // Hide skeletons if error
-            document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton'));
+            const data = await fetchData();
+            if (data) {
+                if (data.meta && data.meta.site_title) {
+                    document.title = data.meta.site_title + ' | قیمت لحظه‌ای طلا، سکه و ارز';
+                }
+                state.platforms = data.platforms;
+                populateSummary(data.summary);
+                populatePlatforms(state.platforms);
+                populateCoins(data.coins);
+                initSorting();
+                initSearch();
+            } else {
+                if (banner) banner.classList.remove('d-none');
+            }
         }
     };
 
