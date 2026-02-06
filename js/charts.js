@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                             rotateAlways: true,
                             fontSize: '10px',
                             offsetY: 10,
-                            offsetX: -5,
+                            offsetX: -15,
                             style: { colors: '#64748b' },
                             maxHeight: 80,
                             hideOverlappingLabels: true
@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         padding: {
                             left: -15,
                             right: -5,
-                            bottom: 60
+                            bottom: 80
                         }
                     }
                 }
