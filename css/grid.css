@@ -768,7 +768,7 @@
   display: none;
 }
 
-@media (max-width: 768 ) {
+@media (max-width: 768px ) {
   .mob-scroll {
     overflow: auto;
     -ms-overflow-style: none;
