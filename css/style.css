@@ -15,7 +15,7 @@
 :root { 
     --color-body: #f8fafc;
     --color-text: #475569;
-    --color-title: #0f172a;
+    --color-title: #242e46;
     --color-border: #e2e8f0;
     --color-primary: #e29b21;
     --color-green: #10b981;
@@ -23,7 +23,7 @@
     --color-white: #ffffff;
     --color-white-rgb: 255, 255, 255;
     --color-block: #ffffff;
-    --color-bright: #64748b;
+    --color-bright: #95a3b7;
     --color-card-shadow: rgba(0, 0, 0, 0.05);
     --color-hover: #f1f5f9;
     --color-scroll-track: #f1f5f9;
