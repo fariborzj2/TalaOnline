@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('App script initialized');
-
     let state = {
         platforms: [],
         currentSort: { column: null, direction: 'asc' }
@@ -164,9 +162,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                     </div>
                 </div>
 
-                <div class="line24 text-left">
-                    <div class=""><span class="color-title font-size-1-2 font-bold">${formatPrice(c.price)}</span> <span class="color-bright">تومان</span></div>
-                    <div class="${c.change_percent >= 0 ? 'color-green' : 'color-red'}">${getTrendArrow(c.change_percent)}${toPersianDigits(c.change_percent)}%</div>
+                <div class="line24 text-left d-flex flex-column align-end">
+                    <div class=""><span class="color-title font-size-1-2 font-bold">${formatPrice(c.price)}</span> <span class="color-bright font-size-0-8">تومان</span></div>
+                    <div class="trend-badge ${c.change_percent >= 0 ? 'color-green' : 'color-red'} font-size-0-8 mt-4" style="padding: 2px 8px;">
+                        ${getTrendArrow(c.change_percent)}${toPersianDigits(c.change_percent)}٪
+                    </div>
                 </div>
             </div>
         `).join('');
