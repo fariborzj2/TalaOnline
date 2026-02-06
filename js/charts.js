@@ -223,8 +223,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                             rotate: -45,
                             rotateAlways: true,
                             fontSize: '10px',
-                            offsetY: -5,
-                            offsetY: -10,
+                            offsetY: 10,
+                            offsetX: -10,
                             style: { colors: '#64748b' },
                             maxHeight: 80,
                             hideOverlappingLabels: true
