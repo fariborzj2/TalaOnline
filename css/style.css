@@ -712,24 +712,24 @@ body {
 }
 /* mode-toggle */
 .mode-toggle {
-  min-height: 38px;
+  min-height: 32px;
   background: var(--color-body);
   border-radius: 12px;
   padding: 4px;
   border: 1px solid var(--color-border);
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  /*! gap: 4px; */
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 }
 .mode-toggle .mode-btn {
   background: transparent;
-  min-height: 32px;
+  min-height: 28px;
   border-radius: 8px;
-  padding: 5px 12px;
+  padding: 3px 12px;
   flex-grow: 1;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   white-space: nowrap;
   color: var(--color-text);
 }
