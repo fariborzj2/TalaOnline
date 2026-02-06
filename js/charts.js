@@ -128,7 +128,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 rtl: true,
                 sparkline: { enabled: false },
                 redrawOnWindowResize: true,
-                redrawOnParentResize: true
+                redrawOnParentResize: true,
+                zoom: {
+                  enabled: false
+                }
             },
             layout: {
                 padding: {
@@ -139,7 +142,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             },
             dataLabels: { enabled: false },
-            stroke: { curve: 'smooth', width: 3, colors: ['#e29b21'] },
+            stroke: { curve: 'smooth', width: 2, colors: ['#e29b21'] },
             fill: {
                 type: 'gradient',
                 gradient: {
@@ -209,7 +212,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 breakpoint: 768,
                 options: {
                     chart: {
-                        height: 380
+                        height: 380,
                     },
                     xaxis: {
                         tickAmount: 6,
@@ -217,12 +220,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                             rotate: -45,
                             rotateAlways: true,
                             fontSize: '10px',
-                            offsetY: 10,
+                            offsetY: 5,
                             style: { colors: '#64748b' },
                             maxHeight: 80,
                             hideOverlappingLabels: true
                         },
-                        axisBorder: { show: true, color: '#f1f5f9' }
+                        axisBorder: { show: false }
                     },
                     yaxis: {
                         labels: {
@@ -263,7 +266,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         chart.updateOptions({
             colors: [color],
             chart: {
-                foreColor: isDark ? '#94a3b8' : '#64748b'
+                foreColor: isDark ? '#94a3b8' : '#64748b',
             },
             fill: {
                 gradient: {
