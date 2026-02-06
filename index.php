@@ -1,9 +1,10 @@
+<?php require_once 'includes/db.php'; ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>طلا آنلاین | مرجع ارائه قیمت و مقایسه پلتفرم های خرید طلا</title>
+  <title><?= get_setting('site_title', 'طلا آنلاین') ?> | قیمت لحظه‌ای طلا، سکه و ارز</title>
     <link rel="stylesheet" href="css/grid.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">

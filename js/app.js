@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const fetchData = async () => {
         try {
-            const response = await fetch('data/dashboard.json');
+            const response = await fetch('api/dashboard.php');
             if (!response.ok) throw new Error('Failed to fetch dashboard data');
             return await response.json();
         } catch (error) {
