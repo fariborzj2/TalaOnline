@@ -886,10 +886,10 @@
   font-size: clamp(0.8em, 0.9vw, 0.95em);
 }
 .font-size-1 {
-  font-size: clamp(0.9rem, 1vw, 1.1em);
+  font-size: clamp(0.9rem, 1vw, 1em);
 }
 .font-size-1-2 {
-  font-size: clamp(1em, 1.2vw, 1em);
+  font-size: clamp(1em, 1.2vw, 1.1em);
 }
 .font-size-1-5 {
   font-size: clamp(1.2em, 1.5vw, 1.4em);
