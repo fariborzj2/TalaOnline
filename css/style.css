@@ -418,7 +418,7 @@ a {
   text-decoration: none;
 }
 body {
-  font: clamp(13px, 1vw, 18px)/1.5 "Vazirmatn", Tahoma, sans-serif;
+  font: clamp(13px, 1vw, 16px)/1.5 "Vazirmatn", Tahoma, sans-serif;
   font-optical-sizing: auto;
   background: var(--color-body);
   color: var(--color-text);
