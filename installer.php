@@ -120,6 +120,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `id` INT AUTO_INCREMENT PRIMARY KEY,
                         `symbol` VARCHAR(50) NOT NULL,
                         `price` VARCHAR(50) NOT NULL,
+                        `high` VARCHAR(50),
+                        `low` VARCHAR(50),
                         `date` DATE NOT NULL,
                         UNIQUE KEY `symbol_date` (`symbol`, `date`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
@@ -154,8 +156,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ['18ayar', 'طلای ۱۸ عیار', '18 Karat Gold', 'images/gold.png', 'gold', 1],
                     ['sekkeh', 'سکه امامی', 'Emami Coin', 'images/coin.png', 'gold', 2],
                     ['abshodeh', 'آبشده (مثقال)', 'Melted Gold', 'images/melted.png', 'gold', 3],
-                    ['usd_sell', 'دلار تهران', 'US Dollar', 'images/flags/usd.png', 'currency', 4],
-                    ['eur', 'یورو', 'Euro', 'images/flags/eur.png', 'currency', 5]
+                    ['silver', 'نقره', 'Silver', 'images/silver.png', 'silver', 4],
+                    ['usd_sell', 'دلار تهران', 'US Dollar', 'images/flags/usd.png', 'currency', 5],
+                    ['eur', 'یورو', 'Euro', 'images/flags/eur.png', 'currency', 6]
                 ];
                 foreach ($seed_data as $item) {
                     $stmt->execute($item);

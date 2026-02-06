@@ -248,6 +248,11 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const data = await fetchData();
         if (data) {
+            // Update Site Title
+            if (data.meta && data.meta.site_title) {
+                document.title = data.meta.site_title + ' | قیمت لحظه‌ای طلا، سکه و ارز';
+            }
+
             state.platforms = data.platforms;
             populateSummary(data.summary);
             populatePlatforms(state.platforms);

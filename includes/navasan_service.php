@@ -61,12 +61,18 @@ class NavasanService {
             }
         }
 
-        // Record today's price in history
+        // Record today's price in history and track high/low
         $today = date('Y-m-d');
         foreach ($data as $symbol => $info) {
             if (isset($info['value'])) {
-                $stmt = $this->pdo->prepare("INSERT IGNORE INTO prices_history (symbol, price, date) VALUES (?, ?, ?)");
-                $stmt->execute([$symbol, $info['value'], $today]);
+                $price = $info['value'];
+                $stmt = $this->pdo->prepare("INSERT INTO prices_history (symbol, price, high, low, date)
+                    VALUES (?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE
+                    price = VALUES(price),
+                    high = GREATEST(high, VALUES(price)),
+                    low = LEAST(low, VALUES(price))");
+                $stmt->execute([$symbol, $price, $price, $price, $today]);
             }
         }
 
@@ -87,7 +93,7 @@ class NavasanService {
         $items = $stmt->fetchAll();
 
         // Pre-fetch today's high/low for all symbols
-        $stmt = $this->pdo->prepare("SELECT symbol, MAX(price) as high, MIN(price) as low FROM prices_history WHERE date = ? GROUP BY symbol");
+        $stmt = $this->pdo->prepare("SELECT symbol, high, low FROM prices_history WHERE date = ?");
         $stmt->execute([$today]);
         $stats = $stmt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC);
 

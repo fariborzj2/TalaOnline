@@ -22,7 +22,8 @@ $items = $navasan->getDashboardData();
 // Reconstruct the JSON structure expected by the frontend
 $response = [
     'meta' => [
-        'date' => date('Y-m-d H:i:s') // Will be formatted by JS
+        'date' => date('Y-m-d H:i:s'), // Will be formatted by JS
+        'site_title' => get_setting('site_title', 'طلا آنلاین')
     ],
     'summary' => [
         'gold' => [
