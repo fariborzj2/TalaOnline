@@ -5,6 +5,13 @@ check_login();
 
 $message = '';
 
+if (isset($_GET['message'])) {
+    if ($_GET['message'] === 'backup_imported') $message = 'نسخه پشتیبان با موفقیت بازگردانی شد.';
+}
+if (isset($_GET['error'])) {
+    $error = 'خطا: ' . htmlspecialchars($_GET['error']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $api_key = $_POST['api_key'];
     $api_sync_interval = $_POST['api_sync_interval'];
@@ -47,6 +54,17 @@ include __DIR__ . '/layout/header.php';
                 <i data-lucide="check" class="w-5 h-5"></i>
             </div>
             <span class="font-bold"><?= $message ?></span>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($error) && $error): ?>
+    <div class="mb-8 animate-bounce-in">
+        <div class="bg-rose-50 border border-rose-100 rounded-xl p-4 flex items-center gap-3 text-rose-700">
+            <div class="w-8 h-8 bg-rose-500 text-white rounded-lg flex items-center justify-center">
+                <i data-lucide="alert-circle" class="w-5 h-5"></i>
+            </div>
+            <span class="font-bold"><?= $error ?></span>
         </div>
     </div>
 <?php endif; ?>
@@ -119,6 +137,41 @@ include __DIR__ . '/layout/header.php';
         </div>
     </div>
 
+    <!-- Backup & Restore -->
+    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-amber-600 border border-amber-50">
+                <i data-lucide="database" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-black text-slate-800">نسخه پشتیبان و بازگردانی</h2>
+                <p class="text-[10px] text-slate-400 font-bold uppercase ">Backup & Restore</p>
+            </div>
+        </div>
+        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h4 class="font-black text-slate-700 text-sm">دریافت فایل پشتیبان</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">یک نسخه کامل از دیتابیس شامل تمامی ارزها، پلتفرم‌ها و تنظیمات را بصورت فایل SQL دانلود کنید.</p>
+                <a href="backup_handler.php?action=export" class="btn-v3 btn-v3-outline w-full !justify-start gap-3">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    دانلود فایل پشتیبان (Export)
+                </a>
+            </div>
+            <div class="space-y-4 border-r border-slate-100 pr-8">
+                <h4 class="font-black text-slate-700 text-sm">بازگردانی دیتابیس</h4>
+                <p class="text-xs text-slate-400 leading-relaxed">فایل پشتیبان قبلی خود را انتخاب کرده و دیتابیس را به حالت قبل بازگردانید. <span class="text-rose-500 font-bold">(تمامی داده‌های فعلی جایگزین خواهند شد)</span></p>
+                <div onclick="document.getElementById('importFile').click()" class="file-input-custom !bg-slate-50 border-dashed border-2 hover:border-indigo-500 group">
+                    <span id="fileNameDisplay" class="text-xs font-bold text-slate-400 group-hover:text-indigo-600">انتخاب فایل SQL...</span>
+                    <i data-lucide="file-up" class="w-4 h-4 text-slate-400 group-hover:text-indigo-600"></i>
+                </div>
+                <button type="button" onclick="confirmImport()" class="btn-v3 btn-v3-primary w-full gap-3">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    شروع بازگردانی (Import)
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Security Settings -->
     <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
         <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
@@ -148,5 +201,23 @@ include __DIR__ . '/layout/header.php';
         </button>
     </div>
 </form>
+
+<!-- Hidden Import Form -->
+<form id="importForm" action="backup_handler.php?action=import" method="POST" enctype="multipart/form-data" class="hidden">
+    <input type="file" name="backup_file" id="importFile" accept=".sql" onchange="document.getElementById('fileNameDisplay').innerText = this.files[0].name">
+</form>
+
+<script>
+    function confirmImport() {
+        const fileInput = document.getElementById('importFile');
+        if (!fileInput.files.length) {
+            alert('لطفاً ابتدا فایل پشتیبان را انتخاب کنید.');
+            return;
+        }
+        if (confirm('آیا از بازگردانی دیتابیس اطمینان دارید؟ تمامی اطلاعات فعلی حذف و اطلاعات فایل جایگزین خواهد شد.')) {
+            document.getElementById('importForm').submit();
+        }
+    }
+</script>
 
 <?php include __DIR__ . '/layout/footer.php'; ?>
