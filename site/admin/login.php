@@ -29,21 +29,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ورود به مدیریت - طلا آنلاین</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&amp;display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style type="text/tailwindcss">
-        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
         body {
             font-family: 'Vazirmatn', sans-serif;
         }
 
         @layer components {
             .login-input {
-                @apply w-full border-2 border-slate-100 bg-white/50 rounded-2xl px-5 py-3.5 pr-14 outline-none transition-all duration-200 font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 focus:bg-white;
+                @apply w-full border border-slate-200 bg-white rounded-xl px-4 py-2.5 pr-12 outline-none transition-all duration-200 font-bold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10;
             }
             .login-button {
-                @apply w-full bg-indigo-600 text-white py-4 md:py-5 rounded-2xl font-black text-base md:text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3;
+                @apply w-full bg-indigo-600 text-white py-2.5 rounded-xl font-black text-base hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3;
             }
         }
     </style>
@@ -55,11 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-100/50 rounded-full blur-[120px]"></div>
     <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-amber-100/50 rounded-full blur-[120px]"></div>
 
-    <div class="w-full max-w-[440px] relative z-10">
-        <div class="bg-white/80 backdrop-blur-2xl p-8 md:p-12 rounded-[32px] md:rounded-[40px] border border-white shadow-2xl shadow-indigo-100/50">
+    <div class="w-full max-w-[400px] relative z-10">
+        <div class="bg-white p-8 md:p-10 rounded-[20px] border border-slate-200">
             <div class="text-center mb-8 md:mb-10">
-                <div class="w-20 h-20 md:w-24 md:h-24 bg-indigo-600 rounded-[28px] md:rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-200 ring-8 ring-indigo-50">
-                    <i data-lucide="shield-check" class="text-white w-10 h-10 md:w-12 md:h-12"></i>
+                <div class="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-6 ring-8 ring-indigo-50">
+                    <i data-lucide="shield-check" class="text-white w-8 h-8"></i>
                 </div>
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">خوش آمدید</h1>
                 <p class="text-slate-400 mt-2 font-bold uppercase tracking-widest text-[10px]">احراز هویت مدیر سیستم</p>
@@ -67,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php if ($error): ?>
                 <div class="mb-6 animate-shake">
-                    <div class="bg-rose-50 border border-rose-100 rounded-2xl p-4 flex items-center gap-3 text-rose-700">
+                    <div class="bg-rose-50 border border-rose-100 rounded-xl p-3 flex items-center gap-3 text-rose-700">
                         <i data-lucide="alert-circle" class="w-5 h-5"></i>
                         <span class="font-bold text-sm"><?= $error ?></span>
                     </div>

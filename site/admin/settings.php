@@ -42,8 +42,8 @@ include __DIR__ . '/layout/header.php';
 
 <?php if ($message): ?>
     <div class="mb-8 animate-bounce-in">
-        <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-center gap-3 text-emerald-700 shadow-sm">
-            <div class="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center shadow-lg shadow-emerald-200">
+        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center gap-3 text-emerald-700">
+            <div class="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center">
                 <i data-lucide="check" class="w-5 h-5"></i>
             </div>
             <span class="font-bold"><?= $message ?></span>
@@ -53,9 +53,9 @@ include __DIR__ . '/layout/header.php';
 
 <form method="POST" class="max-w-4xl space-y-8 pb-10">
     <!-- General Settings -->
-    <div class="glass-card rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100">
+    <div class="glass-card rounded-[20px] overflow-hidden border border-slate-200">
         <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-50">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 border border-indigo-50">
                 <i data-lucide="sliders" class="w-5 h-5"></i>
             </div>
             <div>
@@ -98,9 +98,9 @@ include __DIR__ . '/layout/header.php';
     </div>
 
     <!-- SEO Settings -->
-    <div class="glass-card rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100">
+    <div class="glass-card rounded-[20px] overflow-hidden border border-slate-200">
         <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-50">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 border border-emerald-50">
                 <i data-lucide="search" class="w-5 h-5"></i>
             </div>
             <div>
@@ -128,9 +128,9 @@ include __DIR__ . '/layout/header.php';
     </div>
 
     <!-- Security Settings -->
-    <div class="glass-card rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100">
+    <div class="glass-card rounded-[20px] overflow-hidden border border-slate-200">
         <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 shadow-sm border border-rose-50">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50">
                 <i data-lucide="shield-lock" class="w-5 h-5"></i>
             </div>
             <div>
