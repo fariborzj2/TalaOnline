@@ -12,6 +12,22 @@
 <body>
 <?php include __DIR__ . '/sidebar.php'; ?>
 <div class="main-wrap">
+    <header class="top-bar">
+        <div class="search-container">
+            <i data-lucide="search"></i>
+            <input type="text" class="search-input" placeholder="جستجو در پنل مدیریت...">
+        </div>
+        <div class="user-nav">
+            <div class="notification-bell">
+                <i data-lucide="bell"></i>
+                <span class="notification-dot"></span>
+            </div>
+            <div class="user-avatar">
+                <i data-lucide="user"></i>
+            </div>
+        </div>
+    </header>
+
     <div class="page-header">
         <div class="page-title">
             <h1><?= $page_title ?? 'داشبورد' ?></h1>
