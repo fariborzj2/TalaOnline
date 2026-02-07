@@ -126,7 +126,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <?php include 'sidebar.php'; ?>
 
     <!-- Main Content -->
-    <main class="flex-1 lg:ml-0 p-4 lg:p-8 max-w-7xl mx-auto w-full">
+    <main class="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full">
         <!-- Dashboard Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-10">
             <div>
