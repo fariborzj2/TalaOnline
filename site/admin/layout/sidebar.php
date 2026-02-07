@@ -47,7 +47,7 @@
     </div>
 
     <div class="flex items-center p-5 gap-2 md:gap-4">
-        <div class="hidden sm:flex items-center gap-3 pr-4 border-r border-slate-100">
+        <div class="hidden sm:flex items-center gap-3 pl-4 border-l border-slate-100">
             <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-black">
                 <?= strtoupper(substr($_SESSION['admin_username'], 0, 1)) ?>
             </div>
