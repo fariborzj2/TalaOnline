@@ -44,6 +44,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
             .admin-table th {
                 @apply bg-slate-50/50 border-y border-slate-100 px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest first:rounded-r-lg last:rounded-l-lg first:border-r last:border-l whitespace-nowrap;
             }
+            .admin-table th:first-child, .admin-table th:last-child {
+                border-radius: 0 !important
+            }
             .admin-table td {
                 @apply px-6 py-4 border-b border-slate-50 text-[12px] font-bold text-slate-700 transition-colors whitespace-nowrap;
             }
