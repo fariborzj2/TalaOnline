@@ -40,10 +40,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 @apply w-full border-separate border-spacing-0;
             }
             .admin-table th {
-                @apply bg-slate-50/50 border-y border-slate-100 px-6 py-4 text-right text-[11px] font-black text-slate-400 uppercase tracking-widest first:rounded-r-2xl last:rounded-l-2xl first:border-r last:border-l;
+                @apply bg-slate-50/50 border-y border-slate-100 px-6 py-4 text-right text-[11px] font-black text-slate-400 uppercase tracking-widest first:rounded-r-2xl last:rounded-l-2xl first:border-r last:border-l whitespace-nowrap;
             }
             .admin-table td {
-                @apply px-6 py-5 border-b border-slate-50 text-sm font-bold text-slate-700 transition-colors;
+                @apply px-6 py-5 border-b border-slate-50 text-sm font-bold text-slate-700 transition-colors whitespace-nowrap;
             }
             .admin-table tr:last-child td {
                 @apply border-b-0;
@@ -52,7 +52,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 @apply bg-slate-50/30;
             }
             .btn-v3 {
-                @apply px-6 py-3.5 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 active:scale-95;
+                @apply px-4 py-3 md:px-6 md:py-3.5 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 active:scale-95;
             }
             .btn-v3-primary {
                 @apply bg-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700;
@@ -84,7 +84,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 </head>
 <body class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
     <!-- Mobile Header -->
-    <header class="lg:hidden bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+    <header class="lg:hidden bg-white border-b border-slate-100 px-4 py-4 flex items-center justify-between sticky top-0 z-50">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
                 <i data-lucide="shield-check" class="text-white w-6 h-6"></i>
@@ -99,19 +99,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <?php include 'sidebar.php'; ?>
 
     <!-- Main Content -->
-    <main class="flex-1 lg:ml-0 p-6 lg:p-10 max-w-7xl mx-auto w-full">
+    <main class="flex-1 lg:ml-0 p-4 lg:p-10 max-w-7xl mx-auto w-full">
         <!-- Dashboard Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-10">
             <div>
-                <h1 class="text-3xl font-black text-slate-900 tracking-tight">
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
                     <?= $page_title ?? 'مدیریت' ?>
                 </h1>
                 <?php if (isset($page_subtitle)): ?>
-                    <p class="text-slate-400 mt-1 font-bold"><?= $page_subtitle ?></p>
+                    <p class="text-slate-400 mt-1 font-bold text-xs md:text-base"><?= $page_subtitle ?></p>
                 <?php endif; ?>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 md:gap-4">
                 <?php if (isset($header_action)) echo $header_action; ?>
 
                 <div class="hidden sm:flex items-center gap-3 pr-4 border-r border-slate-100">
@@ -124,8 +124,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </div>
                 </div>
 
-                <a href="logout.php" class="w-12 h-12 bg-white text-rose-500 border border-rose-50 rounded-2xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm group" title="خروج">
-                    <i data-lucide="power" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
+                <a href="logout.php" class="w-10 h-10 md:w-12 md:h-12 bg-white text-rose-500 border border-rose-50 rounded-2xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm group" title="خروج">
+                    <i data-lucide="power" class="w-5 h-5 md:w-6 md:h-6 group-hover:rotate-12 transition-transform"></i>
                 </a>
             </div>
         </div>

@@ -1,5 +1,4 @@
     </main>
-</div> <!-- End main wrap -->
 
 <script>
     // Initialize Lucide icons
