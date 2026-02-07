@@ -105,6 +105,35 @@ $current_page = basename($_SERVER['PHP_SELF']);
             direction: ltr !important;
             text-align: left !important;
         }
+
+        /* Custom File Input */
+        .file-input-wrapper {
+            @apply relative overflow-hidden;
+        }
+        .file-input-custom {
+            @apply w-full border border-slate-200 bg-white rounded-lg px-4 py-2 outline-none transition-all duration-200 font-bold focus:border-indigo-500 flex items-center justify-between cursor-pointer hover:bg-slate-50;
+        }
+        .file-input-custom input[type="file"] {
+            @apply absolute inset-0 opacity-0 cursor-pointer;
+        }
+
+        /* Toggle Switch */
+        .toggle-dot {
+            @apply w-9 h-5 bg-slate-200 rounded-full transition-all duration-300 relative;
+        }
+        .toggle-dot::after {
+            content: '';
+            @apply absolute top-[2px] right-[2px] bg-white rounded-full h-4 w-4 transition-all duration-300 shadow-sm border border-slate-200;
+        }
+        .peer:checked ~ .toggle-dot {
+            @apply bg-indigo-600;
+        }
+        .peer:checked ~ .toggle-dot.toggle-emerald {
+            @apply bg-emerald-600;
+        }
+        .peer:checked ~ .toggle-dot::after {
+            @apply -translate-x-[16px];
+        }
     </style>
 
     <script src="https://unpkg.com/lucide@latest"></script>

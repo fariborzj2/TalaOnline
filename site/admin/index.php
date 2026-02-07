@@ -15,7 +15,7 @@ $stmt = $pdo->query("SELECT COUNT(*) FROM platforms");
 $total_platforms = $stmt->fetchColumn();
 
 // Get recent price updates
-$stmt = $pdo->query("SELECT * FROM prices_cache ORDER BY updated_at DESC LIMIT 5");
+$stmt = $pdo->query("SELECT p.*, i.name as persian_name FROM prices_cache p LEFT JOIN items i ON p.symbol = i.symbol ORDER BY p.updated_at DESC LIMIT 5");
 $recent_updates = $stmt->fetchAll();
 
 $page_title = 'داشبورد مدیریتی';
@@ -128,7 +128,10 @@ include __DIR__ . '/layout/header.php';
                             <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 font-black text-[10px]">
                                 <?= strtoupper(substr($update['symbol'], 0, 2)) ?>
                             </div>
-                            <span class="font-bold text-slate-700"><?= htmlspecialchars($update['symbol']) ?></span>
+                            <div class="flex flex-col">
+                                <span class="font-black text-slate-900 text-xs"><?= htmlspecialchars($update['persian_name'] ?? 'نامشخص') ?></span>
+                                <span class="text-[10px] font-bold text-slate-400 ltr-input"><?= htmlspecialchars($update['symbol']) ?></span>
+                            </div>
                         </div>
                     </td>
                     <td>
