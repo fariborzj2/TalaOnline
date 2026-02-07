@@ -109,8 +109,8 @@ include __DIR__ . '/layout/header.php';
         </div>
         <div class="flex flex-wrap items-center gap-3">
             <div class="relative group">
-                <input type="text" id="tableSearch" placeholder="جستجو در پلتفرم‌ها..." class="text-xs pr-10 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
-                <i data-lucide="search" class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+                <input type="text" id="tableSearch" placeholder="جستجو در پلتفرم‌ها..." class="text-xs pr-12 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
+                <i data-lucide="search" class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
             </div>
             <select id="tableSort" class="text-xs !py-2 border-slate-200 focus:border-indigo-500 w-full md:w-auto">
                 <option value="sort_order">ترتیب نمایش</option>

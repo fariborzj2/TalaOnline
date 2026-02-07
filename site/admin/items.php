@@ -114,9 +114,16 @@ include __DIR__ . '/layout/header.php';
         </div>
         <div class="flex flex-wrap items-center gap-3">
             <div class="relative group">
-                <input type="text" id="tableSearch" placeholder="جستجو در ارزها..." class="text-xs pr-10 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
-                <i data-lucide="search" class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+                <input type="text" id="tableSearch" placeholder="جستجو در ارزها..." class="text-xs pr-12 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
+                <i data-lucide="search" class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
             </div>
+            <select id="tableCategory" class="text-xs !py-2 border-slate-200 focus:border-indigo-500 w-full md:w-auto">
+                <option value="all">همه دسته‌ها</option>
+                <option value="gold">طلا</option>
+                <option value="coin">سکه</option>
+                <option value="currency">ارز</option>
+                <option value="silver">نقره</option>
+            </select>
             <select id="tableSort" class="text-xs !py-2 border-slate-200 focus:border-indigo-500 w-full md:w-auto">
                 <option value="sort_order">ترتیب نمایش</option>
                 <option value="name">نام (الفبا)</option>
@@ -142,7 +149,7 @@ include __DIR__ . '/layout/header.php';
             </thead>
             <tbody class="divide-y divide-slate-50">
                 <?php foreach ($items as $item): ?>
-                <tr class="hover:bg-slate-50/50 transition-colors group">
+                <tr class="hover:bg-slate-50/50 transition-colors group" data-category="<?= $item['category'] ?? 'gold' ?>">
                     <td class="text-center font-black text-slate-400"><?= $item['sort_order'] ?></td>
                     <td>
                         <div class="w-10 h-10 rounded-lg bg-slate-100 p-2 flex items-center justify-center">
@@ -327,6 +334,7 @@ include __DIR__ . '/layout/header.php';
     // Search and Filter Logic
     const searchInput = document.getElementById('tableSearch');
     const sortSelect = document.getElementById('tableSort');
+    const categorySelect = document.getElementById('tableCategory');
     const tableBody = document.querySelector('.admin-table tbody');
     const originalRows = Array.from(tableBody.querySelectorAll('tr'));
     const itemCountSpan = document.getElementById('itemCount');
@@ -334,10 +342,13 @@ include __DIR__ . '/layout/header.php';
     function updateTable() {
         const searchTerm = searchInput.value.toLowerCase();
         const sortBy = sortSelect.value;
+        const filterCat = categorySelect.value;
 
         let filteredRows = originalRows.filter(row => {
             const text = row.innerText.toLowerCase();
-            return text.includes(searchTerm);
+            const matchesSearch = text.includes(searchTerm);
+            const matchesCat = filterCat === 'all' || row.dataset.category === filterCat;
+            return matchesSearch && matchesCat;
         });
 
         // Sort
@@ -365,6 +376,7 @@ include __DIR__ . '/layout/header.php';
 
     searchInput.addEventListener('input', updateTable);
     sortSelect.addEventListener('change', updateTable);
+    categorySelect.addEventListener('change', updateTable);
 
     function openAddModal() {
         document.getElementById('formAction').value = 'add';
