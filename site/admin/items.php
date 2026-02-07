@@ -120,9 +120,9 @@ include __DIR__ . '/layout/header.php';
             </div>
             <h2 class="text-lg font-black text-slate-800">لیست ارزها</h2>
         </div>
-        <div class="flex flex-wrap items-center gap-3">
-            <div class="relative group">
-                <input type="text" id="tableSearch" placeholder="جستجو در ارزها..." class="text-xs pr-12 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div class="relative group w-full md:w-auto">
+                <input type="text" id="tableSearch" placeholder="جستجو در ارزها..." class="text-xs !pr-12 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
                 <i data-lucide="search" class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
             </div>
             <select id="tableCategory" class="text-xs !py-2 border-slate-200 focus:border-indigo-500 w-full md:w-auto">
