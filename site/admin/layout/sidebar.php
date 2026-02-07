@@ -2,7 +2,7 @@
 <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden hidden"></div>
 
 <!-- Sidebar -->
-<aside id="sidebar" class="fixed inset-y-0 right-0 w-64 bg-white border-l border-slate-100 transform translate-x-full lg:translate-x-0 lg:static lg:flex flex-col transition-transform duration-300 ease-in-out z-50 lg:shadow-none">
+<aside id="sidebar" class="fixed inset-y-0 right-0 w-64 bg-white border-l border-slate-100 transform translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:flex flex-col transition-transform duration-300 ease-in-out z-50 lg:shadow-none lg:overflow-y-auto">
     <div class="p-5 pb-4">
         <div class="flex items-center gap-3 mb-8">
             <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center ring-4 ring-indigo-50">

@@ -105,15 +105,25 @@ include __DIR__ . '/layout/header.php';
 <?php endif; ?>
 
 <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-    <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+    <div class="px-8 py-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
                 <i data-lucide="list" class="w-5 h-5"></i>
             </div>
             <h2 class="text-lg font-black text-slate-800">لیست ارزها</h2>
         </div>
-        <div class="flex items-center gap-2">
-            <span class="text-xs font-bold text-slate-400">تعداد کل: <?= count($items) ?></span>
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="relative group">
+                <input type="text" id="tableSearch" placeholder="جستجو در ارزها..." class="text-xs pr-10 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
+                <i data-lucide="search" class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+            </div>
+            <select id="tableSort" class="text-xs !py-2 border-slate-200 focus:border-indigo-500 w-full md:w-auto">
+                <option value="sort_order">ترتیب نمایش</option>
+                <option value="name">نام (الفبا)</option>
+                <option value="price_desc">بیشترین قیمت</option>
+                <option value="price_asc">کمترین قیمت</option>
+            </select>
+            <span class="text-[10px] font-bold text-slate-400 bg-white px-3 py-2 rounded-lg border border-slate-100">تعداد: <span id="itemCount"><?= count($items) ?></span></span>
         </div>
     </div>
     <div class="overflow-x-auto">
@@ -252,14 +262,18 @@ include __DIR__ . '/layout/header.php';
 
             <div class="form-group mb-4">
                 <label>لوگوی دارایی</label>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <input type="file" name="logo_file" class="text-xs">
-                        <p class="text-[9px] text-slate-400 mt-1">آپلود مستقیم تصویر</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="file-input-wrapper">
+                        <div class="file-input-custom">
+                            <span class="file-name-label text-[11px] text-slate-400 truncate">انتخاب تصویر...</span>
+                            <i data-lucide="upload-cloud" class="w-4 h-4 text-slate-400"></i>
+                            <input type="file" name="logo_file" class="file-input-real">
+                        </div>
+                        <p class="text-[9px] text-slate-400 mt-1">آپلود مستقیم تصویر (PNG/JPG)</p>
                     </div>
                     <div class="input-icon-wrapper">
                         <span class="icon"><i data-lucide="link" class="w-3.5 h-3.5"></i></span>
-                        <input type="text" name="logo_url" id="item-logo" class="ltr-input text-xs" placeholder="یا لینک تصویر...">
+                        <input type="text" name="logo_url" id="item-logo" class="ltr-input text-xs !py-2.5" placeholder="یا لینک تصویر...">
                     </div>
                 </div>
                 <input type="hidden" name="current_logo" id="item-current_logo">
@@ -274,14 +288,14 @@ include __DIR__ . '/layout/header.php';
                 <div class="flex items-center justify-between mb-4">
                     <h4 class="font-black text-slate-800 text-xs">تنظیمات پیشرفته</h4>
                     <div class="flex gap-4">
-                        <label class="relative inline-flex items-center cursor-pointer">
+                        <label class="relative inline-flex items-center cursor-pointer group">
                             <input type="checkbox" name="is_manual" id="item-is_manual" class="sr-only peer">
-                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                            <div class="toggle-dot"></div>
                             <span class="mr-2 text-[10px] font-black text-slate-600">قیمت دستی</span>
                         </label>
-                        <label class="relative inline-flex items-center cursor-pointer">
+                        <label class="relative inline-flex items-center cursor-pointer group">
                             <input type="checkbox" name="is_active" id="item-is_active" class="sr-only peer" checked>
-                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                            <div class="toggle-dot toggle-emerald"></div>
                             <span class="mr-2 text-[10px] font-black text-slate-600">فعال</span>
                         </label>
                     </div>
@@ -310,6 +324,48 @@ include __DIR__ . '/layout/header.php';
 </div>
 
 <script>
+    // Search and Filter Logic
+    const searchInput = document.getElementById('tableSearch');
+    const sortSelect = document.getElementById('tableSort');
+    const tableBody = document.querySelector('.admin-table tbody');
+    const originalRows = Array.from(tableBody.querySelectorAll('tr'));
+    const itemCountSpan = document.getElementById('itemCount');
+
+    function updateTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const sortBy = sortSelect.value;
+
+        let filteredRows = originalRows.filter(row => {
+            const text = row.innerText.toLowerCase();
+            return text.includes(searchTerm);
+        });
+
+        // Sort
+        filteredRows.sort((a, b) => {
+            if (sortBy === 'name') {
+                const nameA = a.querySelector('td:nth-child(3) p:first-child').innerText;
+                const nameB = b.querySelector('td:nth-child(3) p:first-child').innerText;
+                return nameA.localeCompare(nameB, 'fa');
+            } else if (sortBy === 'price_desc' || sortBy === 'price_asc') {
+                const priceA = parseFloat(a.querySelector('td:nth-child(6) .font-black').innerText.replace(/,/g, '')) || 0;
+                const priceB = parseFloat(b.querySelector('td:nth-child(6) .font-black').innerText.replace(/,/g, '')) || 0;
+                return sortBy === 'price_desc' ? priceB - priceA : priceA - priceB;
+            } else {
+                const orderA = parseInt(a.querySelector('td:first-child').innerText) || 0;
+                const orderB = parseInt(b.querySelector('td:first-child').innerText) || 0;
+                return orderA - orderB;
+            }
+        });
+
+        // Re-render
+        tableBody.innerHTML = '';
+        filteredRows.forEach(row => tableBody.appendChild(row));
+        itemCountSpan.innerText = filteredRows.length;
+    }
+
+    searchInput.addEventListener('input', updateTable);
+    sortSelect.addEventListener('change', updateTable);
+
     function openAddModal() {
         document.getElementById('formAction').value = 'add';
         document.getElementById('modalTitle').innerText = 'افزودن دارایی جدید';

@@ -123,7 +123,7 @@ include __DIR__ . '/layout/header.php';
     <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
         <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
             <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50">
-                <i data-lucide="shield-lock" class="w-5 h-5"></i>
+                <i data-lucide="lock" class="w-5 h-5"></i>
             </div>
             <div>
                 <h2 class="text-lg font-black text-slate-800">امنیت و دسترسی</h2>
