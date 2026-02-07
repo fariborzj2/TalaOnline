@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 @apply w-full border-2 border-slate-100 bg-white/50 rounded-2xl px-5 py-3.5 pr-14 outline-none transition-all duration-200 font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 focus:bg-white;
             }
             .login-button {
-                @apply w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3;
+                @apply w-full bg-indigo-600 text-white py-4 md:py-5 rounded-2xl font-black text-base md:text-lg shadow-xl shadow-indigo-200 hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3;
             }
         }
     </style>
@@ -56,12 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-amber-100/50 rounded-full blur-[120px]"></div>
 
     <div class="w-full max-w-[440px] relative z-10">
-        <div class="bg-white/80 backdrop-blur-2xl p-10 lg:p-12 rounded-[40px] border border-white shadow-2xl shadow-indigo-100/50">
-            <div class="text-center mb-10">
-                <div class="w-24 h-24 bg-indigo-600 rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-200 ring-8 ring-indigo-50">
-                    <i data-lucide="shield-check" class="text-white w-12 h-12"></i>
+        <div class="bg-white/80 backdrop-blur-2xl p-8 md:p-12 rounded-[32px] md:rounded-[40px] border border-white shadow-2xl shadow-indigo-100/50">
+            <div class="text-center mb-8 md:mb-10">
+                <div class="w-20 h-20 md:w-24 md:h-24 bg-indigo-600 rounded-[28px] md:rounded-[32px] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-indigo-200 ring-8 ring-indigo-50">
+                    <i data-lucide="shield-check" class="text-white w-10 h-10 md:w-12 md:h-12"></i>
                 </div>
-                <h1 class="text-3xl font-black text-slate-900 tracking-tight">خوش آمدید</h1>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">خوش آمدید</h1>
                 <p class="text-slate-400 mt-2 font-bold uppercase tracking-widest text-[10px]">احراز هویت مدیر سیستم</p>
             </div>
 
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
 
-            <form method="POST" class="space-y-6">
+            <form method="POST" class="space-y-5 md:space-y-6">
                 <div class="space-y-2">
                     <label class="block pr-1 font-black text-slate-700 text-sm">نام کاربری</label>
                     <div class="relative group">
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </button>
             </form>
 
-            <div class="mt-10 pt-8 border-t border-slate-100 text-center">
+            <div class="mt-8 md:mt-10 pt-8 border-t border-slate-100 text-center">
                 <a href="../" class="inline-flex items-center gap-2 text-slate-400 hover:text-indigo-600 font-bold text-xs transition-colors group">
                     <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
                     <span>بازگشت به صفحه اصلی سایت</span>
