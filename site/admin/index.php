@@ -18,96 +18,145 @@ $total_platforms = $stmt->fetchColumn();
 $stmt = $pdo->query("SELECT * FROM prices_cache ORDER BY updated_at DESC LIMIT 5");
 $recent_updates = $stmt->fetchAll();
 
-$page_title = 'داشبورد مدیریت';
-$page_subtitle = 'خلاصه وضعیت سیستم و نرخ‌های لحظه‌ای';
+$page_title = 'داشبورد مدیریتی';
+$page_subtitle = 'خلاصه وضعیت سیستم و آخرین نرخ‌های دریافتی از بازار';
 
-$header_action = '<a href="sync.php" class="btn btn-primary"><i data-lucide="refresh-cw"></i> بروزرسانی دستی</a>';
+$header_action = '<a href="sync.php" class="btn-v3 btn-v3-primary"><i data-lucide="refresh-cw" class="w-4 h-4"></i> بروزرسانی دستی</a>';
 
 include __DIR__ . '/layout/header.php';
 ?>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-icon" style="background: #e0f2fe; color: #0ea5e9;">
-            <i data-lucide="database"></i>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+    <div class="glass-card p-6 rounded-3xl relative overflow-hidden group">
+        <div class="flex items-center gap-5 relative z-10">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                <i data-lucide="database" class="w-7 h-7"></i>
+            </div>
+            <div>
+                <p class="text-xs font-black text-slate-400 uppercase tracking-widest">تعداد کل آیتم‌ها</p>
+                <h3 class="text-2xl font-black text-slate-900 mt-1"><?= number_format($total_items) ?></h3>
+            </div>
         </div>
-        <div class="stat-info">
-            <h3>تعداد کل آیتم‌ها</h3>
-            <div class="value"><?= number_format($total_items) ?></div>
-        </div>
+        <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-blue-50/50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
-            <i data-lucide="layout-grid"></i>
+
+    <div class="glass-card p-6 rounded-3xl relative overflow-hidden group">
+        <div class="flex items-center gap-5 relative z-10">
+            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
+                <i data-lucide="layout-grid" class="w-7 h-7"></i>
+            </div>
+            <div>
+                <p class="text-xs font-black text-slate-400 uppercase tracking-widest">پلتفرم‌های فعال</p>
+                <h3 class="text-2xl font-black text-slate-900 mt-1"><?= number_format($total_platforms) ?></h3>
+            </div>
         </div>
-        <div class="stat-info">
-            <h3>پلتفرم‌های فعال</h3>
-            <div class="value"><?= number_format($total_platforms) ?></div>
-        </div>
+        <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-amber-50/50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon" style="background: <?= $usage ? '#dcfce7' : '#fee2e2' ?>; color: <?= $usage ? '#16a34a' : '#dc2626' ?>;">
-            <i data-lucide="<?= $usage ? 'check-circle' : 'x-circle' ?>"></i>
+
+    <div class="glass-card p-6 rounded-3xl relative overflow-hidden group">
+        <div class="flex items-center gap-5 relative z-10">
+            <?php $api_status = $usage ? 'success' : 'danger'; ?>
+            <div class="w-14 h-14 bg-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-50 text-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-600 rounded-2xl flex items-center justify-center group-hover:bg-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-600 group-hover:text-white transition-all duration-300">
+                <i data-lucide="<?= $usage ? 'check-circle' : 'x-circle' ?>" class="w-7 h-7"></i>
+            </div>
+            <div>
+                <p class="text-xs font-black text-slate-400 uppercase tracking-widest">وضعیت اتصال API</p>
+                <h3 class="text-xl font-black text-slate-900 mt-1"><?= $usage ? 'متصل و عملیاتی' : 'خطا در اتصال' ?></h3>
+            </div>
         </div>
-        <div class="stat-info">
-            <h3>وضعیت اتصال API</h3>
-            <div class="value"><?= $usage ? 'فعال' : 'خطا در اتصال' ?></div>
-        </div>
+        <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-50/50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
     </div>
 </div>
 
 <?php if ($usage): ?>
-<h2 style="margin-bottom: 1.5rem; font-size: 1.1rem; color: var(--text-muted);">آمار مصرف وب‌سرویس نوسان</h2>
-<div class="stats-grid">
-    <div class="stat-card" style="border-bottom: 3px solid #3b82f6;">
-        <div class="stat-info">
-            <h3>درخواست‌های ماه جاری</h3>
-            <div class="value"><?= number_format($usage['monthly_usage'] ?? 0) ?></div>
-        </div>
+<div class="mb-10">
+    <div class="flex items-center gap-3 mb-6">
+        <div class="w-2 h-8 bg-indigo-600 rounded-full"></div>
+        <h2 class="text-lg font-black text-slate-800">آمار مصرف وب‌سرویس نوسان</h2>
     </div>
-    <div class="stat-card" style="border-bottom: 3px solid #10b981;">
-        <div class="stat-info">
-            <h3>درخواست‌های امروز</h3>
-            <div class="value"><?= number_format($usage['daily_usage'] ?? 0) ?></div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-card p-6 rounded-3xl border-b-4 border-indigo-500">
+            <p class="text-xs font-black text-slate-400 uppercase tracking-widest">درخواست‌های ماه جاری</p>
+            <div class="flex items-end justify-between mt-2">
+                <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['monthly_usage'] ?? 0) ?></h3>
+                <span class="text-[10px] font-black bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg">REQ/MONTH</span>
+            </div>
         </div>
-    </div>
-    <div class="stat-card" style="border-bottom: 3px solid #e29b21;">
-        <div class="stat-info">
-            <h3>درخواست‌های ساعت اخیر</h3>
-            <div class="value"><?= number_format($usage['hourly_usage'] ?? 0) ?></div>
+        <div class="glass-card p-6 rounded-3xl border-b-4 border-emerald-500">
+            <p class="text-xs font-black text-slate-400 uppercase tracking-widest">درخواست‌های امروز</p>
+            <div class="flex items-end justify-between mt-2">
+                <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['daily_usage'] ?? 0) ?></h3>
+                <span class="text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg">REQ/DAY</span>
+            </div>
+        </div>
+        <div class="glass-card p-6 rounded-3xl border-b-4 border-amber-500">
+            <p class="text-xs font-black text-slate-400 uppercase tracking-widest">درخواست‌های ساعت اخیر</p>
+            <div class="flex items-end justify-between mt-2">
+                <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['hourly_usage'] ?? 0) ?></h3>
+                <span class="text-[10px] font-black bg-amber-50 text-amber-600 px-2 py-1 rounded-lg">REQ/HOUR</span>
+            </div>
         </div>
     </div>
 </div>
 <?php endif; ?>
 
-<div class="card">
-    <div class="card-header">
-        <h2>بروزرسانی‌های اخیر قیمت</h2>
-        <i data-lucide="clock" class="text-muted"></i>
+<div class="glass-card rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100">
+    <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm">
+                <i data-lucide="history" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-black text-slate-800">بروزرسانی‌های اخیر قیمت</h2>
+                <p class="text-xs text-slate-400 font-medium">نمایش ۵ فعالیت اخیر سیستم</p>
+            </div>
+        </div>
+        <button class="text-indigo-600 text-sm font-black hover:underline">مشاهده همه</button>
     </div>
-    <div class="table-responsive">
-        <table>
+    <div class="overflow-x-auto">
+        <table class="w-full admin-table">
             <thead>
                 <tr>
-                    <th>نماد</th>
+                    <th>نماد سیستم</th>
                     <th>قیمت لحظه‌ای</th>
-                    <th>درصد تغییر</th>
+                    <th>تغییرات (۲۴ساعت)</th>
                     <th>زمان بروزرسانی</th>
+                    <th class="text-center">وضعیت</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-50">
                 <?php foreach ($recent_updates as $update): ?>
-                <tr>
-                    <td><code style="background: #f1f5f9; padding: 4px 8px; border-radius: 6px;"><?= htmlspecialchars($update['symbol']) ?></code></td>
-                    <td style="font-weight: 700;"><?= number_format($update['price']) ?> <small class="text-muted">تومان</small></td>
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 font-black text-[10px]">
+                                <?= strtoupper(substr($update['symbol'], 0, 2)) ?>
+                            </div>
+                            <span class="font-bold text-slate-700"><?= htmlspecialchars($update['symbol']) ?></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-base font-black text-slate-900"><?= number_format($update['price']) ?></span>
+                            <span class="text-[10px] font-bold text-slate-400">تومان</span>
+                        </div>
+                    </td>
                     <td>
                         <?php
                         $pct = (float)$update['change_percent'];
-                        $class = $pct >= 0 ? 'badge-success' : 'badge-danger';
+                        $is_up = $pct >= 0;
                         ?>
-                        <span class="badge <?= $class ?>"><?= ($pct > 0 ? '+' : '') . $pct ?>%</span>
+                        <div class="flex items-center gap-1 <?= $is_up ? 'text-emerald-600' : 'text-rose-600' ?> font-black">
+                            <i data-lucide="<?= $is_up ? 'trending-up' : 'trending-down' ?>" class="w-4 h-4"></i>
+                            <span><?= ($pct > 0 ? '+' : '') . $pct ?>%</span>
+                        </div>
                     </td>
-                    <td class="text-muted" style="font-size: 0.85rem;"><?= $update['updated_at'] ?></td>
+                    <td class="text-slate-400 font-medium text-xs"><?= $update['updated_at'] ?></td>
+                    <td class="text-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-600 border border-emerald-100">
+                            فعال
+                        </span>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
