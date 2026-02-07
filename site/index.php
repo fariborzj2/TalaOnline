@@ -39,8 +39,14 @@ $platforms = $stmt->fetchAll();
 // Helpers
 function fa_num($num) {
     if ($num === null || $num === '') return '---';
-    $fmt = new NumberFormatter('fa_IR', NumberFormatter::DECIMAL);
-    return $fmt->format($num);
+    if (class_exists('NumberFormatter')) {
+        $fmt = new NumberFormatter('fa_IR', NumberFormatter::DECIMAL);
+        return $fmt->format($num);
+    }
+    // Simple fallback
+    $western = ['0','1','2','3','4','5','6','7','8','9'];
+    $persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    return str_replace($western, $persian, (string)$num);
 }
 
 function fa_price($num) {
@@ -142,8 +148,12 @@ function get_trend_arrow($change) {
                         <span class="live-pulse"></span>
                         <span id="current-date" class="font-size-0-9 font-bold color-title">
                             <?php
-                            $fmt = new IntlDateFormatter('fa_IR@calendar=persian', IntlDateFormatter::FULL, IntlDateFormatter::NONE, 'Asia/Tehran', IntlDateFormatter::TRADITIONAL);
-                            echo $fmt->format(new DateTime());
+                            if (class_exists('IntlDateFormatter')) {
+                                $fmt = new IntlDateFormatter('fa_IR@calendar=persian', IntlDateFormatter::FULL, IntlDateFormatter::NONE, 'Asia/Tehran', IntlDateFormatter::TRADITIONAL);
+                                echo $fmt->format(new DateTime());
+                            } else {
+                                echo date('Y-m-d'); // Fallback
+                            }
                             ?>
                         </span>
                     </div>
