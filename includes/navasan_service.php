@@ -127,4 +127,23 @@ class NavasanService {
 
         return $processed;
     }
+
+    /**
+     * Get API usage statistics from Navasan
+     */
+    public function getUsage() {
+        if (empty($this->api_key)) return null;
+
+        $url = "http://api.navasan.tech/usage/?api_key=" . $this->api_key;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        if (!$response) return null;
+        return json_decode($response, true);
+    }
 }

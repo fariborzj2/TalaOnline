@@ -4,9 +4,10 @@ require_once __DIR__ . '/../includes/navasan_service.php';
 
 $navasan = new NavasanService($pdo);
 
-// Sync if needed (every 10 mins)
+// Sync if needed
+$sync_interval = (int)get_setting('api_sync_interval', 10) * 60;
 $last_sync = get_setting('last_sync_time', 0);
-if (time() - $last_sync > 600) {
+if (time() - $last_sync > $sync_interval) {
     if ($navasan->syncPrices()) {
         set_setting('last_sync_time', time());
     }

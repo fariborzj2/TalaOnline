@@ -140,6 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)");
                 $stmt->execute(['api_key', $api_key]);
                 $stmt->execute(['site_title', 'طلا آنلاین']);
+                $stmt->execute(['api_sync_interval', '10']);
 
                 // Seed some initial items based on current data
                 $initial_items = [
