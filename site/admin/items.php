@@ -92,9 +92,9 @@ include __DIR__ . '/layout/header.php';
 <!-- Edit Modal -->
 <div id="editModal" class="modal">
     <div class="modal-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <h2 style="margin:0;">ویرایش آیتم</h2>
-            <button onclick="closeModal()" style="color: var(--text-muted); cursor: pointer; background:none; border:none;"><i data-lucide="x"></i></button>
+        <div class="modal-header">
+            <h2>ویرایش آیتم</h2>
+            <button onclick="closeModal()" class="close-modal"><i data-lucide="x"></i></button>
         </div>
         <form method="POST">
             <input type="hidden" name="action" value="edit">

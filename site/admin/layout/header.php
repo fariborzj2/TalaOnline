@@ -13,9 +13,8 @@
 <?php include __DIR__ . '/sidebar.php'; ?>
 <div class="main-wrap">
     <header class="top-bar">
-        <div class="search-container">
-            <i data-lucide="search"></i>
-            <input type="text" class="search-input" placeholder="جستجو در پنل مدیریت...">
+        <div class="page-context">
+            <span class="text-muted">پنل مدیریت</span>
         </div>
         <div class="user-nav">
             <div class="notification-bell">
