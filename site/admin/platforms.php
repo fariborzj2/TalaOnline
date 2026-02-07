@@ -64,6 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $stmt = $pdo->prepare("UPDATE platforms SET is_active = ? WHERE id = ?");
         $stmt->execute([$active_status, $id]);
         $message = 'وضعیت با موفقیت تغییر کرد.';
+    } elseif ($action === 'reorder') {
+        $ids = $_POST['ids'] ?? [];
+        foreach ($ids as $index => $id) {
+            $stmt = $pdo->prepare("UPDATE platforms SET sort_order = ? WHERE id = ?");
+            $stmt->execute([$index, $id]);
+        }
+        echo json_encode(['success' => true]);
+        exit;
     }
 }
 
@@ -125,6 +133,7 @@ include __DIR__ . '/layout/header.php';
         <table class="w-full admin-table">
             <thead>
                 <tr>
+                    <th class="w-10"></th>
                     <th class="w-16">ترتیب</th>
                     <th class="w-20">لوگو</th>
                     <th>نام پلتفرم</th>
@@ -136,8 +145,11 @@ include __DIR__ . '/layout/header.php';
             </thead>
             <tbody class="divide-y divide-slate-50">
                 <?php foreach ($platforms as $p): ?>
-                <tr class="hover:bg-slate-50/50 transition-colors group">
-                    <td class="text-center font-black text-slate-400"><?= $p['sort_order'] ?></td>
+                <tr class="hover:bg-slate-50/50 transition-colors group cursor-move" data-id="<?= $p['id'] ?>">
+                    <td class="text-center text-slate-300">
+                        <i data-lucide="grip-vertical" class="w-4 h-4 handle cursor-grab"></i>
+                    </td>
+                    <td class="text-center font-black text-slate-400 row-order"><?= $p['sort_order'] ?></td>
                     <td>
                         <div class="w-10 h-10 rounded-lg bg-slate-100 p-2 flex items-center justify-center">
                             <img src="../<?= htmlspecialchars($p['logo']) ?>" alt="" class="w-full h-full object-contain">
@@ -353,6 +365,33 @@ include __DIR__ . '/layout/header.php';
 
     searchInput.addEventListener('input', updateTable);
     sortSelect.addEventListener('change', updateTable);
+
+    // Initialize Sortable
+    new Sortable(tableBody, {
+        handle: '.handle',
+        animation: 150,
+        ghostClass: 'bg-indigo-50',
+        onEnd: function() {
+            const ids = Array.from(tableBody.querySelectorAll('tr')).map(tr => tr.dataset.id);
+            const formData = new FormData();
+            formData.append('action', 'reorder');
+            ids.forEach(id => formData.append('ids[]', id));
+
+            fetch('platforms.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    // Update visual order numbers
+                    tableBody.querySelectorAll('tr').forEach((tr, index) => {
+                        tr.querySelector('.row-order').innerText = index;
+                    });
+                }
+            });
+        }
+    });
 
     function openAddModal() {
         document.getElementById('formAction').value = 'add';

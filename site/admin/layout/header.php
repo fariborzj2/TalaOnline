@@ -137,6 +137,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </style>
 
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
     <!-- Mobile Header -->
