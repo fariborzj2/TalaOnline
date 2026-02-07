@@ -193,7 +193,7 @@ include __DIR__ . '/layout/header.php';
                             <button class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn" onclick='editPlatform(<?= json_encode($p) ?>)'>
                                 <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                             </button>
-                            <form method="POST" class="inline" onsubmit="return confirm('آیا از حذف این پلتفرم اطمینان دارید؟')">
+                            <form method="POST" class="inline" onsubmit="handleDelete(event, this, 'پلتفرم')">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $p['id'] ?>">
                                 <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
@@ -392,6 +392,14 @@ include __DIR__ . '/layout/header.php';
             });
         }
     });
+
+    async function handleDelete(event, form, name) {
+        event.preventDefault();
+        const confirmed = await showConfirm(`آیا از حذف ${name} اطمینان دارید؟ این عمل غیرقابل بازگشت است.`);
+        if (confirmed) {
+            form.submit();
+        }
+    }
 
     function openAddModal() {
         document.getElementById('formAction').value = 'add';

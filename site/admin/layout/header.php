@@ -134,6 +134,20 @@ $current_page = basename($_SERVER['PHP_SELF']);
         .peer:checked ~ .toggle-dot::after {
             @apply -translate-x-[16px];
         }
+
+        /* Custom Dialogs */
+        .custom-dialog-overlay {
+            @apply fixed inset-0 z-[2000] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300;
+        }
+        .custom-dialog-overlay.active {
+            @apply opacity-100 pointer-events-auto;
+        }
+        .custom-dialog-box {
+            @apply bg-white w-full max-w-[340px] rounded-2xl p-8 shadow-2xl transform scale-95 opacity-0 transition-all duration-300 text-center;
+        }
+        .custom-dialog-overlay.active .custom-dialog-box {
+            @apply scale-100 opacity-100;
+        }
     </style>
 
     <script src="https://unpkg.com/lucide@latest"></script>
