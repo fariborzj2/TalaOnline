@@ -7,8 +7,10 @@ $action = $_GET['action'] ?? '';
 
 if ($action === 'export') {
     export_database($pdo);
-} elseif ($action === 'import' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    handle_import($pdo);
+} elseif ($action === 'init_import' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    init_import();
+} elseif ($action === 'execute_step' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    execute_step($pdo);
 }
 
 function export_database($pdo) {
@@ -52,29 +54,65 @@ function export_database($pdo) {
     exit;
 }
 
-function handle_import($pdo) {
+function init_import() {
     if (!isset($_FILES['backup_file']) || $_FILES['backup_file']['error'] !== UPLOAD_ERR_OK) {
-        header('Location: settings.php?error=upload');
+        echo json_encode(['success' => false, 'error' => 'خطا در آپلود فایل']);
         exit;
     }
 
     $sql = file_get_contents($_FILES['backup_file']['tmp_name']);
+    // Split by semicolon followed by newline to be relatively safe with our own exports
+    $queries = array_filter(array_map('trim', explode(";\n", $sql)));
+
+    $_SESSION['import_queries'] = $queries;
+    $_SESSION['import_total'] = count($queries);
+    $_SESSION['import_current'] = 0;
+
+    echo json_encode([
+        'success' => true,
+        'total' => $_SESSION['import_total']
+    ]);
+    exit;
+}
+
+function execute_step($pdo) {
+    if (!isset($_SESSION['import_queries'])) {
+        echo json_encode(['success' => false, 'error' => 'جلسه کاری یافت نشد']);
+        exit;
+    }
+
+    $batch_size = 50;
+    $queries = $_SESSION['import_queries'];
+    $current = $_SESSION['import_current'];
+    $total = $_SESSION['import_total'];
+
+    $batch = array_slice($queries, $current, $batch_size);
 
     try {
-        $pdo->beginTransaction();
-        // Simple splitter - might need something more robust for complex SQL,
-        // but for this app it should be fine.
-        $queries = array_filter(array_map('trim', explode(";\n", $sql)));
-        foreach ($queries as $query) {
+        foreach ($batch as $query) {
             if (!empty($query)) {
                 $pdo->exec($query);
             }
         }
-        $pdo->commit();
-        header('Location: settings.php?message=backup_imported');
+
+        $new_current = $current + count($batch);
+        $_SESSION['import_current'] = $new_current;
+
+        $done = ($new_current >= $total);
+        if ($done) {
+            unset($_SESSION['import_queries']);
+            unset($_SESSION['import_total']);
+            unset($_SESSION['import_current']);
+        }
+
+        echo json_encode([
+            'success' => true,
+            'current' => $new_current,
+            'total' => $total,
+            'done' => $done
+        ]);
     } catch (Exception $e) {
-        $pdo->rollBack();
-        header('Location: settings.php?error=' . urlencode($e->getMessage()));
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     }
     exit;
 }
