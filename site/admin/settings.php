@@ -7,11 +7,13 @@ $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $api_key = $_POST['api_key'];
+    $api_sync_interval = $_POST['api_sync_interval'];
     $site_title = $_POST['site_title'];
     $site_description = $_POST['site_description'];
     $site_keywords = $_POST['site_keywords'];
 
     set_setting('api_key', $api_key);
+    set_setting('api_sync_interval', $api_sync_interval);
     set_setting('site_title', $site_title);
     set_setting('site_description', $site_description);
     set_setting('site_keywords', $site_keywords);
@@ -28,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $api_key = get_setting('api_key');
+$api_sync_interval = get_setting('api_sync_interval', '10');
 $site_title = get_setting('site_title', 'طلا آنلاین');
 $site_description = get_setting('site_description', 'مرجع تخصصی قیمت لحظه‌ای طلا، سکه و ارز. مقایسه بهترین پلتفرم‌های خرید و فروش طلا در ایران.');
 $site_keywords = get_setting('site_keywords', 'قیمت طلا, قیمت سکه, دلار تهران, خرید طلا, مقایسه قیمت طلا');
@@ -91,6 +94,11 @@ $site_keywords = get_setting('site_keywords', 'قیمت طلا, قیمت سکه,
             <div class="form-group">
                 <label>کلید API نوسان (Navasan API Key)</label>
                 <input type="text" name="api_key" value="<?= htmlspecialchars($api_key) ?>" placeholder="api_key_...">
+            </div>
+            <div class="form-group">
+                <label>فاصله زمانی بروزرسانی خودکار (دقیقه)</label>
+                <input type="number" name="api_sync_interval" value="<?= htmlspecialchars($api_sync_interval) ?>" min="1" required>
+                <small style="color: var(--text); font-size: 0.8rem;">توصیه می‌شود برای جلوگیری از محدودیت API، مقداری بالاتر از ۵ دقیقه تنظیم کنید.</small>
             </div>
             <hr style="margin: 30px 0; border: 0; border-top: 1px solid var(--border);">
             <h3>تغییر رمز عبور مدیریت</h3>

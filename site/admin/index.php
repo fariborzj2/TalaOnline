@@ -1,7 +1,11 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . '/../../includes/navasan_service.php';
 check_login();
+
+$navasan = new NavasanService($pdo);
+$usage = $navasan->getUsage();
 
 // Handle some basic stats
 $stmt = $pdo->query("SELECT COUNT(*) FROM items");
@@ -194,10 +198,27 @@ $recent_updates = $stmt->fetchAll();
             <div class="stat-label">پلتفرم‌های فعال</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value">فعال</div>
+            <div class="stat-value"><?= $usage ? 'فعال' : 'خطا / بدون کلید' ?></div>
             <div class="stat-label">وضعیت اتصال به API</div>
         </div>
     </div>
+
+    <?php if ($usage): ?>
+    <div class="stats-grid" style="margin-bottom: 40px;">
+        <div class="stat-card" style="border-right: 4px solid #3b82f6;">
+            <div class="stat-value"><?= number_format($usage['monthly_usage'] ?? 0) ?></div>
+            <div class="stat-label">درخواست‌های ماه جاری</div>
+        </div>
+        <div class="stat-card" style="border-right: 4px solid #10b981;">
+            <div class="stat-value"><?= number_format($usage['daily_usage'] ?? 0) ?></div>
+            <div class="stat-label">درخواست‌های امروز</div>
+        </div>
+        <div class="stat-card" style="border-right: 4px solid #e29b21;">
+            <div class="stat-value"><?= number_format($usage['hourly_usage'] ?? 0) ?></div>
+            <div class="stat-label">درخواست‌های ساعت اخیر</div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <div class="card">
         <div class="card-title">
