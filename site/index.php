@@ -1,9 +1,106 @@
+<?php
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/navasan_service.php';
+
+$navasan = new NavasanService($pdo);
+
+// Sync if needed (every 10 mins)
+$last_sync = get_setting('last_sync_time', 0);
+if (time() - $last_sync > 600) {
+    if ($navasan->syncPrices()) {
+        set_setting('last_sync_time', time());
+    }
+}
+
+$items = $navasan->getDashboardData();
+$site_title = get_setting('site_title', 'طلا آنلاین');
+$site_description = get_setting('site_description', 'مرجع تخصصی قیمت لحظه‌ای طلا، سکه و ارز. مقایسه بهترین پلتفرم‌های خرید و فروش طلا در ایران.');
+$site_keywords = get_setting('site_keywords', 'قیمت طلا, قیمت سکه, دلار تهران, خرید طلا, مقایسه قیمت طلا');
+
+// Organize data
+$gold_data = null;
+$silver_data = null;
+$coins = [];
+
+foreach ($items as $item) {
+    if ($item['symbol'] == '18ayar') $gold_data = $item;
+    if ($item['symbol'] == 'silver') $silver_data = $item;
+
+    if (in_array($item['category'], ['gold', 'currency', 'coin'])) {
+        $coins[] = $item;
+    }
+}
+
+// Platforms
+$stmt = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC");
+$platforms = $stmt->fetchAll();
+
+// Helpers
+function fa_num($num) {
+    if ($num === null || $num === '') return '---';
+    $fmt = new NumberFormatter('fa_IR', NumberFormatter::DECIMAL);
+    return $fmt->format($num);
+}
+
+function fa_price($num) {
+    return fa_num($num);
+}
+
+function get_trend_arrow($change) {
+    if ($change > 0) return '<span class="trend-arrow trend-up"></span>';
+    if ($change < 0) return '<span class="trend-arrow trend-down"></span>';
+    return '';
+}
+?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>طلا آنلاین | قیمت لحظه‌ای طلا، سکه و ارز</title>
+    <title><?= htmlspecialchars($site_title) ?> | قیمت لحظه‌ای طلا، سکه و ارز</title>
+    <meta name="description" content="<?= htmlspecialchars($site_description) ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($site_keywords) ?>">
+    <link rel="canonical" href="<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" ?>">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($site_title) ?> | قیمت لحظه‌ای طلا، سکه و ارز">
+    <meta property="og:description" content="<?= htmlspecialchars($site_description) ?>">
+    <meta property="og:image" content="../site/assets/images/logo.svg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" ?>">
+    <meta property="twitter:title" content="<?= htmlspecialchars($site_title) ?> | قیمت لحظه‌ای طلا، سکه و ارز">
+    <meta property="twitter:description" content="<?= htmlspecialchars($site_description) ?>">
+    <meta property="twitter:image" content="../site/assets/images/logo.svg">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "<?= htmlspecialchars($site_title) ?>",
+      "url": "<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]" ?>",
+      "description": "<?= htmlspecialchars($site_description) ?>",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]" ?>/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "<?= htmlspecialchars($site_title) ?>",
+      "url": "<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]" ?>",
+      "logo": "<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]" ?>/site/assets/images/logo.svg"
+    }
+    </script>
+
     <link rel="stylesheet" href="assets/css/grid.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +110,7 @@
 </head>
 <body>
     <a href="#main-content" class="skip-link">رفتن به محتوای اصلی</a>
+    <h1 class="sr-only"><?= htmlspecialchars($site_title) ?> - مرجع قیمت لحظه‌ای طلا و سکه</h1>
     <div class="main" id="main-content">
         <div class="top-bar mb-10">
             <div class="center d-flex just-between align-center">
@@ -41,7 +139,12 @@
                     </button>
                     <div class="d-flex align-center gap-10 border-right pr-15">
                         <span class="live-pulse"></span>
-                        <span id="current-date" class="font-size-0-9 font-bold color-title">...</span>
+                        <span id="current-date" class="font-size-0-9 font-bold color-title">
+                            <?php
+                            $fmt = new IntlDateFormatter('fa_IR@calendar=persian', IntlDateFormatter::FULL, IntlDateFormatter::NONE, 'Asia/Tehran', IntlDateFormatter::TRADITIONAL);
+                            echo $fmt->format(new DateTime());
+                            ?>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -83,23 +186,29 @@
 
                             <div class="price-main mb-20">
                                 <div class="d-flex align-baseline">
-                                    <span class="color-title font-size-2-5 font-bold current-price skeleton">---</span>
+                                    <span class="color-title font-size-2-5 font-bold current-price"><?= fa_price($gold_data['price'] ?? null) ?></span>
                                     <span class="color-bright font-size-1 font-bold mr-10">تومان</span>
                                 </div>
                                 <div class="trend-badge-wrapper mt-5 d-flex align-center gap-10">
-                                    <span class="trend-badge change-percent skeleton">---</span>
-                                    <span class="price-change-val price-change skeleton">---</span>
+                                    <?php
+                                    $change = (float)($gold_data['change'] ?? 0);
+                                    $percent = (float)($gold_data['change_percent'] ?? 0);
+                                    $badge_class = $change >= 0 ? 'color-green' : 'color-red';
+                                    $sign = $change > 0 ? '+' : '';
+                                    ?>
+                                    <span class="trend-badge change-percent <?= $badge_class ?>"><?= get_trend_arrow($change) ?><?= fa_num($percent) ?>٪</span>
+                                    <span class="price-change-val price-change">(<?= $sign . fa_price($change) ?>)</span>
                                 </div>
                             </div>
 
                             <div class="stats-grid">
                                 <div class="stats-item">
                                     <div class="stats-label">بیشترین امروز</div>
-                                    <div class="stats-value high-price skeleton">---</div>
+                                    <div class="stats-value high-price"><?= fa_price($gold_data['high'] ?? null) ?> <span class="font-size-0-7 color-bright">تومان</span></div>
                                 </div>
                                 <div class="stats-item">
                                     <div class="stats-label">کمترین امروز</div>
-                                    <div class="stats-value low-price skeleton">---</div>
+                                    <div class="stats-value low-price"><?= fa_price($gold_data['low'] ?? null) ?> <span class="font-size-0-7 color-bright">تومان</span></div>
                                 </div>
                             </div>
                         </div>
@@ -124,23 +233,29 @@
 
                             <div class="price-main mb-20">
                                 <div class="d-flex align-baseline">
-                                    <span class="color-title font-size-2-5 font-bold current-price skeleton">---</span>
+                                    <span class="color-title font-size-2-5 font-bold current-price"><?= fa_price($silver_data['price'] ?? null) ?></span>
                                     <span class="color-bright font-size-1 font-bold mr-10">تومان</span>
                                 </div>
                                 <div class="trend-badge-wrapper mt-5 d-flex align-center gap-10">
-                                    <span class="trend-badge change-percent skeleton">---</span>
-                                    <span class="price-change-val price-change skeleton">---</span>
+                                    <?php
+                                    $change = (float)($silver_data['change'] ?? 0);
+                                    $percent = (float)($silver_data['change_percent'] ?? 0);
+                                    $badge_class = $change >= 0 ? 'color-green' : 'color-red';
+                                    $sign = $change > 0 ? '+' : '';
+                                    ?>
+                                    <span class="trend-badge change-percent <?= $badge_class ?>"><?= get_trend_arrow($change) ?><?= fa_num($percent) ?>٪</span>
+                                    <span class="price-change-val price-change">(<?= $sign . fa_price($change) ?>)</span>
                                 </div>
                             </div>
 
                             <div class="stats-grid">
                                 <div class="stats-item">
                                     <div class="stats-label">بیشترین امروز</div>
-                                    <div class="stats-value high-price skeleton">---</div>
+                                    <div class="stats-value high-price"><?= fa_price($silver_data['high'] ?? null) ?> <span class="font-size-0-7 color-bright">تومان</span></div>
                                 </div>
                                 <div class="stats-item">
                                     <div class="stats-label">کمترین امروز</div>
-                                    <div class="stats-value low-price skeleton">---</div>
+                                    <div class="stats-value low-price"><?= fa_price($silver_data['low'] ?? null) ?> <span class="font-size-0-7 color-bright">تومان</span></div>
                                 </div>
                             </div>
                         </div>
@@ -163,11 +278,11 @@
                             <div class="d-flex gap-20">
                                 <div class="">
                                     <div class="font-size-0-9">بالاترین قیمت</div>
-                                    <div class=""><span class="font-size-1-2 color-title chart-high-price skeleton">---</span> <span class="color-bright">تومان</span></div>
+                                    <div class=""><span class="font-size-1-2 color-title chart-high-price"><?= fa_price($gold_data['high'] ?? null) ?></span> <span class="color-bright">تومان</span></div>
                                 </div>
                                 <div class="">
                                     <div class="font-size-0-9">پایین‌ترین قیمت</div>
-                                    <div class=""><span class="font-size-1-2 color-title chart-low-price skeleton">---</span> <span class="color-bright">تومان</span></div>
+                                    <div class=""><span class="font-size-1-2 color-title chart-low-price"><?= fa_price($gold_data['low'] ?? null) ?></span> <span class="color-bright">تومان</span></div>
                                 </div>
                             </div>
                         </div>
@@ -221,24 +336,32 @@
                                 </tr>
                             </thead>
                             <tbody id="platforms-table-body">
+                                <?php foreach ($platforms as $p): ?>
                                 <tr>
-                                    <td><div class="skeleton" style="height: 40px; width: 48px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 100px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 80px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 80px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 50px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 60px;"></div></td>
-                                    <td><div class="skeleton" style="height: 38px; width: 100px; border-radius: 100px;"></div></td>
+                                    <td>
+                                        <div class="brand-logo">
+                                            <img src="../<?= htmlspecialchars($p['logo']) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="line20">
+                                            <div class="color-title"><?= htmlspecialchars($p['name']) ?></div>
+                                            <div class="font-size-0-8"><?= htmlspecialchars($p['en_name']) ?></div>
+                                        </div>
+                                    </td>
+                                    <td class="font-size-1-2 color-title"><?= fa_price($p['buy_price']) ?></td>
+                                    <td class="font-size-1-2 color-title"><?= fa_price($p['sell_price']) ?></td>
+                                    <td class="font-size-1-2" dir="ltr"><?= fa_num($p['fee']) ?>٪</td>
+                                    <td>
+                                        <span class="status-badge <?= $p['status'] === 'مناسب خرید' ? 'buy' : 'sell' ?>">
+                                            <?= htmlspecialchars($p['status']) ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="<?= htmlspecialchars($p['link']) ?>" class="btn" target="_blank" rel="noopener noreferrer" aria-label="خرید طلا از <?= htmlspecialchars($p['name']) ?> (در پنجره جدید)">خرید طلا</a>
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td><div class="skeleton" style="height: 40px; width: 48px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 100px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 80px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 80px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 50px;"></div></td>
-                                    <td><div class="skeleton" style="height: 24px; width: 60px;"></div></td>
-                                    <td><div class="skeleton" style="height: 38px; width: 100px; border-radius: 100px;"></div></td>
-                                </tr>
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
@@ -246,14 +369,41 @@
 
                 <div class="block-card order-0 fade-in-up" style="animation-delay: 0.4s;">
                     <div id="coins-list">
-                        <div class="coin-item skeleton" style="height: 60px; margin-bottom: 10px;"></div>
-                        <div class="coin-item skeleton" style="height: 60px; margin-bottom: 10px;"></div>
-                        <div class="coin-item skeleton" style="height: 60px;"></div>
+                        <?php foreach ($coins as $c): ?>
+                        <div class="coin-item">
+                            <div class="d-flex align-center gap-10">
+                                <div class="brand-logo">
+                                    <img src="../<?= htmlspecialchars($c['logo']) ?>" alt="<?= htmlspecialchars($c['name']) ?>">
+                                </div>
+                                <div class="line24">
+                                    <div class="color-title font-size-1"><?= htmlspecialchars($c['name']) ?></div>
+                                    <div class="font-size-0-8"><?= htmlspecialchars($c['en_name']) ?></div>
+                                </div>
+                            </div>
+
+                            <div class="line24 text-left">
+                                <div class=""><span class="color-title font-size-1-2 font-bold"><?= fa_price($c['price']) ?></span> <span class="color-bright font-size-0-8">تومان</span></div>
+                                <div class="<?= (float)$c['change_percent'] >= 0 ? 'color-green' : 'color-red' ?> font-size-0-8 mt-4">
+                                    <?= get_trend_arrow($c['change_percent']) ?><?= fa_num($c['change_percent']) ?>٪
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        window.__INITIAL_STATE__ = {
+            platforms: <?= json_encode($platforms) ?>,
+            coins: <?= json_encode($coins) ?>,
+            summary: {
+                gold: <?= json_encode($gold_data) ?>,
+                silver: <?= json_encode($silver_data) ?>
+            }
+        };
+    </script>
     <script src="assets/js/charts.js"></script>
     <script src="assets/js/app.js"></script>
 </body>

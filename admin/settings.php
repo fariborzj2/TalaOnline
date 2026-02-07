@@ -8,9 +8,13 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $api_key = $_POST['api_key'];
     $site_title = $_POST['site_title'];
+    $site_description = $_POST['site_description'];
+    $site_keywords = $_POST['site_keywords'];
 
     set_setting('api_key', $api_key);
     set_setting('site_title', $site_title);
+    set_setting('site_description', $site_description);
+    set_setting('site_keywords', $site_keywords);
 
     // Check if password change is requested
     if (!empty($_POST['new_password'])) {
@@ -25,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $api_key = get_setting('api_key');
 $site_title = get_setting('site_title', 'طلا آنلاین');
+$site_description = get_setting('site_description', 'مرجع تخصصی قیمت لحظه‌ای طلا، سکه و ارز. مقایسه بهترین پلتفرم‌های خرید و فروش طلا در ایران.');
+$site_keywords = get_setting('site_keywords', 'قیمت طلا, قیمت سکه, دلار تهران, خرید طلا, مقایسه قیمت طلا');
 
 ?>
 <!DOCTYPE html>
@@ -73,6 +79,14 @@ $site_title = get_setting('site_title', 'طلا آنلاین');
             <div class="form-group">
                 <label>عنوان سایت</label>
                 <input type="text" name="site_title" value="<?= htmlspecialchars($site_title) ?>" required>
+            </div>
+            <div class="form-group">
+                <label>توضیحات سئو (Meta Description)</label>
+                <textarea name="site_description" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 12px; box-sizing: border-box; font-family: inherit; height: 100px;"><?= htmlspecialchars($site_description) ?></textarea>
+            </div>
+            <div class="form-group">
+                <label>کلمات کلیدی (جدا شده با کاما)</label>
+                <input type="text" name="site_keywords" value="<?= htmlspecialchars($site_keywords) ?>">
             </div>
             <div class="form-group">
                 <label>کلید API نوسان (Navasan API Key)</label>
