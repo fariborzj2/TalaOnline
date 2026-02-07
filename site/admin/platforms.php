@@ -135,7 +135,7 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td>
                         <p class="font-black text-slate-900"><?= htmlspecialchars($p['name']) ?></p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter ltr-input"><?= htmlspecialchars($p['en_name']) ?></p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"><?= htmlspecialchars($p['en_name']) ?></p>
                     </td>
                     <td>
                         <div class="flex flex-col gap-1">
