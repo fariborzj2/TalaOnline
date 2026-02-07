@@ -4,35 +4,75 @@ require_once __DIR__ . '/../../includes/db.php';
 check_login();
 
 $message = '';
+$error = '';
 
-// Handle Update
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit') {
-    $id = $_POST['id'];
-    $name = $_POST['name'];
-    $en_name = $_POST['en_name'];
-    $buy_price = $_POST['buy_price'];
-    $sell_price = $_POST['sell_price'];
-    $fee = $_POST['fee'];
-    $status = $_POST['status'];
-    $link = $_POST['link'];
-    $logo = $_POST['logo'];
+// Handle Actions
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action = $_POST['action'];
 
-    $stmt = $pdo->prepare("UPDATE platforms SET name = ?, en_name = ?, buy_price = ?, sell_price = ?, fee = ?, status = ?, link = ?, logo = ? WHERE id = ?");
-    $stmt->execute([$name, $en_name, $buy_price, $sell_price, $fee, $status, $link, $logo, $id]);
-    $message = 'پلتفرم با موفقیت بروزرسانی شد.';
+    if ($action === 'add' || $action === 'edit') {
+        $id = $_POST['id'] ?? null;
+        $name = $_POST['name'];
+        $en_name = $_POST['en_name'];
+        $buy_price = $_POST['buy_price'];
+        $sell_price = $_POST['sell_price'];
+        $fee = $_POST['fee'];
+        $status = $_POST['status'];
+        $link = $_POST['link'];
+        $is_active = isset($_POST['is_active']) ? 1 : 0;
+        $sort_order = (int)$_POST['sort_order'];
+
+        // Handle Image Upload
+        $logo = $_POST['current_logo'] ?? '';
+        if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+            $uploaded_path = handle_upload($_FILES['logo_file']);
+            if ($uploaded_path) {
+                $logo = $uploaded_path;
+            }
+        } elseif (!empty($_POST['logo_url'])) {
+            $logo = $_POST['logo_url'];
+        }
+
+        if ($action === 'add') {
+            try {
+                $stmt = $pdo->prepare("INSERT INTO platforms (name, en_name, logo, buy_price, sell_price, fee, status, link, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $en_name, $logo, $buy_price, $sell_price, $fee, $status, $link, $is_active, $sort_order]);
+                $message = 'پلتفرم جدید با موفقیت اضافه شد.';
+            } catch (Exception $e) {
+                $error = 'خطا در افزودن پلتفرم: ' . $e->getMessage();
+            }
+        } else {
+            $stmt = $pdo->prepare("UPDATE platforms SET name = ?, en_name = ?, logo = ?, buy_price = ?, sell_price = ?, fee = ?, status = ?, link = ?, is_active = ?, sort_order = ? WHERE id = ?");
+            $stmt->execute([$name, $en_name, $logo, $buy_price, $sell_price, $fee, $status, $link, $is_active, $sort_order, $id]);
+            $message = 'پلتفرم با موفقیت بروزرسانی شد.';
+        }
+    } elseif ($action === 'delete') {
+        $id = $_POST['id'];
+        $stmt = $pdo->prepare("DELETE FROM platforms WHERE id = ?");
+        $stmt->execute([$id]);
+        $message = 'پلتفرم با موفقیت حذف شد.';
+    } elseif ($action === 'toggle_status') {
+        $id = $_POST['id'];
+        $active_status = $_POST['is_active'];
+        $stmt = $pdo->prepare("UPDATE platforms SET is_active = ? WHERE id = ?");
+        $stmt->execute([$active_status, $id]);
+        $message = 'وضعیت با موفقیت تغییر کرد.';
+    }
 }
 
 $platforms = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC")->fetchAll();
 
 $page_title = 'پلتفرم‌های تبادل';
-$page_subtitle = 'مدیریت و مقایسه نرخ‌های خرید و فروش در صرافی‌ها و پلتفرم‌های طلا';
+$page_subtitle = 'مدیریت کامل صرافی‌ها، نرخ‌های خرید و فروش و کارمزدها';
+
+$header_action = '<button onclick="openAddModal()" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن پلتفرم جدید</button>';
 
 include __DIR__ . '/layout/header.php';
 ?>
 
 <?php if ($message): ?>
-    <div class="mb-8 animate-bounce-in">
-        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center gap-3 text-emerald-700">
+    <div class="mb-8">
+        <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-4 flex items-center gap-3 text-emerald-700">
             <div class="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center">
                 <i data-lucide="check" class="w-5 h-5"></i>
             </div>
@@ -41,10 +81,21 @@ include __DIR__ . '/layout/header.php';
     </div>
 <?php endif; ?>
 
-<div class="glass-card rounded-[20px] overflow-hidden border border-slate-200">
+<?php if ($error): ?>
+    <div class="mb-8">
+        <div class="bg-rose-50 border border-rose-100 rounded-lg p-4 flex items-center gap-3 text-rose-700">
+            <div class="w-8 h-8 bg-rose-500 text-white rounded-lg flex items-center justify-center">
+                <i data-lucide="alert-circle" class="w-5 h-5"></i>
+            </div>
+            <span class="font-bold"><?= $error ?></span>
+        </div>
+    </div>
+<?php endif; ?>
+
+<div class="glass-card rounded-xl overflow-hidden border border-slate-200">
     <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400">
+            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
                 <i data-lucide="layers" class="w-5 h-5"></i>
             </div>
             <h2 class="text-lg font-black text-slate-800">لیست پلتفرم‌ها</h2>
@@ -57,57 +108,69 @@ include __DIR__ . '/layout/header.php';
         <table class="w-full admin-table">
             <thead>
                 <tr>
+                    <th class="w-16">ترتیب</th>
                     <th class="w-20">لوگو</th>
                     <th>نام پلتفرم</th>
                     <th>نرخ خرید / فروش</th>
                     <th>کارمزد</th>
-                    <th>وضعیت</th>
+                    <th class="text-center">وضعیت</th>
                     <th class="text-center">عملیات</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
                 <?php foreach ($platforms as $p): ?>
                 <tr class="hover:bg-slate-50/50 transition-colors group">
+                    <td class="text-center font-black text-slate-400"><?= $p['sort_order'] ?></td>
                     <td>
-                        <div class="w-12 h-12 rounded-2xl bg-slate-100 p-2.5 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 p-2 flex items-center justify-center">
                             <img src="../<?= htmlspecialchars($p['logo']) ?>" alt="" class="w-full h-full object-contain">
                         </div>
                     </td>
                     <td>
                         <p class="font-black text-slate-900"><?= htmlspecialchars($p['name']) ?></p>
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-tighter"><?= htmlspecialchars($p['en_name']) ?></p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter ltr-input"><?= htmlspecialchars($p['en_name']) ?></p>
                     </td>
                     <td>
                         <div class="flex flex-col gap-1">
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-black bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded">BUY</span>
-                                <span class="text-sm font-black text-emerald-600"><?= number_format((float)$p['buy_price']) ?></span>
+                                <span class="text-[9px] font-black bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded">BUY</span>
+                                <span class="text-xs font-black text-emerald-600 ltr-input"><?= number_format((float)$p['buy_price']) ?></span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-black bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded">SELL</span>
-                                <span class="text-sm font-black text-rose-600"><?= number_format((float)$p['sell_price']) ?></span>
+                                <span class="text-[9px] font-black bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded">SELL</span>
+                                <span class="text-xs font-black text-rose-600 ltr-input"><?= number_format((float)$p['sell_price']) ?></span>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-black bg-indigo-50 text-indigo-600 border border-indigo-100">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-indigo-50 text-indigo-600 border border-indigo-100 ltr-input">
                             <?= htmlspecialchars($p['fee']) ?>%
                         </span>
                     </td>
-                    <td>
-                        <?php
-                        $is_good = $p['status'] === 'مناسب خرید';
-                        $status_color = $is_good ? 'emerald' : 'rose';
-                        ?>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black bg-<?= $status_color ?>-50 text-<?= $status_color ?>-600 border border-<?= $status_color ?>-100">
-                            <span class="w-1.5 h-1.5 bg-<?= $status_color ?>-500 rounded-full <?= $is_good ? 'animate-pulse' : '' ?>"></span>
-                            <?= htmlspecialchars($p['status']) ?>
-                        </span>
+                    <td class="text-center">
+                        <form method="POST" class="inline">
+                            <input type="hidden" name="action" value="toggle_status">
+                            <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                            <input type="hidden" name="is_active" value="<?= $p['is_active'] ? 0 : 1 ?>">
+                            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black <?= $p['is_active'] ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200' ?>">
+                                <span class="w-1.5 h-1.5 rounded-full <?= $p['is_active'] ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300' ?>"></span>
+                                <?= $p['is_active'] ? 'فعال' : 'غیرفعال' ?>
+                            </button>
+                        </form>
                     </td>
                     <td class="text-center">
-                        <button class="w-10 h-10 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-xl transition-all flex items-center justify-center mx-auto group/btn" onclick='editPlatform(<?= json_encode($p) ?>)'>
-                            <i data-lucide="edit-3" class="w-5 h-5 group-hover/btn:scale-110 transition-transform"></i>
-                        </button>
+                        <div class="flex items-center justify-center gap-2">
+                            <button class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn" onclick='editPlatform(<?= json_encode($p) ?>)'>
+                                <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
+                            </button>
+                            <form method="POST" class="inline" onsubmit="return confirm('آیا از حذف این پلتفرم اطمینان دارید؟')">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                                <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
+                                    <i data-lucide="trash-2" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -116,85 +179,105 @@ include __DIR__ . '/layout/header.php';
     </div>
 </div>
 
-<!-- Edit Modal -->
-<div id="editModal" class="hidden fixed inset-0 z-[1000] bg-slate-900/40 backdrop-blur-sm items-center justify-center p-4">
-    <div class="bg-white w-full max-w-xl rounded-[20px] p-5 md:p-6 transform transition-all animate-modal-up">
-        <div class="flex items-center justify-between border-b border-slate-50 pb-5">
+<!-- Platform Modal -->
+<div id="platformModal" class="hidden fixed inset-0 z-[1000] bg-slate-900/40 backdrop-blur-sm items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-xl p-6 md:p-8 transform transition-all animate-modal-up modal-container">
+        <div class="flex items-center justify-between border-b border-slate-50 pb-6 mb-6">
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
-                    <i data-lucide="layout" class="w-6 h-6"></i>
+                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="layout" class="w-6 h-6" id="modalIcon"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-black text-slate-900">ویرایش پلتفرم</h2>
+                    <h2 class="text-lg font-black text-slate-900" id="modalTitle">افزودن پلتفرم جدید</h2>
                     <p class="text-[10px] text-slate-400 font-bold mt-1">تنظیمات نرخ‌ها، کارمزد و اطلاعات دسترسی</p>
                 </div>
             </div>
-            <button onclick="closeModal()" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors">
-                <i data-lucide="x" class="w-5 h-5"></i>
+            <button onclick="closeModal()" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-lg flex items-center justify-center hover:bg-slate-100 transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
 
-        <form method="POST" class="mt-6">
-            <input type="hidden" name="action" value="edit">
-            <input type="hidden" name="id" id="edit-id">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="action" id="formAction" value="add">
+            <input type="hidden" name="id" id="platform-id">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div class="form-group">
                     <label>نام فارسی پلتفرم</label>
-                    <input type="text" name="name" id="edit-name" required>
+                    <input type="text" name="name" id="platform-name" required>
                 </div>
                 <div class="form-group">
                     <label>نام انگلیسی (EN Name)</label>
-                    <input type="text" name="en_name" id="edit-en_name">
+                    <input type="text" name="en_name" id="platform-en_name" class="ltr-input">
+                </div>
+            </div>
+
+            <div class="form-group mb-4">
+                <label>لوگوی پلتفرم</label>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <input type="file" name="logo_file" class="text-xs">
+                        <p class="text-[9px] text-slate-400 mt-1">آپلود مستقیم تصویر</p>
+                    </div>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="link" class="w-3.5 h-3.5"></i></span>
+                        <input type="text" name="logo_url" id="platform-logo" class="ltr-input text-xs" placeholder="یا لینک تصویر...">
+                    </div>
+                </div>
+                <input type="hidden" name="current_logo" id="platform-current_logo">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="form-group">
+                    <label>نرخ خرید (تومان)</label>
+                    <input type="text" name="buy_price" id="platform-buy_price" class="text-emerald-600 font-black ltr-input">
+                </div>
+                <div class="form-group">
+                    <label>نرخ فروش (تومان)</label>
+                    <input type="text" name="sell_price" id="platform-sell_price" class="text-rose-600 font-black ltr-input">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="form-group">
+                    <label>کارمزد (%)</label>
+                    <input type="text" name="fee" id="platform-fee" class="font-black text-indigo-600 ltr-input">
+                </div>
+                <div class="form-group col-span-2">
+                    <label>برچسب وضعیت (متن)</label>
+                    <input type="text" name="status" id="platform-status" placeholder="مثلاً مناسب خرید">
                 </div>
             </div>
 
             <div class="form-group mb-6">
-                <label>مسیر لوگو (Logo Path)</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
-                        <i data-lucide="image" class="w-4 h-4"></i>
-                    </span>
-                    <input type="text" name="logo" id="edit-logo" class="pr-10">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="form-group">
-                    <label>نرخ خرید (تومان)</label>
-                    <input type="text" name="buy_price" id="edit-buy_price" class="text-emerald-600 font-black">
-                </div>
-                <div class="form-group">
-                    <label>نرخ فروش (تومان)</label>
-                    <input type="text" name="sell_price" id="edit-sell_price" class="text-rose-600 font-black">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="form-group">
-                    <label>کارمزد (%)</label>
-                    <input type="text" name="fee" id="edit-fee" class="font-black text-indigo-600">
-                </div>
-                <div class="form-group">
-                    <label>برچسب وضعیت</label>
-                    <input type="text" name="status" id="edit-status" placeholder="مثلاً مناسب خرید">
-                </div>
-            </div>
-
-            <div class="form-group mb-8">
                 <label>لینک وب‌سایت پلتفرم</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
-                        <i data-lucide="external-link" class="w-4 h-4"></i>
-                    </span>
-                    <input type="text" name="link" id="edit-link" class="pr-10" placeholder="https://...">
+                <div class="input-icon-wrapper">
+                    <span class="icon"><i data-lucide="external-link" class="w-3.5 h-3.5"></i></span>
+                    <input type="text" name="link" id="platform-link" class="ltr-input" placeholder="https://...">
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 mb-6">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-black text-slate-800 text-xs">تنظیمات سیستمی</h4>
+                    <div class="flex gap-4">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="is_active" id="platform-is_active" class="sr-only peer" checked>
+                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:-translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                            <span class="mr-2 text-[10px] font-black text-slate-600">فعال</span>
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <label class="text-[10px] font-black text-slate-600">ترتیب:</label>
+                            <input type="number" name="sort_order" id="platform-sort_order" value="0" class="w-16 py-1 px-2 text-xs">
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="flex items-center gap-4">
                 <button type="submit" class="btn-v3 btn-v3-primary flex-grow">
-                    <i data-lucide="save" class="w-5 h-5"></i>
-                    ذخیره تغییرات پلتفرم
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    ذخیره اطلاعات پلتفرم
                 </button>
                 <button type="button" class="btn-v3 btn-v3-outline" onclick="closeModal()">انصراف</button>
             </div>
@@ -203,28 +286,61 @@ include __DIR__ . '/layout/header.php';
 </div>
 
 <script>
-    function editPlatform(p) {
-        document.getElementById('edit-id').value = p.id;
-        document.getElementById('edit-name').value = p.name;
-        document.getElementById('edit-en_name').value = p.en_name;
-        document.getElementById('edit-logo').value = p.logo;
-        document.getElementById('edit-buy_price').value = p.buy_price;
-        document.getElementById('edit-sell_price').value = p.sell_price;
-        document.getElementById('edit-fee').value = p.fee;
-        document.getElementById('edit-status').value = p.status;
-        document.getElementById('edit-link').value = p.link;
+    function openAddModal() {
+        document.getElementById('formAction').value = 'add';
+        document.getElementById('modalTitle').innerText = 'افزودن پلتفرم جدید';
+        document.getElementById('modalIcon').setAttribute('data-lucide', 'plus');
+        document.getElementById('platform-id').value = '';
+        document.getElementById('platform-name').value = '';
+        document.getElementById('platform-en_name').value = '';
+        document.getElementById('platform-logo').value = '';
+        document.getElementById('platform-buy_price').value = '';
+        document.getElementById('platform-sell_price').value = '';
+        document.getElementById('platform-fee').value = '';
+        document.getElementById('platform-status').value = '';
+        document.getElementById('platform-link').value = '';
+        document.getElementById('platform-is_active').checked = true;
+        document.getElementById('platform-sort_order').value = '0';
 
-        const modal = document.getElementById('editModal');
+        showModal();
+    }
+
+    function editPlatform(p) {
+        document.getElementById('formAction').value = 'edit';
+        document.getElementById('modalTitle').innerText = 'ویرایش پلتفرم';
+        document.getElementById('modalIcon').setAttribute('data-lucide', 'edit-2');
+        document.getElementById('platform-id').value = p.id;
+        document.getElementById('platform-name').value = p.name;
+        document.getElementById('platform-en_name').value = p.en_name;
+        document.getElementById('platform-logo').value = p.logo;
+        document.getElementById('platform-current_logo').value = p.logo;
+        document.getElementById('platform-buy_price').value = p.buy_price;
+        document.getElementById('platform-sell_price').value = p.sell_price;
+        document.getElementById('platform-fee').value = p.fee;
+        document.getElementById('platform-status').value = p.status;
+        document.getElementById('platform-link').value = p.link;
+        document.getElementById('platform-is_active').checked = p.is_active == 1;
+        document.getElementById('platform-sort_order').value = p.sort_order;
+
+        showModal();
+    }
+
+    function showModal() {
+        const modal = document.getElementById('platformModal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
-
         window.refreshIcons();
     }
 
     function closeModal() {
-        const modal = document.getElementById('editModal');
+        const modal = document.getElementById('platformModal');
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('platformModal');
+        if (event.target == modal) closeModal();
     }
 </script>
 

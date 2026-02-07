@@ -42,10 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         @layer components {
             .login-input {
-                @apply w-full border border-slate-200 bg-white rounded-xl px-4 py-2.5 pr-12 outline-none transition-all duration-200 font-bold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10;
+                @apply w-full border border-slate-200 bg-white rounded-lg px-4 py-2.5 pr-12 outline-none transition-all duration-200 font-bold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10;
             }
             .login-button {
-                @apply w-full bg-indigo-600 text-white py-2.5 rounded-xl font-black text-base hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3;
+                @apply w-full bg-indigo-600 text-white py-2.5 rounded-lg font-black text-xs hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3;
             }
         }
     </style>
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-amber-100/50 rounded-full blur-[120px]"></div>
 
     <div class="w-full max-w-[400px] relative z-10">
-        <div class="bg-white p-8 md:p-10 rounded-[20px] border border-slate-200">
+        <div class="bg-white p-8 md:p-10 rounded-xl border border-slate-200">
             <div class="text-center mb-8 md:mb-10">
                 <div class="w-16 h-16 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-6 ring-8 ring-indigo-50">
                     <i data-lucide="shield-check" class="text-white w-8 h-8"></i>
@@ -76,24 +76,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
 
-            <form method="POST" class="space-y-5 md:space-y-6">
-                <div class="space-y-2">
-                    <label class="block pr-1 font-black text-slate-700 text-sm">نام کاربری</label>
+            <form method="POST" class="space-y-4 md:space-y-5">
+                <div class="space-y-1.5">
+                    <label class="block pr-1 font-black text-slate-700 text-xs">نام کاربری</label>
                     <div class="relative group">
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                            <i data-lucide="user" class="w-5 h-5"></i>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
+                            <i data-lucide="user" class="w-4 h-4"></i>
                         </span>
-                        <input type="text" name="username" required autocomplete="username" placeholder="Username" class="login-input">
+                        <input type="text" name="username" required autocomplete="username" placeholder="Username" class="login-input ltr-input">
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="block pr-1 font-black text-slate-700 text-sm">رمز عبور</label>
+                <div class="space-y-1.5">
+                    <label class="block pr-1 font-black text-slate-700 text-xs">رمز عبور</label>
                     <div class="relative group">
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
-                            <i data-lucide="key-round" class="w-5 h-5"></i>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
+                            <i data-lucide="key-round" class="w-4 h-4"></i>
                         </span>
-                        <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" class="login-input">
+                        <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" class="login-input ltr-input">
                     </div>
                 </div>
 

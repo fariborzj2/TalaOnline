@@ -89,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `description` TEXT,
                         `manual_price` VARCHAR(50),
                         `is_manual` TINYINT(1) DEFAULT 0,
+                        `is_active` TINYINT(1) DEFAULT 1,
                         `category` VARCHAR(50) DEFAULT 'gold',
                         `sort_order` INT DEFAULT 0
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
@@ -113,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `fee` VARCHAR(20),
                         `status` VARCHAR(50),
                         `link` VARCHAR(255),
+                        `is_active` TINYINT(1) DEFAULT 1,
                         `sort_order` INT DEFAULT 0
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 

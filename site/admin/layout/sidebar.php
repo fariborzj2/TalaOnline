@@ -5,12 +5,12 @@
 <aside id="sidebar" class="fixed inset-y-0 right-0 w-64 bg-white border-l border-slate-100 transform translate-x-full lg:translate-x-0 lg:static lg:flex flex-col transition-transform duration-300 ease-in-out z-50 lg:shadow-none">
     <div class="p-5 pb-4">
         <div class="flex items-center gap-3 mb-8">
-            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center ring-4 ring-indigo-50">
+            <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center ring-4 ring-indigo-50">
                 <i data-lucide="shield-check" class="text-white w-6 h-6"></i>
             </div>
             <div>
-                <h2 class="font-black text-lg text-slate-900 leading-tight">طلا آنلاین</h2>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Core Admin v4.0</p>
+                <h2 class="font-black text-base text-slate-900 leading-tight">طلا آنلاین</h2>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Core Admin v4.0</p>
             </div>
         </div>
 
@@ -35,11 +35,11 @@
     </div>
 
     <div class="mt-auto p-5 border-t border-slate-50">
-        <div class="bg-indigo-600 rounded-[20px] p-5 text-white relative overflow-hidden">
+        <div class="bg-indigo-600 rounded-xl p-5 text-white relative overflow-hidden">
             <div class="relative z-10">
-                <p class="text-indigo-100 text-[10px] font-bold uppercase tracking-widest mb-1">نسخه سیستم</p>
-                <h3 class="font-black text-base mb-3">4.2.0-STABLE</h3>
-                <a href="../" target="_blank" class="block w-full text-center bg-white/20 hover:bg-white/30 py-2.5 rounded-xl text-xs font-bold transition-all">
+                <p class="text-indigo-100 text-[9px] font-bold uppercase tracking-widest mb-1">نسخه سیستم</p>
+                <h3 class="font-black text-sm mb-3">4.2.0-STABLE</h3>
+                <a href="../" target="_blank" class="block w-full text-center bg-white/20 hover:bg-white/30 py-2 rounded-lg text-[10px] font-bold transition-all">
                     مشاهده وب‌سایت
                 </a>
             </div>
