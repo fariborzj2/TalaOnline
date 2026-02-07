@@ -67,14 +67,14 @@ function get_trend_arrow($change) {
     <meta property="og:url" content="<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" ?>">
     <meta property="og:title" content="<?= htmlspecialchars($site_title) ?> | قیمت لحظه‌ای طلا، سکه و ارز">
     <meta property="og:description" content="<?= htmlspecialchars($site_description) ?>">
-    <meta property="og:image" content="../site/assets/images/logo.svg">
+    <meta property="og:image" content="<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]" ?>/assets/images/logo.svg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" ?>">
     <meta property="twitter:title" content="<?= htmlspecialchars($site_title) ?> | قیمت لحظه‌ای طلا، سکه و ارز">
     <meta property="twitter:description" content="<?= htmlspecialchars($site_description) ?>">
-    <meta property="twitter:image" content="../site/assets/images/logo.svg">
+    <meta property="twitter:image" content="<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]" ?>/assets/images/logo.svg">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -340,7 +340,7 @@ function get_trend_arrow($change) {
                                 <tr>
                                     <td>
                                         <div class="brand-logo">
-                                            <img src="../<?= htmlspecialchars($p['logo']) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
+                                            <img src="<?= htmlspecialchars($p['logo']) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
                                         </div>
                                     </td>
                                     <td>
@@ -373,7 +373,7 @@ function get_trend_arrow($change) {
                         <div class="coin-item">
                             <div class="d-flex align-center gap-10">
                                 <div class="brand-logo">
-                                    <img src="../<?= htmlspecialchars($c['logo']) ?>" alt="<?= htmlspecialchars($c['name']) ?>">
+                                    <img src="<?= htmlspecialchars($c['logo']) ?>" alt="<?= htmlspecialchars($c['name']) ?>">
                                 </div>
                                 <div class="line24">
                                     <div class="color-title font-size-1"><?= htmlspecialchars($c['name']) ?></div>

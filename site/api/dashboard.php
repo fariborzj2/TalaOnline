@@ -4,8 +4,8 @@
  */
 
 header('Content-Type: application/json');
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/navasan_service.php';
+require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . '/../../includes/navasan_service.php';
 
 $navasan = new NavasanService($pdo);
 

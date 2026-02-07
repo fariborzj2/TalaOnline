@@ -1,9 +1,0 @@
-User-agent: *
-Allow: /site/
-Allow: /site/assets/
-Disallow: /admin/
-Disallow: /api/
-Disallow: /includes/
-Disallow: /installer.php
-
-Sitemap: http://localhost/sitemap.xml

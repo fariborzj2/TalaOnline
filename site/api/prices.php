@@ -4,7 +4,7 @@
  */
 
 header('Content-Type: application/json');
-require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../../includes/db.php';
 
 $response = [
     'gold' => [],
@@ -35,8 +35,8 @@ foreach ($silver_history as $row) {
 }
 
 // If database is empty, fall back to static data for initial experience
-if (empty($response['gold']) && file_exists(__DIR__ . '/../data/prices.json')) {
-    $static_data = json_decode(file_get_contents(__DIR__ . '/../data/prices.json'), true);
+if (empty($response['gold']) && file_exists(__DIR__ . '/../../data/prices.json')) {
+    $static_data = json_decode(file_get_contents(__DIR__ . '/../../data/prices.json'), true);
     if ($static_data) {
         $response = $static_data;
     }
