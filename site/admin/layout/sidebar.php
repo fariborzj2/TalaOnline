@@ -21,11 +21,11 @@
             </a>
             <a href="items.php" class="sidebar-link <?= $current_page == 'items.php' ? 'active' : '' ?>">
                 <i data-lucide="coins" class="w-6 h-6"></i>
-                <span>دارایی‌ها</span>
+                <span>ارزها</span>
             </a>
             <a href="platforms.php" class="sidebar-link <?= $current_page == 'platforms.php' ? 'active' : '' ?>">
                 <i data-lucide="building-2" class="w-6 h-6"></i>
-                <span>سکوها</span>
+                <span>پتلفرم‌ها</span>
             </a>
             <a href="settings.php" class="sidebar-link <?= $current_page == 'settings.php' ? 'active' : '' ?>">
                 <i data-lucide="settings" class="w-6 h-6"></i>

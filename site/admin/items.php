@@ -74,8 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 $items = $pdo->query("SELECT i.*, p.price as api_price FROM items i LEFT JOIN prices_cache p ON i.symbol = p.symbol ORDER BY i.sort_order ASC")->fetchAll();
 
-$page_title = 'مدیریت دارایی‌ها';
-$page_subtitle = 'مدیریت کامل دارایی‌ها، دسته‌بندی‌ها و قیمت‌های دستی';
+$page_title = 'مدیریت ارزها';
+$page_subtitle = 'مدیریت کامل ارزها، دسته‌بندی‌ها و قیمت‌های دستی';
 
 $header_action = '<button onclick="openAddModal()" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن دارایی جدید</button>';
 
@@ -110,7 +110,7 @@ include __DIR__ . '/layout/header.php';
             <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
                 <i data-lucide="list" class="w-5 h-5"></i>
             </div>
-            <h2 class="text-lg font-black text-slate-800">لیست دارایی‌ها</h2>
+            <h2 class="text-lg font-black text-slate-800">لیست ارزها</h2>
         </div>
         <div class="flex items-center gap-2">
             <span class="text-xs font-bold text-slate-400">تعداد کل: <?= count($items) ?></span>
