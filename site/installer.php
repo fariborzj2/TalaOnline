@@ -202,6 +202,7 @@ $checks = [
     'PHP Version (>= 7.4)' => version_compare(PHP_VERSION, '7.4.0', '>='),
     'PDO Extension' => extension_loaded('pdo'),
     'PDO MySQL Extension' => extension_loaded('pdo_mysql'),
+    'Intl Extension' => extension_loaded('intl'),
     'Config Writable' => is_writable('.')
 ];
 $all_passed = !in_array(false, $checks, true);
