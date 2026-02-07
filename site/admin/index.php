@@ -37,7 +37,6 @@ include __DIR__ . '/layout/header.php';
                 <h3 class="text-2xl font-black text-slate-900 mt-1"><?= number_format($total_items) ?></h3>
             </div>
         </div>
-        <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-blue-50/50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
     </div>
 
     <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
@@ -50,7 +49,6 @@ include __DIR__ . '/layout/header.php';
                 <h3 class="text-2xl font-black text-slate-900 mt-1"><?= number_format($total_platforms) ?></h3>
             </div>
         </div>
-        <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-amber-50/50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
     </div>
 
     <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
@@ -64,7 +62,6 @@ include __DIR__ . '/layout/header.php';
                 <h3 class="text-xl font-black text-slate-900 mt-1"><?= $usage ? 'متصل و عملیاتی' : 'خطا در اتصال' ?></h3>
             </div>
         </div>
-        <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-50/50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
     </div>
 </div>
 
