@@ -3,6 +3,18 @@ require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
 check_login();
 
+// Schema Self-Healing
+try {
+    $pdo->query("SELECT is_active FROM items LIMIT 1");
+} catch (Exception $e) {
+    $pdo->exec("ALTER TABLE items ADD COLUMN is_active TINYINT(1) DEFAULT 1");
+}
+try {
+    $pdo->query("SELECT category FROM items LIMIT 1");
+} catch (Exception $e) {
+    $pdo->exec("ALTER TABLE items ADD COLUMN category VARCHAR(50) DEFAULT 'gold'");
+}
+
 $message = '';
 $error = '';
 
@@ -12,15 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     if ($action === 'add' || $action === 'edit') {
         $id = $_POST['id'] ?? null;
-        $symbol = $_POST['symbol'];
-        $name = $_POST['name'];
-        $en_name = $_POST['en_name'];
-        $description = $_POST['description'];
-        $manual_price = $_POST['manual_price'];
+        $symbol = $_POST['symbol'] ?? '';
+        $name = $_POST['name'] ?? '';
+        $en_name = $_POST['en_name'] ?? '';
+        $description = $_POST['description'] ?? '';
+        $manual_price = $_POST['manual_price'] ?? '';
         $is_manual = isset($_POST['is_manual']) ? 1 : 0;
         $is_active = isset($_POST['is_active']) ? 1 : 0;
-        $category = $_POST['category'];
-        $sort_order = (int)$_POST['sort_order'];
+        $category = $_POST['category'] ?? 'gold';
+        $sort_order = (int)($_POST['sort_order'] ?? 0);
 
         // Handle Image Upload
         $logo = $_POST['current_logo'] ?? '';
@@ -134,7 +146,8 @@ include __DIR__ . '/layout/header.php';
                     <td>
                         <?php
                         $cat_map = ['gold' => 'طلا', 'coin' => 'سکه', 'currency' => 'ارز', 'silver' => 'نقره'];
-                        $cat_name = $cat_map[$item['category']] ?? $item['category'];
+                        $item_cat = $item['category'] ?? 'gold';
+                        $cat_name = $cat_map[$item_cat] ?? $item_cat;
                         ?>
                         <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-black border border-slate-200">
                             <?= $cat_name ?>
@@ -156,13 +169,14 @@ include __DIR__ . '/layout/header.php';
                         <?php endif; ?>
                     </td>
                     <td class="text-center">
+                        <?php $active = $item['is_active'] ?? 1; ?>
                         <form method="POST" class="inline">
                             <input type="hidden" name="action" value="toggle_status">
                             <input type="hidden" name="id" value="<?= $item['id'] ?>">
-                            <input type="hidden" name="status" value="<?= $item['is_active'] ? 0 : 1 ?>">
-                            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black <?= $item['is_active'] ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200' ?>">
-                                <span class="w-1.5 h-1.5 rounded-full <?= $item['is_active'] ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300' ?>"></span>
-                                <?= $item['is_active'] ? 'فعال' : 'غیرفعال' ?>
+                            <input type="hidden" name="status" value="<?= $active ? 0 : 1 ?>">
+                            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black <?= $active ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200' ?>">
+                                <span class="w-1.5 h-1.5 rounded-full <?= $active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300' ?>"></span>
+                                <?= $active ? 'فعال' : 'غیرفعال' ?>
                             </button>
                         </form>
                     </td>

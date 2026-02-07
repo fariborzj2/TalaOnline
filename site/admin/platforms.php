@@ -3,6 +3,13 @@ require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
 check_login();
 
+// Schema Self-Healing
+try {
+    $pdo->query("SELECT is_active FROM platforms LIMIT 1");
+} catch (Exception $e) {
+    $pdo->exec("ALTER TABLE platforms ADD COLUMN is_active TINYINT(1) DEFAULT 1");
+}
+
 $message = '';
 $error = '';
 
@@ -12,15 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     if ($action === 'add' || $action === 'edit') {
         $id = $_POST['id'] ?? null;
-        $name = $_POST['name'];
-        $en_name = $_POST['en_name'];
-        $buy_price = $_POST['buy_price'];
-        $sell_price = $_POST['sell_price'];
-        $fee = $_POST['fee'];
-        $status = $_POST['status'];
-        $link = $_POST['link'];
+        $name = $_POST['name'] ?? '';
+        $en_name = $_POST['en_name'] ?? '';
+        $buy_price = $_POST['buy_price'] ?? '';
+        $sell_price = $_POST['sell_price'] ?? '';
+        $fee = $_POST['fee'] ?? '';
+        $status = $_POST['status'] ?? '';
+        $link = $_POST['link'] ?? '';
         $is_active = isset($_POST['is_active']) ? 1 : 0;
-        $sort_order = (int)$_POST['sort_order'];
+        $sort_order = (int)($_POST['sort_order'] ?? 0);
 
         // Handle Image Upload
         $logo = $_POST['current_logo'] ?? '';
@@ -148,13 +155,14 @@ include __DIR__ . '/layout/header.php';
                         </span>
                     </td>
                     <td class="text-center">
+                        <?php $active = $p['is_active'] ?? 1; ?>
                         <form method="POST" class="inline">
                             <input type="hidden" name="action" value="toggle_status">
                             <input type="hidden" name="id" value="<?= $p['id'] ?>">
-                            <input type="hidden" name="is_active" value="<?= $p['is_active'] ? 0 : 1 ?>">
-                            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black <?= $p['is_active'] ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200' ?>">
-                                <span class="w-1.5 h-1.5 rounded-full <?= $p['is_active'] ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300' ?>"></span>
-                                <?= $p['is_active'] ? 'فعال' : 'غیرفعال' ?>
+                            <input type="hidden" name="is_active" value="<?= $active ? 0 : 1 ?>">
+                            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black <?= $active ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200' ?>">
+                                <span class="w-1.5 h-1.5 rounded-full <?= $active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300' ?>"></span>
+                                <?= $active ? 'فعال' : 'غیرفعال' ?>
                             </button>
                         </form>
                     </td>
