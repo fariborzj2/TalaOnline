@@ -60,7 +60,7 @@ include __DIR__ . '/layout/header.php';
             </div>
             <div>
                 <h2 class="text-lg font-black text-slate-800">تنظیمات عمومی</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Main Configuration</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase ">Main Configuration</p>
             </div>
         </div>
         <div class="p-8 space-y-6">
@@ -99,14 +99,14 @@ include __DIR__ . '/layout/header.php';
             </div>
             <div>
                 <h2 class="text-lg font-black text-slate-800">تنظیمات سئو (SEO)</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Search Engine Optimization</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase ">Search Engine Optimization</p>
             </div>
         </div>
         <div class="p-8 space-y-6">
             <div class="form-group">
                 <label>توضیحات متا (Meta Description)</label>
                 <textarea name="site_description" rows="4" class="resize-none"><?= htmlspecialchars($site_description) ?></textarea>
-                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-widest">توصیه شده: بین ۱۵۰ تا ۱۶۰ کاراکتر</p>
+                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">توصیه شده: بین ۱۵۰ تا ۱۶۰ کاراکتر</p>
             </div>
             <div class="form-group">
                 <label>کلمات کلیدی (Keywords)</label>
@@ -114,7 +114,7 @@ include __DIR__ . '/layout/header.php';
                     <span class="icon"><i data-lucide="hash" class="w-4 h-4"></i></span>
                     <input type="text" name="site_keywords" value="<?= htmlspecialchars($site_keywords) ?>" placeholder="طلا, سکه, ارز...">
                 </div>
-                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-widest">کلمات را با کاما (,) از هم جدا کنید</p>
+                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">کلمات را با کاما (,) از هم جدا کنید</p>
             </div>
         </div>
     </div>
@@ -127,7 +127,7 @@ include __DIR__ . '/layout/header.php';
             </div>
             <div>
                 <h2 class="text-lg font-black text-slate-800">امنیت و دسترسی</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Security & Access</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase ">Security & Access</p>
             </div>
         </div>
         <div class="p-8">

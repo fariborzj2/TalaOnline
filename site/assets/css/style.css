@@ -1089,7 +1089,6 @@ td, th {
 th {
   font-size: 0.85rem;
   text-transform: uppercase;
-  letter-spacing: 0.025em;
   color: #64748b;
   padding: 12px 12px;
 }

@@ -33,7 +33,7 @@ include __DIR__ . '/layout/header.php';
                 <i data-lucide="database" class="w-7 h-7"></i>
             </div>
             <div>
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest">تعداد کل آیتم‌ها</p>
+                <p class="text-xs font-black text-slate-400 uppercase ">تعداد کل آیتم‌ها</p>
                 <h3 class="text-2xl font-black text-slate-900 mt-1"><?= number_format($total_items) ?></h3>
             </div>
         </div>
@@ -45,7 +45,7 @@ include __DIR__ . '/layout/header.php';
                 <i data-lucide="layout-grid" class="w-7 h-7"></i>
             </div>
             <div>
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest">پلتفرم‌های فعال</p>
+                <p class="text-xs font-black text-slate-400 uppercase ">پلتفرم‌های فعال</p>
                 <h3 class="text-2xl font-black text-slate-900 mt-1"><?= number_format($total_platforms) ?></h3>
             </div>
         </div>
@@ -58,7 +58,7 @@ include __DIR__ . '/layout/header.php';
                 <i data-lucide="<?= $usage ? 'check-circle' : 'x-circle' ?>" class="w-7 h-7"></i>
             </div>
             <div>
-                <p class="text-xs font-black text-slate-400 uppercase tracking-widest">وضعیت اتصال API</p>
+                <p class="text-xs font-black text-slate-400 uppercase ">وضعیت اتصال API</p>
                 <h3 class="text-xl font-black text-slate-900 mt-1"><?= $usage ? 'متصل و عملیاتی' : 'خطا در اتصال' ?></h3>
             </div>
         </div>
@@ -68,26 +68,25 @@ include __DIR__ . '/layout/header.php';
 <?php if ($usage): ?>
 <div class="mb-10">
     <div class="flex items-center gap-3 mb-6">
-        <div class="w-2 h-8 bg-indigo-600 rounded-full"></div>
         <h2 class="text-lg font-black text-slate-800">آمار مصرف وب‌سرویس نوسان</h2>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="glass-card p-6 rounded-xl border-b-4 border-indigo-500">
-            <p class="text-xs font-black text-slate-400 uppercase tracking-widest">درخواست‌های ماه جاری</p>
+            <p class="text-xs font-black text-slate-400 uppercase ">درخواست‌های ماه جاری</p>
             <div class="flex items-end justify-between mt-2">
                 <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['monthly_usage'] ?? 0) ?></h3>
                 <span class="text-[10px] font-black bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg">REQ/MONTH</span>
             </div>
         </div>
         <div class="glass-card p-6 rounded-xl border-b-4 border-emerald-500">
-            <p class="text-xs font-black text-slate-400 uppercase tracking-widest">درخواست‌های امروز</p>
+            <p class="text-xs font-black text-slate-400 uppercase ">درخواست‌های امروز</p>
             <div class="flex items-end justify-between mt-2">
                 <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['daily_usage'] ?? 0) ?></h3>
                 <span class="text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg">REQ/DAY</span>
             </div>
         </div>
         <div class="glass-card p-6 rounded-xl border-b-4 border-amber-500">
-            <p class="text-xs font-black text-slate-400 uppercase tracking-widest">درخواست‌های ساعت اخیر</p>
+            <p class="text-xs font-black text-slate-400 uppercase ">درخواست‌های ساعت اخیر</p>
             <div class="flex items-end justify-between mt-2">
                 <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['hourly_usage'] ?? 0) ?></h3>
                 <span class="text-[10px] font-black bg-amber-50 text-amber-600 px-2 py-1 rounded-lg">REQ/HOUR</span>

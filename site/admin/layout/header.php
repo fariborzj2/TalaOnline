@@ -42,7 +42,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 @apply w-full border-separate border-spacing-0;
             }
             .admin-table th {
-                @apply bg-slate-50/50 border-y border-slate-100 px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest first:rounded-r-lg last:rounded-l-lg first:border-r last:border-l whitespace-nowrap;
+                @apply bg-slate-50/50 border-y border-slate-100 px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase  first:rounded-r-lg last:rounded-l-lg first:border-r last:border-l whitespace-nowrap;
             }
             .admin-table th:first-child, .admin-table th:last-child {
                 border-radius: 0 !important
@@ -144,7 +144,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <div class="hidden sm:flex items-center gap-3 pr-4 border-r border-slate-100">
                     <div class="flex flex-col items-end">
                         <span class="text-sm font-black text-slate-900"><?= $_SESSION['admin_username'] ?></span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Administrator</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase ">Administrator</span>
                     </div>
                     <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-black">
                         <?= strtoupper(substr($_SESSION['admin_username'], 0, 1)) ?>

@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <i data-lucide="shield-check" class="text-white w-8 h-8"></i>
                 </div>
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">خوش آمدید</h1>
-                <p class="text-slate-400 mt-2 font-bold uppercase tracking-widest text-[10px]">احراز هویت مدیر سیستم</p>
+                <p class="text-slate-400 mt-2 font-bold uppercase  text-[10px]">احراز هویت مدیر سیستم</p>
             </div>
 
             <?php if ($error): ?>

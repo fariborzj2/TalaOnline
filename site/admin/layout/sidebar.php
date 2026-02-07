@@ -10,7 +10,7 @@
             </div>
             <div>
                 <h2 class="font-black text-base text-slate-900 leading-tight">طلا آنلاین</h2>
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Core Admin v4.0</p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase  mt-0.5">Core Admin v4.0</p>
             </div>
         </div>
 
@@ -37,7 +37,7 @@
     <div class="mt-auto p-5 border-t border-slate-50">
         <div class="bg-indigo-600 rounded-xl p-5 text-white relative overflow-hidden">
             <div class="relative z-10">
-                <p class="text-indigo-100 text-[9px] font-bold uppercase tracking-widest mb-1">نسخه سیستم</p>
+                <p class="text-indigo-100 text-[9px] font-bold uppercase  mb-1">نسخه سیستم</p>
                 <h3 class="font-black text-sm mb-3">4.2.0-STABLE</h3>
                 <a href="../" target="_blank" class="block w-full text-center bg-white/20 hover:bg-white/30 py-2 rounded-lg text-[10px] font-bold transition-all">
                     مشاهده وب‌سایت
