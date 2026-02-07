@@ -160,14 +160,28 @@ include __DIR__ . '/layout/header.php';
             <div class="space-y-4 border-r border-slate-100 pr-8">
                 <h4 class="font-black text-slate-700 text-sm">بازگردانی دیتابیس</h4>
                 <p class="text-xs text-slate-400 leading-relaxed">فایل پشتیبان قبلی خود را انتخاب کرده و دیتابیس را به حالت قبل بازگردانید. <span class="text-rose-500 font-bold">(تمامی داده‌های فعلی جایگزین خواهند شد)</span></p>
-                <div onclick="document.getElementById('importFile').click()" class="file-input-custom !bg-slate-50 border-dashed border-2 hover:border-indigo-500 group">
-                    <span id="fileNameDisplay" class="text-xs font-bold text-slate-400 group-hover:text-indigo-600">انتخاب فایل SQL...</span>
-                    <i data-lucide="file-up" class="w-4 h-4 text-slate-400 group-hover:text-indigo-600"></i>
+
+                <div id="importInitial">
+                    <div onclick="document.getElementById('importFile').click()" class="file-input-custom !bg-slate-50 border-dashed border-2 hover:border-indigo-500 group mb-4">
+                        <span id="fileNameDisplay" class="text-xs font-bold text-slate-400 group-hover:text-indigo-600">انتخاب فایل SQL...</span>
+                        <i data-lucide="file-up" class="w-4 h-4 text-slate-400 group-hover:text-indigo-600"></i>
+                    </div>
+                    <button type="button" onclick="startImport()" id="importBtn" class="btn-v3 btn-v3-primary w-full gap-3">
+                        <i data-lucide="upload" class="w-4 h-4"></i>
+                        شروع بازگردانی (Import)
+                    </button>
                 </div>
-                <button type="button" onclick="confirmImport()" class="btn-v3 btn-v3-primary w-full gap-3">
-                    <i data-lucide="upload" class="w-4 h-4"></i>
-                    شروع بازگردانی (Import)
-                </button>
+
+                <div id="importProgress" class="hidden space-y-3">
+                    <div class="flex items-center justify-between text-[10px] font-black uppercase">
+                        <span class="text-slate-400">در حال بازگردانی داده‌ها...</span>
+                        <span id="progressPercent" class="text-indigo-600">0%</span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div id="progressBar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <p id="progressStatus" class="text-[9px] text-slate-400 font-bold">آماده‌سازی برای پردازش...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -202,20 +216,73 @@ include __DIR__ . '/layout/header.php';
     </div>
 </form>
 
-<!-- Hidden Import Form -->
-<form id="importForm" action="backup_handler.php?action=import" method="POST" enctype="multipart/form-data" class="hidden">
-    <input type="file" name="backup_file" id="importFile" accept=".sql" onchange="document.getElementById('fileNameDisplay').innerText = this.files[0].name">
-</form>
+<!-- Hidden Import Input -->
+<input type="file" id="importFile" accept=".sql" class="hidden" onchange="document.getElementById('fileNameDisplay').innerText = this.files[0].name">
 
 <script>
-    function confirmImport() {
+    async function startImport() {
         const fileInput = document.getElementById('importFile');
         if (!fileInput.files.length) {
             alert('لطفاً ابتدا فایل پشتیبان را انتخاب کنید.');
             return;
         }
-        if (confirm('آیا از بازگردانی دیتابیس اطمینان دارید؟ تمامی اطلاعات فعلی حذف و اطلاعات فایل جایگزین خواهد شد.')) {
-            document.getElementById('importForm').submit();
+
+        if (!confirm('آیا از بازگردانی دیتابیس اطمینان دارید؟ تمامی اطلاعات فعلی حذف و اطلاعات فایل جایگزین خواهد شد.')) {
+            return;
+        }
+
+        const initialUI = document.getElementById('importInitial');
+        const progressUI = document.getElementById('importProgress');
+        const progressBar = document.getElementById('progressBar');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressStatus = document.getElementById('progressStatus');
+
+        initialUI.classList.add('hidden');
+        progressUI.classList.remove('hidden');
+
+        try {
+            // Step 1: Init Import
+            const formData = new FormData();
+            formData.append('backup_file', fileInput.files[0]);
+
+            progressStatus.innerText = 'در حال آپلود و تحلیل فایل...';
+            const initRes = await fetch('backup_handler.php?action=init_import', {
+                method: 'POST',
+                body: formData
+            });
+            const initData = await initRes.json();
+
+            if (!initData.success) throw new Error(initData.error);
+
+            // Step 2: Execute Steps
+            let done = false;
+            while (!done) {
+                const stepFormData = new FormData();
+                const stepRes = await fetch('backup_handler.php?action=execute_step', {
+                    method: 'POST',
+                    body: stepFormData
+                });
+                const stepData = await stepRes.json();
+
+                if (!stepData.success) throw new Error(stepData.error);
+
+                const percent = Math.round((stepData.current / stepData.total) * 100);
+                progressBar.style.width = percent + '%';
+                progressPercent.innerText = percent + '%';
+                progressStatus.innerText = `در حال اجرا: ${stepData.current} از ${stepData.total} دستور`;
+
+                done = stepData.done;
+            }
+
+            progressStatus.innerText = 'بازگردانی با موفقیت انجام شد. در حال انتقال...';
+            setTimeout(() => {
+                window.location.href = 'settings.php?message=backup_imported';
+            }, 1000);
+
+        } catch (error) {
+            alert('خطا در بازگردانی: ' + error.message);
+            initialUI.classList.remove('hidden');
+            progressUI.classList.add('hidden');
         }
     }
 </script>
