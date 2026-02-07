@@ -1,15 +1,17 @@
 <?php
-session_start();
+/**
+ * Admin Authentication Helper
+ */
 
-function check_login() {
-    if (!isset($_SESSION['admin_id'])) {
-        header('Location: login.php');
-        exit;
-    }
-    return true;
-}
+session_start();
 
 function is_logged_in() {
     return isset($_SESSION['admin_id']);
 }
-?>
+
+function check_login() {
+    if (!is_logged_in()) {
+        header('Location: login.php');
+        exit;
+    }
+}

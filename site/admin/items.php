@@ -30,8 +30,8 @@ include __DIR__ . '/layout/header.php';
 
 <?php if ($message): ?>
     <div class="mb-6 animate-bounce-in">
-        <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-center gap-3 text-emerald-700 shadow-sm">
-            <div class="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center shadow-lg shadow-emerald-200">
+        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex items-center gap-3 text-emerald-700">
+            <div class="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center">
                 <i data-lucide="check" class="w-5 h-5"></i>
             </div>
             <span class="font-bold"><?= $message ?></span>
@@ -39,10 +39,10 @@ include __DIR__ . '/layout/header.php';
     </div>
 <?php endif; ?>
 
-<div class="glass-card rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100">
+<div class="glass-card rounded-[20px] overflow-hidden border border-slate-200">
     <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400">
                 <i data-lucide="list" class="w-5 h-5"></i>
             </div>
             <h2 class="text-lg font-black text-slate-800">لیست دارایی‌ها</h2>
@@ -104,7 +104,7 @@ include __DIR__ . '/layout/header.php';
                         <?php endif; ?>
                     </td>
                     <td class="text-center">
-                        <button class="w-10 h-10 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-xl transition-all shadow-sm flex items-center justify-center mx-auto group/btn" onclick='editItem(<?= json_encode($item) ?>)'>
+                        <button class="w-10 h-10 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-xl transition-all flex items-center justify-center mx-auto group/btn" onclick='editItem(<?= json_encode($item) ?>)'>
                             <i data-lucide="edit-3" class="w-5 h-5 group-hover/btn:scale-110 transition-transform"></i>
                         </button>
                     </td>
@@ -116,24 +116,24 @@ include __DIR__ . '/layout/header.php';
 </div>
 
 <!-- Edit Modal -->
-<div id="editModal" class="hidden fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm items-center justify-center p-4">
-    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl p-8 lg:p-10 transform transition-all animate-modal-up">
-        <div class="flex items-center justify-between border-b border-slate-50 pb-6">
+<div id="editModal" class="hidden fixed inset-0 z-[1000] bg-slate-900/40 backdrop-blur-sm items-center justify-center p-4">
+    <div class="bg-white w-full max-w-xl rounded-[20px] p-5 md:p-6 transform transition-all animate-modal-up">
+        <div class="flex items-center justify-between border-b border-slate-50 pb-5">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
                     <i data-lucide="edit-2" class="w-6 h-6"></i>
                 </div>
                 <div>
                     <h2 class="text-xl font-black text-slate-900">ویرایش اطلاعات دارایی</h2>
-                    <p class="text-xs text-slate-400 font-bold">تنظیمات قیمت و مشخصات ظاهری</p>
+                    <p class="text-[10px] text-slate-400 font-bold mt-1">تنظیمات قیمت و مشخصات ظاهری</p>
                 </div>
             </div>
-            <button onclick="closeModal()" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-colors">
+            <button onclick="closeModal()" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
 
-        <form method="POST" class="mt-8">
+        <form method="POST" class="mt-6">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="id" id="edit-id">
 
@@ -164,10 +164,10 @@ include __DIR__ . '/layout/header.php';
                 <textarea name="description" id="edit-description" rows="3" placeholder="توضیحات کوتاهی در مورد این دارایی بنویسید..."></textarea>
             </div>
 
-            <div class="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100 mb-8 transition-all hover:border-indigo-100">
+            <div class="p-5 bg-slate-50 rounded-xl border border-slate-100 mb-6">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-amber-500 shadow-sm">
+                        <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-amber-500 border border-slate-100">
                             <i data-lucide="zap" class="w-4 h-4"></i>
                         </div>
                         <h4 class="font-black text-slate-800">تنظیمات اورراید قیمت</h4>
