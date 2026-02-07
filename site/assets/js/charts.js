@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const fetchData = async () => {
         try {
             console.log('Fetching data...');
-            const response = await fetch('../api/prices.php');
+            const response = await fetch('api/prices.php');
             if (!response.ok) throw new Error('Failed to fetch price data');
             allData = await response.json();
             console.log('Data fetched successfully', {

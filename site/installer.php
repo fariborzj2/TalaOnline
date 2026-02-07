@@ -8,7 +8,7 @@ ini_set('display_errors', 1);
 
 session_start();
 
-$config_file = 'config.php';
+$config_file = __DIR__ . '/../config.php';
 
 // If already installed and config exists, redirect or block
 if (file_exists($config_file)) {
@@ -143,22 +143,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Seed some initial items based on current data
                 $initial_items = [
-                    ['gold_18k', '18ayar', 'طلای ۱۸ عیار', '18 Karat Gold', 'site/assets/images/gold.png', 'gold', 1],
-                    ['sekkeh_emami', 'sekkeh', 'سکه امامی', 'Emami Coin', 'site/assets/images/coin.png', 'gold', 2],
-                    ['abshodeh', 'abshodeh', 'مثقال طلا', 'Melted Gold', 'site/assets/images/melted.png', 'gold', 3],
-                    ['silver', 'silver', 'نقره', 'Silver', 'site/assets/images/silver.png', 'silver', 4]
+                    ['gold_18k', '18ayar', 'طلای ۱۸ عیار', '18 Karat Gold', 'assets/images/gold.svg', 'gold', 1],
+                    ['sekkeh_emami', 'sekkeh', 'سکه امامی', 'Emami Coin', 'assets/images/coin/tamam.png', 'gold', 2],
+                    ['abshodeh', 'abshodeh', 'مثقال طلا', 'Melted Gold', 'assets/images/gold.svg', 'gold', 3],
+                    ['silver', 'silver', 'نقره', 'Silver', 'assets/images/silver.svg', 'silver', 4]
                 ];
 
                 $stmt = $pdo->prepare("INSERT IGNORE INTO items (symbol, name, en_name, logo, category, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
                 // Note: adjusted symbols to match Navasan if known, else placeholders
                 // Using Navasan symbols from NAVASAN_API.md
                 $seed_data = [
-                    ['18ayar', 'طلای ۱۸ عیار', '18 Karat Gold', 'site/assets/images/gold.png', 'gold', 1],
-                    ['sekkeh', 'سکه امامی', 'Emami Coin', 'site/assets/images/coin.png', 'gold', 2],
-                    ['abshodeh', 'آبشده (مثقال)', 'Melted Gold', 'site/assets/images/melted.png', 'gold', 3],
-                    ['silver', 'نقره', 'Silver', 'site/assets/images/silver.png', 'silver', 4],
-                    ['usd_sell', 'دلار تهران', 'US Dollar', 'site/assets/images/flags/usd.png', 'currency', 5],
-                    ['eur', 'یورو', 'Euro', 'site/assets/images/flags/eur.png', 'currency', 6]
+                    ['18ayar', 'طلای ۱۸ عیار', '18 Karat Gold', 'assets/images/gold.svg', 'gold', 1],
+                    ['sekkeh', 'سکه امامی', 'Emami Coin', 'assets/images/coin/tamam.png', 'gold', 2],
+                    ['abshodeh', 'آبشده (مثقال)', 'Melted Gold', 'assets/images/gold.svg', 'gold', 3],
+                    ['silver', 'نقره', 'Silver', 'assets/images/silver.svg', 'silver', 4],
+                    ['usd_sell', 'دلار تهران', 'US Dollar', 'assets/images/road-wayside.svg', 'currency', 5],
+                    ['eur', 'یورو', 'Euro', 'assets/images/road-wayside.svg', 'currency', 6]
                 ];
                 foreach ($seed_data as $item) {
                     $stmt->execute($item);
@@ -166,11 +166,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Seed Platforms
                 $platforms_data = [
-                    ['گرمی', 'Gerami', 'site/assets/images/platforms/gerami.png', '19849500', '19749500', '0.5', 'مناسب خرید', 'https://gerami.ir', 1],
-                    ['میلی', 'Milli', 'site/assets/images/platforms/milli.png', '19849500', '19749500', '0.3', 'مناسب خرید', 'https://milli.gold', 2],
-                    ['زرپاد', 'Zarpad', 'site/assets/images/platforms/zarpad.png', '19849500', '19749500', '0.45', 'مناسب فروش', 'https://zarpad.com', 3],
-                    ['وال گلد', 'wallGold', 'site/assets/images/platforms/wallgold.png', '19849500', '19749500', '0.5', 'مناسب خرید', 'https://wallgold.ir', 4],
-                    ['طلاین', 'Tlyn', 'site/assets/images/platforms/taline.png', '19849500', '19749500', '0.6', 'مناسب فروش', 'https://tlyn.ir', 5]
+                    ['گرمی', 'Gerami', 'assets/images/platforms/gerami.png', '19849500', '19749500', '0.5', 'مناسب خرید', 'https://gerami.ir', 1],
+                    ['میلی', 'Milli', 'assets/images/platforms/milli.png', '19849500', '19749500', '0.3', 'مناسب خرید', 'https://milli.gold', 2],
+                    ['زرپاد', 'Zarpad', 'assets/images/platforms/zarpad.png', '19849500', '19749500', '0.45', 'مناسب فروش', 'https://zarpad.com', 3],
+                    ['وال گلد', 'wallGold', 'assets/images/platforms/wallgold.png', '19849500', '19749500', '0.5', 'مناسب خرید', 'https://wallgold.ir', 4],
+                    ['طلاین', 'Tlyn', 'assets/images/platforms/taline.png', '19849500', '19749500', '0.6', 'مناسب فروش', 'https://tlyn.ir', 5]
                 ];
                 $stmt = $pdo->prepare("INSERT IGNORE INTO platforms (name, en_name, logo, buy_price, sell_price, fee, status, link, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 foreach ($platforms_data as $platform) {
@@ -204,6 +204,9 @@ $checks = [
     'Config Writable' => is_writable('.')
 ];
 $all_passed = !in_array(false, $checks, true);
+
+// Check if config folder is writable
+$checks['Config Root Writable'] = is_writable(__DIR__ . '/../');
 
 ?>
 <!DOCTYPE html>
