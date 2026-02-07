@@ -23,29 +23,29 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
         body {
             font-family: 'Vazirmatn', sans-serif;
-            @apply bg-[#f8fafc] text-slate-900 antialiased;
+            @apply bg-[#f8fafc] text-slate-900 antialiased text-[13px];
         }
 
         @layer base {
             h1, h2, h3, h4, h5, h6 { @apply font-black; }
-            label { @apply block pr-1 font-black text-slate-700 text-sm mb-1.5; }
+            label { @apply block pr-1 font-black text-slate-700 text-xs mb-1.5; }
             input[type="text"], input[type="password"], input[type="email"], input[type="number"], select, textarea {
-                @apply w-full border border-slate-200 bg-white rounded-xl px-4 py-2 outline-none transition-all duration-200 font-bold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10;
+                @apply w-full border border-slate-200 bg-white rounded-lg px-4 py-2 outline-none transition-all duration-200 font-bold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10;
             }
         }
 
         @layer components {
             .glass-card {
-                @apply bg-white rounded-[20px] border border-slate-200;
+                @apply bg-white rounded-xl border border-slate-200;
             }
             .admin-table {
                 @apply w-full border-separate border-spacing-0;
             }
             .admin-table th {
-                @apply bg-slate-50/50 border-y border-slate-100 px-6 py-4 text-right text-[11px] font-black text-slate-400 uppercase tracking-widest first:rounded-r-xl last:rounded-l-xl first:border-r last:border-l whitespace-nowrap;
+                @apply bg-slate-50/50 border-y border-slate-100 px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest first:rounded-r-lg last:rounded-l-lg first:border-r last:border-l whitespace-nowrap;
             }
             .admin-table td {
-                @apply px-6 py-4 border-b border-slate-50 text-sm font-bold text-slate-700 transition-colors whitespace-nowrap;
+                @apply px-6 py-4 border-b border-slate-50 text-[12px] font-bold text-slate-700 transition-colors whitespace-nowrap;
             }
             .admin-table tr:last-child td {
                 @apply border-b-0;
@@ -54,7 +54,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 @apply bg-slate-50/30;
             }
             .btn-v3 {
-                @apply px-4 py-2 md:px-5 md:py-2 rounded-xl font-black text-sm transition-all flex items-center justify-center gap-2 active:scale-95;
+                @apply px-4 py-2 md:px-5 md:py-2 rounded-lg font-black text-xs transition-all flex items-center justify-center gap-2 active:scale-95;
             }
             .btn-v3-primary {
                 @apply bg-indigo-600 text-white hover:bg-indigo-700;
@@ -63,7 +63,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 @apply bg-white text-slate-600 border border-slate-200 hover:bg-slate-50;
             }
             .sidebar-link {
-                @apply flex items-center gap-4 px-4 py-3 rounded-xl font-bold text-slate-400 transition-all duration-300 hover:bg-slate-50 hover:text-indigo-600;
+                @apply flex items-center gap-4 px-4 py-3 rounded-lg font-bold text-slate-400 transition-all duration-300 hover:bg-slate-50 hover:text-indigo-600;
             }
             .sidebar-link.active {
                 @apply bg-indigo-50 text-indigo-700;
@@ -79,6 +79,28 @@ $current_page = basename($_SERVER['PHP_SELF']);
         }
         .animate-modal-up {
             animation: modalUp 0.2s ease-out forwards;
+        }
+
+        /* Modal scroll fix */
+        .modal-container {
+            @apply max-h-[90vh] overflow-y-auto;
+        }
+
+        /* Input with icon fix */
+        .input-icon-wrapper {
+            @apply relative;
+        }
+        .input-icon-wrapper input {
+            @apply pr-12;
+        }
+        .input-icon-wrapper .icon {
+            @apply absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center;
+        }
+
+        /* LTR Inputs */
+        .ltr-input {
+            direction: ltr !important;
+            text-align: left !important;
         }
     </style>
 
@@ -121,12 +143,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <span class="text-sm font-black text-slate-900"><?= $_SESSION['admin_username'] ?></span>
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Administrator</span>
                     </div>
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-black">
+                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-black">
                         <?= strtoupper(substr($_SESSION['admin_username'], 0, 1)) ?>
                     </div>
                 </div>
 
-                <a href="logout.php" class="w-10 h-10 md:w-10 md:h-10 bg-white text-rose-500 border border-rose-100 rounded-xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all group" title="خروج">
+                <a href="logout.php" class="w-10 h-10 md:w-10 md:h-10 bg-white text-rose-500 border border-rose-100 rounded-lg flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all group" title="خروج">
                     <i data-lucide="power" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
                 </a>
             </div>

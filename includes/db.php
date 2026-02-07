@@ -58,3 +58,22 @@ function set_setting($key, $value) {
         return false;
     }
 }
+
+/**
+ * Handle File Uploads
+ */
+function handle_upload($file, $target_dir = 'uploads/') {
+    if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
+        return null;
+    }
+
+    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = uniqid() . '.' . $extension;
+    $target_path = __DIR__ . '/../site/' . $target_dir . $filename;
+
+    if (move_uploaded_file($file['tmp_name'], $target_path)) {
+        return $target_dir . $filename;
+    }
+
+    return null;
+}

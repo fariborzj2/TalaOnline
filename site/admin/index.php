@@ -27,9 +27,9 @@ include __DIR__ . '/layout/header.php';
 ?>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-    <div class="glass-card p-6 rounded-[20px] relative overflow-hidden group">
+    <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
         <div class="flex items-center gap-5 relative z-10">
-            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+            <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                 <i data-lucide="database" class="w-7 h-7"></i>
             </div>
             <div>
@@ -40,9 +40,9 @@ include __DIR__ . '/layout/header.php';
         <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-blue-50/50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
     </div>
 
-    <div class="glass-card p-6 rounded-[20px] relative overflow-hidden group">
+    <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
         <div class="flex items-center gap-5 relative z-10">
-            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
+            <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all duration-300">
                 <i data-lucide="layout-grid" class="w-7 h-7"></i>
             </div>
             <div>
@@ -53,10 +53,10 @@ include __DIR__ . '/layout/header.php';
         <div class="absolute -bottom-6 -left-6 w-24 h-24 bg-amber-50/50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
     </div>
 
-    <div class="glass-card p-6 rounded-[20px] relative overflow-hidden group">
+    <div class="glass-card p-6 rounded-xl relative overflow-hidden group">
         <div class="flex items-center gap-5 relative z-10">
             <?php $api_status = $usage ? 'success' : 'danger'; ?>
-            <div class="w-14 h-14 bg-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-50 text-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-600 rounded-2xl flex items-center justify-center group-hover:bg-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-600 group-hover:text-white transition-all duration-300">
+            <div class="w-14 h-14 bg-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-50 text-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-600 rounded-lg flex items-center justify-center group-hover:bg-<?= $api_status == 'success' ? 'emerald' : 'rose' ?>-600 group-hover:text-white transition-all duration-300">
                 <i data-lucide="<?= $usage ? 'check-circle' : 'x-circle' ?>" class="w-7 h-7"></i>
             </div>
             <div>
@@ -75,21 +75,21 @@ include __DIR__ . '/layout/header.php';
         <h2 class="text-lg font-black text-slate-800">آمار مصرف وب‌سرویس نوسان</h2>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="glass-card p-6 rounded-[20px] border-b-4 border-indigo-500">
+        <div class="glass-card p-6 rounded-xl border-b-4 border-indigo-500">
             <p class="text-xs font-black text-slate-400 uppercase tracking-widest">درخواست‌های ماه جاری</p>
             <div class="flex items-end justify-between mt-2">
                 <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['monthly_usage'] ?? 0) ?></h3>
                 <span class="text-[10px] font-black bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg">REQ/MONTH</span>
             </div>
         </div>
-        <div class="glass-card p-6 rounded-[20px] border-b-4 border-emerald-500">
+        <div class="glass-card p-6 rounded-xl border-b-4 border-emerald-500">
             <p class="text-xs font-black text-slate-400 uppercase tracking-widest">درخواست‌های امروز</p>
             <div class="flex items-end justify-between mt-2">
                 <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['daily_usage'] ?? 0) ?></h3>
                 <span class="text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg">REQ/DAY</span>
             </div>
         </div>
-        <div class="glass-card p-6 rounded-[20px] border-b-4 border-amber-500">
+        <div class="glass-card p-6 rounded-xl border-b-4 border-amber-500">
             <p class="text-xs font-black text-slate-400 uppercase tracking-widest">درخواست‌های ساعت اخیر</p>
             <div class="flex items-end justify-between mt-2">
                 <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['hourly_usage'] ?? 0) ?></h3>
@@ -100,7 +100,7 @@ include __DIR__ . '/layout/header.php';
 </div>
 <?php endif; ?>
 
-<div class="glass-card rounded-[20px] overflow-hidden border border-slate-200">
+<div class="glass-card rounded-xl overflow-hidden border border-slate-200">
     <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400">

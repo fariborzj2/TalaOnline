@@ -53,7 +53,7 @@ include __DIR__ . '/layout/header.php';
 
 <form method="POST" class="max-w-4xl space-y-8 pb-10">
     <!-- General Settings -->
-    <div class="glass-card rounded-[20px] overflow-hidden border border-slate-200">
+    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
         <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
             <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 border border-indigo-50">
                 <i data-lucide="sliders" class="w-5 h-5"></i>
@@ -66,31 +66,25 @@ include __DIR__ . '/layout/header.php';
         <div class="p-8 space-y-6">
             <div class="form-group">
                 <label>عنوان اصلی وب‌سایت</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
-                        <i data-lucide="layout" class="w-4 h-4"></i>
-                    </span>
-                    <input type="text" name="site_title" value="<?= htmlspecialchars($site_title) ?>" required class="pr-12">
+                <div class="input-icon-wrapper">
+                    <span class="icon"><i data-lucide="layout" class="w-4 h-4"></i></span>
+                    <input type="text" name="site_title" value="<?= htmlspecialchars($site_title) ?>" required>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="form-group">
                     <label>کلید API نوسان (Navasan API Key)</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
-                            <i data-lucide="key" class="w-4 h-4"></i>
-                        </span>
-                        <input type="text" name="api_key" value="<?= htmlspecialchars($api_key) ?>" placeholder="api_key_..." class="pr-12 font-mono text-sm">
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="key" class="w-4 h-4"></i></span>
+                        <input type="text" name="api_key" value="<?= htmlspecialchars($api_key) ?>" placeholder="api_key_..." class="ltr-input font-mono text-xs">
                     </div>
                 </div>
                 <div class="form-group">
                     <label>فاصله زمانی بروزرسانی (دقیقه)</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
-                            <i data-lucide="timer" class="w-4 h-4"></i>
-                        </span>
-                        <input type="number" name="api_sync_interval" value="<?= htmlspecialchars($api_sync_interval) ?>" min="1" required class="pr-12">
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="timer" class="w-4 h-4"></i></span>
+                        <input type="number" name="api_sync_interval" value="<?= htmlspecialchars($api_sync_interval) ?>" min="1" required class="ltr-input">
                     </div>
                 </div>
             </div>
@@ -98,7 +92,7 @@ include __DIR__ . '/layout/header.php';
     </div>
 
     <!-- SEO Settings -->
-    <div class="glass-card rounded-[20px] overflow-hidden border border-slate-200">
+    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
         <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
             <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 border border-emerald-50">
                 <i data-lucide="search" class="w-5 h-5"></i>
@@ -116,11 +110,9 @@ include __DIR__ . '/layout/header.php';
             </div>
             <div class="form-group">
                 <label>کلمات کلیدی (Keywords)</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
-                        <i data-lucide="hash" class="w-4 h-4"></i>
-                    </span>
-                    <input type="text" name="site_keywords" value="<?= htmlspecialchars($site_keywords) ?>" placeholder="طلا, سکه, ارز..." class="pr-12">
+                <div class="input-icon-wrapper">
+                    <span class="icon"><i data-lucide="hash" class="w-4 h-4"></i></span>
+                    <input type="text" name="site_keywords" value="<?= htmlspecialchars($site_keywords) ?>" placeholder="طلا, سکه, ارز...">
                 </div>
                 <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-widest">کلمات را با کاما (,) از هم جدا کنید</p>
             </div>
@@ -128,7 +120,7 @@ include __DIR__ . '/layout/header.php';
     </div>
 
     <!-- Security Settings -->
-    <div class="glass-card rounded-[20px] overflow-hidden border border-slate-200">
+    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
         <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
             <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50">
                 <i data-lucide="shield-lock" class="w-5 h-5"></i>
@@ -141,11 +133,9 @@ include __DIR__ . '/layout/header.php';
         <div class="p-8">
             <div class="form-group mb-0">
                 <label>تغییر رمز عبور مدیریت</label>
-                <div class="relative">
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
-                        <i data-lucide="lock" class="w-4 h-4"></i>
-                    </span>
-                    <input type="password" name="new_password" placeholder="در صورت عدم نیاز به تغییر، خالی بگذارید" class="pr-12">
+                <div class="input-icon-wrapper">
+                    <span class="icon"><i data-lucide="lock" class="w-4 h-4"></i></span>
+                    <input type="password" name="new_password" placeholder="در صورت عدم نیاز به تغییر، خالی بگذارید" class="ltr-input">
                 </div>
             </div>
         </div>
