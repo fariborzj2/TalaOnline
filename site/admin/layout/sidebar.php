@@ -45,6 +45,22 @@
             </div>
         </div>
     </div>
+    
+    <div class="flex items-center gap-2 md:gap-4">
+        <div class="hidden sm:flex items-center gap-3 pr-4 border-r border-slate-100">
+            <div class="flex flex-col items-end">
+                <span class="text-sm font-black text-slate-900"><?= $_SESSION['admin_username'] ?></span>
+                <span class="text-[10px] font-bold text-slate-400 uppercase ">Administrator</span>
+            </div>
+            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-black">
+                <?= strtoupper(substr($_SESSION['admin_username'], 0, 1)) ?>
+            </div>
+        </div>
+
+        <a href="logout.php" class="w-10 h-10 md:w-10 md:h-10 bg-white text-rose-500 border border-rose-100 rounded-lg flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all group" title="خروج">
+            <i data-lucide="power" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
+        </a>
+    </div>
 </aside>
 
 <script>
