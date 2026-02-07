@@ -223,11 +223,12 @@ include __DIR__ . '/layout/header.php';
     async function startImport() {
         const fileInput = document.getElementById('importFile');
         if (!fileInput.files.length) {
-            alert('لطفاً ابتدا فایل پشتیبان را انتخاب کنید.');
+            await showAlert('لطفاً ابتدا فایل پشتیبان را انتخاب کنید.', 'warning');
             return;
         }
 
-        if (!confirm('آیا از بازگردانی دیتابیس اطمینان دارید؟ تمامی اطلاعات فعلی حذف و اطلاعات فایل جایگزین خواهد شد.')) {
+        const confirmed = await showConfirm('آیا از بازگردانی دیتابیس اطمینان دارید؟ تمامی اطلاعات فعلی حذف و اطلاعات فایل جایگزین خواهد شد.');
+        if (!confirmed) {
             return;
         }
 
@@ -280,7 +281,7 @@ include __DIR__ . '/layout/header.php';
             }, 1000);
 
         } catch (error) {
-            alert('خطا در بازگردانی: ' + error.message);
+            await showAlert('خطا در بازگردانی: ' + error.message, 'error');
             initialUI.classList.remove('hidden');
             progressUI.classList.add('hidden');
         }
