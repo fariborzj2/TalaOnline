@@ -24,61 +24,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 $platforms = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC")->fetchAll();
 
+$page_title = 'مدیریت پلتفرم‌ها';
+$page_subtitle = 'مدیریت لیست صرافی‌ها و پلتفرم‌های خرید طلا';
+
+include __DIR__ . '/layout/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدیریت پلتفرم‌ها - طلا آنلاین</title>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #e29b21; --bg: #f8fafc; --sidebar: #1e293b; --card: #ffffff; --text: #475569; --title: #1e293b; --border: #e2e8f0; }
-        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; }
-        .sidebar { width: 260px; background: var(--sidebar); color: white; min-height: 100vh; padding: 30px 20px; box-sizing: border-box; position: fixed; right: 0; top: 0; }
-        .main-content { flex-grow: 1; margin-right: 260px; padding: 40px; }
-        .nav-link { color: #cbd5e1; text-decoration: none; display: block; padding: 12px 15px; border-radius: 12px; transition: all 0.3s; }
-        .nav-link:hover, .nav-link.active { background: rgba(226, 155, 33, 0.1); color: var(--primary); }
-        .card { background: var(--card); border-radius: 20px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid var(--border); margin-bottom: 30px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: right; padding: 15px; border-bottom: 1px solid var(--border); }
-        .btn { padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; }
-        .btn-edit { background: #3b82f6; color: white; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
-        .modal-content { background: white; margin: 2% auto; padding: 30px; border-radius: 20px; width: 600px; max-width: 90%; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"] { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; }
-        .alert { padding: 15px; background: #dcfce7; color: #16a34a; border-radius: 10px; margin-bottom: 20px; }
-    </style>
-</head>
-<body>
 
-<div class="sidebar">
-    <div style="font-size: 1.5rem; color: var(--primary); margin-bottom: 40px; text-align: center;">TalaOnline Admin</div>
-    <ul class="nav-menu">
-        <li class="nav-item"><a href="index.php" class="nav-link">داشبورد</a></li>
-        <li class="nav-item"><a href="items.php" class="nav-link">مدیریت آیتم‌ها</a></li>
-        <li class="nav-item"><a href="platforms.php" class="nav-link active">مدیریت پلتفرم‌ها</a></li>
-        <li class="nav-item"><a href="settings.php" class="nav-link">تنظیمات سیستم</a></li>
-    </ul>
-</div>
+<?php if ($message): ?>
+    <div class="badge badge-success" style="padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i data-lucide="check-circle" style="width: 18px;"></i>
+        <?= $message ?>
+    </div>
+<?php endif; ?>
 
-<div class="main-content">
-    <h1>مدیریت پلتفرم‌های طلا</h1>
-
-    <?php if ($message): ?>
-        <div class="alert"><?= $message ?></div>
-    <?php endif; ?>
-
-    <div class="card">
+<div class="card">
+    <div class="table-responsive">
         <table>
             <thead>
                 <tr>
                     <th>لوگو</th>
                     <th>نام پلتفرم</th>
-                    <th>قیمت خرید</th>
-                    <th>قیمت فروش</th>
+                    <th>قیمت (خرید / فروش)</th>
                     <th>کارمزد</th>
                     <th>وضعیت</th>
                     <th>عملیات</th>
@@ -87,14 +53,31 @@ $platforms = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC")->fet
             <tbody>
                 <?php foreach ($platforms as $p): ?>
                 <tr>
-                    <td><img src="../<?= htmlspecialchars($p['logo']) ?>" width="30"></td>
-                    <td><?= htmlspecialchars($p['name']) ?></td>
-                    <td><?= number_format((float)$p['buy_price']) ?></td>
-                    <td><?= number_format((float)$p['sell_price']) ?></td>
-                    <td><?= $p['fee'] ?>%</td>
-                    <td><?= $p['status'] ?></td>
                     <td>
-                        <button class="btn btn-edit" onclick="editPlatform(<?= htmlspecialchars(json_encode($p)) ?>)">ویرایش</button>
+                        <div style="width: 48px; height: 48px; border-radius: 12px; background: #f8fafc; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <img src="../<?= htmlspecialchars($p['logo']) ?>" style="max-width: 32px; height: auto;">
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 700; color: var(--text-main);"><?= htmlspecialchars($p['name']) ?></div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);"><?= htmlspecialchars($p['en_name']) ?></div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; color: #16a34a;"><?= number_format((float)$p['buy_price']) ?></div>
+                        <div style="font-weight: 600; color: #dc2626;"><?= number_format((float)$p['sell_price']) ?></div>
+                    </td>
+                    <td><span class="badge badge-info"><?= htmlspecialchars($p['fee']) ?>%</span></td>
+                    <td>
+                        <?php
+                        $status_class = $p['status'] === 'مناسب خرید' ? 'badge-success' : 'badge-danger';
+                        ?>
+                        <span class="badge <?= $status_class ?>"><?= htmlspecialchars($p['status']) ?></span>
+                    </td>
+                    <td>
+                        <button class="btn btn-outline" style="padding: 0.5rem;" onclick='editPlatform(<?= json_encode($p) ?>)'>
+                            <i data-lucide="edit-3" style="width: 16px;"></i>
+                            ویرایش
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -105,12 +88,16 @@ $platforms = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC")->fet
 
 <!-- Edit Modal -->
 <div id="editModal" class="modal">
-    <div class="modal-content">
-        <h2>ویرایش پلتفرم</h2>
+    <div class="modal-content" style="max-width: 600px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="margin:0;">ویرایش پلتفرم</h2>
+            <button onclick="closeModal()" style="color: var(--text-muted); cursor: pointer; background:none; border:none;"><i data-lucide="x"></i></button>
+        </div>
         <form method="POST">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="id" id="edit-id">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="form-group">
                     <label>نام پلتفرم</label>
                     <input type="text" name="name" id="edit-name" required>
@@ -120,11 +107,13 @@ $platforms = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC")->fet
                     <input type="text" name="en_name" id="edit-en_name">
                 </div>
             </div>
+
             <div class="form-group">
                 <label>آدرس لوگو</label>
                 <input type="text" name="logo" id="edit-logo">
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="form-group">
                     <label>قیمت خرید</label>
                     <input type="text" name="buy_price" id="edit-buy_price">
@@ -134,7 +123,8 @@ $platforms = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC")->fet
                     <input type="text" name="sell_price" id="edit-sell_price">
                 </div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="form-group">
                     <label>کارمزد (%)</label>
                     <input type="text" name="fee" id="edit-fee">
@@ -144,13 +134,15 @@ $platforms = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC")->fet
                     <input type="text" name="status" id="edit-status">
                 </div>
             </div>
+
             <div class="form-group">
                 <label>لینک سایت</label>
                 <input type="text" name="link" id="edit-link">
             </div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="submit" class="btn btn-edit" style="flex-grow: 1;">ذخیره تغییرات</button>
-                <button type="button" class="btn btn-outline" style="border: 1px solid #ddd;" onclick="closeModal()">انصراف</button>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="flex-grow: 1; justify-content: center;">ذخیره تغییرات</button>
+                <button type="button" class="btn btn-outline" style="flex-grow: 1; justify-content: center;" onclick="closeModal()">انصراف</button>
             </div>
         </form>
     </div>
@@ -167,12 +159,12 @@ $platforms = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC")->fet
         document.getElementById('edit-fee').value = p.fee;
         document.getElementById('edit-status').value = p.status;
         document.getElementById('edit-link').value = p.link;
-        document.getElementById('editModal').style.display = 'block';
+        document.getElementById('editModal').style.display = 'flex';
+        lucide.createIcons();
     }
     function closeModal() {
         document.getElementById('editModal').style.display = 'none';
     }
 </script>
 
-</body>
-</html>
+<?php include __DIR__ . '/layout/footer.php'; ?>

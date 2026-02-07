@@ -13,8 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $description = $_POST['description'];
     $manual_price = $_POST['manual_price'];
     $is_manual = isset($_POST['is_manual']) ? 1 : 0;
-
-    // Simple logo handling (could be expanded to file upload)
     $logo = $_POST['logo'];
 
     $stmt = $pdo->prepare("UPDATE items SET name = ?, en_name = ?, description = ?, manual_price = ?, is_manual = ?, logo = ? WHERE id = ?");
@@ -24,56 +22,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 $items = $pdo->query("SELECT i.*, p.price as api_price FROM items i LEFT JOIN prices_cache p ON i.symbol = p.symbol ORDER BY i.sort_order ASC")->fetchAll();
 
+$page_title = 'مدیریت آیتم‌ها';
+$page_subtitle = 'مدیریت قیمت‌های دستی و اطلاعات دارایی‌ها';
+
+include __DIR__ . '/layout/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدیریت آیتم‌ها - طلا آنلاین</title>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* Shared CSS variables and base styles from index.php */
-        :root { --primary: #e29b21; --bg: #f8fafc; --sidebar: #1e293b; --card: #ffffff; --text: #475569; --title: #1e293b; --border: #e2e8f0; }
-        body { font-family: 'Vazirmatn', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; display: flex; }
-        .sidebar { width: 260px; background: var(--sidebar); color: white; min-height: 100vh; padding: 30px 20px; box-sizing: border-box; position: fixed; right: 0; top: 0; }
-        .main-content { flex-grow: 1; margin-right: 260px; padding: 40px; }
-        .nav-menu { list-style: none; padding: 0; }
-        .nav-link { color: #cbd5e1; text-decoration: none; display: block; padding: 12px 15px; border-radius: 12px; transition: all 0.3s; }
-        .nav-link:hover, .nav-link.active { background: rgba(226, 155, 33, 0.1); color: var(--primary); }
-        .card { background: var(--card); border-radius: 20px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid var(--border); margin-bottom: 30px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: right; padding: 15px; border-bottom: 1px solid var(--border); }
-        .btn { padding: 8px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; }
-        .btn-edit { background: #3b82f6; color: white; }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
-        .modal-content { background: white; margin: 5% auto; padding: 30px; border-radius: 20px; width: 500px; max-width: 90%; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; box-sizing: border-box; }
-        .alert { padding: 15px; background: #dcfce7; color: #16a34a; border-radius: 10px; margin-bottom: 20px; }
-    </style>
-</head>
-<body>
 
-<div class="sidebar">
-    <div style="font-size: 1.5rem; color: var(--primary); margin-bottom: 40px; text-align: center;">TalaOnline Admin</div>
-    <ul class="nav-menu">
-        <li class="nav-item"><a href="index.php" class="nav-link">داشبورد</a></li>
-        <li class="nav-item"><a href="items.php" class="nav-link active">مدیریت آیتم‌ها</a></li>
-        <li class="nav-item"><a href="platforms.php" class="nav-link">مدیریت پلتفرم‌ها</a></li>
-        <li class="nav-item"><a href="settings.php" class="nav-link">تنظیمات سیستم</a></li>
-    </ul>
-</div>
+<?php if ($message): ?>
+    <div class="badge badge-success" style="padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i data-lucide="check-circle" style="width: 18px;"></i>
+        <?= $message ?>
+    </div>
+<?php endif; ?>
 
-<div class="main-content">
-    <h1>مدیریت آیتم‌ها و قیمت‌ها</h1>
-
-    <?php if ($message): ?>
-        <div class="alert"><?= $message ?></div>
-    <?php endif; ?>
-
-    <div class="card">
+<div class="card">
+    <div class="table-responsive">
         <table>
             <thead>
                 <tr>
@@ -81,7 +44,6 @@ $items = $pdo->query("SELECT i.*, p.price as api_price FROM items i LEFT JOIN pr
                     <th>نام آیتم</th>
                     <th>نماد API</th>
                     <th>قیمت API</th>
-                    <th>قیمت دستی</th>
                     <th>وضعیت</th>
                     <th>عملیات</th>
                 </tr>
@@ -89,20 +51,36 @@ $items = $pdo->query("SELECT i.*, p.price as api_price FROM items i LEFT JOIN pr
             <tbody>
                 <?php foreach ($items as $item): ?>
                 <tr>
-                    <td><img src="../<?= htmlspecialchars($item['logo']) ?>" width="30"></td>
-                    <td><?= htmlspecialchars($item['name']) ?></td>
-                    <td><code><?= htmlspecialchars($item['symbol']) ?></code></td>
-                    <td><?= number_format((float)$item['api_price']) ?></td>
-                    <td><?= $item['manual_price'] ? number_format((float)$item['manual_price']) : '-' ?></td>
+                    <td>
+                        <div style="width: 40px; height: 40px; border-radius: 10px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <img src="../<?= htmlspecialchars($item['logo']) ?>" style="max-width: 24px; height: auto;">
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 700; color: var(--text-main);"><?= htmlspecialchars($item['name']) ?></div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);"><?= htmlspecialchars($item['en_name']) ?></div>
+                    </td>
+                    <td><code style="background: #f1f5f9; padding: 4px 8px; border-radius: 6px;"><?= htmlspecialchars($item['symbol']) ?></code></td>
                     <td>
                         <?php if ($item['is_manual']): ?>
-                            <span style="color: #e29b21; font-weight: bold;">دستی (Override)</span>
+                            <div style="text-decoration: line-through; color: var(--text-muted); font-size: 0.8rem;"><?= number_format((float)$item['api_price']) ?></div>
+                            <div style="color: var(--primary); font-weight: 700;"><?= number_format((float)$item['manual_price']) ?></div>
                         <?php else: ?>
-                            <span style="color: #16a34a;">خودکار</span>
+                            <div style="font-weight: 700;"><?= number_format((float)$item['api_price']) ?></div>
                         <?php endif; ?>
                     </td>
                     <td>
-                        <button class="btn btn-edit" onclick="editItem(<?= htmlspecialchars(json_encode($item)) ?>)">ویرایش</button>
+                        <?php if ($item['is_manual']): ?>
+                            <span class="badge badge-warning">دستی (Override)</span>
+                        <?php else: ?>
+                            <span class="badge badge-success">خودکار (API)</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <button class="btn btn-outline" style="padding: 0.5rem;" onclick='editItem(<?= json_encode($item) ?>)'>
+                            <i data-lucide="edit-3" style="width: 16px;"></i>
+                            ویرایش
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -114,38 +92,42 @@ $items = $pdo->query("SELECT i.*, p.price as api_price FROM items i LEFT JOIN pr
 <!-- Edit Modal -->
 <div id="editModal" class="modal">
     <div class="modal-content">
-        <h2>ویرایش آیتم</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="margin:0;">ویرایش آیتم</h2>
+            <button onclick="closeModal()" style="color: var(--text-muted); cursor: pointer; background:none; border:none;"><i data-lucide="x"></i></button>
+        </div>
         <form method="POST">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="id" id="edit-id">
-            <div class="form-group">
-                <label>نام فارسی</label>
-                <input type="text" name="name" id="edit-name" required>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label>نام فارسی</label>
+                    <input type="text" name="name" id="edit-name" required>
+                </div>
+                <div class="form-group">
+                    <label>نام انگلیسی</label>
+                    <input type="text" name="en_name" id="edit-en_name">
+                </div>
             </div>
             <div class="form-group">
-                <label>نام انگلیسی</label>
-                <input type="text" name="en_name" id="edit-en_name">
-            </div>
-            <div class="form-group">
-                <label>آدرس لوگو</label>
+                <label>آدرس لوگو (نسبت به پوشه site)</label>
                 <input type="text" name="logo" id="edit-logo">
             </div>
             <div class="form-group">
                 <label>توضیح کوتاه</label>
-                <textarea name="description" id="edit-description"></textarea>
+                <textarea name="description" id="edit-description" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label>قیمت دستی (تومان)</label>
                 <input type="text" name="manual_price" id="edit-manual_price" placeholder="مثلاً 19500000">
             </div>
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" name="is_manual" id="edit-is_manual"> استفاده از قیمت دستی به جای API
-                </label>
+            <div class="form-group" style="background: #f8fafc; padding: 1rem; border-radius: 12px; display: flex; align-items: center; gap: 0.75rem;">
+                <input type="checkbox" name="is_manual" id="edit-is_manual" style="width: 20px; height: 20px; accent-color: var(--primary);">
+                <label for="edit-is_manual" style="margin-bottom: 0; cursor: pointer;">استفاده از قیمت دستی به جای API</label>
             </div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="submit" class="btn btn-edit" style="flex-grow: 1;">ذخیره تغییرات</button>
-                <button type="button" class="btn btn-outline" style="border: 1px solid #ddd;" onclick="closeModal()">انصراف</button>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="flex-grow: 1; justify-content: center;">ذخیره تغییرات</button>
+                <button type="button" class="btn btn-outline" style="flex-grow: 1; justify-content: center;" onclick="closeModal()">انصراف</button>
             </div>
         </form>
     </div>
@@ -160,7 +142,8 @@ $items = $pdo->query("SELECT i.*, p.price as api_price FROM items i LEFT JOIN pr
         document.getElementById('edit-description').value = item.description;
         document.getElementById('edit-manual_price').value = item.manual_price;
         document.getElementById('edit-is_manual').checked = item.is_manual == 1;
-        document.getElementById('editModal').style.display = 'block';
+        document.getElementById('editModal').style.display = 'flex';
+        lucide.createIcons();
     }
     function closeModal() {
         document.getElementById('editModal').style.display = 'none';
@@ -170,5 +153,4 @@ $items = $pdo->query("SELECT i.*, p.price as api_price FROM items i LEFT JOIN pr
     }
 </script>
 
-</body>
-</html>
+<?php include __DIR__ . '/layout/footer.php'; ?>
