@@ -5,6 +5,9 @@
 
 $config_file = __DIR__ . '/../config.php';
 
+// Initialize $pdo as null to prevent "undefined variable" errors
+$pdo = null;
+
 if (file_exists($config_file)) {
     require_once $config_file;
 
