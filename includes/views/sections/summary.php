@@ -1,8 +1,8 @@
-<div class="mob-scroll basis500 grow-1 d-flex gap-20">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full lg:w-1/2">
     <?= View::renderComponent('price_card', [
         'id' => 'gold-summary',
         'title' => 'طلای ۱۸ عیار',
-        'subtitle' => 'قیمت لحظه‌ای طلا',
+        'subtitle' => 'قیمت لحظه‌ای هر گرم طلا',
         'icon' => 'gold',
         'icon_class' => 'gold-icon',
         'data' => $gold_data,
@@ -12,7 +12,7 @@
     <?= View::renderComponent('price_card', [
         'id' => 'silver-summary',
         'title' => 'نقره ۹۹۹',
-        'subtitle' => 'قیمت لحظه‌ای نقره',
+        'subtitle' => 'قیمت لحظه‌ای هر گرم نقره',
         'icon' => 'silver',
         'icon_class' => 'silver-icon',
         'data' => $silver_data,

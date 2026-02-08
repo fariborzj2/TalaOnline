@@ -5,15 +5,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     };
 
     const persianNumberFormatter = new Intl.NumberFormat('fa-IR');
-
     const toPersianDigits = (num) => {
         if (num === null || num === undefined) return '';
         return persianNumberFormatter.format(num);
     };
 
-    const formatPrice = (price) => {
-        return toPersianDigits(price);
-    };
+    const formatPrice = (price) => toPersianDigits(price);
 
     const fetchData = async () => {
         try {
@@ -26,150 +23,110 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     };
 
-    const getTrendArrow = (change) => {
-        if (change > 0) return '<span class="trend-arrow trend-up"></span>';
-        if (change < 0) return '<span class="trend-arrow trend-down"></span>';
-        return '';
-    };
-
     const populateSummary = (summary) => {
-        const assets = ['gold', 'silver'];
-        assets.forEach(asset => {
+        ['gold', 'silver'].forEach(asset => {
             const container = document.getElementById(`${asset}-summary`);
             if (!container) return;
 
             const data = summary[asset];
+            const isPositive = data.change >= 0;
 
             const currentPriceEl = container.querySelector('.current-price');
-            currentPriceEl.textContent = formatPrice(data.current);
-            currentPriceEl.classList.remove('skeleton');
+            currentPriceEl.textContent = formatPrice(data.current || data.price);
 
             const priceChangeEl = container.querySelector('.price-change');
             const sign = data.change > 0 ? '+' : '';
             priceChangeEl.textContent = `(${sign}${formatPrice(data.change)})`;
-            priceChangeEl.classList.remove('skeleton');
 
+            const badgeEl = container.querySelector('.change-percent').parentElement;
             const percentEl = container.querySelector('.change-percent');
-            percentEl.innerHTML = getTrendArrow(data.change) + toPersianDigits(data.change_percent) + '٪';
-            percentEl.className = `trend-badge change-percent ${data.change >= 0 ? 'color-green' : 'color-red'}`;
-            percentEl.classList.remove('skeleton');
 
-            const highPriceEl = container.querySelector('.high-price');
-            highPriceEl.innerHTML = `${formatPrice(data.high)} <span class="font-size-0-7 color-bright">تومان</span>`;
-            highPriceEl.classList.remove('skeleton');
+            percentEl.textContent = toPersianDigits(Math.abs(data.change_percent)) + '٪';
+            badgeEl.querySelector('span:first-child').textContent = isPositive ? '▲' : '▼';
 
-            const lowPriceEl = container.querySelector('.low-price');
-            lowPriceEl.innerHTML = `${formatPrice(data.low)} <span class="font-size-0-7 color-bright">تومان</span>`;
-            lowPriceEl.classList.remove('skeleton');
+            if (isPositive) {
+                badgeEl.classList.remove('bg-rose-100', 'text-rose-700', 'dark:bg-rose-900/30', 'dark:text-rose-400');
+                badgeEl.classList.add('bg-emerald-100', 'text-emerald-700', 'dark:bg-emerald-900/30', 'dark:text-emerald-400');
+            } else {
+                badgeEl.classList.remove('bg-emerald-100', 'text-emerald-700', 'dark:bg-emerald-900/30', 'dark:text-emerald-400');
+                badgeEl.classList.add('bg-rose-100', 'text-rose-700', 'dark:bg-rose-900/30', 'dark:text-rose-400');
+            }
+
+            container.querySelector('.high-price').firstChild.textContent = formatPrice(data.high);
+            container.querySelector('.low-price').firstChild.textContent = formatPrice(data.low);
         });
-
-        // Also update the chart high/low placeholders if needed
-        const chartHighEl = document.querySelector('.chart-high-price');
-        chartHighEl.textContent = formatPrice(summary.gold.high);
-        chartHighEl.classList.remove('skeleton');
-
-        const chartLowEl = document.querySelector('.chart-low-price');
-        chartLowEl.textContent = formatPrice(summary.gold.low);
-        chartLowEl.classList.remove('skeleton');
     };
 
     const populatePlatforms = (platforms) => {
-        const tbody = document.getElementById('platforms-table-body');
+        const tbody = document.getElementById('platforms-list');
         if (!tbody) return;
 
         if (platforms.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding: 40px; color: var(--color-bright);">
-                <div class="mb-10 font-size-1-5">🔍</div>
-                نتیجه‌ای برای جستجوی شما یافت نشد.
-            </td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400 font-bold">موردی یافت نشد.</td></tr>`;
             return;
         }
 
         tbody.innerHTML = platforms.map(p => `
-            <tr>
-                <td>
-                    <div class="brand-logo">
-                        <img src="${p.logo}" alt="${p.name}">
+            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/20 transition-colors border-b border-slate-50 dark:border-slate-800/50 text-right">
+                <td class="px-6 py-5">
+                    <div class="flex items-center space-x-reverse space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 p-1.5 shadow-sm">
+                            <img src="${p.logo}" alt="${p.name}" class="w-full h-full object-contain">
+                        </div>
+                        <span class="text-sm font-black text-slate-800 dark:text-slate-200">${p.name}</span>
                     </div>
                 </td>
-                <td>
-                    <div class="line20">
-                        <div class="color-title">${p.name}</div>
-                        <div class="font-size-0-8">${p.en_name}</div>
-                    </div>
+                <td class="px-6 py-5 text-center text-sm font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
+                    ${formatPrice(p.buy_price)}
                 </td>
-                <td class="font-size-1-2 color-title">${formatPrice(p.buy_price)}</td>
-                <td class="font-size-1-2 color-title">${formatPrice(p.sell_price)}</td>
-                <td class="font-size-1-2" dir="ltr">${toPersianDigits(p.fee)}٪</td>
-                <td>
-                    <span class="status-badge ${p.status === 'مناسب خرید' ? 'buy' : 'sell'}">
-                        ${p.status}
+                <td class="px-6 py-5 text-center text-sm font-bold text-rose-600 dark:text-rose-400 tabular-nums">
+                    ${formatPrice(p.sell_price)}
+                </td>
+                <td class="px-6 py-5 text-center text-xs font-bold text-slate-500 dark:text-slate-400">
+                    ${toPersianDigits(p.fee)}٪
+                </td>
+                <td class="px-6 py-5 text-center">
+                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-black ${p.status === 'active' || p.status === 'فعال' || p.status === 'مناسب خرید' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-slate-100 text-slate-500'}">
+                        ${p.status === 'active' ? 'فعال' : (p.status || 'نامشخص')}
                     </span>
                 </td>
-                <td>
-                    <a href="${p.link}" class="btn" target="_blank" rel="noopener noreferrer" aria-label="خرید طلا از ${p.name} (در پنجره جدید)">خرید طلا</a>
+                <td class="px-6 py-5 text-center">
+                    <a href="${p.link}" target="_blank" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-primary hover:text-white transition-all duration-300">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
                 </td>
             </tr>
         `).join('');
-    };
-
-    const initSorting = () => {
-        document.querySelectorAll('th.sortable').forEach(th => {
-            th.addEventListener('click', () => {
-                const column = th.dataset.sort;
-                const direction = state.currentSort.column === column && state.currentSort.direction === 'asc' ? 'desc' : 'asc';
-
-                state.currentSort = { column, direction };
-
-                // Update UI classes
-                document.querySelectorAll('th.sortable').forEach(el => {
-                    el.classList.remove('active-sort', 'sort-asc', 'sort-desc');
-                    el.removeAttribute('aria-sort');
-                });
-                th.classList.add('active-sort', `sort-${direction}`);
-                th.setAttribute('aria-sort', direction === 'asc' ? 'ascending' : 'descending');
-
-                // Sort data
-                state.platforms.sort((a, b) => {
-                    let valA = a[column];
-                    let valB = b[column];
-
-                    if (column === 'name') {
-                        return direction === 'asc' ? valA.localeCompare(valB, 'fa') : valB.localeCompare(valA, 'fa');
-                    }
-
-                    return direction === 'asc' ? valA - valB : valB - valA;
-                });
-
-                populatePlatforms(state.platforms);
-            });
-        });
     };
 
     const populateCoins = (coins) => {
         const container = document.getElementById('coins-list');
         if (!container) return;
 
-        container.innerHTML = coins.map(c => `
-            <div class="coin-item">
-                <div class="d-flex align-center gap-10">
-                    <div class="brand-logo">
-                        <img src="${c.logo}" alt="${c.name}">
+        container.innerHTML = coins.map((c, index) => {
+            const isPos = c.change_percent >= 0;
+            return `
+                <div class="group flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-all duration-300 border border-transparent hover:border-slate-100 dark:hover:border-slate-700/50 fade-in-up" style="animation-delay: ${0.2 + (index * 0.05)}s">
+                    <div class="flex items-center space-x-reverse space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center p-2 group-hover:scale-110 transition-transform duration-300">
+                            <img src="assets/images/coin/${c.symbol}.svg" alt="${c.name}" class="w-full h-full object-contain" onerror="this.src='assets/images/gold.svg'">
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-extrabold text-slate-800 dark:text-slate-200">${c.name}</h4>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${c.symbol}</p>
+                        </div>
                     </div>
-                    <div class="line24">
-                        <div class="color-title font-size-1">${c.name}</div>
-                        <div class="font-size-0-8">${c.en_name}</div>
+                    <div class="text-left text-left-important">
+                        <p class="text-sm font-black text-slate-900 dark:text-white">${formatPrice(c.price)}</p>
+                        <div class="flex items-center justify-end space-x-reverse space-x-1.5">
+                            <span class="text-[10px] font-bold ${isPos ? 'text-emerald-500' : 'text-rose-500'}">
+                                ${isPos ? '+' : ''}${toPersianDigits(c.change_percent)}٪
+                            </span>
+                        </div>
                     </div>
                 </div>
-
-                <div class="line24 text-left">
-                    <div class=""><span class="color-title font-size-1-2 font-bold">${formatPrice(c.price)}</span> <span class="color-bright font-size-0-8">تومان</span></div>
-                    <div class="${c.change_percent >= 0 ? 'color-green' : 'color-red'} font-size-0-8 mt-4">
-                        ${getTrendArrow(c.change_percent)}${toPersianDigits(c.change_percent)}٪
-                    </div>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     };
 
     const initSearch = () => {
@@ -180,90 +137,57 @@ document.addEventListener('DOMContentLoaded', async function() {
             const query = e.target.value.toLowerCase();
             const filtered = state.platforms.filter(p =>
                 p.name.toLowerCase().includes(query) ||
-                p.en_name.toLowerCase().includes(query)
+                (p.en_name && p.en_name.toLowerCase().includes(query))
             );
             populatePlatforms(filtered);
-
-            // Announce result count to screen readers
-            const announcement = document.getElementById('search-announcement');
-            if (announcement) {
-                if (filtered.length > 0) {
-                    announcement.textContent = `${toPersianDigits(filtered.length)} مورد یافت شد.`;
-                } else {
-                    announcement.textContent = 'موردی یافت نشد.';
-                }
-            }
         });
     };
 
     const initTheme = () => {
         const themeToggle = document.getElementById('theme-toggle');
-        const sunIcon = themeToggle.querySelector('.sun-icon');
-        const moonIcon = themeToggle.querySelector('.moon-icon');
-
         const setTheme = (theme) => {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
             if (theme === 'dark') {
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
+                document.documentElement.classList.add('dark');
             } else {
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
+                document.documentElement.classList.remove('dark');
             }
-            // Dispatch event for charts to update if needed
+            localStorage.setItem('theme', theme);
             window.dispatchEvent(new CustomEvent('themechanged', { detail: { theme } }));
         };
 
-        const currentTheme = localStorage.getItem('theme') || 'light';
+        const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         setTheme(currentTheme);
 
         themeToggle.addEventListener('click', () => {
-            const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            setTheme(newTheme);
+            const isDark = document.documentElement.classList.contains('dark');
+            setTheme(isDark ? 'light' : 'dark');
         });
     };
 
     const initApp = async () => {
         initTheme();
         const banner = document.getElementById('error-banner');
-        if (banner) banner.classList.add('d-none');
+        if (banner) banner.classList.add('hidden');
 
-        // Update current date (only if not already set by SSR)
-        const dateEl = document.getElementById('current-date');
-        if (dateEl && (dateEl.textContent === '...' || dateEl.textContent === '')) {
-            const now = new Date();
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            const formattedDate = new Intl.DateTimeFormat('fa-IR', options).format(now);
-            dateEl.textContent = formattedDate;
-        }
-
-        // Use initial state if available to avoid redundant fetch on load
         if (window.__INITIAL_STATE__) {
             const data = window.__INITIAL_STATE__;
             state.platforms = data.platforms;
-            initSorting();
             initSearch();
             console.log('Initialized from SSR state');
         } else {
             const data = await fetchData();
             if (data) {
-                if (data.meta && data.meta.site_title) {
-                    document.title = data.meta.site_title + ' | قیمت لحظه‌ای طلا، سکه و ارز';
-                }
                 state.platforms = data.platforms;
                 populateSummary(data.summary);
                 populatePlatforms(state.platforms);
                 populateCoins(data.coins);
-                initSorting();
                 initSearch();
             } else {
-                if (banner) banner.classList.remove('d-none');
+                if (banner) banner.classList.remove('hidden');
             }
         }
     };
 
-    // Reload button handler
     const reloadBtn = document.getElementById('reload-btn');
     if (reloadBtn) {
         reloadBtn.addEventListener('click', () => {

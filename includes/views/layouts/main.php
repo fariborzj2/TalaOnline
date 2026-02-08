@@ -38,20 +38,69 @@
     }
     </script>
 
-    <link rel="stylesheet" href="assets/css/grid.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#e29b21',
+                        'primary-light': '#f5b545',
+                        'primary-dark': '#b87d1a',
+                        surface: {
+                            light: '#ffffff',
+                            dark: '#1e293b'
+                        },
+                        background: {
+                            light: '#f8fafc',
+                            dark: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        vazir: ['Vazirmatn', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply font-vazir bg-background-light text-slate-600 dark:bg-background-dark dark:text-slate-400;
+            }
+        }
+        @layer components {
+            .glass {
+                @apply bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-xl;
+            }
+            .glass-card {
+                @apply glass rounded-3xl p-6 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-2xl;
+            }
+            .btn-primary {
+                @apply bg-primary hover:bg-primary-dark text-white font-bold py-2 px-6 rounded-full transition-all duration-300 shadow-lg shadow-primary/30 hover:shadow-primary/50;
+            }
+        }
+    </style>
 </head>
 <body>
     <a href="#main-content" class="skip-link">رفتن به محتوای اصلی</a>
     <h1 class="sr-only"><?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?> - مرجع قیمت لحظه‌ای طلا و سکه</h1>
-    <div class="main" id="main-content">
-        <div class="top-bar mb-10">
-            <div class="center d-flex just-between align-center">
-                <div class="logo">
+    <div class="min-h-screen relative" id="main-content">
+        <!-- Top Navigation -->
+        <nav class="sticky top-0 z-50 glass border-b border-slate-200/50 dark:border-slate-700/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <!-- Logo Area -->
+                    <div class="flex items-center">
                     <a href="/">
                         <svg width="117" height="26" viewBox="0 0 117 26" fill="none" xmlns="http://www.w3.org/2000/svg" style="height: 32px; width: auto;" aria-label="طلا آنلاین" role="img">
                             <path d="M0.371094 16.9111H8.93555V19.5186H0.371094C0.240885 19.5186 0.146484 19.4307 0.0878906 19.2549C0.0292969 19.0791 0 18.734 0 18.2197C0 17.7054 0.0292969 17.3604 0.0878906 17.1846C0.146484 17.0023 0.240885 16.9111 0.371094 16.9111Z" fill="currentColor"/>
@@ -71,30 +120,46 @@
                         </svg>
                     </a>
                 </div>
-                <div class="d-flex align-center gap-15">
-                    <button id="theme-toggle" class="theme-btn" aria-label="تغییر تم (روشن/تاریک)">
-                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                    </button>
-                    <div class="d-flex align-center gap-10 border-right pr-15">
-                        <span class="live-pulse"></span>
-                        <span id="current-date" class="font-size-0-9 font-bold color-title">
-                            <?php
-                            if (class_exists('IntlDateFormatter')) {
-                                $fmt = new IntlDateFormatter('fa_IR@calendar=persian', IntlDateFormatter::FULL, IntlDateFormatter::NONE, 'Asia/Tehran', IntlDateFormatter::TRADITIONAL);
-                                echo $fmt->format(new DateTime());
-                            } else {
-                                echo date('Y-m-d'); // Fallback
-                            }
-                            ?>
-                        </span>
+                    <!-- Actions Area -->
+                    <div class="flex items-center space-x-reverse space-x-4">
+                        <!-- Theme Toggle -->
+                        <button id="theme-toggle" class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 hover:text-primary transition-all duration-300" aria-label="تغییر تم (روشن/تاریک)">
+                            <svg class="sun-icon block dark:hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                            <svg class="moon-icon hidden dark:block" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                        </button>
+
+                        <!-- Date Display -->
+                        <div class="hidden sm:flex items-center space-x-reverse space-x-3 bg-slate-100 dark:bg-slate-700/50 px-5 py-2.5 rounded-2xl border border-slate-200/50 dark:border-slate-600/30">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span id="current-date" class="text-sm font-bold text-slate-700 dark:text-slate-200">
+                                <?php
+                                if (class_exists('IntlDateFormatter')) {
+                                    $fmt = new IntlDateFormatter('fa_IR@calendar=persian', IntlDateFormatter::FULL, IntlDateFormatter::NONE, 'Asia/Tehran', IntlDateFormatter::TRADITIONAL);
+                                    echo $fmt->format(new DateTime());
+                                } else {
+                                    echo date('Y-m-d');
+                                }
+                                ?>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </nav>
 
-        <?= $content ?>
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <?= $content ?>
+        </main>
 
+        <!-- Footer -->
+        <footer class="mt-12 py-8 border-t border-slate-200 dark:border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-slate-500 dark:text-slate-400 text-sm">© <?= date('Y') ?> <?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?>. تمامی حقوق محفوظ است.</p>
+            </div>
+        </footer>
     </div>
 
     <script src="assets/js/charts.js"></script>
