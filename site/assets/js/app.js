@@ -29,31 +29,27 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (!container) return;
 
             const data = summary[asset];
-            const isPositive = data.change >= 0;
+            const isPositive = data.change_percent >= 0;
 
             const currentPriceEl = container.querySelector('.current-price');
-            currentPriceEl.textContent = formatPrice(data.current || data.price);
+            if (currentPriceEl) currentPriceEl.textContent = formatPrice(data.price);
 
-            const priceChangeEl = container.querySelector('.price-change');
-            const sign = data.change > 0 ? '+' : '';
-            priceChangeEl.textContent = `(${sign}${formatPrice(data.change)})`;
-
-            const badgeEl = container.querySelector('.change-percent').parentElement;
+            const changeContainer = container.querySelector('.change-container');
             const percentEl = container.querySelector('.change-percent');
+            const iconEl = container.querySelector('.trend-icon');
 
-            percentEl.textContent = toPersianDigits(Math.abs(data.change_percent)) + '٪';
-            badgeEl.querySelector('span:first-child').textContent = isPositive ? '▲' : '▼';
+            if (percentEl) percentEl.textContent = toPersianDigits(Math.abs(data.change_percent)) + '٪';
+            if (iconEl) iconEl.textContent = isPositive ? '↗' : '↘';
 
-            if (isPositive) {
-                badgeEl.classList.remove('bg-rose-100', 'text-rose-700', 'dark:bg-rose-900/30', 'dark:text-rose-400');
-                badgeEl.classList.add('bg-emerald-100', 'text-emerald-700', 'dark:bg-emerald-900/30', 'dark:text-emerald-400');
-            } else {
-                badgeEl.classList.remove('bg-emerald-100', 'text-emerald-700', 'dark:bg-emerald-900/30', 'dark:text-emerald-400');
-                badgeEl.classList.add('bg-rose-100', 'text-rose-700', 'dark:bg-rose-900/30', 'dark:text-rose-400');
+            if (changeContainer) {
+                if (isPositive) {
+                    changeContainer.classList.remove('text-rose-500');
+                    changeContainer.classList.add('text-emerald-500');
+                } else {
+                    changeContainer.classList.remove('text-emerald-500');
+                    changeContainer.classList.add('text-rose-500');
+                }
             }
-
-            container.querySelector('.high-price').firstChild.textContent = formatPrice(data.high);
-            container.querySelector('.low-price').firstChild.textContent = formatPrice(data.low);
         });
     };
 

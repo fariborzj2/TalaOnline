@@ -49,9 +49,10 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#e29b21',
-                        'primary-light': '#f5b545',
-                        'primary-dark': '#b87d1a',
+                        primary: '#1d4ed8', // Blue from image
+                        secondary: '#f59e0b', // Orange from image
+                        'primary-light': '#3b82f6',
+                        'primary-dark': '#1e40af',
                         surface: {
                             light: '#ffffff',
                             dark: '#1e293b'
@@ -65,8 +66,13 @@
                         vazir: ['Vazirmatn', 'sans-serif'],
                     },
                     borderRadius: {
-                        '2xl': '1.5rem',
-                        '3xl': '2rem',
+                        '2xl': '1rem',
+                        '3xl': '1.5rem',
+                        '4xl': '2rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'hover': '0 10px 30px -5px rgba(0, 0, 0, 0.1)',
                     }
                 }
             }
@@ -75,93 +81,121 @@
     <style type="text/tailwindcss">
         @layer base {
             body {
-                @apply font-vazir bg-background-light text-slate-600 dark:bg-background-dark dark:text-slate-400;
+                @apply font-vazir bg-background-light text-slate-600 dark:bg-background-dark dark:text-slate-400 antialiased;
             }
         }
         @layer components {
-            .glass {
-                @apply bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-xl;
-            }
             .glass-card {
-                @apply glass rounded-3xl p-6 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-2xl;
+                @apply bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-soft rounded-3xl p-6 transition-all duration-300;
             }
-            .btn-primary {
-                @apply bg-primary hover:bg-primary-dark text-white font-bold py-2 px-6 rounded-full transition-all duration-300 shadow-lg shadow-primary/30 hover:shadow-primary/50;
+            .sidebar-item {
+                @apply flex items-center justify-center w-12 h-12 rounded-2xl text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-all duration-200;
+            }
+            .sidebar-item.active {
+                @apply bg-primary text-white shadow-lg shadow-primary/30;
+            }
+            .tab-item {
+                @apply px-6 py-2 rounded-full text-sm font-bold transition-all duration-200;
+            }
+            .tab-item.active {
+                @apply bg-primary text-white shadow-md shadow-primary/20;
+            }
+            .tab-item:not(.active) {
+                @apply text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800;
+            }
+            .btn-upgrade {
+                @apply bg-secondary hover:bg-amber-600 text-white font-bold py-2.5 px-6 rounded-full transition-all duration-300 flex items-center gap-2 shadow-lg shadow-secondary/30;
             }
         }
     </style>
 </head>
-<body>
-    <a href="#main-content" class="skip-link">رفتن به محتوای اصلی</a>
-    <h1 class="sr-only"><?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?> - مرجع قیمت لحظه‌ای طلا و سکه</h1>
-    <div class="min-h-screen relative" id="main-content">
-        <!-- Top Navigation -->
-        <nav class="sticky top-0 z-50 glass border-b border-slate-200/50 dark:border-slate-700/50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-20">
-                    <!-- Logo Area -->
-                    <div class="flex items-center">
-                    <a href="/">
-                        <svg width="117" height="26" viewBox="0 0 117 26" fill="none" xmlns="http://www.w3.org/2000/svg" style="height: 32px; width: auto;" aria-label="طلا آنلاین" role="img">
-                            <path d="M0.371094 16.9111H8.93555V19.5186H0.371094C0.240885 19.5186 0.146484 19.4307 0.0878906 19.2549C0.0292969 19.0791 0 18.734 0 18.2197C0 17.7054 0.0292969 17.3604 0.0878906 17.1846C0.146484 17.0023 0.240885 16.9111 0.371094 16.9111Z" fill="currentColor"/>
-                            <path d="M14.3164 14.4014C14.3164 15.0199 14.3685 15.5146 14.4727 15.8857C14.5768 16.2568 14.7884 16.5205 15.1074 16.6768C15.4264 16.833 15.9115 16.9111 16.5625 16.9111H17.0508V19.5186H16.5332C15.7194 19.5186 14.9837 19.3525 14.3262 19.0205C13.6686 18.682 13.2259 18.2165 12.998 17.624C12.8483 18.0212 12.5879 18.363 12.2168 18.6494C11.8522 18.9294 11.4193 19.1442 10.918 19.2939C10.4167 19.4437 9.89583 19.5186 9.35547 19.5186H8.94531C8.8151 19.5186 8.7207 19.4307 8.66211 19.2549C8.60352 19.0791 8.57422 18.734 8.57422 18.2197C8.57422 17.7054 8.60352 17.3604 8.66211 17.1846C8.7207 17.0023 8.8151 16.9111 8.94531 16.9111H9.35547C10.026 16.9111 10.5273 16.833 10.8594 16.6768C11.1979 16.514 11.4225 16.2503 11.5332 15.8857C11.6504 15.5146 11.709 15.0199 11.709 14.4014V12.7412H14.3164V14.4014ZM11.1426 10.1435C10.6634 9.66972 10.6612 8.89644 11.1377 8.41992C11.6142 7.9434 12.3875 7.94561 12.8613 8.42483C13.3313 8.90022 13.3292 9.66597 12.8564 10.1387C12.3837 10.6114 11.618 10.6135 11.1426 10.1435Z" fill="currentColor"/>
-                            <path d="M21.5723 11.0615C21.7611 11.8298 21.9108 12.5589 22.0215 13.249C22.1322 13.9326 22.1875 14.5706 22.1875 15.1631C22.1875 16.042 22.028 16.8102 21.709 17.4678C21.39 18.1188 20.8822 18.6234 20.1855 18.9814C19.4954 19.3395 18.5872 19.5186 17.4609 19.5186H17.0508C16.9206 19.5186 16.8262 19.4307 16.7676 19.2549C16.709 19.0791 16.6797 18.734 16.6797 18.2197C16.6797 17.7054 16.709 17.3604 16.7676 17.1846C16.8262 17.0023 16.9206 16.9111 17.0508 16.9111H17.4609C18.2357 16.9111 18.7923 16.7451 19.1309 16.4131C19.4694 16.0745 19.6387 15.5635 19.6387 14.8799C19.6387 14.4827 19.5898 14.0238 19.4922 13.5029C19.401 12.9756 19.2773 12.3864 19.1211 11.7354L21.5723 11.0615ZM19.1016 23.7666C18.6224 23.2928 18.6202 22.5195 19.0967 22.043C19.5732 21.5664 20.3465 21.5687 20.8203 22.0479C21.2903 22.5233 21.2881 23.289 20.8154 23.7617C20.3427 24.2344 19.577 24.2366 19.1016 23.7666ZM15.6836 23.7666C15.2044 23.2928 15.2022 22.5195 15.6787 22.043C16.1552 21.5664 16.9285 21.5687 17.4023 22.0479C17.8723 22.5233 17.8702 23.289 17.3975 23.7617C16.9248 24.2344 16.159 24.2366 15.6836 23.7666Z" fill="currentColor"/>
-                            <path d="M24.2285 6.2959L26.6504 5.36816C27.2689 6.83952 27.7604 8.35319 28.125 9.90918C28.4961 11.4587 28.7305 13.0179 28.8281 14.5869L26.3086 14.9092C26.25 13.9521 26.1296 12.9886 25.9473 12.0186C25.765 11.042 25.5273 10.0752 25.2344 9.11816C24.9479 8.15462 24.6126 7.21387 24.2285 6.2959ZM32.1387 5.58301H34.7461V14.8311C34.7461 15.6188 34.9121 16.1624 35.2441 16.4619C35.5762 16.7614 36.1686 16.9111 37.0215 16.9111H37.0312V19.5186H37.0215C35.791 19.5186 34.821 19.2679 34.1113 18.7666C33.4082 18.2653 32.9688 17.5068 32.793 16.4912L32.7832 16.2178C32.2559 16.9795 31.5951 17.6045 30.8008 18.0928C30.0065 18.5745 29.0462 18.9326 27.9199 19.167C26.7936 19.4014 25.4655 19.5186 23.9355 19.5186V16.9111C25.6738 16.9111 27.0964 16.7874 28.2031 16.54C29.3099 16.2861 30.1725 15.876 30.791 15.3096C31.416 14.7432 31.8652 13.988 32.1387 13.0439V5.58301Z" fill="currentColor"/>
-                            <path d="M41.5527 11.0615C41.7415 11.8298 41.8913 12.5589 42.002 13.249C42.1126 13.9326 42.168 14.5706 42.168 15.1631C42.168 16.042 42.0085 16.8102 41.6895 17.4678C41.3704 18.1188 40.8626 18.6234 40.166 18.9814C39.4759 19.3395 38.5677 19.5186 37.4414 19.5186H37.0312C36.901 19.5186 36.8066 19.4307 36.748 19.2549C36.6895 19.0791 36.6602 18.734 36.6602 18.2197C36.6602 17.7054 36.6895 17.3604 36.748 17.1846C36.8066 17.0023 36.901 16.9111 37.0312 16.9111H37.4414C38.2161 16.9111 38.7728 16.7451 39.1113 16.4131C39.4499 16.0745 39.6191 15.5635 39.6191 14.8799C39.6191 14.4827 39.5703 14.0238 39.4727 13.5029C39.3815 12.9756 39.2578 12.3864 39.1016 11.7354L41.5527 11.0615ZM38.5059 8.82517C38.0267 8.35136 38.0245 7.57808 38.501 7.10156C38.9775 6.62504 39.7508 6.62725 40.2246 7.10647C40.6946 7.58186 40.6924 8.34761 40.2197 8.82031C39.747 9.29302 38.9813 9.29518 38.5059 8.82517Z" fill="currentColor"/>
-                            <path d="M48.079 1.88929C48.2726 1.62327 48.6237 1.50459 48.9163 1.65499C49.2048 1.80329 49.3272 2.15577 49.1661 2.43732C48.9191 2.86892 48.66 3.20134 48.3887 3.43457C48.0241 3.74707 47.5749 3.90332 47.041 3.90332C46.7285 3.90332 46.4193 3.85449 46.1133 3.75684C45.8138 3.65918 45.5371 3.55176 45.2832 3.43457C45.0814 3.34342 44.8893 3.2653 44.707 3.2002C44.5247 3.12858 44.3522 3.09277 44.1895 3.09277C43.8704 3.09277 43.6035 3.21322 43.3887 3.4541C43.2768 3.57952 43.1614 3.71995 43.0425 3.87537C42.8461 4.13207 42.4888 4.21087 42.2129 4.04256C41.9402 3.87618 41.8394 3.52467 42.0103 3.25467C42.2884 2.81498 42.5916 2.46479 42.9199 2.2041C43.3626 1.84603 43.8314 1.66699 44.3262 1.66699C44.5801 1.66699 44.8242 1.70931 45.0586 1.79395C45.2995 1.87207 45.5404 1.96322 45.7812 2.06738C46.0156 2.17155 46.2435 2.2627 46.4648 2.34082C46.6862 2.41895 46.9076 2.45801 47.1289 2.45801C47.3633 2.45801 47.5781 2.37988 47.7734 2.22363C47.8728 2.14418 47.9746 2.03273 48.079 1.88929ZM46.8848 5.58301V19.5186H44.2773V5.58301H46.8848Z" fill="currentColor"/>
-                            <path d="M53.4863 6.2959L55.9082 5.36816C56.5267 6.83952 57.0182 8.35319 57.3828 9.90918C57.7539 11.4587 57.9883 13.0179 58.0859 14.5869L55.5664 14.9092C55.5078 13.9521 55.3874 12.9886 55.2051 12.0186C55.0228 11.042 54.7852 10.0752 54.4922 9.11816C54.2057 8.15462 53.8704 7.21387 53.4863 6.2959ZM61.3965 5.58301H64.0039V14.8311C64.0039 15.6188 64.1699 16.1624 64.502 16.4619C64.834 16.7614 65.4264 16.9111 66.2793 16.9111H66.2891V19.5186H66.2793C65.0488 19.5186 64.0788 19.2679 63.3691 18.7666C62.666 18.2653 62.2266 17.5068 62.0508 16.4912L62.041 16.2178C61.5137 16.9795 60.8529 17.6045 60.0586 18.0928C59.2643 18.5745 58.304 18.9326 57.1777 19.167C56.0514 19.4014 54.7233 19.5186 53.1934 19.5186V16.9111C54.9316 16.9111 56.3542 16.7874 57.4609 16.54C58.5677 16.2861 59.4303 15.876 60.0488 15.3096C60.6738 14.7432 61.123 13.988 61.3965 13.0439V5.58301Z" fill="currentColor"/>
-                            <path d="M66.3086 19.5186C66.1784 19.5186 66.084 19.4307 66.0254 19.2549C65.9603 19.0791 65.9277 18.734 65.9277 18.2197C65.9277 17.7054 65.9603 17.3604 66.0254 17.1846C66.084 17.0023 66.1784 16.9111 66.3086 16.9111H67.5488C67.6009 16.833 67.653 16.7549 67.7051 16.6768C67.7637 16.5921 67.8158 16.514 67.8613 16.4424V5.58301H70.459V11.6572C70.459 12.0739 70.4427 12.4906 70.4102 12.9072C70.3841 13.3174 70.3288 13.721 70.2441 14.1182C70.9733 13.1351 71.748 12.3929 72.5684 11.8916C73.3887 11.3903 74.2253 11.1396 75.0781 11.1396C75.8854 11.1396 76.5788 11.3219 77.1582 11.6865C77.7441 12.0511 78.1934 12.5394 78.5059 13.1514C78.8249 13.7568 78.9844 14.4307 78.9844 15.1729C78.9844 15.7588 78.89 16.3122 78.7012 16.833C78.5189 17.3538 78.1868 17.8161 77.7051 18.2197C77.2298 18.6234 76.5658 18.9424 75.7129 19.1768C74.86 19.4046 73.7663 19.5186 72.4316 19.5186H66.3086ZM70.6055 16.9111H73.0078C73.457 16.9111 73.8704 16.8883 74.248 16.8428C74.6322 16.7907 74.9642 16.7061 75.2441 16.5889C75.5306 16.4652 75.752 16.2959 75.9082 16.0811C76.0645 15.8597 76.1426 15.5798 76.1426 15.2412C76.1426 14.7855 76.0026 14.4144 75.7227 14.1279C75.4492 13.8415 75.0781 13.6982 74.6094 13.6982C74.2643 13.6982 73.8835 13.8024 73.4668 14.0107C73.0501 14.2126 72.6009 14.5479 72.1191 15.0166C71.6439 15.4854 71.1393 16.1169 70.6055 16.9111Z" fill="currentColor"/>
-                            <rect width="18.9091" height="18.9091" transform="matrix(0.866025 0.5 -0.866025 0.5 100.36 7.09094)" fill="#6580E1"/>
-                            <path d="M100.36 7.09091V0L88.0783 7.09091L83.9844 16.5455L100.36 7.09091Z" fill="#93AAFC"/>
-                            <path d="M100.36 7.09091V0L112.642 7.09091L116.736 16.5455L100.36 7.09091Z" fill="#6580E1"/>
-                            <path d="M100.36 26V14.1819L88.0783 7.09094L83.9844 16.5455L100.36 26Z" fill="#F8CA4C"/>
-                            <path d="M100.36 26V14.1819L112.642 7.09094L116.736 16.5455L100.36 26Z" fill="#DCAF33"/>
-                            <rect width="14.1818" height="14.1818" transform="matrix(0.866025 0.5 -0.866025 0.5 100.36 0)" fill="#FFD35B"/>
-                        </svg>
-                    </a>
+<body class="overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 right-0 z-50 w-24 border-l border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col items-center py-8 transition-transform duration-300 lg:translate-x-0 lg:static lg:h-screen lg:z-auto translate-x-full">
+            <!-- Logo -->
+            <div class="mb-12">
+                <div class="w-12 h-12 rounded-full border-4 border-slate-900 dark:border-white flex items-center justify-center">
+                    <div class="w-6 h-6 rounded-full border-2 border-slate-900 dark:border-white"></div>
                 </div>
-                    <!-- Actions Area -->
-                    <div class="flex items-center space-x-reverse space-x-4">
-                        <!-- Theme Toggle -->
-                        <button id="theme-toggle" class="p-3 rounded-2xl bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 hover:text-primary transition-all duration-300" aria-label="تغییر تم (روشن/تاریک)">
-                            <svg class="sun-icon block dark:hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                            <svg class="moon-icon hidden dark:block" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                        </button>
+            </div>
 
-                        <!-- Date Display -->
-                        <div class="hidden sm:flex items-center space-x-reverse space-x-3 bg-slate-100 dark:bg-slate-700/50 px-5 py-2.5 rounded-2xl border border-slate-200/50 dark:border-slate-600/30">
-                            <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            <span id="current-date" class="text-sm font-bold text-slate-700 dark:text-slate-200">
-                                <?php
-                                if (class_exists('IntlDateFormatter')) {
-                                    $fmt = new IntlDateFormatter('fa_IR@calendar=persian', IntlDateFormatter::FULL, IntlDateFormatter::NONE, 'Asia/Tehran', IntlDateFormatter::TRADITIONAL);
-                                    echo $fmt->format(new DateTime());
-                                } else {
-                                    echo date('Y-m-d');
-                                }
-                                ?>
-                            </span>
-                        </div>
+            <!-- Nav Icons -->
+            <div class="flex flex-col gap-6 flex-grow">
+                <a href="#" class="sidebar-item" aria-label="خانه"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></a>
+                <a href="#" class="sidebar-item" aria-label="کیف پول"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg></a>
+                <a href="#" class="sidebar-item active" aria-label="تحلیل"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></a>
+                <a href="#" class="sidebar-item" aria-label="آمار"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20v-6M6 20V10M18 20V4"></path></svg></a>
+                <a href="#" class="sidebar-item" aria-label="تنظیمات"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></a>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="flex flex-col gap-4 mt-auto">
+                <button id="theme-toggle" class="sidebar-item" aria-label="تغییر تم">
+                    <svg class="sun-icon block dark:hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="moon-icon hidden dark:block" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <div class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
+                    <img src="https://i.pravatar.cc/100" alt="User">
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-40 lg:hidden hidden" onclick="toggleSidebar()"></div>
+
+        <!-- Main Content -->
+        <main class="flex-grow flex flex-col min-w-0">
+            <!-- Header -->
+            <header class="bg-white/50 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-40 px-4 lg:px-8 py-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                <!-- Mobile Menu Toggle -->
+                <button class="lg:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400" onclick="toggleSidebar()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+
+                <!-- Tabs -->
+                <div class="flex bg-slate-100/50 dark:bg-slate-800/50 p-1.5 rounded-full border border-slate-200/20">
+                    <a href="#" class="tab-item active">نمای کلی</a>
+                    <a href="#" class="tab-item">منابع</a>
+                    <a href="#" class="tab-item">تخصیص</a>
+                </div>
+
+                <!-- Search & Profile -->
+                <div class="flex items-center gap-6 w-full md:w-auto">
+                    <div class="relative flex-grow md:w-80 group">
+                        <input type="text" placeholder="جستجو در بازار..." class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 rounded-full py-3 pr-12 pl-4 text-sm focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none transition-all">
+                        <svg class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     </div>
+
+                    <button class="relative text-slate-400 hover:text-slate-600 transition-colors">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <span class="absolute top-0 left-0 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+                    </button>
+
+                    <button class="btn-upgrade group">
+                        <div class="bg-amber-400 group-hover:bg-amber-300 p-1 rounded-lg transition-colors">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-white"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                        </div>
+                        <span>ارتقاء اکانت</span>
+                    </button>
                 </div>
-            </div>
-        </nav>
+            </header>
 
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <?= $content ?>
+            <!-- Page Content -->
+            <div class="p-8">
+                <?= $content ?>
+            </div>
         </main>
-
-        <!-- Footer -->
-        <footer class="mt-12 py-8 border-t border-slate-200 dark:border-slate-800">
-            <div class="max-w-7xl mx-auto px-4 text-center">
-                <p class="text-slate-500 dark:text-slate-400 text-sm">© <?= date('Y') ?> <?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?>. تمامی حقوق محفوظ است.</p>
-            </div>
-        </footer>
     </div>
 
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+    </script>
     <script src="assets/js/charts.js"></script>
     <script src="assets/js/app.js"></script>
 </body>

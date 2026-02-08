@@ -2,13 +2,16 @@
 
 function fa_num($num) {
     if ($num === null || $num === '') return '---';
-    if (class_exists('NumberFormatter')) {
-        $fmt = new NumberFormatter('fa_IR', NumberFormatter::DECIMAL);
-        return $fmt->format($num);
-    }
-    // Simple fallback
+
+    // Simple fallback/digit replacement is safer for formatted strings like dates
     $western = ['0','1','2','3','4','5','6','7','8','9'];
     $persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+
+    if (is_numeric($num) && class_exists('NumberFormatter')) {
+        $fmt = new NumberFormatter('fa_IR', NumberFormatter::DECIMAL);
+        return $fmt->format((float)$num);
+    }
+
     return str_replace($western, $persian, (string)$num);
 }
 

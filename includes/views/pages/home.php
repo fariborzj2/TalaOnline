@@ -12,26 +12,43 @@
     </div>
 </div>
 
-<!-- Hero Section: Summary & Chart -->
-<div class="flex flex-col lg:flex-row gap-8 mb-12">
+<!-- Page Title & Actions -->
+<div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+    <h2 class="text-3xl font-black text-slate-900 dark:text-white">نمای بازار طلا و ارز</h2>
+
+    <div class="flex items-center gap-4">
+        <button class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-sm font-bold shadow-soft">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span><?= fa_num(date('Y/m/d')) ?></span>
+        </button>
+        <button class="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-sm font-bold shadow-soft">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>خروجی</span>
+        </button>
+    </div>
+</div>
+
+<!-- Summary Cards Row -->
+<div class="mb-12">
     <?= View::renderSection('summary', [
         'gold_data' => $gold_data,
-        'silver_data' => $silver_data
-    ]) ?>
-
-    <?= View::renderSection('chart', [
-        'gold_data' => $gold_data
+        'silver_data' => $silver_data,
+        'coins' => array_slice($coins, 0, 3) // Add some coins to summary for variety
     ]) ?>
 </div>
 
-<!-- Platforms & Coins Section -->
-<div class="flex flex-col lg:flex-row gap-8">
-    <?= View::renderSection('platforms', [
-        'platforms' => $platforms
-    ]) ?>
-
-    <?= View::renderSection('coins', [
+<!-- Performance Market Table -->
+<div class="mb-12">
+    <?= View::renderSection('market_performance', [
+        'platforms' => $platforms,
         'coins' => $coins
+    ]) ?>
+</div>
+
+<!-- Detailed Charts (Optional, as the image shows sparklines in table) -->
+<div class="mb-12">
+     <?= View::renderSection('chart', [
+        'gold_data' => $gold_data
     ]) ?>
 </div>
 
