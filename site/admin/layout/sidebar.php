@@ -23,6 +23,10 @@
                 <i data-lucide="coins" class="w-6 h-6"></i>
                 <span>ارزها</span>
             </a>
+            <a href="categories.php" class="sidebar-link <?= $current_page == 'categories.php' ? 'active' : '' ?>">
+                <i data-lucide="layers" class="w-6 h-6"></i>
+                <span>دسته‌بندی‌ها</span>
+            </a>
             <a href="platforms.php" class="sidebar-link <?= $current_page == 'platforms.php' ? 'active' : '' ?>">
                 <i data-lucide="building-2" class="w-6 h-6"></i>
                 <span>پتلفرم‌ها</span>

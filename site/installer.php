@@ -80,6 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `setting_value` TEXT
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
+                    "CREATE TABLE IF NOT EXISTS `categories` (
+                        `id` INT AUTO_INCREMENT PRIMARY KEY,
+                        `slug` VARCHAR(50) NOT NULL UNIQUE,
+                        `name` VARCHAR(100) NOT NULL,
+                        `sort_order` INT DEFAULT 0
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
                     "CREATE TABLE IF NOT EXISTS `items` (
                         `id` INT AUTO_INCREMENT PRIMARY KEY,
                         `symbol` VARCHAR(50) NOT NULL UNIQUE,
@@ -143,6 +150,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute(['api_key', $api_key]);
                 $stmt->execute(['site_title', 'طلا آنلاین']);
                 $stmt->execute(['api_sync_interval', '10']);
+
+                // Seed Categories
+                $stmt = $pdo->prepare("INSERT IGNORE INTO categories (slug, name, sort_order) VALUES (?, ?, ?)");
+                $seed_cats = [
+                    ['gold', 'طلا', 1],
+                    ['coin', 'سکه', 2],
+                    ['currency', 'ارز', 3],
+                    ['silver', 'نقره', 4]
+                ];
+                foreach ($seed_cats as $cat) {
+                    $stmt->execute($cat);
+                }
 
                 // Seed some initial items based on current data
                 $initial_items = [
