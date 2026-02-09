@@ -82,6 +82,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 $items = $pdo->query("SELECT i.*, p.price as api_price FROM items i LEFT JOIN prices_cache p ON i.symbol = p.symbol ORDER BY i.sort_order ASC")->fetchAll();
 
+// Fetch categories for mapping and dropdowns
+try {
+    $categories = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->fetchAll();
+} catch (Exception $e) {
+    $categories = [];
+}
+$cat_map = [];
+foreach ($categories as $cat) {
+    $cat_map[$cat['slug']] = $cat['name'];
+}
+
 $page_title = 'مدیریت ارزها';
 $page_subtitle = 'مدیریت کامل ارزها، دسته‌بندی‌ها و قیمت‌های دستی';
 
@@ -127,10 +138,9 @@ include __DIR__ . '/layout/header.php';
             </div>
             <select id="tableCategory" class="text-xs !py-2 border-slate-200 focus:border-indigo-500 w-full md:w-auto">
                 <option value="all">همه دسته‌ها</option>
-                <option value="gold">طلا</option>
-                <option value="coin">سکه</option>
-                <option value="currency">ارز</option>
-                <option value="silver">نقره</option>
+                <?php foreach ($categories as $cat): ?>
+                    <option value="<?= htmlspecialchars($cat['slug']) ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                <?php endforeach; ?>
             </select>
             <select id="tableSort" class="text-xs !py-2 border-slate-200 focus:border-indigo-500 w-full md:w-auto">
                 <option value="sort_order">ترتیب نمایش</option>
@@ -174,12 +184,11 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td>
                         <?php
-                        $cat_map = ['gold' => 'طلا', 'coin' => 'سکه', 'currency' => 'ارز', 'silver' => 'نقره'];
                         $item_cat = $item['category'] ?? 'gold';
                         $cat_name = $cat_map[$item_cat] ?? $item_cat;
                         ?>
                         <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-black border border-slate-200">
-                            <?= $cat_name ?>
+                            <?= htmlspecialchars($cat_name) ?>
                         </span>
                     </td>
                     <td>
@@ -271,10 +280,9 @@ include __DIR__ . '/layout/header.php';
                 <div class="form-group">
                     <label>دسته‌بندی</label>
                     <select name="category" id="item-category">
-                        <option value="gold">طلا</option>
-                        <option value="coin">سکه</option>
-                        <option value="currency">ارز</option>
-                        <option value="silver">نقره</option>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= htmlspecialchars($cat['slug']) ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>

@@ -14,6 +14,14 @@ if (time() - $last_sync > $sync_interval) {
 }
 
 $items = $navasan->getDashboardData();
+
+// Fetch categories for filtering
+try {
+    $categories = $pdo->query("SELECT slug FROM categories")->fetchAll(PDO::FETCH_COLUMN);
+} catch (Exception $e) {
+    $categories = ['gold', 'currency', 'coin']; // Fallback
+}
+
 $site_title = get_setting('site_title', 'طلا آنلاین');
 $site_description = get_setting('site_description', 'مرجع تخصصی قیمت لحظه‌ای طلا، سکه و ارز. مقایسه بهترین پلتفرم‌های خرید و فروش طلا در ایران.');
 $site_keywords = get_setting('site_keywords', 'قیمت طلا, قیمت سکه, دلار تهران, خرید طلا, مقایسه قیمت طلا');
@@ -27,7 +35,8 @@ foreach ($items as $item) {
     if ($item['symbol'] == '18ayar') $gold_data = $item;
     if ($item['symbol'] == 'silver') $silver_data = $item;
 
-    if (in_array($item['category'], ['gold', 'currency', 'coin'])) {
+    // Show in coins list if it's in a managed category (except silver which has its own box)
+    if (in_array($item['category'], $categories) && $item['category'] !== 'silver') {
         $coins[] = $item;
     }
 }

@@ -20,6 +20,13 @@ if (time() - $last_sync > $sync_interval) {
 
 $items = $navasan->getDashboardData();
 
+// Fetch categories for filtering
+try {
+    $categories = $pdo->query("SELECT slug FROM categories")->fetchAll(PDO::FETCH_COLUMN);
+} catch (Exception $e) {
+    $categories = ['gold', 'currency', 'coin']; // Fallback
+}
+
 // Reconstruct the JSON structure expected by the frontend
 $response = [
     'meta' => [
@@ -60,7 +67,7 @@ foreach ($items as $item) {
     }
 
     // Categorize
-    if ($item['category'] == 'gold' || $item['category'] == 'currency' || $item['category'] == 'coin') {
+    if (in_array($item['category'], $categories) && $item['category'] !== 'silver') {
         $response['coins'][] = [
             'name' => $item['name'],
             'en_name' => $item['en_name'],
