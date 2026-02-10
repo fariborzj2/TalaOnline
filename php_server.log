@@ -1,46 +1,56 @@
-[Tue Feb 10 14:46:44 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Tue Feb 10 14:47:22 2026] [::1]:37384 Accepted
-[Tue Feb 10 14:47:22 2026] [::1]:37384 [200]: GET /
-[Tue Feb 10 14:47:22 2026] [::1]:37384 Closing
-[Tue Feb 10 14:47:22 2026] [::1]:37396 Accepted
-[Tue Feb 10 14:47:22 2026] [::1]:37400 Accepted
-[Tue Feb 10 14:47:22 2026] [::1]:37396 [200]: GET /assets/css/style.css
-[Tue Feb 10 14:47:22 2026] [::1]:37396 Closing
-[Tue Feb 10 14:47:22 2026] [::1]:37400 [200]: GET /assets/css/grid.css
-[Tue Feb 10 14:47:22 2026] [::1]:37400 Closing
-[Tue Feb 10 14:47:22 2026] [::1]:37416 Accepted
-[Tue Feb 10 14:47:22 2026] [::1]:37422 Accepted
-[Tue Feb 10 14:47:22 2026] [::1]:37432 Accepted
-[Tue Feb 10 14:47:22 2026] [::1]:37416 [200]: GET /assets/css/font.css
-[Tue Feb 10 14:47:22 2026] [::1]:37416 Closing
-[Tue Feb 10 14:47:22 2026] [::1]:37422 [200]: GET /assets/images/logo.svg
-[Tue Feb 10 14:47:22 2026] [::1]:37422 Closing
-[Tue Feb 10 14:47:22 2026] [::1]:37432 [200]: GET /assets/images/gold/gold.png
-[Tue Feb 10 14:47:22 2026] [::1]:37432 Closing
-[Tue Feb 10 14:47:22 2026] [::1]:37438 Accepted
-[Tue Feb 10 14:47:22 2026] [::1]:37438 [200]: GET /assets/images/gold/rob.png
-[Tue Feb 10 14:47:22 2026] [::1]:37438 Closing
-[Tue Feb 10 14:47:22 2026] [::1]:37450 Accepted
-[Tue Feb 10 14:47:22 2026] [::1]:37450 [200]: GET /assets/js/charts.js
-[Tue Feb 10 14:47:22 2026] [::1]:37450 Closing
-[Tue Feb 10 14:47:22 2026] [::1]:37456 Accepted
-[Tue Feb 10 14:47:22 2026] [::1]:37456 [200]: GET /assets/js/app.js
-[Tue Feb 10 14:47:22 2026] [::1]:37456 Closing
-[Tue Feb 10 14:47:23 2026] [::1]:37470 Accepted
-[Tue Feb 10 14:47:23 2026] [::1]:37470 [200]: GET /assets/images/platforms/gerami.png
-[Tue Feb 10 14:47:23 2026] [::1]:37470 Closing
-[Tue Feb 10 14:47:23 2026] [::1]:37480 Accepted
-[Tue Feb 10 14:47:23 2026] [::1]:37480 [200]: GET /assets/images/platforms/milli.png
-[Tue Feb 10 14:47:23 2026] [::1]:37480 Closing
-[Tue Feb 10 14:47:23 2026] [::1]:37492 Accepted
-[Tue Feb 10 14:47:23 2026] [::1]:37506 Accepted
-[Tue Feb 10 14:47:23 2026] [::1]:37492 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2
-[Tue Feb 10 14:47:23 2026] [::1]:37512 Accepted
-[Tue Feb 10 14:47:23 2026] [::1]:37506 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2
-[Tue Feb 10 14:47:23 2026] [::1]:37512 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2
-[Tue Feb 10 14:47:23 2026] [::1]:37492 Closing
-[Tue Feb 10 14:47:23 2026] [::1]:37506 Closing
-[Tue Feb 10 14:47:23 2026] [::1]:37512 Closing
-[Tue Feb 10 14:47:23 2026] [::1]:37524 Accepted
-[Tue Feb 10 14:47:23 2026] [::1]:37524 [200]: GET /api/prices.php?symbol=18ayar
-[Tue Feb 10 14:47:23 2026] [::1]:37524 Closing
+[Tue Feb 10 14:59:07 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Tue Feb 10 14:59:26 2026] [::1]:34148 Accepted
+[Tue Feb 10 14:59:26 2026] PHP Warning:  Undefined array key "logo" in /app/includes/views/sections/summary.php on line 30
+[Tue Feb 10 14:59:26 2026] PHP Warning:  Undefined array key "logo" in /app/includes/views/sections/summary.php on line 30
+[Tue Feb 10 14:59:26 2026] PHP Warning:  Undefined array key "logo" in /app/includes/views/sections/summary.php on line 30
+[Tue Feb 10 14:59:26 2026] PHP Warning:  Undefined array key "logo" in /app/includes/views/sections/summary.php on line 30
+[Tue Feb 10 14:59:26 2026] [::1]:34148 [200]: GET /
+[Tue Feb 10 14:59:26 2026] [::1]:34148 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34150 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34152 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34156 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34168 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34170 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34150 [200]: GET /assets/css/style.css
+[Tue Feb 10 14:59:26 2026] [::1]:34150 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34152 [200]: GET /assets/css/grid.css
+[Tue Feb 10 14:59:26 2026] [::1]:34152 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34156 [200]: GET /assets/css/font.css
+[Tue Feb 10 14:59:26 2026] [::1]:34168 [200]: GET /assets/images/logo.svg
+[Tue Feb 10 14:59:26 2026] [::1]:34170 [200]: GET /assets/images/gold/gold.png
+[Tue Feb 10 14:59:26 2026] [::1]:34156 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34168 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34170 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34172 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34172 [200]: GET /assets/images/gold/rob.png
+[Tue Feb 10 14:59:26 2026] [::1]:34172 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34184 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34196 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34184 [200]: GET /assets/js/charts.js
+[Tue Feb 10 14:59:26 2026] [::1]:34196 [200]: GET /assets/js/app.js
+[Tue Feb 10 14:59:26 2026] [::1]:34184 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34196 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34200 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34200 [200]: GET /assets/images/platforms/gerami.png
+[Tue Feb 10 14:59:26 2026] [::1]:34200 Closing
+[Tue Feb 10 14:59:26 2026] [::1]:34202 Accepted
+[Tue Feb 10 14:59:26 2026] [::1]:34202 [200]: GET /assets/images/platforms/milli.png
+[Tue Feb 10 14:59:26 2026] [::1]:34202 Closing
+[Tue Feb 10 14:59:27 2026] [::1]:34214 Accepted
+[Tue Feb 10 14:59:27 2026] [::1]:34216 Accepted
+[Tue Feb 10 14:59:27 2026] [::1]:34222 Accepted
+[Tue Feb 10 14:59:27 2026] [::1]:34214 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2
+[Tue Feb 10 14:59:27 2026] [::1]:34216 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2
+[Tue Feb 10 14:59:27 2026] [::1]:34222 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2
+[Tue Feb 10 14:59:27 2026] [::1]:34214 Closing
+[Tue Feb 10 14:59:27 2026] [::1]:34216 Closing
+[Tue Feb 10 14:59:27 2026] [::1]:34222 Closing
+[Tue Feb 10 14:59:27 2026] [::1]:34238 Accepted
+[Tue Feb 10 14:59:27 2026] [::1]:34238 [200]: GET /api/prices.php?symbol=18ayar
+[Tue Feb 10 14:59:27 2026] [::1]:34238 Closing
+[Tue Feb 10 14:59:29 2026] [::1]:34254 Accepted
+[Tue Feb 10 14:59:29 2026] [::1]:34254 [200]: GET /api/prices.php?symbol=18AYAR
+[Tue Feb 10 14:59:29 2026] [::1]:34254 Closing
+[Tue Feb 10 14:59:30 2026] [::1]:34262 Accepted
+[Tue Feb 10 14:59:30 2026] [::1]:34262 [200]: GET /api/prices.php?symbol=18AYAR
+[Tue Feb 10 14:59:30 2026] [::1]:34262 Closing
