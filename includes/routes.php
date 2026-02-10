@@ -21,23 +21,38 @@ $router->add('/', function() {
         ];
     }
 
-    $categories = ['gold', 'currency', 'coin'];
+    $categories_data = [];
     if ($pdo) {
         try {
-            $categories = $pdo->query("SELECT slug FROM categories")->fetchAll(PDO::FETCH_COLUMN);
+            $categories_data = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->fetchAll();
         } catch (Exception $e) {}
+    }
+
+    if (empty($categories_data)) {
+        $categories_data = [
+            ['slug' => 'gold', 'name' => 'طلا و جواهرات', 'en_name' => 'gold market', 'icon' => 'coins'],
+            ['slug' => 'coin', 'name' => 'مسکوکات طلا', 'en_name' => 'gold coins', 'icon' => 'circle-dollar-sign'],
+            ['slug' => 'currency', 'name' => 'ارزهای رایج', 'en_name' => 'foreign currency', 'icon' => 'banknote']
+        ];
     }
 
     $gold_data = null;
     $silver_data = null;
-    $coins = [];
+    $grouped_items = [];
+
+    foreach ($categories_data as $cat) {
+        $grouped_items[$cat['slug']] = [
+            'info' => $cat,
+            'items' => []
+        ];
+    }
 
     foreach ($items as $item) {
         if ($item['symbol'] == '18ayar') $gold_data = $item;
         if ($item['symbol'] == 'silver') $silver_data = $item;
 
-        if (in_array($item['category'], $categories) && $item['category'] !== 'silver') {
-            $coins[] = $item;
+        if (isset($grouped_items[$item['category']])) {
+            $grouped_items[$item['category']]['items'][] = $item;
         }
     }
 
@@ -62,7 +77,7 @@ $router->add('/', function() {
         'site_keywords' => get_setting('site_keywords', 'قیمت طلا, قیمت سکه'),
         'gold_data' => $gold_data,
         'silver_data' => $silver_data,
-        'coins' => $coins,
+        'grouped_items' => $grouped_items,
         'platforms' => $platforms
     ]);
 });

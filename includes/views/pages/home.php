@@ -1,32 +1,34 @@
 <div class="section">
+    <?php
+    // Prepare a list of items for the summary (e.g. first 3 items that are not gold/silver)
+    $summary_items = [];
+    foreach ($grouped_items as $group) {
+        foreach ($group['items'] as $item) {
+            if ($item['symbol'] !== '18ayar' && $item['symbol'] !== 'silver' && count($summary_items) < 3) {
+                $summary_items[] = $item;
+            }
+        }
+    }
+    ?>
     <?= View::renderSection('summary', [
         'gold_data' => $gold_data,
         'silver_data' => $silver_data,
-        'coins' => array_slice($coins, 0, 3)
+        'coins' => $summary_items
     ]) ?>
 </div>
 
 <div class="section">
     <div class="d-flex-wrap gap-md">
-        <!-- Gold and Coins -->
-        <?= View::renderSection('coins', [
-            'coins' => $coins,
-            'title' => 'بازار طلا و سکه',
-            'subtitle' => 'gold market',
-            'id' => 'gold-market-list'
-        ]) ?>
-
-        <!-- You could add another coins section here for Currency if needed,
-             but for now let's just use what we have in index.html as a placeholder or second list -->
-        <?php
-        // Just as an example of how to match the layout
-        echo View::renderSection('coins', [
-            'coins' => array_slice($coins, 4, 4),
-            'title' => 'حباب طلا و سکه',
-            'subtitle' => 'gold bubble',
-            'id' => 'bubble-market-list'
-        ]);
-        ?>
+        <?php foreach ($grouped_items as $category_slug => $group): ?>
+            <?php if (empty($group['items'])) continue; ?>
+            <?= View::renderSection('coins', [
+                'coins' => $group['items'],
+                'title' => $group['info']['name'],
+                'subtitle' => $group['info']['en_name'],
+                'icon' => $group['info']['icon'] ?? 'coins',
+                'id' => $category_slug . '-market-list'
+            ]) ?>
+        <?php endforeach; ?>
     </div>
 </div>
 
@@ -45,7 +47,7 @@
 <script>
     window.__INITIAL_STATE__ = {
         platforms: <?= json_encode($platforms) ?>,
-        coins: <?= json_encode($coins) ?>,
+        grouped_items: <?= json_encode($grouped_items) ?>,
         summary: {
             gold: <?= json_encode($gold_data) ?>,
             silver: <?= json_encode($silver_data) ?>
