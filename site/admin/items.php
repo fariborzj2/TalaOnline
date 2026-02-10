@@ -5,19 +5,19 @@ check_login();
 
 // Schema Self-Healing
 try {
-    $pdo->query("SELECT is_active FROM items LIMIT 1");
+    $columns = $pdo->query("DESCRIBE items")->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('is_active', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN is_active TINYINT(1) DEFAULT 1");
+    }
+    if (!in_array('category', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN category VARCHAR(50) DEFAULT 'gold'");
+    }
+    if (!in_array('show_in_summary', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN show_in_summary TINYINT(1) DEFAULT 0");
+    }
 } catch (Exception $e) {
-    $pdo->exec("ALTER TABLE items ADD COLUMN is_active TINYINT(1) DEFAULT 1");
-}
-try {
-    $pdo->query("SELECT category FROM items LIMIT 1");
-} catch (Exception $e) {
-    $pdo->exec("ALTER TABLE items ADD COLUMN category VARCHAR(50) DEFAULT 'gold'");
-}
-try {
-    $pdo->query("SELECT show_in_summary FROM items LIMIT 1");
-} catch (Exception $e) {
-    $pdo->exec("ALTER TABLE items ADD COLUMN show_in_summary TINYINT(1) DEFAULT 0");
+    // If DESCRIBE fails, the table might not exist yet.
+    // Usually it's created by installer.php or we could add CREATE TABLE here.
 }
 
 $message = '';

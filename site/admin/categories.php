@@ -15,8 +15,10 @@ try {
         icon VARCHAR(50) DEFAULT 'coins',
         sort_order INT DEFAULT 0
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+}
 
-    // Check if new columns exist, if not add them (for existing tables)
+// Check if new columns exist, if not add them (for existing tables)
+try {
     $columns = $pdo->query("DESCRIBE categories")->fetchAll(PDO::FETCH_COLUMN);
     if (!in_array('en_name', $columns)) {
         $pdo->exec("ALTER TABLE categories ADD COLUMN en_name VARCHAR(100) DEFAULT NULL AFTER name");
@@ -24,8 +26,10 @@ try {
     if (!in_array('icon', $columns)) {
         $pdo->exec("ALTER TABLE categories ADD COLUMN icon VARCHAR(50) DEFAULT 'coins' AFTER en_name");
     }
+} catch (Exception $e) {}
 
-    // Populate initial categories
+// Populate initial categories
+try {
     $stmt = $pdo->query("SELECT COUNT(*) FROM categories");
     if ($stmt->fetchColumn() == 0) {
         $pdo->exec("INSERT INTO categories (slug, name, en_name, icon, sort_order) VALUES

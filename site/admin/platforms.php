@@ -5,10 +5,11 @@ check_login();
 
 // Schema Self-Healing
 try {
-    $pdo->query("SELECT is_active FROM platforms LIMIT 1");
-} catch (Exception $e) {
-    $pdo->exec("ALTER TABLE platforms ADD COLUMN is_active TINYINT(1) DEFAULT 1");
-}
+    $columns = $pdo->query("DESCRIBE platforms")->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('is_active', $columns)) {
+        $pdo->exec("ALTER TABLE platforms ADD COLUMN is_active TINYINT(1) DEFAULT 1");
+    }
+} catch (Exception $e) {}
 
 $message = '';
 $error = '';
