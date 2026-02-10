@@ -38,7 +38,7 @@ try {
             ('currency', 'ارزهای رایج', 'foreign currency', 'banknote', 3),
             ('crypto', 'ارزهای دیجیتال', 'cryptocurrency', 'bitcoin', 4)");
     }
-}
+} catch (Exception $e) {}
 
 $message = '';
 $error = '';
