@@ -15,7 +15,7 @@
         <?php foreach ($coins as $coin): ?>
             <?= View::renderComponent('coin_item', [
                 'coin' => $coin,
-                'image' => 'assets/images/gold/' . (strpos($coin['name'], 'نیم') !== false ? 'nim' : (strpos($coin['name'], 'ربع') !== false ? 'rob' : 'gold')) . '.png'
+                'image' => ($coin['logo'] ?? '') ?: 'assets/images/gold/' . (strpos($coin['name'] ?? '', 'نیم') !== false ? 'nim' : (strpos($coin['name'] ?? '', 'ربع') !== false ? 'rob' : 'gold')) . '.png'
             ]) ?>
         <?php endforeach; ?>
     </div>
