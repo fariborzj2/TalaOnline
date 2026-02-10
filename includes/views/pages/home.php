@@ -1,11 +1,15 @@
 <div class="section">
     <?php
-    // Prepare a list of items for the summary (e.g. first 3 items that are not gold/silver)
-    $summary_items = [];
-    foreach ($grouped_items as $group) {
-        foreach ($group['items'] as $item) {
-            if ($item['symbol'] !== '18ayar' && $item['symbol'] !== 'silver' && count($summary_items) < 3) {
-                $summary_items[] = $item;
+    // If no manual summary items are selected, use fallback logic
+    if (empty($summary_items)) {
+        if ($gold_data) $summary_items[] = $gold_data;
+        if ($silver_data) $summary_items[] = $silver_data;
+
+        foreach ($grouped_items as $group) {
+            foreach ($group['items'] as $item) {
+                if ($item['symbol'] !== '18ayar' && $item['symbol'] !== 'silver' && count($summary_items) < 4) {
+                    $summary_items[] = $item;
+                }
             }
         }
     }

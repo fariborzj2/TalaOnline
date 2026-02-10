@@ -28,9 +28,13 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const isPos = assetData.change >= 0;
         const changePercentEl = document.getElementById('modal-change-percent');
-        changePercentEl.querySelector('span').textContent = toPersianDigits(Math.abs(assetData.change)) + '%';
+
+        // Reset HTML to ensure we have a fresh <i> tag for Lucide to process
+        changePercentEl.innerHTML = `
+            <span>${toPersianDigits(Math.abs(assetData.change))}%</span>
+            <i data-lucide="${isPos ? 'arrow-up' : 'arrow-down'}"></i>
+        `;
         changePercentEl.className = `d-flex align-center gap-05 font-bold ${isPos ? 'text-success' : 'text-error'}`;
-        changePercentEl.querySelector('i').setAttribute('data-lucide', isPos ? 'arrow-up' : 'arrow-down');
 
         document.getElementById('modal-change-amount').textContent = (isPos ? '+ ' : '- ') + formatPrice(Math.abs(assetData.change_amount));
         document.getElementById('modal-high').textContent = formatPrice(assetData.high);

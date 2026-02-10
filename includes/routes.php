@@ -57,10 +57,21 @@ $router->add('/', function() {
     }
 
     $platforms = [];
+    $summary_items = [];
     if ($pdo) {
         try {
             $stmt = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC");
             $platforms = $stmt->fetchAll();
+
+            // Check for items marked as show_in_summary
+            $stmt = $pdo->query("SELECT symbol FROM items WHERE show_in_summary = 1 ORDER BY sort_order ASC LIMIT 4");
+            $summary_symbols = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            foreach ($items as $item) {
+                if (in_array($item['symbol'], $summary_symbols)) {
+                    $summary_items[] = $item;
+                }
+            }
         } catch (Exception $e) {}
     }
 
@@ -77,6 +88,7 @@ $router->add('/', function() {
         'site_keywords' => get_setting('site_keywords', 'قیمت طلا, قیمت سکه'),
         'gold_data' => $gold_data,
         'silver_data' => $silver_data,
+        'summary_items' => $summary_items,
         'grouped_items' => $grouped_items,
         'platforms' => $platforms
     ]);
