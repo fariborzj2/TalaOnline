@@ -186,8 +186,8 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </td>
                     <td>
-                        <p class="font-black text-slate-900"><?= htmlspecialchars($item['name']) ?></p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"><?= htmlspecialchars($item['en_name']) ?></p>
+                        <p class="font-black text-slate-900"><?= htmlspecialchars($item['name'] ?? '') ?></p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"><?= htmlspecialchars($item['en_name'] ?? '') ?></p>
                     </td>
                     <td>
                         <?php

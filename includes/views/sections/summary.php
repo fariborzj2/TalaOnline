@@ -27,7 +27,7 @@
             'price' => $coin['price'],
             'change' => $coin['change_percent'],
             'change_amount' => $coin['change_amount'] ?? 0,
-            'image' => $coin['logo'] ?: 'assets/images/gold/' . (strpos($coin['name'], 'نیم') !== false ? 'nim' : (strpos($coin['name'], 'ربع') !== false ? 'rob' : 'gold')) . '.png'
+            'image' => ($coin['logo'] ?? '') ?: 'assets/images/gold/' . (strpos($coin['name'], 'نیم') !== false ? 'nim' : (strpos($coin['name'], 'ربع') !== false ? 'rob' : 'gold')) . '.png'
         ]) ?>
         <?php endforeach; ?>
     <?php endif; ?>
