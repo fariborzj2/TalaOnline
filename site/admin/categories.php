@@ -156,13 +156,13 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td class="text-center font-black text-slate-400 row-order"><?= $cat['sort_order'] ?></td>
                     <td>
-                        <p class="font-black text-slate-900"><?= htmlspecialchars($cat['name']) ?></p>
-                        <p class="text-[10px] text-slate-400 font-bold"><?= htmlspecialchars($cat['en_name']) ?></p>
+                        <p class="font-black text-slate-900"><?= htmlspecialchars($cat['name'] ?? '') ?></p>
+                        <p class="text-[10px] text-slate-400 font-bold"><?= htmlspecialchars($cat['en_name'] ?? '') ?></p>
                     </td>
                     <td>
                         <div class="flex items-center gap-2 text-slate-600">
-                            <i data-lucide="<?= htmlspecialchars($cat['icon']) ?>" class="w-4 h-4"></i>
-                            <span class="text-[10px] font-bold"><?= htmlspecialchars($cat['icon']) ?></span>
+                            <i data-lucide="<?= htmlspecialchars($cat['icon'] ?? 'coins') ?>" class="w-4 h-4"></i>
+                            <span class="text-[10px] font-bold"><?= htmlspecialchars($cat['icon'] ?? 'coins') ?></span>
                         </div>
                     </td>
                     <td>

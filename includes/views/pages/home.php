@@ -27,8 +27,8 @@
             <?php if (empty($group['items'])) continue; ?>
             <?= View::renderSection('coins', [
                 'coins' => $group['items'],
-                'title' => $group['info']['name'],
-                'subtitle' => $group['info']['en_name'],
+                'title' => $group['info']['name'] ?? '',
+                'subtitle' => $group['info']['en_name'] ?? '',
                 'icon' => $group['info']['icon'] ?? 'coins',
                 'id' => $category_slug . '-market-list'
             ]) ?>
