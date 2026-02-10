@@ -70,7 +70,13 @@ function handle_upload($file, $target_dir = 'uploads/') {
 
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $filename = uniqid() . '.' . $extension;
-    $target_path = __DIR__ . '/../site/' . $target_dir . $filename;
+    $full_target_dir = __DIR__ . '/../site/' . $target_dir;
+
+    if (!is_dir($full_target_dir)) {
+        mkdir($full_target_dir, 0755, true);
+    }
+
+    $target_path = $full_target_dir . $filename;
 
     if (move_uploaded_file($file['tmp_name'], $target_path)) {
         return $target_dir . $filename;
