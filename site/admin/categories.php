@@ -11,17 +11,28 @@ try {
         id INT AUTO_INCREMENT PRIMARY KEY,
         slug VARCHAR(50) UNIQUE NOT NULL,
         name VARCHAR(100) NOT NULL,
+        en_name VARCHAR(100) DEFAULT NULL,
+        icon VARCHAR(50) DEFAULT 'coins',
         sort_order INT DEFAULT 0
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+    // Check if new columns exist, if not add them (for existing tables)
+    $columns = $pdo->query("DESCRIBE categories")->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('en_name', $columns)) {
+        $pdo->exec("ALTER TABLE categories ADD COLUMN en_name VARCHAR(100) DEFAULT NULL AFTER name");
+    }
+    if (!in_array('icon', $columns)) {
+        $pdo->exec("ALTER TABLE categories ADD COLUMN icon VARCHAR(50) DEFAULT 'coins' AFTER en_name");
+    }
 
     // Populate initial categories
     $stmt = $pdo->query("SELECT COUNT(*) FROM categories");
     if ($stmt->fetchColumn() == 0) {
-        $pdo->exec("INSERT INTO categories (slug, name, sort_order) VALUES
-            ('gold', 'طلا', 1),
-            ('coin', 'سکه', 2),
-            ('currency', 'ارز', 3),
-            ('silver', 'نقره', 4)");
+        $pdo->exec("INSERT INTO categories (slug, name, en_name, icon, sort_order) VALUES
+            ('gold', 'طلا و جواهرات', 'gold market', 'coins', 1),
+            ('coin', 'مسکوکات طلا', 'gold coins', 'circle-dollar-sign', 2),
+            ('currency', 'ارزهای رایج', 'foreign currency', 'banknote', 3),
+            ('crypto', 'ارزهای دیجیتال', 'cryptocurrency', 'bitcoin', 4)");
     }
 }
 
@@ -35,21 +46,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($action === 'add' || $action === 'edit') {
         $id = $_POST['id'] ?? null;
         $name = $_POST['name'] ?? '';
+        $en_name = $_POST['en_name'] ?? '';
+        $icon = $_POST['icon'] ?? 'coins';
         $slug = $_POST['slug'] ?? '';
         $sort_order = (int)($_POST['sort_order'] ?? 0);
 
         if ($action === 'add') {
             try {
-                $stmt = $pdo->prepare("INSERT INTO categories (name, slug, sort_order) VALUES (?, ?, ?)");
-                $stmt->execute([$name, $slug, $sort_order]);
+                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, slug, sort_order) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $en_name, $icon, $slug, $sort_order]);
                 $message = 'دسته‌بندی جدید با موفقیت اضافه شد.';
             } catch (Exception $e) {
                 $error = 'خطا در افزودن دسته‌بندی: ' . $e->getMessage();
             }
         } else {
             try {
-                $stmt = $pdo->prepare("UPDATE categories SET name = ?, slug = ?, sort_order = ? WHERE id = ?");
-                $stmt->execute([$name, $slug, $sort_order, $id]);
+                $stmt = $pdo->prepare("UPDATE categories SET name = ?, en_name = ?, icon = ?, slug = ?, sort_order = ? WHERE id = ?");
+                $stmt->execute([$name, $en_name, $icon, $slug, $sort_order, $id]);
                 $message = 'دسته‌بندی با موفقیت بروزرسانی شد.';
             } catch (Exception $e) {
                 $error = 'خطا در بروزرسانی دسته‌بندی: ' . $e->getMessage();
@@ -130,6 +143,7 @@ include __DIR__ . '/layout/header.php';
                     <th class="w-10"></th>
                     <th class="w-16">ترتیب</th>
                     <th>نام دسته‌بندی</th>
+                    <th>آیکون</th>
                     <th>نامک (Slug)</th>
                     <th class="text-center">عملیات</th>
                 </tr>
@@ -143,6 +157,13 @@ include __DIR__ . '/layout/header.php';
                     <td class="text-center font-black text-slate-400 row-order"><?= $cat['sort_order'] ?></td>
                     <td>
                         <p class="font-black text-slate-900"><?= htmlspecialchars($cat['name']) ?></p>
+                        <p class="text-[10px] text-slate-400 font-bold"><?= htmlspecialchars($cat['en_name']) ?></p>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-2 text-slate-600">
+                            <i data-lucide="<?= htmlspecialchars($cat['icon']) ?>" class="w-4 h-4"></i>
+                            <span class="text-[10px] font-bold"><?= htmlspecialchars($cat['icon']) ?></span>
+                        </div>
                     </td>
                     <td>
                         <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[10px] font-black border border-indigo-100 ltr-input">
@@ -194,12 +215,23 @@ include __DIR__ . '/layout/header.php';
 
             <div class="form-group mb-4">
                 <label>نام دسته‌بندی (فارسی)</label>
-                <input type="text" name="name" id="cat-name" required placeholder="مثلاً ارزهای دیجیتال">
+                <input type="text" name="name" id="cat-name" required placeholder="مثلاً بازار طلا و سکه">
             </div>
 
             <div class="form-group mb-4">
-                <label>نامک (Slug - انگلیسی)</label>
-                <input type="text" name="slug" id="cat-slug" required class="ltr-input" placeholder="مثلاً crypto">
+                <label>زیرعنوان (انگلیسی/توضیح کوتاه)</label>
+                <input type="text" name="en_name" id="cat-en_name" placeholder="مثلاً gold market">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-group mb-4">
+                    <label>آیکون Lucide</label>
+                    <input type="text" name="icon" id="cat-icon" placeholder="مثلاً coins" class="ltr-input">
+                </div>
+                <div class="form-group mb-4">
+                    <label>نامک (Slug)</label>
+                    <input type="text" name="slug" id="cat-slug" required class="ltr-input" placeholder="مثلاً gold">
+                </div>
             </div>
 
             <div class="form-group mb-6">
@@ -281,6 +313,8 @@ include __DIR__ . '/layout/header.php';
         document.getElementById('modalIcon').setAttribute('data-lucide', 'plus');
         document.getElementById('cat-id').value = '';
         document.getElementById('cat-name').value = '';
+        document.getElementById('cat-en_name').value = '';
+        document.getElementById('cat-icon').value = 'coins';
         document.getElementById('cat-slug').value = '';
         document.getElementById('cat-sort_order').value = '0';
 
@@ -293,6 +327,8 @@ include __DIR__ . '/layout/header.php';
         document.getElementById('modalIcon').setAttribute('data-lucide', 'edit-2');
         document.getElementById('cat-id').value = cat.id;
         document.getElementById('cat-name').value = cat.name;
+        document.getElementById('cat-en_name').value = cat.en_name || '';
+        document.getElementById('cat-icon').value = cat.icon || 'coins';
         document.getElementById('cat-slug').value = cat.slug;
         document.getElementById('cat-sort_order').value = cat.sort_order;
 
