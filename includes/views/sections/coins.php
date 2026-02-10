@@ -1,34 +1,22 @@
-<div class="w-full lg:w-1/3">
-    <div class="glass-card h-full">
-        <div class="flex items-center justify-between mb-8">
-            <h3 class="text-xl font-black text-slate-800 dark:text-white flex items-center">
-                <span class="w-2 h-8 bg-primary rounded-full ml-3"></span>
-                لیست قیمت‌ها
-            </h3>
-            <div class="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-700/50 px-3 py-1 rounded-lg">
-                بروزرسانی: هم‌اکنون
+<div class="bg-block border basis-250 grow-1 radius-16 nowrap">
+    <div class="d-flex just-between align-center gap-1 pd-md border-bottom">
+        <div class="d-flex align-center gap-1">
+            <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
+                <i data-lucide="coins" color="var(--color-primary)" class="w-6 h-6"></i>
+            </div>
+            <div class="line-height-1-5">
+                <h2 class="font-size-2"><?= $title ?? 'بازار طلا و سکه' ?></h2>
+                <span class="text-gray"><?= $subtitle ?? 'gold market' ?></span>
             </div>
         </div>
+    </div>
 
-        <div class="space-y-2 overflow-y-auto max-h-[600px] pr-2 custom-scrollbar" id="coins-list">
-            <?php foreach ($coins as $index => $coin): ?>
-                <?= View::renderComponent('coin_item', [
-                    'coin' => $coin,
-                    'delay' => 0.2 + ($index * 0.05)
-                ]) ?>
-            <?php endforeach; ?>
-        </div>
+    <div class="p-1 d-column" id="<?= $id ?? 'coins-list' ?>">
+        <?php foreach ($coins as $coin): ?>
+            <?= View::renderComponent('coin_item', [
+                'coin' => $coin,
+                'image' => 'assets/images/gold/' . (strpos($coin['name'], 'نیم') !== false ? 'nim' : (strpos($coin['name'], 'ربع') !== false ? 'rob' : 'gold')) . '.png'
+            ]) ?>
+        <?php endforeach; ?>
     </div>
 </div>
-
-<style>
-.custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-slate-200 dark:bg-slate-700 rounded-full;
-}
-</style>

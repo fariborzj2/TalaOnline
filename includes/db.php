@@ -16,9 +16,7 @@ if (file_exists($config_file)) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        if (defined('INSTALLED') && INSTALLED === true) {
-            die("خطا در اتصال به دیتابیس: " . $e->getMessage());
-        }
+        // Just continue, we'll handle null $pdo in other places
     }
 } else {
     // Redirect to installer if not in installer already

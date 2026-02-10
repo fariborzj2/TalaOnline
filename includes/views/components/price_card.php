@@ -1,18 +1,34 @@
-<div class="glass-card hover:shadow-hover" id="<?= $id ?? '' ?>">
-    <div class="flex justify-between items-start mb-4">
-        <h3 class="text-sm font-bold text-slate-400"><?= htmlspecialchars($title) ?></h3>
-        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white <?= $color ?? 'bg-primary' ?>">
-            <span class="text-[10px] font-black"><?= substr($symbol, 0, 1) ?></span>
+<div class="card asset-item" id="<?= $id ?? '' ?>" data-asset='<?= json_encode([
+    "symbol" => $symbol,
+    "name" => $title,
+    "price" => $price,
+    "change" => $change,
+    "change_amount" => $change_amount ?? 0,
+    "image" => $image ?? "assets/images/gold/gold.png",
+    "high" => $high ?? $price,
+    "low" => $low ?? $price
+]) ?>'>
+    <div class="d-flex just-between align-center gap-1">
+        <div class="d-flex align-center gap-1 mb-1">
+            <div class="w-12 h-12 border radius-12 p-05 bg-secondary">
+                <img src="<?= $image ?? 'assets/images/gold/gold.png' ?>" alt="<?= htmlspecialchars($title) ?>">
+            </div>
+            <div class="line-height-1-5">
+                <h2 class="font-size-2"><?= htmlspecialchars($title) ?></h2>
+                <span class="text-gray"><?= htmlspecialchars($symbol) ?></span>
+            </div>
         </div>
     </div>
-
-    <div class="mb-2">
-        <span class="text-2xl font-black text-slate-900 dark:text-white current-price"><?= fa_price($price) ?></span>
-    </div>
-
-    <div class="flex items-center gap-1.5 <?= $change >= 0 ? 'text-emerald-500' : 'text-rose-500' ?> change-container">
-        <span class="text-xs font-bold trend-icon"><?= $change >= 0 ? '↗' : '↘' ?></span>
-        <span class="text-xs font-black change-percent"><?= fa_num(abs($change)) ?>٪</span>
-        <span class="text-[10px] font-bold opacity-60">امروز</span>
+    <div class="line-height-1-5 text-right" dir="ltr">
+       <strong class="font-size-6 current-price"><?= fa_price($price) ?></strong>
+        <div class="d-flex just-end align-center gap-1 change-container">
+            <?php if (isset($change_amount)): ?>
+                <span class="text-gray change-amount"><?= ($change >= 0 ? '+ ' : '- ') . fa_price(abs($change_amount)) ?></span>
+            <?php endif; ?>
+            <span class="d-flex align-center gap-05 <?= $change >= 0 ? 'text-success' : 'text-error' ?>">
+                <span class="font-size-3 change-percent"><?= fa_num(abs($change)) ?>%</span>
+                <i data-lucide="<?= $change >= 0 ? 'arrow-up' : 'arrow-down' ?>" class="icon-size-1"></i>
+            </span>
+        </div>
     </div>
 </div>

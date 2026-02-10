@@ -1,29 +1,32 @@
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+<div class="scrollbar-hidden d-flex gap-md">
     <?= View::renderComponent('price_card', [
         'id' => 'gold-summary',
         'title' => 'طلای ۱۸ عیار',
-        'symbol' => 'Gold',
+        'symbol' => 'GOLD18',
         'price' => $gold_data['price'] ?? 0,
         'change' => $gold_data['change_percent'] ?? 0,
-        'color' => 'bg-blue-500',
+        'change_amount' => $gold_data['change_amount'] ?? 0,
+        'image' => 'assets/images/gold/gold.png'
     ]) ?>
 
     <?= View::renderComponent('price_card', [
         'id' => 'silver-summary',
         'title' => 'نقره ۹۹۹',
-        'symbol' => 'Silver',
+        'symbol' => 'SILVER',
         'price' => $silver_data['price'] ?? 0,
         'change' => $silver_data['change_percent'] ?? 0,
-        'color' => 'bg-purple-500',
+        'change_amount' => $silver_data['change_amount'] ?? 0,
+        'image' => 'assets/images/gold/gold.png'
     ]) ?>
 
     <?php foreach ($coins as $coin): ?>
     <?= View::renderComponent('price_card', [
         'title' => $coin['name'],
-        'symbol' => $coin['symbol'],
+        'symbol' => strtoupper($coin['symbol']),
         'price' => $coin['price'],
         'change' => $coin['change_percent'],
-        'color' => 'bg-indigo-500',
+        'change_amount' => $coin['change_amount'] ?? 0,
+        'image' => 'assets/images/gold/' . (strpos($coin['name'], 'نیم') !== false ? 'nim' : (strpos($coin['name'], 'ربع') !== false ? 'rob' : 'gold')) . '.png'
     ]) ?>
     <?php endforeach; ?>
 </div>
