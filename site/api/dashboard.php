@@ -79,7 +79,7 @@ foreach ($items as $item) {
 }
 
 // Fetch Platforms
-$stmt = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC");
+$stmt = $pdo->query("SELECT * FROM platforms WHERE is_active = 1 ORDER BY sort_order ASC");
 $platforms = $stmt->fetchAll();
 foreach ($platforms as $p) {
     $response['platforms'][] = [

@@ -332,31 +332,32 @@ include __DIR__ . '/layout/header.php';
                 <textarea name="description" id="item-description" rows="2" placeholder="توضیحات کوتاهی در مورد این دارایی..."></textarea>
             </div>
 
-            <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h4 class="font-black text-slate-800 text-xs">تنظیمات پیشرفته</h4>
-                    <div class="flex gap-4">
-                        <label class="relative inline-flex items-center cursor-pointer group">
-                            <input type="checkbox" name="is_manual" id="item-is_manual" class="sr-only peer">
-                            <div class="toggle-dot"></div>
-                            <span class="mr-2 text-[10px] font-black text-slate-600">قیمت دستی</span>
-                        </label>
-                        <label class="relative inline-flex items-center cursor-pointer group">
-                            <input type="checkbox" name="show_in_summary" id="item-show_in_summary" class="sr-only peer">
-                            <div class="toggle-dot toggle-indigo"></div>
-                            <span class="mr-2 text-[10px] font-black text-slate-600">نمایش در خلاصه بالا</span>
-                        </label>
-                        <label class="relative inline-flex items-center cursor-pointer group">
-                            <input type="checkbox" name="show_chart" id="item-show_chart" class="sr-only peer">
-                            <div class="toggle-dot toggle-amber"></div>
-                            <span class="mr-2 text-[10px] font-black text-slate-600">نمایش در نمودار</span>
-                        </label>
-                        <label class="relative inline-flex items-center cursor-pointer group">
-                            <input type="checkbox" name="is_active" id="item-is_active" class="sr-only peer" checked>
-                            <div class="toggle-dot toggle-emerald"></div>
-                            <span class="mr-2 text-[10px] font-black text-slate-600">فعال</span>
-                        </label>
-                    </div>
+            <div class="p-5 bg-slate-50/50 rounded-xl border border-slate-100 mb-6">
+                <h4 class="font-black text-slate-800 text-[11px] uppercase tracking-wider mb-5 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                    تنظیمات پیشرفته
+                </h4>
+                <div class="grid grid-cols-2 gap-y-5 gap-x-8">
+                    <label class="relative inline-flex items-center cursor-pointer group">
+                        <input type="checkbox" name="is_active" id="item-is_active" class="sr-only peer" checked>
+                        <div class="toggle-dot toggle-emerald"></div>
+                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">وضعیت فعال</span>
+                    </label>
+                    <label class="relative inline-flex items-center cursor-pointer group">
+                        <input type="checkbox" name="is_manual" id="item-is_manual" class="sr-only peer">
+                        <div class="toggle-dot"></div>
+                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">قیمت دستی</span>
+                    </label>
+                    <label class="relative inline-flex items-center cursor-pointer group">
+                        <input type="checkbox" name="show_in_summary" id="item-show_in_summary" class="sr-only peer">
+                        <div class="toggle-dot toggle-indigo"></div>
+                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">نمایش در خلاصه بالا</span>
+                    </label>
+                    <label class="relative inline-flex items-center cursor-pointer group">
+                        <input type="checkbox" name="show_chart" id="item-show_chart" class="sr-only peer">
+                        <div class="toggle-dot toggle-amber"></div>
+                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">نمایش در نمودار</span>
+                    </label>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="form-group mb-0">
