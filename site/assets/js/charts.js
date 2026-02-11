@@ -134,7 +134,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Initialize Main Chart
-    const mainChart = new AssetChart('#chart', '18ayar');
+    const firstSelectedAsset = document.querySelector('.chart-toggle-btn');
+    const initialSymbol = firstSelectedAsset ? firstSelectedAsset.getAttribute('data-symbol') : '18ayar';
+
+    const mainChart = new AssetChart('#chart', initialSymbol);
     window.mainChart = mainChart;
 
     if (await mainChart.fetchData()) {
@@ -145,18 +148,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     window.AssetChart = AssetChart;
 
     // --- Main Chart Listeners ---
-    document.querySelector('#gold-chart-btn')?.addEventListener('click', function() {
-        this.parentElement.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-        mainChart.symbol = '18ayar';
-        mainChart.fetchData().then(() => mainChart.render());
-    });
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('chart-toggle-btn')) {
+            const btn = e.target;
+            btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-    document.querySelector('#silver-chart-btn')?.addEventListener('click', function() {
-        this.parentElement.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-        mainChart.symbol = 'silver';
-        mainChart.fetchData().then(() => mainChart.render());
+            const symbol = btn.getAttribute('data-symbol');
+            mainChart.symbol = symbol;
+            mainChart.fetchData().then(() => mainChart.render());
+        }
     });
 
     document.querySelectorAll('.period-toggle .mode-btn').forEach(btn => {

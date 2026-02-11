@@ -10,10 +10,15 @@
             </div>
         </div>
         <div class="d-flex-wrap gap-1">
-            <div class="d-flex gap-05 border-left pl-1 ml-1">
-                <button class="btn btn-secondary btn-sm active" id="gold-chart-btn">طلا</button>
-                <button class="btn btn-secondary btn-sm" id="silver-chart-btn">نقره</button>
+            <?php if (!empty($chart_items)): ?>
+            <div class="d-flex gap-05 border-left pl-1 ml-1" id="chart-assets-toggle">
+                <?php foreach ($chart_items as $index => $item): ?>
+                    <button class="btn btn-secondary btn-sm chart-toggle-btn <?= $index === 0 ? 'active' : '' ?>" data-symbol="<?= htmlspecialchars($item['symbol']) ?>">
+                        <?= htmlspecialchars($item['name']) ?>
+                    </button>
+                <?php endforeach; ?>
             </div>
+            <?php endif; ?>
             <div class="d-flex gap-05 period-toggle">
                 <button class="btn btn-secondary btn-sm mode-btn active" id="period-7d">۷ روز</button>
                 <button class="btn btn-secondary btn-sm mode-btn" id="period-30d">۳۰ روز</button>

@@ -15,6 +15,9 @@ try {
     if (!in_array('show_in_summary', $columns)) {
         $pdo->exec("ALTER TABLE items ADD COLUMN show_in_summary TINYINT(1) DEFAULT 0");
     }
+    if (!in_array('show_chart', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN show_chart TINYINT(1) DEFAULT 0");
+    }
 } catch (Exception $e) {
     // If DESCRIBE fails, the table might not exist yet.
     // Usually it's created by installer.php or we could add CREATE TABLE here.
@@ -37,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $is_manual = isset($_POST['is_manual']) ? 1 : 0;
         $is_active = isset($_POST['is_active']) ? 1 : 0;
         $show_in_summary = isset($_POST['show_in_summary']) ? 1 : 0;
+        $show_chart = isset($_POST['show_chart']) ? 1 : 0;
         $category = $_POST['category'] ?? 'gold';
         $sort_order = (int)($_POST['sort_order'] ?? 0);
 
@@ -53,15 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         if ($action === 'add') {
             try {
-                $stmt = $pdo->prepare("INSERT INTO items (symbol, name, en_name, description, logo, manual_price, is_manual, is_active, show_in_summary, category, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$symbol, $name, $en_name, $description, $logo, $manual_price, $is_manual, $is_active, $show_in_summary, $category, $sort_order]);
+                $stmt = $pdo->prepare("INSERT INTO items (symbol, name, en_name, description, logo, manual_price, is_manual, is_active, show_in_summary, show_chart, category, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$symbol, $name, $en_name, $description, $logo, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $category, $sort_order]);
                 $message = 'دارایی جدید با موفقیت اضافه شد.';
             } catch (Exception $e) {
                 $error = 'خطا در افزودن دارایی: ' . $e->getMessage();
             }
         } else {
-            $stmt = $pdo->prepare("UPDATE items SET symbol = ?, name = ?, en_name = ?, description = ?, logo = ?, manual_price = ?, is_manual = ?, is_active = ?, show_in_summary = ?, category = ?, sort_order = ? WHERE id = ?");
-            $stmt->execute([$symbol, $name, $en_name, $description, $logo, $manual_price, $is_manual, $is_active, $show_in_summary, $category, $sort_order, $id]);
+            $stmt = $pdo->prepare("UPDATE items SET symbol = ?, name = ?, en_name = ?, description = ?, logo = ?, manual_price = ?, is_manual = ?, is_active = ?, show_in_summary = ?, show_chart = ?, category = ?, sort_order = ? WHERE id = ?");
+            $stmt->execute([$symbol, $name, $en_name, $description, $logo, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $category, $sort_order, $id]);
             $message = 'دارایی با موفقیت بروزرسانی شد.';
         }
     } elseif ($action === 'delete') {
@@ -169,6 +173,7 @@ include __DIR__ . '/layout/header.php';
                     <th>نماد API</th>
                     <th>قیمت نمایشی</th>
                     <th class="text-center">خلاصه اول صفحه</th>
+                    <th class="text-center">نمایش در نمودار</th>
                     <th class="text-center">وضعیت</th>
                     <th class="text-center">عملیات</th>
                 </tr>
@@ -218,6 +223,16 @@ include __DIR__ . '/layout/header.php';
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-600 border border-indigo-100">
                                 <i data-lucide="layout-template" class="w-3 h-3"></i>
                                 نمایش در بالا
+                            </span>
+                        <?php else: ?>
+                            <span class="text-[10px] text-slate-300 font-bold">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="text-center">
+                        <?php if ($item['show_chart']): ?>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-amber-50 text-amber-600 border border-amber-100">
+                                <i data-lucide="bar-chart-3" class="w-3 h-3"></i>
+                                در نمودار
                             </span>
                         <?php else: ?>
                             <span class="text-[10px] text-slate-300 font-bold">-</span>
@@ -341,6 +356,11 @@ include __DIR__ . '/layout/header.php';
                             <input type="checkbox" name="show_in_summary" id="item-show_in_summary" class="sr-only peer">
                             <div class="toggle-dot toggle-indigo"></div>
                             <span class="mr-2 text-[10px] font-black text-slate-600">نمایش در خلاصه بالا</span>
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer group">
+                            <input type="checkbox" name="show_chart" id="item-show_chart" class="sr-only peer">
+                            <div class="toggle-dot toggle-amber"></div>
+                            <span class="mr-2 text-[10px] font-black text-slate-600">نمایش در نمودار</span>
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer group">
                             <input type="checkbox" name="is_active" id="item-is_active" class="sr-only peer" checked>
@@ -469,6 +489,7 @@ include __DIR__ . '/layout/header.php';
         document.getElementById('item-is_manual').checked = false;
         document.getElementById('item-is_active').checked = true;
         document.getElementById('item-show_in_summary').checked = false;
+        document.getElementById('item-show_chart').checked = false;
         document.getElementById('item-sort_order').value = '0';
 
         showModal();
@@ -490,6 +511,7 @@ include __DIR__ . '/layout/header.php';
         document.getElementById('item-is_manual').checked = item.is_manual == 1;
         document.getElementById('item-is_active').checked = item.is_active == 1;
         document.getElementById('item-show_in_summary').checked = item.show_in_summary == 1;
+        document.getElementById('item-show_chart').checked = item.show_chart == 1;
         document.getElementById('item-sort_order').value = item.sort_order;
 
         showModal();
