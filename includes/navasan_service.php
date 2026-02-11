@@ -85,10 +85,11 @@ class NavasanService {
     public function getDashboardData() {
         $today = date('Y-m-d');
 
-        // Fetch all managed items
+        // Fetch all active managed items
         $stmt = $this->pdo->query("SELECT i.*, p.price as api_price, p.change_val, p.change_percent, p.updated_at
                                    FROM items i
                                    LEFT JOIN prices_cache p ON i.symbol = p.symbol
+                                   WHERE i.is_active = 1
                                    ORDER BY i.sort_order ASC");
         $items = $stmt->fetchAll();
 

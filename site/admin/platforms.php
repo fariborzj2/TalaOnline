@@ -292,19 +292,20 @@ include __DIR__ . '/layout/header.php';
                 </div>
             </div>
 
-            <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 mb-6">
-                <div class="flex items-center justify-between">
-                    <h4 class="font-black text-slate-800 text-xs">تنظیمات سیستمی</h4>
-                    <div class="flex gap-4">
-                        <label class="relative inline-flex items-center cursor-pointer group">
-                            <input type="checkbox" name="is_active" id="platform-is_active" class="sr-only peer" checked>
-                            <div class="toggle-dot toggle-emerald"></div>
-                            <span class="mr-2 text-[10px] font-black text-slate-600">فعال</span>
-                        </label>
-                        <div class="flex items-center gap-2">
-                            <label class="text-[10px] font-black text-slate-600">ترتیب:</label>
-                            <input type="number" name="sort_order" id="platform-sort_order" value="0" class="w-16 py-1 px-2 text-xs">
-                        </div>
+            <div class="p-5 bg-slate-50/50 rounded-xl border border-slate-100 mb-6">
+                <h4 class="font-black text-slate-800 text-[11px] uppercase tracking-wider mb-5 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                    تنظیمات سیستمی
+                </h4>
+                <div class="grid grid-cols-2 gap-y-5 gap-x-8">
+                    <label class="relative inline-flex items-center cursor-pointer group">
+                        <input type="checkbox" name="is_active" id="platform-is_active" class="sr-only peer" checked>
+                        <div class="toggle-dot toggle-emerald"></div>
+                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">وضعیت فعال</span>
+                    </label>
+                    <div class="form-group mb-0 flex items-center gap-3">
+                        <label class="text-[11px] font-black text-slate-600 mb-0">ترتیب نمایش:</label>
+                        <input type="number" name="sort_order" id="platform-sort_order" value="0" class="!w-20 !py-1 !px-3 text-xs">
                     </div>
                 </div>
             </div>
