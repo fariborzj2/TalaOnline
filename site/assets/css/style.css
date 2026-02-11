@@ -300,11 +300,18 @@ input:focus {
 
 /* Pill Toggle Group */
 .pill-toggle-group {
-    display: inline-flex;
+    display: flex;
     background-color: #f1f5f9;
     padding: 4px;
     border-radius: 9999px;
     border: 1px solid #e2e8f0;
+    max-width: 100%;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.pill-toggle-group::-webkit-scrollbar {
+    display: none;
 }
 .pill-btn {
     padding: 6px 16px;
@@ -330,4 +337,20 @@ input:focus {
 /* RTL for pill group */
 [dir="rtl"] .pill-toggle-group {
     flex-direction: row;
+}
+
+@media (max-width: 600px) {
+    .chart-controls {
+        align-items: flex-start !important;
+        width: 100%;
+        gap: 12px !important;
+    }
+    .pill-toggle-group {
+        width: 100%;
+        padding: 2px;
+    }
+    .pill-btn {
+        padding: 6px 12px;
+        font-size: 10px;
+    }
 }
