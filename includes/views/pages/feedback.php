@@ -1,11 +1,11 @@
 <div class="section">
-    <div class="card radius-24 border mb-2 shadow-sm overflow-hidden">
-        <div class="pd-md border-bottom bg-block">
+    <div class="bg-block pd-md border basis-250 grow-1 radius-16">
+        <div class="border-bottom bg-block">
             <h2 class="font-size-6 font-black text-title">تماس با ما</h2>
             <p class="text-gray font-size-2 mt-1">نظرات، پیشنهادات و مشکلات خود را با ما در میان بگذارید.</p>
         </div>
 
-        <div class="pd-md">
+        <div >
             <?php if (!empty($message)): ?>
                 <div class="pd-md radius-16 mb-2 <?= $success ? 'bg-success text-success border-success' : 'bg-error text-error border-error' ?> d-flex align-center gap-1">
                     <i data-lucide="<?= $success ? 'check-circle' : 'alert-circle' ?>" class="icon-size-4"></i>
