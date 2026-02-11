@@ -1,8 +1,8 @@
 <div class="section">
     <div class="bg-block pd-md border basis-250 grow-1 radius-16">
-        <div class="border-bottom bg-block">
+        <div class="border-bottom bg-block pd-10">
             <h2 class="font-size-6 font-black text-title">تماس با ما</h2>
-            <p class="text-gray font-size-2 mt-1">نظرات، پیشنهادات و مشکلات خود را با ما در میان بگذارید.</p>
+            <p class="text-gray font-size-2">نظرات، پیشنهادات و مشکلات خود را با ما در میان بگذارید.</p>
         </div>
 
         <div >
