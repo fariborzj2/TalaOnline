@@ -157,3 +157,10 @@ $router->add('/feedback', function() {
         'success' => $success
     ]);
 });
+
+$router->add('/about-us', function() {
+    return View::renderPage('about', [
+        'page_title' => 'درباره ما',
+        'content' => get_setting('about_us_content', 'لطفاً محتوای این صفحه را از پنل مدیریت تنظیم کنید.')
+    ]);
+});

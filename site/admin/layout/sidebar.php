@@ -52,6 +52,10 @@ if (isset($pdo)) {
                     </span>
                 <?php endif; ?>
             </a>
+            <a href="about.php" class="sidebar-link <?= $current_page == 'about.php' ? 'active' : '' ?>">
+                <i data-lucide="book-open" class="w-6 h-6"></i>
+                <span>درباره ما</span>
+            </a>
             <a href="settings.php" class="sidebar-link <?= $current_page == 'settings.php' ? 'active' : '' ?>">
                 <i data-lucide="settings" class="w-6 h-6"></i>
                 <span>تنظیمات</span>
