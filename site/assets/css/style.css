@@ -300,7 +300,7 @@ input:focus {
 }
 .ml-05 { margin-left: 0.5rem; }
 
-.chart-box {
+.chart-box , #modal-chart {
     margin: 0 -12px;
 }
 
