@@ -31,6 +31,10 @@
                 <i data-lucide="building-2" class="w-6 h-6"></i>
                 <span>پتلفرم‌ها</span>
             </a>
+            <a href="feedbacks.php" class="sidebar-link <?= $current_page == 'feedbacks.php' ? 'active' : '' ?>">
+                <i data-lucide="mail" class="w-6 h-6"></i>
+                <span>پیام‌ها</span>
+            </a>
             <a href="settings.php" class="sidebar-link <?= $current_page == 'settings.php' ? 'active' : '' ?>">
                 <i data-lucide="settings" class="w-6 h-6"></i>
                 <span>تنظیمات</span>
