@@ -109,7 +109,34 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
         }
 
-        tbody.innerHTML = platforms.map(p => `
+        // Calculate best prices
+        let minBuy = null;
+        let maxSell = null;
+        platforms.forEach(p => {
+            const effBuy = p.buy_price * (1 + p.fee / 100);
+            const effSell = p.sell_price * (1 - p.fee / 100);
+            if (minBuy === null || effBuy < minBuy) minBuy = effBuy;
+            if (maxSell === null || effSell > maxSell) maxSell = effSell;
+        });
+
+        tbody.innerHTML = platforms.map(p => {
+            const effBuy = p.buy_price * (1 + p.fee / 100);
+            const effSell = p.sell_price * (1 - p.fee / 100);
+            const isBestBuy = effBuy <= minBuy;
+            const isBestSell = effSell >= maxSell;
+
+            let statusText = 'عادی';
+            let statusClass = 'warning';
+
+            if (isBestBuy) {
+                statusText = 'مناسب خرید';
+                statusClass = 'success';
+            } else if (isBestSell) {
+                statusText = 'مناسب فروش';
+                statusClass = 'info';
+            }
+
+            return `
             <tr>
                 <td>
                     <div class="brand-logo"> <img src="${p.logo}" alt="${p.name}"> </div>
@@ -124,8 +151,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <td class="font-size-2 font-bold text-title">${formatPrice(p.sell_price)}</td>
                 <td class="font-size-2 " dir="ltr">${toPersianDigits(p.fee)}%</td>
                 <td>
-                    <span class="status-badge ${p.status === 'active' || p.status === 'مناسب خرید' ? 'success' : 'warning'}">
-                        ${p.status === 'active' ? 'مناسب خرید' : (p.status || 'نامشخص')}
+                    <span class="status-badge ${statusClass}">
+                        ${statusText}
                     </span>
                 </td>
                 <td>
@@ -134,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     </a>
                 </td>
             </tr>
-        `).join('');
+        `;}).join('');
         lucide.createIcons();
     };
 

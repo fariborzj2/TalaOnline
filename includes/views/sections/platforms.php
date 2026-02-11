@@ -39,7 +39,41 @@
                 </tr>
             </thead>
             <tbody id="platforms-list">
+                <?php
+                $min_buy = null;
+                $max_sell = null;
+                foreach ($platforms as $p) {
+                    $buy = (float)($p['buy_price'] ?? 0);
+                    $sell = (float)($p['sell_price'] ?? 0);
+                    $fee = (float)($p['fee'] ?? 0);
+                    $eff_buy = $buy * (1 + $fee / 100);
+                    $eff_sell = $sell * (1 - $fee / 100);
+                    if ($min_buy === null || $eff_buy < $min_buy) $min_buy = $eff_buy;
+                    if ($max_sell === null || $eff_sell > $max_sell) $max_sell = $eff_sell;
+                }
+                ?>
                 <?php foreach ($platforms as $platform): ?>
+                    <?php
+                    $buy = (float)($platform['buy_price'] ?? 0);
+                    $sell = (float)($platform['sell_price'] ?? 0);
+                    $fee = (float)($platform['fee'] ?? 0);
+                    $eff_buy = $buy * (1 + $fee / 100);
+                    $eff_sell = $sell * (1 - $fee / 100);
+
+                    $is_best_buy = ($min_buy !== null && $eff_buy <= $min_buy);
+                    $is_best_sell = ($max_sell !== null && $eff_sell >= $max_sell);
+
+                    $status_text = 'عادی';
+                    $status_class = 'warning';
+
+                    if ($is_best_buy) {
+                        $status_text = 'مناسب خرید';
+                        $status_class = 'success';
+                    } elseif ($is_best_sell) {
+                        $status_text = 'مناسب فروش';
+                        $status_class = 'info';
+                    }
+                    ?>
                     <tr>
                         <td>
                             <div class="brand-logo"> <img src="<?= htmlspecialchars($platform['logo']) ?>" alt="<?= htmlspecialchars($platform['name']) ?>"> </div>
@@ -54,8 +88,8 @@
                         <td class="font-size-2 font-bold text-title"><?= fa_price($platform['sell_price']) ?></td>
                         <td class="font-size-2 " dir="ltr"><?= fa_num($platform['fee']) ?>%</td>
                         <td>
-                            <span class="status-badge <?= $platform['status'] == 'active' ? 'success' : 'warning' ?>">
-                                <?= $platform['status'] == 'active' ? 'مناسب خرید' : 'غیرفعال' ?>
+                            <span class="status-badge <?= $status_class ?>">
+                                <?= $status_text ?>
                             </span>
                         </td>
                         <td>

@@ -97,8 +97,8 @@ $router->add('/', function() {
 
     if (empty($platforms)) {
         $platforms = [
-            ['name' => 'گرمی', 'logo' => 'assets/images/platforms/gerami.png', 'buy_price' => 19849500, 'sell_price' => 19749500, 'fee' => 0.5, 'status' => 'active', 'link' => '#', 'en_name' => 'Gerami'],
-            ['name' => 'میلی', 'logo' => 'assets/images/platforms/milli.png', 'buy_price' => 19849500, 'sell_price' => 19749500, 'fee' => 0.3, 'status' => 'active', 'link' => '#', 'en_name' => 'Milli'],
+            ['name' => 'گرمی', 'logo' => 'assets/images/platforms/gerami.png', 'buy_price' => 19800000, 'sell_price' => 19700000, 'fee' => 0.5, 'status' => 'active', 'link' => '#', 'en_name' => 'Gerami'],
+            ['name' => 'میلی', 'logo' => 'assets/images/platforms/milli.png', 'buy_price' => 19900000, 'sell_price' => 19800000, 'fee' => 0.1, 'status' => 'active', 'link' => '#', 'en_name' => 'Milli'],
         ];
     }
 
