@@ -227,17 +227,14 @@ include __DIR__ . '/layout/header.php';
         document.getElementById('fb-date').innerText = fb.created_at;
 
         const statusInput = document.getElementById('fb-status');
-        const btnText = document.querySelector('#toggleReadBtn span');
-        const btnIcon = document.querySelector('#toggleReadBtn i');
+        const toggleReadBtn = document.getElementById('toggleReadBtn');
 
         if (fb.is_read == 1) {
             statusInput.value = 0;
-            btnText.innerText = 'علامت‌گذاری به عنوان خوانده نشده';
-            btnIcon.setAttribute('data-lucide', 'mail');
+            toggleReadBtn.innerHTML = '<i data-lucide="mail" class="w-4 h-4"></i> <span>علامت‌گذاری به عنوان خوانده نشده</span>';
         } else {
             statusInput.value = 1;
-            btnText.innerText = 'علامت‌گذاری به عنوان خوانده شده';
-            btnIcon.setAttribute('data-lucide', 'check');
+            toggleReadBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> <span>علامت‌گذاری به عنوان خوانده شده</span>';
         }
 
         showModal();
