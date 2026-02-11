@@ -143,11 +143,17 @@ include __DIR__ . '/layout/header.php';
                     <td>
                         <?php
                         $pct = (float)$update['change_percent'];
+                        $change_val = (float)($update['change_val'] ?? 0);
                         $is_up = $pct >= 0;
                         ?>
-                        <div class="flex items-center gap-1 <?= $is_up ? 'text-emerald-600' : 'text-rose-600' ?> font-black">
-                            <i data-lucide="<?= $is_up ? 'trending-up' : 'trending-down' ?>" class="w-4 h-4"></i>
-                            <span><?= ($pct > 0 ? '+' : '') . $pct ?>%</span>
+                        <div class="flex flex-col">
+                            <div class="flex items-center gap-1 <?= $is_up ? 'text-emerald-600' : 'text-rose-600' ?> font-black text-xs">
+                                <i data-lucide="<?= $is_up ? 'trending-up' : 'trending-down' ?>" class="w-3 h-3"></i>
+                                <span><?= ($pct > 0 ? '+' : '') . $pct ?>%</span>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-400" dir="ltr">
+                                <?= ($is_up ? '+ ' : '- ') . number_format(abs($change_val)) ?>
+                            </span>
                         </div>
                     </td>
                     <td class="text-slate-400 font-medium text-xs"><?= $update['updated_at'] ?></td>

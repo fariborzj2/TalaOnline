@@ -136,6 +136,36 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
+    // --- Helper to update main chart stats ---
+    const updateMainChartStats = (symbol) => {
+        if (!window.__INITIAL_STATE__ || !window.__INITIAL_STATE__.grouped_items) return;
+
+        let item = null;
+        // Search in summary items if available
+        if (window.__INITIAL_STATE__.summary) {
+            if (window.__INITIAL_STATE__.summary.gold && window.__INITIAL_STATE__.summary.gold.symbol === symbol) item = window.__INITIAL_STATE__.summary.gold;
+            if (window.__INITIAL_STATE__.summary.silver && window.__INITIAL_STATE__.summary.silver.symbol === symbol) item = window.__INITIAL_STATE__.summary.silver;
+        }
+
+        if (!item) {
+            // Search in grouped items
+            for (const cat in window.__INITIAL_STATE__.grouped_items) {
+                const found = window.__INITIAL_STATE__.grouped_items[cat].items.find(i => i.symbol === symbol);
+                if (found) {
+                    item = found;
+                    break;
+                }
+            }
+        }
+
+        if (item) {
+            const highEl = document.querySelector('.chart-high-price');
+            const lowEl = document.querySelector('.chart-low-price');
+            if (highEl) highEl.textContent = toPersianDigits(item.high || item.price) + ' تومان';
+            if (lowEl) lowEl.textContent = toPersianDigits(item.low || item.price) + ' تومان';
+        }
+    };
+
     // Initialize Main Chart
     const firstSelectedAsset = document.querySelector('.chart-toggle-btn');
     const initialSymbol = firstSelectedAsset ? firstSelectedAsset.getAttribute('data-symbol') : '18ayar';
@@ -145,6 +175,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     if (await mainChart.fetchData()) {
         mainChart.render();
+        updateMainChartStats(initialSymbol);
     }
 
     // Modal Chart Global Access
@@ -158,6 +189,16 @@ document.addEventListener('DOMContentLoaded', async function() {
             btn.classList.add('active');
 
             const symbol = btn.getAttribute('data-symbol');
+            const name = btn.getAttribute('data-name');
+
+            // Update UI elements
+            const titleEl = document.querySelector('.chart-section-title');
+            const descEl = document.querySelector('.chart-section-desc');
+            if (titleEl) titleEl.textContent = `نمودار قیمت ${name}`;
+            if (descEl) descEl.textContent = `نوسانات قیمت ${name} در بازه‌های زمانی مختلف`;
+
+            updateMainChartStats(symbol);
+
             mainChart.symbol = symbol;
             mainChart.fetchData().then(() => mainChart.render());
         }
@@ -167,7 +208,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         btn.addEventListener('click', function() {
             this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            const days = this.id === 'period-7d' ? 7 : (this.id === 'period-30d' ? 30 : 365);
+            const period = this.getAttribute('data-period');
+            const days = period === '7d' ? 7 : (period === '30d' ? 30 : 365);
             mainChart.updatePeriod(days);
         });
     });
