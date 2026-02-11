@@ -164,8 +164,7 @@ include __DIR__ . '/layout/header.php';
                 <tr>
                     <th class="w-10"></th>
                     <th class="w-16">ترتیب</th>
-                    <th class="w-20">لوگو</th>
-                    <th>نام و نماد</th>
+                    <th>دارایی</th>
                     <th>دسته</th>
                     <th>قیمت نمایشی</th>
                     <th class="text-center">خلاصه</th>
@@ -182,13 +181,15 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td class="text-center font-black text-slate-400 row-order"><?= $item['sort_order'] ?></td>
                     <td>
-                        <div class="w-10 h-10 rounded-lg bg-slate-100 p-2 flex items-center justify-center">
-                            <img src="../<?= htmlspecialchars($item['logo']) ?>" alt="" class="w-full h-full object-contain">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-slate-100 p-2 flex items-center justify-center shrink-0">
+                                <img src="../<?= htmlspecialchars($item['logo']) ?>" alt="" class="w-full h-full object-contain">
+                            </div>
+                            <div>
+                                <p class="font-black text-slate-900"><?= htmlspecialchars($item['name'] ?? '') ?></p>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"><?= htmlspecialchars($item['symbol'] ?? '') ?></p>
+                            </div>
                         </div>
-                    </td>
-                    <td>
-                        <p class="font-black text-slate-900"><?= htmlspecialchars($item['name'] ?? '') ?></p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter ltr-input"><?= htmlspecialchars($item['symbol'] ?? '') ?></p>
                     </td>
                     <td>
                         <?php
@@ -404,12 +405,12 @@ include __DIR__ . '/layout/header.php';
         // Sort
         filteredRows.sort((a, b) => {
             if (sortBy === 'name') {
-                const nameA = a.querySelector('td:nth-child(4) p:first-child').innerText;
-                const nameB = b.querySelector('td:nth-child(4) p:first-child').innerText;
+                const nameA = a.querySelector('td:nth-child(3) p:first-child').innerText;
+                const nameB = b.querySelector('td:nth-child(3) p:first-child').innerText;
                 return nameA.localeCompare(nameB, 'fa');
             } else if (sortBy === 'price_desc' || sortBy === 'price_asc') {
-                const priceA = parseFloat(a.querySelector('td:nth-child(6) .font-black').innerText.replace(/,/g, '')) || 0;
-                const priceB = parseFloat(b.querySelector('td:nth-child(6) .font-black').innerText.replace(/,/g, '')) || 0;
+                const priceA = parseFloat(a.querySelector('td:nth-child(5) .font-black').innerText.replace(/,/g, '')) || 0;
+                const priceB = parseFloat(b.querySelector('td:nth-child(5) .font-black').innerText.replace(/,/g, '')) || 0;
                 return sortBy === 'price_desc' ? priceB - priceA : priceA - priceB;
             } else {
                 const orderA = parseInt(a.querySelector('td:first-child').innerText) || 0;
