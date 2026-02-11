@@ -34,7 +34,7 @@ include __DIR__ . '/layout/header.php';
             </div>
             <div>
                 <p class="text-xs font-black text-slate-400 uppercase ">تعداد کل آیتم‌ها</p>
-                <h3 class="text-2xl font-black text-slate-900 mt-1"><?= number_format($total_items) ?></h3>
+                <h3 class="text-2xl font-black text-slate-900 mt-1"><?= fa_num(number_format($total_items)) ?></h3>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@ include __DIR__ . '/layout/header.php';
             </div>
             <div>
                 <p class="text-xs font-black text-slate-400 uppercase ">پلتفرم‌های فعال</p>
-                <h3 class="text-2xl font-black text-slate-900 mt-1"><?= number_format($total_platforms) ?></h3>
+                <h3 class="text-2xl font-black text-slate-900 mt-1"><?= fa_num(number_format($total_platforms)) ?></h3>
             </div>
         </div>
     </div>
@@ -74,21 +74,21 @@ include __DIR__ . '/layout/header.php';
         <div class="glass-card p-6 rounded-xl border-b-4 border-indigo-500">
             <p class="text-xs font-black text-slate-400 uppercase ">درخواست‌های ماه جاری</p>
             <div class="flex items-end justify-between mt-2">
-                <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['monthly_usage'] ?? 0) ?></h3>
+                <h3 class="text-2xl font-black text-slate-900"><?= fa_num(number_format($usage['monthly_usage'] ?? 0)) ?></h3>
                 <span class="text-[10px] font-black bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg">REQ/MONTH</span>
             </div>
         </div>
         <div class="glass-card p-6 rounded-xl border-b-4 border-emerald-500">
             <p class="text-xs font-black text-slate-400 uppercase ">درخواست‌های امروز</p>
             <div class="flex items-end justify-between mt-2">
-                <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['daily_usage'] ?? 0) ?></h3>
+                <h3 class="text-2xl font-black text-slate-900"><?= fa_num(number_format($usage['daily_usage'] ?? 0)) ?></h3>
                 <span class="text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded-lg">REQ/DAY</span>
             </div>
         </div>
         <div class="glass-card p-6 rounded-xl border-b-4 border-amber-500">
             <p class="text-xs font-black text-slate-400 uppercase ">درخواست‌های ساعت اخیر</p>
             <div class="flex items-end justify-between mt-2">
-                <h3 class="text-2xl font-black text-slate-900"><?= number_format($usage['hourly_usage'] ?? 0) ?></h3>
+                <h3 class="text-2xl font-black text-slate-900"><?= fa_num(number_format($usage['hourly_usage'] ?? 0)) ?></h3>
                 <span class="text-[10px] font-black bg-amber-50 text-amber-600 px-2 py-1 rounded-lg">REQ/HOUR</span>
             </div>
         </div>
@@ -136,7 +136,7 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td>
                         <div class="flex items-baseline gap-1">
-                            <span class="text-base font-black text-slate-900"><?= number_format($update['price']) ?></span>
+                            <span class="text-base font-black text-slate-900"><?= fa_num(number_format($update['price'])) ?></span>
                             <span class="text-[10px] font-bold text-slate-400">تومان</span>
                         </div>
                     </td>
@@ -149,10 +149,10 @@ include __DIR__ . '/layout/header.php';
                         <div class="flex flex-col">
                             <div class="flex items-center gap-1 <?= $is_up ? 'text-emerald-600' : 'text-rose-600' ?> font-black text-xs">
                                 <i data-lucide="<?= $is_up ? 'trending-up' : 'trending-down' ?>" class="w-3 h-3"></i>
-                                <span><?= ($pct > 0 ? '+' : '') . $pct ?>%</span>
+                                <span><?= ($pct > 0 ? '+' : '') . fa_num($pct) ?>%</span>
                             </div>
                             <span class="text-[10px] font-bold text-slate-400" dir="ltr">
-                                <?= ($is_up ? '+ ' : '- ') . number_format(abs($change_val)) ?>
+                                <?= ($is_up ? '+ ' : '- ') . fa_num(number_format(abs($change_val))) ?>
                             </span>
                         </div>
                     </td>
