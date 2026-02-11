@@ -28,7 +28,7 @@
     }
 }
 .bg-primary {
-    background-color: var(--primary-color);
+    background-color: var(--color-primary);
 }
 .bg-secondary {
     background-color: var(--secondary-color);
@@ -43,7 +43,7 @@
     background-color: var(--bg-warning);
 }
 .text-primary {
-    color: var(--primary-color);
+    color: var(--color-primary);
 }
 .text-secondary {
     color: var(--secondary-color);
