@@ -16,7 +16,7 @@
                     <button class="pill-btn chart-toggle-btn <?= $index === 0 ? 'active' : '' ?>"
                             data-symbol="<?= htmlspecialchars($item['symbol']) ?>"
                             data-name="<?= htmlspecialchars($item['name']) ?>">
-                        نمودار <?= htmlspecialchars($item['name']) ?>
+                            <?= htmlspecialchars($item['name']) ?>
                     </button>
                 <?php endforeach; ?>
             </div>
