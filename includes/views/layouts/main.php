@@ -59,8 +59,11 @@
                             </div>
 
                             <div class="border radius-10 pl-1-5 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
+                                <div class="pulse-container ml-05">
+                                    <span class="pulse-dot"></span>
+                                </div>
                                 <i data-lucide="calendar-days" class="icon-size-3"></i>
-                                <span><?= fa_num(date('Y/m/d')) ?></span>
+                                <span><?= jalali_date() ?></span>
                             </div>
                         </div>
                     </div>
