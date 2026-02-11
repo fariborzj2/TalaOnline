@@ -19,6 +19,23 @@ function fa_price($num) {
     return fa_num($num);
 }
 
+function jalali_date($date = 'now') {
+    if (!class_exists('IntlDateFormatter')) {
+        return date('Y/m/d');
+    }
+
+    $fmt = new IntlDateFormatter(
+        'fa_IR@calendar=persian',
+        IntlDateFormatter::LONG,
+        IntlDateFormatter::NONE,
+        'Asia/Tehran',
+        IntlDateFormatter::TRADITIONAL,
+        'd MMMM y'
+    );
+
+    return fa_num($fmt->format(strtotime($date)));
+}
+
 function get_trend_arrow($change) {
     if ($change > 0) return '<span class="trend-arrow trend-up"></span>';
     if ($change < 0) return '<span class="trend-arrow trend-down"></span>';
