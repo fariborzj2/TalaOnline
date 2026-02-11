@@ -118,6 +118,7 @@ class NavasanService {
                 'category' => $item['category'],
                 'price' => $display_price,
                 'change' => $item['change_val'] ?? 0,
+                'change_amount' => $item['change_val'] ?? 0,
                 'change_percent' => $item['change_percent'] ?? 0,
                 'high' => $stats[$symbol]['high'] ?? $display_price,
                 'low' => $stats[$symbol]['low'] ?? $display_price,
