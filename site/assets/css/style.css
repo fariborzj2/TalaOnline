@@ -240,6 +240,16 @@ input:focus {
     color: var(--color-error);
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
+.status-badge.warning {
+    background: var(--bg-warning);
+    color: var(--color-warning);
+    border: 1px solid rgba(225, 174, 19, 0.2);
+}
+.status-badge.info {
+    background: rgba(30, 144, 255, 0.1);
+    color: #1e90ff;
+    border: 1px solid rgba(30, 144, 255, 0.2);
+}
 /* ApexCharts Tooltip RTL Fix */
 .apexcharts-tooltip {
     text-align: right !important;
