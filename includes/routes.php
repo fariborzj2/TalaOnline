@@ -121,3 +121,39 @@ $router->add('/item/:symbol', function($params) {
         'page_title' => 'جزئیات ' . $params['symbol']
     ]);
 });
+
+$router->add('/feedback', function() {
+    global $pdo;
+    $message = '';
+    $success = false;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $subject = $_POST['subject'] ?? '';
+        $body = $_POST['message'] ?? '';
+
+        if (!empty($name) && !empty($body)) {
+            if ($pdo) {
+                try {
+                    $stmt = $pdo->prepare("INSERT INTO feedbacks (name, email, subject, message) VALUES (?, ?, ?, ?)");
+                    $stmt->execute([$name, $email, $subject, $body]);
+                    $message = 'پیام شما با موفقیت ارسال شد. با تشکر از بازخورد شما.';
+                    $success = true;
+                } catch (Exception $e) {
+                    $message = 'متاسفانه خطایی در ارسال پیام رخ داد. لطفا دوباره تلاش کنید.';
+                }
+            } else {
+                $message = 'خطا در اتصال به پایگاه داده. لطفا بعدا تلاش کنید.';
+            }
+        } else {
+            $message = 'لطفا تمامی فیلدهای ضروری (نام و پیام) را پر کنید.';
+        }
+    }
+
+    return View::renderPage('feedback', [
+        'page_title' => 'تماس با ما / ارسال بازخورد',
+        'message' => $message,
+        'success' => $success
+    ]);
+});
