@@ -18,12 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $site_title = $_POST['site_title'];
     $site_description = $_POST['site_description'];
     $site_keywords = $_POST['site_keywords'];
+    $tinymce_api_key = $_POST['tinymce_api_key'];
 
     set_setting('api_key', $api_key);
     set_setting('api_sync_interval', $api_sync_interval);
     set_setting('site_title', $site_title);
     set_setting('site_description', $site_description);
     set_setting('site_keywords', $site_keywords);
+    set_setting('tinymce_api_key', $tinymce_api_key);
 
     if (!empty($_POST['new_password'])) {
         $hashed_pass = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
@@ -104,6 +106,14 @@ include __DIR__ . '/layout/header.php';
                         <span class="icon"><i data-lucide="timer" class="w-4 h-4"></i></span>
                         <input type="number" name="api_sync_interval" value="<?= htmlspecialchars($api_sync_interval) ?>" min="1" required class="ltr-input">
                     </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>کلید API ویرایشگر (TinyMCE API Key)</label>
+                <div class="input-icon-wrapper">
+                    <span class="icon"><i data-lucide="code" class="w-4 h-4"></i></span>
+                    <input type="text" name="tinymce_api_key" value="<?= htmlspecialchars(get_setting('tinymce_api_key')) ?>" placeholder="no-api-key" class="ltr-input font-mono text-xs">
                 </div>
             </div>
         </div>

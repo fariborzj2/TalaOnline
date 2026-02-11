@@ -22,23 +22,11 @@ $page_title = 'مدیریت صفحه درباره ما';
 $page_subtitle = 'ویرایش محتوای متنی، تصاویر و اطلاعات تماس در صفحه درباره ما';
 
 include __DIR__ . '/layout/header.php';
+include __DIR__ . '/layout/editor.php';
 ?>
 
-<!-- TinyMCE CDN -->
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-
 <script>
-  tinymce.init({
-    selector: '#about_us_editor',
-    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-    directionality: 'rtl',
-    language: 'fa',
-    height: 500,
-    branding: false,
-    promotion: false,
-    content_style: 'body { font-family:Vazirmatn,Arial,sans-serif; font-size:14px; direction: rtl; }'
-  });
+  initTinyMCE('#about_us_editor');
 </script>
 
 <?php if ($message): ?>
