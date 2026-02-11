@@ -80,7 +80,7 @@
     </script>
     <!-- Detail Modal -->
     <div id="detail-modal" class="modal-overlay d-none">
-        <div class="modal-content bg-block radius-24 shadow-lg">
+        <div class="modal-content bg-block radius-16 shadow-lg">
             <div class="modal-header d-flex just-between align-center pd-md border-bottom">
                 <div class="d-flex align-center gap-1">
                     <div class="modal-icon w-12 h-12 border radius-12 p-05 bg-secondary d-flex align-center just-center">
