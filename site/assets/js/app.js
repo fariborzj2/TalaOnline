@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Reset HTML to ensure we have a fresh <i> tag for Lucide to process
         changePercentEl.innerHTML = `
             <span>${toPersianDigits(Math.abs(assetData.change))}%</span>
-            <i data-lucide="${isPos ? 'arrow-up' : 'arrow-down'}"></i>
+            <i data-lucide="${isPos ? 'arrow-up' : 'arrow-down'}" class="icon-size-1"></i>
         `;
         changePercentEl.className = `d-flex align-center gap-05 font-bold ${isPos ? 'text-success' : 'text-error'}`;
 
