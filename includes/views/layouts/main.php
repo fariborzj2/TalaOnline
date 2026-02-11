@@ -107,10 +107,10 @@
                             <span id="modal-change-amount" class="text-gray">---</span>
                         </div>
                     </div>
-                    <div class="d-flex gap-05 period-toggle" id="modal-period-toggle">
-                        <button class="btn btn-secondary btn-sm active" data-period="7d">۷ روز</button>
-                        <button class="btn btn-secondary btn-sm" data-period="30d">۳۰ روز</button>
-                        <button class="btn btn-secondary btn-sm" data-period="1y">۱ سال</button>
+                    <div class="pill-toggle-group" id="modal-period-toggle">
+                        <button class="pill-btn active" data-period="7d">۷ روز</button>
+                        <button class="pill-btn" data-period="30d">۳۰ روز</button>
+                        <button class="pill-btn" data-period="1y">۱ سال</button>
                     </div>
                 </div>
 
