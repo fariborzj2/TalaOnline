@@ -194,5 +194,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     };
 
+    // Global form submission loading state
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.classList.add('btn-loading');
+            }
+        });
+    });
+
     await initApp();
 });

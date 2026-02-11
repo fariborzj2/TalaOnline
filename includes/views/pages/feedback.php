@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="mt-1">
-                    <button type="submit" class="btn-submit radius-12 d-flex align-center just-center gap-1 w-full">
+                    <button type="submit" class="btn btn-sm btn-primary radius-12 just-center w-full">
                         <i data-lucide="send" class="icon-size-4"></i>
                         <span>ارسال پیام</span>
                     </button>
@@ -59,25 +59,6 @@
 </div>
 
 <style>
-    .btn-submit {
-        background-color: var(--color-warning);
-        color: white;
-        border: none;
-        padding: 16px;
-        font-size: 16px;
-        font-weight: 800;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        width: 100%;
-    }
-    .btn-submit:hover {
-        background-color: #c99a0e;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(225, 174, 19, 0.2);
-    }
-    .btn-submit:active {
-        transform: translateY(0);
-    }
     .border-success { border: 1px solid rgba(16, 185, 129, 0.3); }
     .border-error { border: 1px solid rgba(239, 68, 68, 0.3); }
     .basis-300 { flex-basis: 300px; }
