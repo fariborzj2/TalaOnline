@@ -83,6 +83,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                     rtl: true,
                     zoom: { enabled: false }
                 },
+                markers: { size: 0 },
+                dataLabels: { enabled: false },
                 stroke: { curve: 'smooth', width: 2, colors: ['#f59e0c'] },
                 fill: {
                     type: 'gradient',
@@ -101,6 +103,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 grid: { borderColor: '#eee', strokeDashArray: 4 },
                 tooltip: {
                     theme: 'light',
+                    rtl: true,
                     x: { formatter: (val, { seriesIndex, dataPointIndex, w }) => w.config.series[seriesIndex].data[dataPointIndex].fullDate },
                     y: { formatter: (val) => toPersianDigits(val) + ' تومان' }
                 },

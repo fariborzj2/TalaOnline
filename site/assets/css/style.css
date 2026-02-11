@@ -240,3 +240,14 @@ input:focus {
     color: var(--color-error);
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
+/* ApexCharts Tooltip RTL Fix */
+.apexcharts-tooltip {
+    text-align: right !important;
+    direction: rtl !important;
+}
+.apexcharts-tooltip-title {
+    text-align: right !important;
+}
+.apexcharts-tooltip-text {
+    text-align: right !important;
+}
