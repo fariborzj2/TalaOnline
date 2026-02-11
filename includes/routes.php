@@ -24,22 +24,21 @@ $router->add('/', function() {
     $categories_data = [];
     if ($pdo) {
         try {
-            $categories_data = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->fetchAll();
+            $stmt = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC");
+            $categories_data = $stmt->fetchAll();
         } catch (Exception $e) {}
-    }
-
-    if (empty($categories_data)) {
+    } else {
         $categories_data = [
             ['slug' => 'gold', 'name' => 'طلا و جواهرات', 'en_name' => 'gold market', 'icon' => 'coins'],
             ['slug' => 'coin', 'name' => 'مسکوکات طلا', 'en_name' => 'gold coins', 'icon' => 'circle-dollar-sign'],
-            ['slug' => 'currency', 'name' => 'ارزهای رایج', 'en_name' => 'foreign currency', 'icon' => 'banknote']
         ];
     }
 
     $gold_data = null;
     $silver_data = null;
-    $grouped_items = [];
 
+    // Group items by category
+    $grouped_items = [];
     foreach ($categories_data as $cat) {
         $grouped_items[$cat['slug']] = [
             'info' => $cat,
@@ -58,6 +57,7 @@ $router->add('/', function() {
 
     $platforms = [];
     $summary_items = [];
+    $chart_items = [];
     if ($pdo) {
         try {
             $stmt = $pdo->query("SELECT * FROM platforms ORDER BY sort_order ASC");
@@ -67,12 +67,32 @@ $router->add('/', function() {
             $stmt = $pdo->query("SELECT symbol FROM items WHERE show_in_summary = 1 ORDER BY sort_order ASC LIMIT 4");
             $summary_symbols = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+            // Check for items marked as show_chart
+            $stmt = $pdo->query("SELECT symbol FROM items WHERE show_chart = 1 ORDER BY sort_order ASC");
+            $chart_symbols = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
             foreach ($items as $item) {
                 if (in_array($item['symbol'], $summary_symbols)) {
                     $summary_items[] = $item;
                 }
+                if (in_array($item['symbol'], $chart_symbols)) {
+                    $chart_items[] = $item;
+                }
             }
         } catch (Exception $e) {}
+    } else {
+        // Mock chart items
+        foreach ($items as $item) {
+            if (in_array($item['symbol'], ['18ayar', 'sekeh'])) {
+                $chart_items[] = $item;
+            }
+        }
+    }
+
+    // Fallback if no items marked for summary
+    if (empty($summary_items)) {
+        if ($gold_data) $summary_items[] = $gold_data;
+        if ($silver_data) $summary_items[] = $silver_data;
     }
 
     if (empty($platforms)) {
@@ -89,6 +109,7 @@ $router->add('/', function() {
         'gold_data' => $gold_data,
         'silver_data' => $silver_data,
         'summary_items' => $summary_items,
+        'chart_items' => $chart_items,
         'grouped_items' => $grouped_items,
         'platforms' => $platforms
     ]);

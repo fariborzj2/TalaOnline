@@ -38,7 +38,8 @@
 
 <div class="section">
     <?= View::renderSection('chart', [
-        'gold_data' => $gold_data
+        'gold_data' => $gold_data,
+        'chart_items' => $chart_items
     ]) ?>
 </div>
 
