@@ -74,6 +74,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
             .sidebar-link i {
                 @apply w-5 h-5;
             }
+
+            /* Button Loading State */
+            .btn-loading {
+                @apply relative !text-transparent pointer-events-none;
+            }
+            .btn-loading::after {
+                content: "";
+                @apply absolute inset-0 m-auto w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin;
+            }
+            .btn-v3-outline.btn-loading::after {
+                @apply border-slate-200 border-t-indigo-600;
+            }
         }
 
         @keyframes modalUp {

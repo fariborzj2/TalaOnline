@@ -195,13 +195,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     };
 
     // Global form submission loading state
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function() {
-            const submitBtn = this.querySelector('button[type="submit"]');
+    document.addEventListener('submit', function(e) {
+        const form = e.target.closest('form');
+        if (form) {
+            const submitBtn = form.querySelector('button[type="submit"]');
             if (submitBtn) {
                 submitBtn.classList.add('btn-loading');
             }
-        });
+        }
     });
 
     await initApp();

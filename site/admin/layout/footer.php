@@ -18,6 +18,16 @@
         }
     });
 
+    // Global form submission loading state
+    document.addEventListener('submit', function(e) {
+        if (e.target.tagName === 'FORM') {
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.classList.add('btn-loading');
+            }
+        }
+    });
+
 </script>
 
 <!-- Custom Dialog Modal -->
