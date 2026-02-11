@@ -18,10 +18,7 @@ try {
     if (!in_array('show_chart', $columns)) {
         $pdo->exec("ALTER TABLE items ADD COLUMN show_chart TINYINT(1) DEFAULT 0");
     }
-} catch (Exception $e) {
-    // If DESCRIBE fails, the table might not exist yet.
-    // Usually it's created by installer.php or we could add CREATE TABLE here.
-}
+} catch (Exception $e) {}
 
 $message = '';
 $error = '';
@@ -168,12 +165,11 @@ include __DIR__ . '/layout/header.php';
                     <th class="w-10"></th>
                     <th class="w-16">ترتیب</th>
                     <th class="w-20">لوگو</th>
-                    <th>نام و عنوان</th>
+                    <th>نام و نماد</th>
                     <th>دسته</th>
-                    <th>نماد API</th>
                     <th>قیمت نمایشی</th>
-                    <th class="text-center">خلاصه اول صفحه</th>
-                    <th class="text-center">نمایش در نمودار</th>
+                    <th class="text-center">خلاصه</th>
+                    <th class="text-center">نمودار</th>
                     <th class="text-center">وضعیت</th>
                     <th class="text-center">عملیات</th>
                 </tr>
@@ -192,7 +188,7 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td>
                         <p class="font-black text-slate-900"><?= htmlspecialchars($item['name'] ?? '') ?></p>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"><?= htmlspecialchars($item['en_name'] ?? '') ?></p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter ltr-input"><?= htmlspecialchars($item['symbol'] ?? '') ?></p>
                     </td>
                     <td>
                         <?php
@@ -201,11 +197,6 @@ include __DIR__ . '/layout/header.php';
                         ?>
                         <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-black border border-slate-200">
                             <?= htmlspecialchars($cat_name) ?>
-                        </span>
-                    </td>
-                    <td>
-                        <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[10px] font-black border border-indigo-100 ltr-input">
-                            <?= htmlspecialchars($item['symbol']) ?>
                         </span>
                     </td>
                     <td>
@@ -220,8 +211,7 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td class="text-center">
                         <?php if ($item['show_in_summary']): ?>
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-600 border border-indigo-100">
-                                <i data-lucide="layout-template" class="w-3 h-3"></i>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-600 border border-indigo-100">
                                 نمایش در بالا
                             </span>
                         <?php else: ?>
@@ -230,8 +220,7 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td class="text-center">
                         <?php if ($item['show_chart']): ?>
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-amber-50 text-amber-600 border border-amber-100">
-                                <i data-lucide="bar-chart-3" class="w-3 h-3"></i>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-amber-50 text-amber-600 border border-amber-100">
                                 در نمودار
                             </span>
                         <?php else: ?>
@@ -244,8 +233,7 @@ include __DIR__ . '/layout/header.php';
                             <input type="hidden" name="action" value="toggle_status">
                             <input type="hidden" name="id" value="<?= $item['id'] ?>">
                             <input type="hidden" name="status" value="<?= $active ? 0 : 1 ?>">
-                            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black <?= $active ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200' ?>">
-                                <span class="w-1.5 h-1.5 rounded-full <?= $active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300' ?>"></span>
+                            <button type="submit" class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black <?= $active ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200' ?>">
                                 <?= $active ? 'فعال' : 'غیرفعال' ?>
                             </button>
                         </form>
@@ -416,8 +404,8 @@ include __DIR__ . '/layout/header.php';
         // Sort
         filteredRows.sort((a, b) => {
             if (sortBy === 'name') {
-                const nameA = a.querySelector('td:nth-child(3) p:first-child').innerText;
-                const nameB = b.querySelector('td:nth-child(3) p:first-child').innerText;
+                const nameA = a.querySelector('td:nth-child(4) p:first-child').innerText;
+                const nameB = b.querySelector('td:nth-child(4) p:first-child').innerText;
                 return nameA.localeCompare(nameB, 'fa');
             } else if (sortBy === 'price_desc' || sortBy === 'price_asc') {
                 const priceA = parseFloat(a.querySelector('td:nth-child(6) .font-black').innerText.replace(/,/g, '')) || 0;
