@@ -1,6 +1,16 @@
 <!-- Sidebar Overlay -->
 <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden hidden"></div>
 
+<?php
+// Fetch unread feedback count
+$unread_feedbacks_count = 0;
+if (isset($pdo)) {
+    try {
+        $stmt = $pdo->query("SELECT COUNT(*) FROM feedbacks WHERE is_read = 0");
+        $unread_feedbacks_count = $stmt->fetchColumn();
+    } catch (Exception $e) {}
+}
+?>
 <!-- Sidebar -->
 <aside id="sidebar" class="fixed inset-y-0 right-0 w-64 bg-white border-l border-slate-100 transform translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:flex flex-col transition-transform duration-300 ease-in-out z-50 lg:shadow-none lg:overflow-y-auto">
     <div class="p-5 pb-4">
@@ -31,9 +41,16 @@
                 <i data-lucide="building-2" class="w-6 h-6"></i>
                 <span>پتلفرم‌ها</span>
             </a>
-            <a href="feedbacks.php" class="sidebar-link <?= $current_page == 'feedbacks.php' ? 'active' : '' ?>">
-                <i data-lucide="mail" class="w-6 h-6"></i>
-                <span>پیام‌ها</span>
+            <a href="feedbacks.php" class="sidebar-link <?= $current_page == 'feedbacks.php' ? 'active' : '' ?> flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <i data-lucide="mail" class="w-6 h-6"></i>
+                    <span>پیام‌ها</span>
+                </div>
+                <?php if ($unread_feedbacks_count > 0): ?>
+                    <span class="bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                        <?= $unread_feedbacks_count ?>
+                    </span>
+                <?php endif; ?>
             </a>
             <a href="settings.php" class="sidebar-link <?= $current_page == 'settings.php' ? 'active' : '' ?>">
                 <i data-lucide="settings" class="w-6 h-6"></i>
