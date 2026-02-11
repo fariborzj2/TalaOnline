@@ -118,7 +118,7 @@
                     <div id="modal-chart"></div>
                 </div>
 
-                <div class="d-flex- just-between mt-1 pt-1 border-top">
+                <div class="d-flex just-between mt-1 pt-1 border-top">
                      <div class="d-flex-wrap gap-1">
                          <span class="text-gray">بالاترین (۲۴ساعته):</span>
                          <strong id="modal-high" class="text-success">---</strong>
