@@ -14,10 +14,10 @@ $router->add('/', function() {
     } else {
         // Mock data for verification if DB is not available
         $items = [
-            ['symbol' => '18ayar', 'price' => 19853180, 'change_percent' => 3.04, 'category' => 'gold', 'name' => 'طلای ۱۸ عیار'],
-            ['symbol' => 'silver', 'price' => 1234567, 'change_percent' => -0.5, 'category' => 'silver', 'name' => 'نقره ۹۹۹'],
-            ['symbol' => 'sekeh', 'price' => 193000000, 'change_percent' => 1.54, 'category' => 'coin', 'name' => 'سکه امامی'],
-            ['symbol' => 'rob', 'price' => 56500000, 'change_percent' => 3.15, 'category' => 'coin', 'name' => 'ربع سکه'],
+            ['symbol' => '18ayar', 'price' => 19853180, 'change_percent' => 3.04, 'change_amount' => 580000, 'category' => 'gold', 'name' => 'طلای ۱۸ عیار'],
+            ['symbol' => 'silver', 'price' => 1234567, 'change_percent' => -0.5, 'change_amount' => 6000, 'category' => 'silver', 'name' => 'نقره ۹۹۹'],
+            ['symbol' => 'sekeh', 'price' => 193000000, 'change_percent' => 1.54, 'change_amount' => 2900000, 'category' => 'coin', 'name' => 'سکه امامی'],
+            ['symbol' => 'rob', 'price' => 56500000, 'change_percent' => 3.15, 'change_amount' => 1700000, 'category' => 'coin', 'name' => 'ربع سکه'],
         ];
     }
 

@@ -4,6 +4,7 @@ $name = $item['name'];
 $symbol = $item['symbol'] ?? ($is_platform ? 'PLAT' : '');
 $price = $item['price'] ?? 0;
 $change = $item['change_percent'] ?? 0;
+$change_amount = $item['change_amount'] ?? 0;
 $is_positive = $change >= 0;
 
 // Random data for empty fields to match image look
@@ -31,8 +32,13 @@ $supply = fa_num(rand(1000, 9999)) . ',000 ' . $symbol;
         <span class="text-sm font-black text-slate-700 dark:text-slate-200"><?= fa_price($price) ?></span>
     </td>
     <td class="px-8 py-5">
-        <div class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black <?= $is_positive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' ?>">
-            <?= ($is_positive ? '+' : '') . fa_num($change) ?>٪
+        <div class="flex flex-col gap-1">
+            <div class="inline-flex items-center w-fit px-3 py-1 rounded-full text-[10px] font-black <?= $is_positive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' ?>">
+                <?= ($is_positive ? '+' : '-') . fa_num(abs($change)) ?>٪
+            </div>
+            <span class="text-[10px] text-slate-400 font-bold" dir="ltr">
+                <?= ($is_positive ? '+ ' : '- ') . fa_price(abs($change_amount)) ?>
+            </span>
         </div>
     </td>
     <td class="px-8 py-5">
