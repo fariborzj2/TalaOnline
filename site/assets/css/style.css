@@ -297,3 +297,37 @@ input:focus {
     }
 }
 .ml-05 { margin-left: 0.5rem; }
+
+/* Pill Toggle Group */
+.pill-toggle-group {
+    display: inline-flex;
+    background-color: #f1f5f9;
+    padding: 4px;
+    border-radius: 9999px;
+    border: 1px solid #e2e8f0;
+}
+.pill-btn {
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    white-space: nowrap;
+}
+.pill-btn:hover {
+    color: #1e293b;
+}
+.pill-btn.active {
+    background-color: #ffffff;
+    color: #1e1e1e;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* RTL for pill group */
+[dir="rtl"] .pill-toggle-group {
+    flex-direction: row;
+}

@@ -5,24 +5,26 @@
                 <i data-lucide="trending-up" class="icon-size-6"></i>
             </div>
             <div>
-                <h2 class="text-title">نمودار قیمت طلا</h2>
-                <span class="font-size-0-9">نوسانات قیمت طلا در بازه‌های زمانی مختلف</span>
+                <h2 class="text-title chart-section-title">نمودار قیمت طلا</h2>
+                <span class="font-size-0-9 chart-section-desc">نوسانات قیمت طلا در بازه‌های زمانی مختلف</span>
             </div>
         </div>
-        <div class="d-flex-wrap gap-1">
+        <div class="d-flex flex-column align-end gap-1">
             <?php if (!empty($chart_items)): ?>
-            <div class="d-flex gap-05 border-left pl-1 ml-1" id="chart-assets-toggle">
+            <div class="pill-toggle-group" id="chart-assets-toggle">
                 <?php foreach ($chart_items as $index => $item): ?>
-                    <button class="btn btn-secondary btn-sm chart-toggle-btn <?= $index === 0 ? 'active' : '' ?>" data-symbol="<?= htmlspecialchars($item['symbol']) ?>">
-                        <?= htmlspecialchars($item['name']) ?>
+                    <button class="pill-btn chart-toggle-btn <?= $index === 0 ? 'active' : '' ?>"
+                            data-symbol="<?= htmlspecialchars($item['symbol']) ?>"
+                            data-name="<?= htmlspecialchars($item['name']) ?>">
+                        نمودار <?= htmlspecialchars($item['name']) ?>
                     </button>
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
-            <div class="d-flex gap-05 period-toggle">
-                <button class="btn btn-secondary btn-sm mode-btn active" id="period-7d">۷ روز</button>
-                <button class="btn btn-secondary btn-sm mode-btn" id="period-30d">۳۰ روز</button>
-                <button class="btn btn-secondary btn-sm mode-btn" id="period-1y">۱ سال</button>
+            <div class="pill-toggle-group period-toggle">
+                <button class="pill-btn mode-btn active" id="period-7d" data-period="7d">۷ روزه</button>
+                <button class="pill-btn mode-btn" id="period-30d" data-period="30d">۱ ماهه</button>
+                <button class="pill-btn mode-btn" id="period-1y" data-period="1y">یکساله</button>
             </div>
         </div>
     </div>
@@ -31,13 +33,13 @@
         <div id="chart"></div>
     </div>
 
-    <div class="d-flex just-between mt-1 pt-1 border-top">
+    <div class="d-flex-wrap just-between mt-1 pt-1 border-top">
          <div class="d-flex gap-1">
-             <span class="text-gray">بالاترین قیمت:</span>
+             <span class="text-gray">بالاترین قیمت (۲۴ساعته):</span>
              <strong class="text-success chart-high-price">---</strong>
          </div>
          <div class="d-flex gap-1">
-             <span class="text-gray">پایین‌ترین قیمت:</span>
+             <span class="text-gray">پایین‌ترین قیمت (۲۴ساعته):</span>
              <strong class="text-error chart-low-price">---</strong>
          </div>
     </div>
