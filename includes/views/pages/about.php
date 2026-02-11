@@ -2,7 +2,7 @@
     <div class="bg-block pd-md border basis-250 grow-1 radius-16">
         <div class="pb-1 mb-1 border-bottom bg-block">
             <h2 class="font-size-6 font-black text-title">درباره ما</h2>
-            <p class="text-gray font-size-2 mt-1">آشنایی با تیم و اهداف وب‌سایت طلا آنلاین</p>
+            <p class="text-gray font-size-2">آشنایی با تیم و اهداف وب‌سایت طلا آنلاین</p>
         </div>
         <div class="about-content text-title font-bold leading-relaxed">
             <?= $content ?>
