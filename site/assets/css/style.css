@@ -72,6 +72,11 @@ strong {
 img {
     display: block;
     max-width: 100%;
+    color: transparent;
+}
+img[src=""],
+img:not([src]) {
+  visibility: hidden 
 }
 a {
     text-decoration: none
