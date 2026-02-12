@@ -21,8 +21,8 @@
                         </div>
                     <?php endif; ?>
                     <div class="d-column gap-025 flex-1">
-                        <span class="d-flex text-gray font-size-0-8 font-bold"><span><?= htmlspecialchars($item['source']) ?></span> • <span><?= jalali_date($item['pubDate']) ?></span></span>
-                        <h4 class="font-size-1 text-title line-height-1-5"><?= htmlspecialchars($item['title']) ?></h4>
+                        <span class="d-flex text-gray font-size-0-8 gap-08"><span><?= htmlspecialchars($item['source']) ?></span> • <span><?= jalali_date($item['pubDate']) ?></span></span>
+                        <h4 class="font-size-1 text-title line-height-1-5 ellipsis-x"><?= htmlspecialchars($item['title']) ?></h4>
                     </div>
                 </a>
                 <?php if ($index < count($news) - 1): ?>

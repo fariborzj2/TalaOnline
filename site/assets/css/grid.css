@@ -500,6 +500,12 @@
         order: 4;
     }
 }
+.font-size-0-8 {
+    font-size: 0.8rem;
+}
+.font-size-0-9 {
+    font-size: 0.9rem;
+}
 .font-size-1 {
     font-size: 12px;
 }
