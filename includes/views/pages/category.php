@@ -1,5 +1,5 @@
 <?php if (!empty($category['short_description'])): ?>
-<div class="section mb-2">
+<div class="section">
     <div class="bg-block border radius-16 pd-md">
         <div class="content-text line-height-2 text-gray">
             <?= $category['short_description'] ?>
