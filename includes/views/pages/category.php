@@ -21,7 +21,7 @@
 <?php if (!empty($category['description'])): ?>
 <div class="section">
     <div class="bg-block pd-md border radius-16">
-        <div class="d-flex just-between align-center gap-1 pb-1 mb-2 border-bottom">
+        <div class="d-flex align-center gap-1 pb-1 mb-2 border-bottom">
             <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
                 <i data-lucide="info" color="var(--color-primary)" class="w-6 h-6"></i>
             </div>
@@ -37,7 +37,7 @@
 <?php if (!empty($faqs)): ?>
 <div class="section">
     <div class="bg-block pd-md border radius-16">
-        <div class="d-flex just-between align-center gap-1 pb-1 mb-2 border-bottom">
+        <div class="d-flex align-center gap-1 pb-1 mb-2 border-bottom">
             <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
                 <i data-lucide="help-circle" color="var(--color-primary)" class="w-6 h-6"></i>
             </div>
