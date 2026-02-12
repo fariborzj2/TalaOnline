@@ -49,28 +49,33 @@
         </div>
 
         <div class="container">
-            <div class="center d-column gap-md">
-                <div class="hader">
-                    <div class="d-flex-wrap gap-1 just-between align-center">
-                        <h1 class="font-size-3"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
-                        <div class="d-flex gap-1">
-                            <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
-                                <i data-lucide="bell" class="icon-size-3"></i>
-                            </div>
-
-                            <div class="border radius-10 pl-1-5 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
-                                <div class="pulse-container ml-05">
-                                    <span class="pulse-dot"></span>
+            <div class="center d-flex gap-md align-start no-wrap main-layout">
+                <div class="main-content d-column gap-md flex-1 min-w-0">
+                    <div class="hader">
+                        <div class="d-flex-wrap gap-1 just-between align-center">
+                            <h1 class="font-size-3"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
+                            <div class="d-flex gap-1">
+                                <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
+                                    <i data-lucide="bell" class="icon-size-3"></i>
                                 </div>
-                                <i data-lucide="calendar-days" class="icon-size-3"></i>
-                                <span><?= jalali_date() ?></span>
+
+                                <div class="border radius-10 pl-1-5 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
+                                    <div class="pulse-container ml-05">
+                                        <span class="pulse-dot"></span>
+                                    </div>
+                                    <i data-lucide="calendar-days" class="icon-size-3"></i>
+                                    <span><?= jalali_date() ?></span>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <?= $content ?>
                 </div>
 
-                <?= $content ?>
-
+                <?php if (!($is_home ?? false)): ?>
+                    <?= View::renderSection('sidebar') ?>
+                <?php endif; ?>
             </div>
         </div>
     </main>

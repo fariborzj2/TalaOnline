@@ -299,6 +299,10 @@ input:focus {
     }
 }
 .ml-05 { margin-left: 0.5rem; }
+.flex-1 { flex: 1; }
+.min-w-0 { min-width: 0; }
+.no-wrap { flex-wrap: nowrap !important; }
+.main-layout { display: flex !important; flex-direction: row !important; }
 
 .chart-box , #modal-chart {
     margin: 0 -12px;
