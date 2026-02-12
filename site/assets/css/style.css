@@ -417,7 +417,7 @@ input:focus {
     color: var(--color-title);
 }
 .content-text h1 { font-size: 2rem; }
-.content-text h2 { font-size: 1.75rem; border-bottom: 2px solid var(--color-primary); display: inline-block; padding-bottom: 5px; margin-bottom: 1.5rem; }
+.content-text h2 { font-size: 1.75rem; display: inline-block; padding-bottom: 5px; margin-bottom: 1.5rem; }
 .content-text h3 { font-size: 1.5rem; }
 
 .content-text ol, .content-text ul {
@@ -445,16 +445,19 @@ input:focus {
 }
 
 /* Responsive and Styled Tables within Content */
+.content-text .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    background: var(--color-block);
+    -webkit-overflow-scrolling: touch;
+}
 .content-text table {
     width: 100%;
     border-collapse: collapse;
-    margin: 1.5rem 0;
-    background: var(--color-block);
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid var(--color-border);
-    display: block; /* For responsiveness */
-    overflow-x: auto;
+    min-width: 600px; /* Ensure it doesn't get too squashed on mobile */
 }
 .content-text table thead tr, .content-text table tr:first-child {
     background: var(--secondary-color);
@@ -496,4 +499,43 @@ input:focus {
     background: transparent;
     padding: 0;
     color: inherit;
+}
+
+/* Table of Contents Styling */
+.toc-container {
+    background: var(--secondary-color);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    border: 1px solid var(--color-border);
+}
+.toc-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-title);
+}
+.toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.toc-list li {
+    margin-bottom: 0.5rem;
+}
+.toc-list li.toc-h3 {
+    margin-right: 1.5rem;
+    font-size: 0.9em;
+}
+.toc-list a {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: block;
+}
+.toc-list a:hover {
+    color: var(--color-primary);
 }

@@ -4,7 +4,8 @@
             <h2 class="font-size-6 font-black text-title">درباره ما</h2>
             <p class="text-gray font-size-2">آشنایی با تیم و اهداف وب‌سایت طلا آنلاین</p>
         </div>
-        <div class="about-content text-title font-bold leading-relaxed">
+        <div class="about-content content-text text-title font-bold leading-relaxed">
+            <div id="toc-placeholder"></div>
             <?= $content ?>
         </div>
     </div>

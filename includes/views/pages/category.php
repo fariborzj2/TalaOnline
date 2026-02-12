@@ -28,6 +28,7 @@
             <h2 class="font-size-2">توضیحات و راهنما</h2>
         </div>
         <div class="content-text line-height-2">
+            <div id="toc-placeholder"></div>
             <?= $category['description'] ?>
         </div>
     </div>
