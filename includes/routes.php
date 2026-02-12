@@ -201,6 +201,7 @@ $router->add('/:slug', function($params) {
         } catch (Exception $e) {}
     }
 
+
     if (!$category) {
         // Fallback to 404 if not a category
         http_response_code(404);

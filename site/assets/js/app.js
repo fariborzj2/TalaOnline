@@ -205,5 +205,64 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     });
 
+    // --- Content Enhancements (Tables & TOC) ---
+    const enhanceContent = () => {
+        const contentAreas = document.querySelectorAll('.content-text');
+        contentAreas.forEach(area => {
+            // 1. Wrap tables for responsiveness
+            const tables = area.querySelectorAll('table');
+            tables.forEach(table => {
+                if (!table.parentElement.classList.contains('table-wrapper')) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'table-wrapper';
+                    table.parentNode.insertBefore(wrapper, table);
+                    wrapper.appendChild(table);
+                }
+            });
+
+            // 2. Generate Table of Contents
+            const tocPlaceholder = area.querySelector('#toc-placeholder');
+            if (tocPlaceholder) {
+                const headings = area.querySelectorAll('h2, h3');
+                if (headings.length > 1) {
+                    const tocContainer = document.createElement('div');
+                    tocContainer.className = 'toc-container';
+
+                    const tocTitle = document.createElement('div');
+                    tocTitle.className = 'toc-title';
+                    tocTitle.innerHTML = '<i data-lucide="list"></i> فهرست مطالب';
+                    tocContainer.appendChild(tocTitle);
+
+                    const tocList = document.createElement('ul');
+                    tocList.className = 'toc-list';
+
+                    headings.forEach((heading, index) => {
+                        const id = `heading-${index}`;
+                        heading.id = id;
+
+                        const listItem = document.createElement('li');
+                        listItem.className = `toc-${heading.tagName.toLowerCase()}`;
+
+                        const link = document.createElement('a');
+                        link.href = `#${id}`;
+                        link.textContent = heading.textContent;
+                        link.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            heading.scrollIntoView({ behavior: 'smooth' });
+                        });
+
+                        listItem.appendChild(link);
+                        tocList.appendChild(listItem);
+                    });
+
+                    tocContainer.appendChild(tocList);
+                    tocPlaceholder.appendChild(tocContainer);
+                    lucide.createIcons();
+                }
+            }
+        });
+    };
+
     await initApp();
+    enhanceContent();
 });
