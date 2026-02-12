@@ -50,7 +50,7 @@
 
         <div class="container">
             <div class="center d-flex-wrap gap-md align-start main-layout">
-                <div class="main-content d-column gap-md grow-1">
+                <div class="main-content d-column gap-md grow-1 overflow-hidden" >
                     <div class="hader">
                         <div class="d-flex-wrap gap-1 just-between align-center">
                             <h1 class="font-size-3"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
