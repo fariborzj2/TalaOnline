@@ -643,7 +643,35 @@
 .overflow-hidden {
     overflow: hidden;
 }
-
+.ellipsis-x {
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+}
+.ellipsis-y {
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    cursor: pointer
+}
+.line-clamp-2 {
+    -webkit-line-clamp:2;
+}
+.line-clamp-3 {
+    -webkit-line-clamp:3;
+}
+.line-clamp-4 {
+    -webkit-line-clamp:4;
+}
+.line-clamp-5 {
+    -webkit-line-clamp:5;
+}
+.line-clamp-6 {
+    -webkit-line-clamp:6;
+}
+.pointer {
+    cursor: pointer
+}
 /* ================= Table Container ================= */
 .table-box {
   position: relative;
