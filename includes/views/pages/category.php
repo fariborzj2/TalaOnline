@@ -1,7 +1,7 @@
 <?php if (!empty($category['short_description'])): ?>
 <div class="section">
     <div class="bg-block border radius-16 pd-md">
-        <div class="content-text line-height-2 text-gray">
+        <div class="content-text line-height-2">
             <?= $category['short_description'] ?>
         </div>
     </div>
@@ -27,7 +27,7 @@
             </div>
             <h2 class="font-size-2">توضیحات و راهنما</h2>
         </div>
-        <div class="content-text line-height-2 text-gray">
+        <div class="content-text line-height-2">
             <?= $category['description'] ?>
         </div>
     </div>

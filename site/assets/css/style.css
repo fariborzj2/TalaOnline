@@ -389,3 +389,10 @@ input:focus {
 @keyframes btn-loading-spinner {
     to { transform: rotate(360deg); }
 }
+.content-text ol , .content-text ul {
+    margin-right: 30px 
+}
+.content-text p {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
