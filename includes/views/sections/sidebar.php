@@ -19,10 +19,8 @@ if ($pdo) {
 ?>
 <aside class="sidebar d-column gap-md basis-300 grow-1">
     <!-- To make any card sticky, simply add the 'is-sticky' class to it -->
-    <?= View::renderComponent('news_card', ['news' => $news]) ?>
-
-    <!-- Example of a sticky card -->
-    <div class="bg-block radius-16 pd-md border is-sticky">
+   
+    <div class="bg-block radius-16 pd-md border">
         <div class="d-flex align-center gap-05 mb-1">
             <i data-lucide="info" class="text-primary icon-size-4"></i>
             <h3 class="font-size-2 font-bold">راهنمای استفاده</h3>
@@ -31,6 +29,8 @@ if ($pdo) {
             قیمت‌ها هر ۱۰ دقیقه به صورت خودکار بروزرسانی می‌شوند. برای مشاهده نمودار تغییرات هر مورد، روی آن کلیک کنید.
         </p>
     </div>
+
+     <?= View::renderComponent('news_card', ['news' => $news]) ?>
 </aside>
 
 <style>
