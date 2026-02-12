@@ -37,14 +37,23 @@
     </script>
 </head>
 <body>
+    <?php
+    $current_uri = $_SERVER['REQUEST_URI'];
+    $current_path = parse_url($current_uri, PHP_URL_PATH);
+    // Simple normalization to match the hrefs
+    $current_path = '/' . ltrim($current_path, '/');
+    if ($current_path !== '/') {
+        $current_path = rtrim($current_path, '/');
+    }
+    ?>
     <main class="app">
         <div class="side-menu">
             <div class="logo"><img src="assets/images/logo.svg" alt="طلا آنلاین"></div>
             <ul>
-                <li><a href="/" class="active"><i data-lucide="house" class="w-6 h-6"></i></a></li>
-                <li><a href="/calculator"><i data-lucide="calculator" class="w-6 h-6"></i></a></li>
-                <li><a href="/about-us"><i data-lucide="book-open-text" class="w-6 h-6"></i></a></li>
-                <li><a href="/feedback"><i data-lucide="message-square-more" class="w-6 h-6"></i></a></li>
+                <li><a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>"><i data-lucide="house" class="w-6 h-6"></i></a></li>
+                <li><a href="/calculator" class="<?= $current_path == '/calculator' ? 'active' : '' ?>"><i data-lucide="calculator" class="w-6 h-6"></i></a></li>
+                <li><a href="/about-us" class="<?= $current_path == '/about-us' ? 'active' : '' ?>"><i data-lucide="book-open-text" class="w-6 h-6"></i></a></li>
+                <li><a href="/feedback" class="<?= $current_path == '/feedback' ? 'active' : '' ?>"><i data-lucide="message-square-more" class="w-6 h-6"></i></a></li>
             </ul>
         </div>
 
