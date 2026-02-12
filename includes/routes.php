@@ -196,9 +196,6 @@ $router->add('/:slug', function($params) {
         exit;
     }
 
-    // Load without layout as requested
-    View::setLayout(null);
-
     return View::renderPage('category', [
         'category' => $category,
         'items' => $items,
