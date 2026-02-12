@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../../includes/rss_service.php';
 check_login();
 
 // Schema Self-Healing for RSS Feeds
@@ -23,6 +24,7 @@ $error = '';
 // Handle Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
+    $rssService = new RssService($pdo);
 
     if ($action === 'add') {
         $name = $_POST['name'] ?? '';
@@ -31,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             try {
                 $stmt = $pdo->prepare("INSERT INTO rss_feeds (name, url) VALUES (?, ?)");
                 $stmt->execute([$name, $url]);
+                $rssService->clearCache();
                 $message = 'فید جدید با موفقیت اضافه شد.';
             } catch (Exception $e) {
                 $error = 'خطا در افزودن فید: ' . $e->getMessage();
@@ -46,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         try {
             $stmt = $pdo->prepare("UPDATE rss_feeds SET name = ?, url = ?, is_active = ? WHERE id = ?");
             $stmt->execute([$name, $url, $is_active, $id]);
+            $rssService->clearCache();
             $message = 'تغییرات با موفقیت ذخیره شد.';
         } catch (Exception $e) {
             $error = 'خطا در ویرایش فید: ' . $e->getMessage();
@@ -55,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         try {
             $stmt = $pdo->prepare("DELETE FROM rss_feeds WHERE id = ?");
             $stmt->execute([$id]);
+            $rssService->clearCache();
             $message = 'فید با موفقیت حذف شد.';
         } catch (Exception $e) {
             $error = 'خطا در حذف فید: ' . $e->getMessage();
@@ -65,11 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt = $pdo->prepare("UPDATE rss_feeds SET sort_order = ? WHERE id = ?");
             $stmt->execute([$index, $id]);
         }
+        $rssService->clearCache();
         echo json_encode(['success' => true]);
         exit;
     } elseif ($action === 'update_news_count') {
         $count = $_POST['news_count'] ?? 5;
         set_setting('news_count', $count);
+        $rssService->clearCache();
         $message = 'تنظیمات با موفقیت بروزرسانی شد.';
     }
 }
