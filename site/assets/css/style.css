@@ -5,9 +5,9 @@
     border: none;
 }
 :root {
-    --color-body: #f4f4f4;
+    --color-body: #f1f5f9;
     --color-primary: #f59e0c;
-    --secondary-color: #f4f4f4;
+    --secondary-color: #f1f5f9;
     --color-text: #64748b;
     --color-title: #1e1e1e;
     --color-border: #eee;
