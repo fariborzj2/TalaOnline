@@ -73,7 +73,10 @@
                     <?= $content ?>
                 </div>
 
-                <?= View::renderSection('sidebar') ?>
+               <?php if (!($is_home ?? true)): ?>
+                 <?= View::renderSection('sidebar') ?>
+               <?php endif; ?>
+
             </div>
         </div>
     </main>
