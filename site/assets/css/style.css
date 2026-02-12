@@ -401,10 +401,99 @@ input:focus {
 @keyframes btn-loading-spinner {
     to { transform: rotate(360deg); }
 }
-.content-text ol , .content-text ul {
-    margin-right: 30px 
+.content-text {
+    color: var(--color-text);
+    line-height: 1.8;
 }
 .content-text p {
-    font-size: 1.2em;
-    margin-bottom: 10px;
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+}
+.content-text h1, .content-text h2, .content-text h3,
+.content-text h4, .content-text h5, .content-text h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 800;
+    color: var(--color-title);
+}
+.content-text h1 { font-size: 2rem; }
+.content-text h2 { font-size: 1.75rem; border-bottom: 2px solid var(--color-primary); display: inline-block; padding-bottom: 5px; margin-bottom: 1.5rem; }
+.content-text h3 { font-size: 1.5rem; }
+
+.content-text ol, .content-text ul {
+    margin-right: 2rem;
+    margin-bottom: 1.5rem;
+}
+.content-text li {
+    margin-bottom: 0.5rem;
+}
+.content-text blockquote {
+    border-right: 4px solid var(--color-primary);
+    background: var(--secondary-color);
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0 12px 12px 0;
+    font-style: italic;
+    color: var(--color-title);
+}
+.content-text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+    margin: 1.5rem 0;
+    border: 1px solid var(--color-border);
+}
+
+/* Responsive and Styled Tables within Content */
+.content-text table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: var(--color-block);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    display: block; /* For responsiveness */
+    overflow-x: auto;
+}
+.content-text table thead tr, .content-text table tr:first-child {
+    background: var(--secondary-color);
+}
+.content-text table th, .content-text table td {
+    padding: 12px 15px;
+    text-align: right;
+    border-bottom: 1px solid var(--color-border);
+}
+.content-text table th {
+    font-weight: 700;
+    color: var(--color-title);
+    white-space: nowrap;
+}
+.content-text table tr:last-child td {
+    border-bottom: none;
+}
+.content-text table tr:hover {
+    background-color: rgba(245, 158, 12, 0.05);
+}
+
+.content-text code {
+    background: var(--secondary-color);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    color: var(--color-error);
+}
+.content-text pre {
+    background: #2d3436;
+    color: #dfe6e9;
+    padding: 1.5rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    direction: ltr;
+}
+.content-text pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
 }
