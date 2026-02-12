@@ -9,7 +9,7 @@
 <?php endif; ?>
 
 <div class="section">
-    <?= View::renderSection('coins', [
+    <?= View::renderSection('coins_table', [
         'coins' => $items,
         'title' => $category['name'],
         'subtitle' => $category['en_name'],
