@@ -4,9 +4,6 @@
             <i data-lucide="newspaper" class="text-primary icon-size-4"></i>
             <h3 class="font-size-2 font-bold">اخبار روز</h3>
         </div>
-        <span class="pulse-container">
-            <span class="pulse-dot"></span>
-        </span>
     </div>
 
     <div class="news-list d-column gap-1">
