@@ -73,6 +73,9 @@ img {
     display: block;
     max-width: 100%;
 }
+a {
+    text-decoration: none
+}
 input , button {
     font-family: estedad;
 }

@@ -29,7 +29,6 @@
 <style>
     .news-item {
         transition: all 0.2s;
-        padding: 5px 0;
     }
     .news-item:hover h4 {
         color: var(--color-primary);
