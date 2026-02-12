@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?> | قیمت لحظه‌ای طلا، سکه و ارز</title>
-    <meta name="description" content="<?= htmlspecialchars($site_description ?? '') ?>">
-    <meta name="keywords" content="<?= htmlspecialchars($site_keywords ?? '') ?>">
+    <meta name="description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? $site_keywords ?? '') ?>">
 
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/grid.css">
@@ -52,7 +52,7 @@
             <div class="center d-column gap-md">
                 <div class="hader mb-2">
                     <div class="d-flex just-between align-center">
-                        <h1><?= htmlspecialchars($page_title ?? 'طلا آنلاین') ?></h1>
+                        <h1><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
                         <div class="d-flex gap-1">
                             <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
                                 <i data-lucide="bell" class="icon-size-3"></i>

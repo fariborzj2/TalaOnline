@@ -199,7 +199,10 @@ $router->add('/:slug', function($params) {
     return View::renderPage('category', [
         'category' => $category,
         'items' => $items,
-        'page_title' => $category['name'],
-        'site_title' => $category['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین'),
+        'page_title' => $category['page_title'] ?: $category['name'],
+        'h1_title' => $category['h1_title'],
+        'meta_description' => $category['meta_description'],
+        'meta_keywords' => $category['meta_keywords'],
+        'site_title' => $category['page_title'] ?: ($category['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
     ]);
 });
