@@ -30,6 +30,7 @@
                 'title' => $group['info']['name'] ?? '',
                 'subtitle' => $group['info']['en_name'] ?? '',
                 'icon' => $group['info']['icon'] ?? 'coins',
+                'slug' => $category_slug,
                 'id' => $category_slug . '-market-list'
             ]) ?>
         <?php endforeach; ?>
