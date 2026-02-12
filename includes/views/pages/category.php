@@ -1,6 +1,6 @@
 <?php if (!empty($category['short_description'])): ?>
 <div class="section mb-2">
-    <div class="bg-block border radius-16 pd-lg">
+    <div class="bg-block border radius-16 pd-md">
         <div class="content-text line-height-2 text-gray">
             <?= $category['short_description'] ?>
         </div>
@@ -20,7 +20,7 @@
 
 <?php if (!empty($category['description'])): ?>
 <div class="section">
-    <div class="bg-block border radius-16 pd-lg">
+    <div class="bg-block pd-md border radius-16">
         <div class="d-flex align-center gap-1 mb-1">
             <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
                 <i data-lucide="info" color="var(--color-primary)" class="w-6 h-6"></i>
@@ -36,8 +36,8 @@
 
 <?php if (!empty($faqs)): ?>
 <div class="section">
-    <div class="bg-block border radius-16 pd-lg">
-        <div class="d-flex align-center gap-1 mb-1-5">
+    <div class="bg-block pd-md border radius-16 pd-lg">
+        <div class="d-flex align-center gap-1 mb-1">
             <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
                 <i data-lucide="help-circle" color="var(--color-primary)" class="w-6 h-6"></i>
             </div>
