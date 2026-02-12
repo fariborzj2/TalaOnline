@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    <div class="table-box">
+    <div class="table-box" style="border:none; border-radius:none">
         <table class="full-width">
             <thead>
                 <tr>

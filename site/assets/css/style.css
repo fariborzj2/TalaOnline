@@ -525,7 +525,6 @@ input:focus {
     color: var(--color-title);
 }
 .toc-list {
-    list-style: ;
     padding: 0;
     margin: 0 20px 0 !important;
 }
