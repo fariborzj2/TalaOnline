@@ -17,7 +17,7 @@ if ($pdo) {
     ];
 }
 ?>
-<aside class="sidebar d-column gap-md w-sidebar">
+<aside class="sidebar d-column gap-md basis-300 grow-1">
     <?= View::renderComponent('news_card', ['news' => $news]) ?>
 
     <!-- Possible future sidebar cards -->
