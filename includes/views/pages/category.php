@@ -1,3 +1,18 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?></title>
+
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/grid.css">
+    <link rel="stylesheet" href="assets/css/font.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body class="bg-body pd-md">
+<div class="center d-column gap-md">
 <div class="section">
     <?= View::renderSection('coins', [
         'coins' => $items,
@@ -24,9 +39,15 @@
 </div>
 <?php endif; ?>
 
+</div>
 <script>
     window.__INITIAL_STATE__ = {
         category: <?= json_encode($category) ?>,
         items: <?= json_encode($items) ?>
     };
+    lucide.createIcons();
 </script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -122,43 +122,6 @@ $router->add('/item/:symbol', function($params) {
     ]);
 });
 
-$router->add('/category/:slug', function($params) {
-    global $pdo;
-    $slug = $params['slug'];
-    $category = null;
-    $items = [];
-
-    if ($pdo) {
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM categories WHERE slug = ?");
-            $stmt->execute([$slug]);
-            $category = $stmt->fetch();
-
-            if ($category) {
-                $navasan = new NavasanService($pdo);
-                $all_items = $navasan->getDashboardData();
-                foreach ($all_items as $item) {
-                    if ($item['category'] === $slug) {
-                        $items[] = $item;
-                    }
-                }
-            }
-        } catch (Exception $e) {}
-    }
-
-    if (!$category) {
-        header("Location: /");
-        exit;
-    }
-
-    return View::renderPage('category', [
-        'category' => $category,
-        'items' => $items,
-        'page_title' => $category['name'],
-        'site_title' => $category['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین'),
-    ]);
-});
-
 $router->add('/feedback', function() {
     global $pdo;
     $message = '';
@@ -199,5 +162,47 @@ $router->add('/about-us', function() {
     return View::renderPage('about', [
         'page_title' => 'درباره ما',
         'content' => get_setting('about_us_content', 'لطفاً محتوای این صفحه را از پنل مدیریت تنظیم کنید.')
+    ]);
+});
+
+$router->add('/:slug', function($params) {
+    global $pdo;
+    $slug = $params['slug'];
+    $category = null;
+    $items = [];
+
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM categories WHERE slug = ?");
+            $stmt->execute([$slug]);
+            $category = $stmt->fetch();
+
+            if ($category) {
+                $navasan = new NavasanService($pdo);
+                $all_items = $navasan->getDashboardData();
+                foreach ($all_items as $item) {
+                    if ($item['category'] === $slug) {
+                        $items[] = $item;
+                    }
+                }
+            }
+        } catch (Exception $e) {}
+    }
+
+    if (!$category) {
+        // Fallback to 404 if not a category
+        http_response_code(404);
+        echo "404 Not Found";
+        exit;
+    }
+
+    // Load without layout as requested
+    View::setLayout(null);
+
+    return View::renderPage('category', [
+        'category' => $category,
+        'items' => $items,
+        'page_title' => $category['name'],
+        'site_title' => $category['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین'),
     ]);
 });
