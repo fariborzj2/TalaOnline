@@ -52,7 +52,7 @@
                         <i data-lucide="chevron-down" class="w-4 h-4 transition-all"></i>
                     </div>
                     <div class="faq-answer pd-md border-top d-none">
-                        <p class="font-size-1 line-height-2 text-gray"><?= nl2br(htmlspecialchars($faq['answer'])) ?></p>
+                        <p class="font-size-1 line-height-2"><?= nl2br(htmlspecialchars($faq['answer'])) ?></p>
                     </div>
                 </div>
             <?php endforeach; ?>
