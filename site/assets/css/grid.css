@@ -336,8 +336,28 @@
 .sticky {
     position: sticky;
 }
+.is-sticky {
+    position: sticky;
+    top: 20px;
+    z-index: 10;
+}
 .top-0 {
     top: 0;
+}
+.top-1 {
+    top: 10px;
+}
+.top-2 {
+    top: 20px;
+}
+.top-3 {
+    top: 30px;
+}
+.top-4 {
+    top: 40px;
+}
+.top-5 {
+    top: 50px;
 }
 .bottom-0 {
     bottom: 0;

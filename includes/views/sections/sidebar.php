@@ -18,10 +18,11 @@ if ($pdo) {
 }
 ?>
 <aside class="sidebar d-column gap-md basis-300 grow-1">
+    <!-- To make any card sticky, simply add the 'is-sticky' class to it -->
     <?= View::renderComponent('news_card', ['news' => $news]) ?>
 
-    <!-- Possible future sidebar cards -->
-    <div class="bg-block radius-16 pd-md border">
+    <!-- Example of a sticky card -->
+    <div class="bg-block radius-16 pd-md border is-sticky">
         <div class="d-flex align-center gap-05 mb-1">
             <i data-lucide="info" class="text-primary icon-size-4"></i>
             <h3 class="font-size-2 font-bold">راهنمای استفاده</h3>
@@ -33,15 +34,15 @@ if ($pdo) {
 </aside>
 
 <style>
-    .w-sidebar {
+    .sidebar {
         width: 320px;
         flex-shrink: 0;
     }
-    .w-sidebar .card {
+    .sidebar .card {
         white-space: normal;
     }
     @media (max-width: 1100px) {
-        .w-sidebar {
+        .sidebar {
             display: none;
         }
     }

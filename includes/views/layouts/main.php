@@ -49,7 +49,7 @@
         </div>
 
         <div class="container">
-            <div class="center d-flex-wrap gap-md align-start main-layout">
+            <div class="center d-flex-wrap gap-md align-stretch main-layout">
                 <div class="main-content d-column gap-md grow-8 overflow-hidden basis-700" >
                     <div class="hader">
                         <div class="d-flex-wrap gap-1 just-between align-center">
