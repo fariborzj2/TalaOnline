@@ -37,6 +37,10 @@ if (isset($pdo)) {
                 <i data-lucide="layers" class="w-6 h-6"></i>
                 <span>دسته‌بندی‌ها</span>
             </a>
+            <a href="rss_feeds.php" class="sidebar-link <?= $current_page == 'rss_feeds.php' ? 'active' : '' ?>">
+                <i data-lucide="rss" class="w-6 h-6"></i>
+                <span>خبرخوان</span>
+            </a>
             <a href="platforms.php" class="sidebar-link <?= $current_page == 'platforms.php' ? 'active' : '' ?>">
                 <i data-lucide="building-2" class="w-6 h-6"></i>
                 <span>پتلفرم‌ها</span>

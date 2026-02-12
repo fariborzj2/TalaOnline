@@ -103,6 +103,7 @@ $router->add('/', function() {
     }
 
     return View::renderPage('home', [
+        'is_home' => true,
         'site_title' => get_setting('site_title', 'طلا آنلاین'),
         'site_description' => get_setting('site_description', 'مرجع تخصصی قیمت لحظه‌ای طلا، سکه و ارز.'),
         'site_keywords' => get_setting('site_keywords', 'قیمت طلا, قیمت سکه'),
