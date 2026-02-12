@@ -749,8 +749,8 @@
 }
 
 /* ================= Cells ================= */
-th,
-td {
+.table-box th,
+.table-box td {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -759,7 +759,7 @@ td {
   text-align: center;
 }
 
-th {
+.table-box th {
   background: var(--color-block);
   font-size: 0.85rem;
   font-weight: 600;
@@ -769,13 +769,13 @@ th {
   z-index: 10;
 }
 
-td {
+.table-box td {
   vertical-align: middle;
 }
 
 /* ================= Rounded Header ================= */
-th:first-child { border-top-right-radius: 20px; }
-th:last-child  { border-top-left-radius: 20px; }
+.table-box th:first-child { border-top-right-radius: 20px; }
+.table-box th:last-child  { border-top-left-radius: 20px; }
 
 /* ================= Row Interaction ================= */
 tbody tr {

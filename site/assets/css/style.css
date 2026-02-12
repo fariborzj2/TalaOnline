@@ -457,7 +457,7 @@ input:focus {
 .content-text table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* Ensure it doesn't get too squashed on mobile */
+    display: table; /* Reset from potential block/flex */
 }
 .content-text table thead tr, .content-text table tr:first-child {
     background: var(--secondary-color);
@@ -466,6 +466,8 @@ input:focus {
     padding: 12px 15px;
     text-align: right;
     border-bottom: 1px solid var(--color-border);
+    display: table-cell; /* Reset from flex */
+    vertical-align: middle;
 }
 .content-text table th {
     font-weight: 700;
