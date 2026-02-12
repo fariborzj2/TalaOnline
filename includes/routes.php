@@ -39,6 +39,8 @@ $router->add('/', function() {
 
     // Group items by category
     $grouped_items = [];
+    $home_limit = (int)get_setting('home_category_limit', 5);
+
     foreach ($categories_data as $cat) {
         $grouped_items[$cat['slug']] = [
             'info' => $cat,
@@ -51,7 +53,9 @@ $router->add('/', function() {
         if ($item['symbol'] == 'silver') $silver_data = $item;
 
         if (isset($grouped_items[$item['category']])) {
-            $grouped_items[$item['category']]['items'][] = $item;
+            if (count($grouped_items[$item['category']]['items']) < $home_limit) {
+                $grouped_items[$item['category']]['items'][] = $item;
+            }
         }
     }
 

@@ -15,6 +15,7 @@ if (isset($_GET['error'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $api_key = $_POST['api_key'];
     $api_sync_interval = $_POST['api_sync_interval'];
+    $home_category_limit = $_POST['home_category_limit'];
     $site_title = $_POST['site_title'];
     $site_description = $_POST['site_description'];
     $site_keywords = $_POST['site_keywords'];
@@ -22,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     set_setting('api_key', $api_key);
     set_setting('api_sync_interval', $api_sync_interval);
+    set_setting('home_category_limit', $home_category_limit);
     set_setting('site_title', $site_title);
     set_setting('site_description', $site_description);
     set_setting('site_keywords', $site_keywords);
@@ -39,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $api_key = get_setting('api_key');
 $api_sync_interval = get_setting('api_sync_interval', '10');
+$home_category_limit = get_setting('home_category_limit', '5');
 $site_title = get_setting('site_title', 'طلا آنلاین');
 $site_description = get_setting('site_description', 'مرجع تخصصی قیمت لحظه‌ای طلا، سکه و ارز. مقایسه بهترین پلتفرم‌های خرید و فروش طلا در ایران.');
 $site_keywords = get_setting('site_keywords', 'قیمت طلا, قیمت سکه, دلار تهران, خرید طلا, مقایسه قیمت طلا');
@@ -106,6 +109,17 @@ include __DIR__ . '/layout/header.php';
                         <span class="icon"><i data-lucide="timer" class="w-4 h-4"></i></span>
                         <input type="number" name="api_sync_interval" value="<?= htmlspecialchars($api_sync_interval) ?>" min="1" required class="ltr-input">
                     </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>تعداد دارایی‌ها در هر دسته‌بندی (صفحه اصلی)</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="list-ordered" class="w-4 h-4"></i></span>
+                        <input type="number" name="home_category_limit" value="<?= htmlspecialchars($home_category_limit) ?>" min="1" max="50" required class="ltr-input">
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">حداکثر تعداد آیتم‌هایی که در باکس‌های صفحه اصلی نمایش داده می‌شود</p>
                 </div>
             </div>
 
