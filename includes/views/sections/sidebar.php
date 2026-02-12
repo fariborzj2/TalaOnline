@@ -21,7 +21,7 @@ if ($pdo) {
     <?= View::renderComponent('news_card', ['news' => $news]) ?>
 
     <!-- Possible future sidebar cards -->
-    <div class="card bg-block radius-16 pd-md border">
+    <div class="bg-block radius-16 pd-md border">
         <div class="d-flex align-center gap-05 mb-1">
             <i data-lucide="info" class="text-primary icon-size-4"></i>
             <h3 class="font-size-2 font-bold">راهنمای استفاده</h3>

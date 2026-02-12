@@ -1,4 +1,4 @@
-<div class="card bg-block radius-16 pd-md border d-column gap-1">
+<div class="bg-block radius-16 pd-md border d-column gap-1">
     <div class="d-flex align-center just-between mb-05">
         <div class="d-flex align-center gap-05">
             <i data-lucide="newspaper" class="text-primary icon-size-4"></i>
