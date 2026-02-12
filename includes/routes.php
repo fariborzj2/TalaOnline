@@ -170,6 +170,7 @@ $router->add('/:slug', function($params) {
     $slug = $params['slug'];
     $category = null;
     $items = [];
+    $faqs = [];
 
     if ($pdo) {
         try {
@@ -178,6 +179,7 @@ $router->add('/:slug', function($params) {
             $category = $stmt->fetch();
 
             if ($category) {
+                // Fetch Items
                 $navasan = new NavasanService($pdo);
                 $all_items = $navasan->getDashboardData();
                 foreach ($all_items as $item) {
@@ -185,6 +187,11 @@ $router->add('/:slug', function($params) {
                         $items[] = $item;
                     }
                 }
+
+                // Fetch FAQs
+                $stmt = $pdo->prepare("SELECT * FROM category_faqs WHERE category_id = ? ORDER BY sort_order ASC");
+                $stmt->execute([$category['id']]);
+                $faqs = $stmt->fetchAll();
             }
         } catch (Exception $e) {}
     }
@@ -199,6 +206,7 @@ $router->add('/:slug', function($params) {
     return View::renderPage('category', [
         'category' => $category,
         'items' => $items,
+        'faqs' => $faqs,
         'page_title' => $category['page_title'] ?: $category['name'],
         'h1_title' => $category['h1_title'],
         'meta_description' => $category['meta_description'],

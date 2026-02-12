@@ -43,6 +43,21 @@ try {
     if (!in_array('meta_keywords', $columns)) {
         $pdo->exec("ALTER TABLE categories ADD COLUMN meta_keywords TEXT DEFAULT NULL AFTER meta_description");
     }
+    if (!in_array('short_description', $columns)) {
+        $pdo->exec("ALTER TABLE categories ADD COLUMN short_description TEXT DEFAULT NULL AFTER description");
+    }
+} catch (Exception $e) {}
+
+// Create FAQs table
+try {
+    $pdo->exec("CREATE TABLE IF NOT EXISTS category_faqs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        category_id INT NOT NULL,
+        question TEXT NOT NULL,
+        answer TEXT NOT NULL,
+        sort_order INT DEFAULT 0,
+        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 } catch (Exception $e) {}
 
 // Populate initial categories
@@ -64,37 +79,7 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
 
-    if ($action === 'add' || $action === 'edit') {
-        $id = $_POST['id'] ?? null;
-        $name = $_POST['name'] ?? '';
-        $en_name = $_POST['en_name'] ?? '';
-        $icon = $_POST['icon'] ?? 'coins';
-        $description = $_POST['description'] ?? '';
-        $h1_title = $_POST['h1_title'] ?? '';
-        $page_title = $_POST['page_title'] ?? '';
-        $meta_description = $_POST['meta_description'] ?? '';
-        $meta_keywords = $_POST['meta_keywords'] ?? '';
-        $slug = $_POST['slug'] ?? '';
-        $sort_order = (int)($_POST['sort_order'] ?? 0);
-
-        if ($action === 'add') {
-            try {
-                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, description, h1_title, page_title, meta_description, meta_keywords, slug, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$name, $en_name, $icon, $description, $h1_title, $page_title, $meta_description, $meta_keywords, $slug, $sort_order]);
-                $message = 'دسته‌بندی جدید با موفقیت اضافه شد.';
-            } catch (Exception $e) {
-                $error = 'خطا در افزودن دسته‌بندی: ' . $e->getMessage();
-            }
-        } else {
-            try {
-                $stmt = $pdo->prepare("UPDATE categories SET name = ?, en_name = ?, icon = ?, description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ?, slug = ?, sort_order = ? WHERE id = ?");
-                $stmt->execute([$name, $en_name, $icon, $description, $h1_title, $page_title, $meta_description, $meta_keywords, $slug, $sort_order, $id]);
-                $message = 'دسته‌بندی با موفقیت بروزرسانی شد.';
-            } catch (Exception $e) {
-                $error = 'خطا در بروزرسانی دسته‌بندی: ' . $e->getMessage();
-            }
-        }
-    } elseif ($action === 'delete') {
+    if ($action === 'delete') {
         $id = $_POST['id'];
         try {
             $stmt = $pdo->prepare("DELETE FROM categories WHERE id = ?");
@@ -119,15 +104,16 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->f
 $page_title = 'مدیریت دسته‌بندی‌ها';
 $page_subtitle = 'مدیریت دسته‌بندی‌های ارز، طلا و سکه';
 
-$header_action = '<button onclick="openAddModal()" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن دسته‌بندی جدید</button>';
+$header_action = '<a href="category_edit.php" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن دسته‌بندی جدید</a>';
 
 include __DIR__ . '/layout/header.php';
-include __DIR__ . '/layout/editor.php';
 ?>
 
-<script>
-  initTinyMCE('#cat-description');
-</script>
+<?php
+if (isset($_GET['message']) && $_GET['message'] === 'success') {
+    $message = 'عملیات با موفقیت انجام شد.';
+}
+?>
 
 <?php if ($message): ?>
     <div class="mb-6">
@@ -203,9 +189,9 @@ include __DIR__ . '/layout/editor.php';
                     </td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <button class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn" onclick='editCategory(<?= json_encode($cat) ?>)'>
+                            <a href="category_edit.php?id=<?= $cat['id'] ?>" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn">
                                 <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
-                            </button>
+                            </a>
                             <form method="POST" class="inline" onsubmit="handleDelete(event, this, 'دسته‌بندی')">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $cat['id'] ?>">
@@ -219,101 +205,6 @@ include __DIR__ . '/layout/editor.php';
                 <?php endforeach; ?>
             </tbody>
         </table>
-    </div>
-</div>
-
-<!-- Category Modal -->
-<div id="categoryModal" class="hidden fixed inset-0 z-[1000] bg-slate-900/40 backdrop-blur-sm items-center justify-center p-4">
-    <div class="bg-white w-full max-w-3xl rounded-xl p-6 md:p-8 transform transition-all animate-modal-up modal-container">
-        <div class="flex items-center justify-between border-b border-slate-50 pb-6 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center">
-                    <i data-lucide="tag" class="w-6 h-6" id="modalIcon"></i>
-                </div>
-                <div>
-                    <h2 class="text-lg font-black text-slate-900" id="modalTitle">افزودن دسته‌بندی جدید</h2>
-                    <p class="text-[10px] text-slate-400 font-bold mt-1">تنظیمات نام و آدرس دسته‌بندی</p>
-                </div>
-            </div>
-            <button onclick="closeModal()" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-lg flex items-center justify-center hover:bg-slate-100 transition-colors">
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
-
-        <form method="POST">
-            <input type="hidden" name="action" id="formAction" value="add">
-            <input type="hidden" name="id" id="cat-id">
-
-            <div class="form-group mb-4">
-                <label>نام دسته‌بندی (فارسی)</label>
-                <input type="text" name="name" id="cat-name" required placeholder="مثلاً بازار طلا و سکه">
-            </div>
-
-            <div class="form-group mb-4">
-                <label>زیرعنوان (انگلیسی/توضیح کوتاه)</label>
-                <input type="text" name="en_name" id="cat-en_name" placeholder="مثلاً gold market">
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="form-group mb-4">
-                    <label>آیکون Lucide</label>
-                    <input type="text" name="icon" id="cat-icon" placeholder="مثلاً coins" class="ltr-input">
-                </div>
-                <div class="form-group mb-4">
-                    <label>نامک (Slug)</label>
-                    <input type="text" name="slug" id="cat-slug" required class="ltr-input" placeholder="مثلاً gold">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="form-group mb-4">
-                    <label>ترتیب نمایش</label>
-                    <input type="number" name="sort_order" id="cat-sort_order" value="0">
-                </div>
-            </div>
-
-            <div class="form-group mb-6">
-                <label>محتوای متنی دسته‌بندی</label>
-                <textarea name="description" id="cat-description"></textarea>
-            </div>
-
-            <div class="p-5 bg-slate-50/50 rounded-xl border border-slate-100 mb-6">
-                <h4 class="font-black text-slate-800 text-[11px] uppercase tracking-wider mb-5 flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                    تنظیمات SEO و تایتل‌ها
-                </h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div class="form-group">
-                        <label>عنوان اصلی (H1)</label>
-                        <input type="text" name="h1_title" id="cat-h1_title" placeholder="مثلاً قیمت لحظه‌ای طلا و سکه">
-                    </div>
-                    <div class="form-group">
-                        <label>عنوان تایتل (Meta Title)</label>
-                        <input type="text" name="page_title" id="cat-page_title" placeholder="عنوان مرورگر">
-                    </div>
-                </div>
-                <div class="form-group mb-4">
-                    <label>توضیحات متا (Meta Description)</label>
-                    <textarea name="meta_description" id="cat-meta_description" rows="2" placeholder="توضیحات سئو برای موتورهای جستجو..."></textarea>
-                </div>
-                <div class="form-group mb-0">
-                    <label>کلمات کلیدی (Meta Keywords)</label>
-                    <div id="keywords-container" class="flex flex-wrap gap-2 p-2 bg-white border border-slate-200 rounded-lg min-h-[42px] mb-2">
-                        <input type="text" id="keyword-input" class="!border-none !p-0 !ring-0 text-xs flex-grow min-w-[120px]" placeholder="تایپ کنید و اینتر بزنید...">
-                    </div>
-                    <input type="hidden" name="meta_keywords" id="cat-meta_keywords">
-                    <p class="text-[9px] text-slate-400 mt-1">کلمات کلیدی را وارد کرده و Enter یا کاما بزنید.</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <button type="submit" class="btn-v3 btn-v3-primary flex-grow">
-                    <i data-lucide="save" class="w-4 h-4"></i>
-                    ذخیره اطلاعات
-                </button>
-                <button type="button" class="btn-v3 btn-v3-outline" onclick="closeModal()">انصراف</button>
-            </div>
-        </form>
     </div>
 </div>
 
@@ -373,122 +264,6 @@ include __DIR__ . '/layout/editor.php';
             form.submit();
         }
     }
-
-    function openAddModal() {
-        document.getElementById('formAction').value = 'add';
-        document.getElementById('modalTitle').innerText = 'افزودن دسته‌بندی جدید';
-        document.getElementById('modalIcon').setAttribute('data-lucide', 'plus');
-        document.getElementById('cat-id').value = '';
-        document.getElementById('cat-name').value = '';
-        document.getElementById('cat-en_name').value = '';
-        document.getElementById('cat-icon').value = 'coins';
-        document.getElementById('cat-slug').value = '';
-        document.getElementById('cat-sort_order').value = '0';
-        document.getElementById('cat-h1_title').value = '';
-        document.getElementById('cat-page_title').value = '';
-        document.getElementById('cat-meta_description').value = '';
-        document.getElementById('cat-meta_keywords').value = '';
-        renderKeywords([]);
-
-        if (tinymce.get('cat-description')) {
-            tinymce.get('cat-description').setContent('');
-        } else {
-            document.getElementById('cat-description').value = '';
-        }
-
-        showModal();
-    }
-
-    function editCategory(cat) {
-        document.getElementById('formAction').value = 'edit';
-        document.getElementById('modalTitle').innerText = 'ویرایش دسته‌بندی';
-        document.getElementById('modalIcon').setAttribute('data-lucide', 'edit-2');
-        document.getElementById('cat-id').value = cat.id;
-        document.getElementById('cat-name').value = cat.name;
-        document.getElementById('cat-en_name').value = cat.en_name || '';
-        document.getElementById('cat-icon').value = cat.icon || 'coins';
-        document.getElementById('cat-slug').value = cat.slug;
-        document.getElementById('cat-sort_order').value = cat.sort_order;
-        document.getElementById('cat-h1_title').value = cat.h1_title || '';
-        document.getElementById('cat-page_title').value = cat.page_title || '';
-        document.getElementById('cat-meta_description').value = cat.meta_description || '';
-        document.getElementById('cat-meta_keywords').value = cat.meta_keywords || '';
-        renderKeywords(cat.meta_keywords ? cat.meta_keywords.split(',') : []);
-
-        if (tinymce.get('cat-description')) {
-            tinymce.get('cat-description').setContent(cat.description || '');
-        } else {
-            document.getElementById('cat-description').value = cat.description || '';
-        }
-
-        showModal();
-    }
-
-    function showModal() {
-        const modal = document.getElementById('categoryModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        window.refreshIcons();
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('categoryModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('categoryModal');
-        if (event.target == modal) closeModal();
-    }
-
-    // Keywords Tags Logic
-    const keywordInput = document.getElementById('keyword-input');
-    const keywordsContainer = document.getElementById('keywords-container');
-    const metaKeywordsHidden = document.getElementById('cat-meta_keywords');
-    let keywords = [];
-
-    function renderKeywords(tags) {
-        keywords = tags.map(t => t.trim()).filter(t => t !== '');
-
-        // Remove existing tags except input
-        const tagsElements = keywordsContainer.querySelectorAll('.keyword-tag');
-        tagsElements.forEach(el => el.remove());
-
-        keywords.forEach((tag, index) => {
-            const tagEl = document.createElement('span');
-            tagEl.className = 'keyword-tag inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[10px] font-bold border border-indigo-100';
-            tagEl.innerHTML = `${tag} <button type="button" onclick="removeTag(${index})" class="hover:text-rose-500 transition-colors"><i data-lucide="x" class="w-3 h-3"></i></button>`;
-            keywordsContainer.insertBefore(tagEl, keywordInput);
-        });
-
-        metaKeywordsHidden.value = keywords.join(',');
-        if (window.refreshIcons) window.refreshIcons();
-    }
-
-    function removeTag(index) {
-        keywords.splice(index, 1);
-        renderKeywords(keywords);
-    }
-
-    keywordInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ',') {
-            e.preventDefault();
-            const val = keywordInput.value.trim().replace(',', '');
-            if (val && !keywords.includes(val)) {
-                keywords.push(val);
-                renderKeywords(keywords);
-                keywordInput.value = '';
-            }
-        } else if (e.key === 'Backspace' && keywordInput.value === '' && keywords.length > 0) {
-            keywords.pop();
-            renderKeywords(keywords);
-        }
-    });
-
-    keywordsContainer.addEventListener('click', () => {
-        keywordInput.focus();
-    });
 </script>
 
 <?php include __DIR__ . '/layout/footer.php'; ?>
