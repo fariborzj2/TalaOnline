@@ -31,6 +31,18 @@ try {
     if (!in_array('description', $columns)) {
         $pdo->exec("ALTER TABLE categories ADD COLUMN description TEXT DEFAULT NULL AFTER icon");
     }
+    if (!in_array('h1_title', $columns)) {
+        $pdo->exec("ALTER TABLE categories ADD COLUMN h1_title VARCHAR(255) DEFAULT NULL AFTER description");
+    }
+    if (!in_array('page_title', $columns)) {
+        $pdo->exec("ALTER TABLE categories ADD COLUMN page_title VARCHAR(255) DEFAULT NULL AFTER h1_title");
+    }
+    if (!in_array('meta_description', $columns)) {
+        $pdo->exec("ALTER TABLE categories ADD COLUMN meta_description TEXT DEFAULT NULL AFTER page_title");
+    }
+    if (!in_array('meta_keywords', $columns)) {
+        $pdo->exec("ALTER TABLE categories ADD COLUMN meta_keywords TEXT DEFAULT NULL AFTER meta_description");
+    }
 } catch (Exception $e) {}
 
 // Populate initial categories
@@ -58,21 +70,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $en_name = $_POST['en_name'] ?? '';
         $icon = $_POST['icon'] ?? 'coins';
         $description = $_POST['description'] ?? '';
+        $h1_title = $_POST['h1_title'] ?? '';
+        $page_title = $_POST['page_title'] ?? '';
+        $meta_description = $_POST['meta_description'] ?? '';
+        $meta_keywords = $_POST['meta_keywords'] ?? '';
         $slug = $_POST['slug'] ?? '';
         $sort_order = (int)($_POST['sort_order'] ?? 0);
 
         if ($action === 'add') {
             try {
-                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, description, slug, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$name, $en_name, $icon, $description, $slug, $sort_order]);
+                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, description, h1_title, page_title, meta_description, meta_keywords, slug, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $en_name, $icon, $description, $h1_title, $page_title, $meta_description, $meta_keywords, $slug, $sort_order]);
                 $message = 'دسته‌بندی جدید با موفقیت اضافه شد.';
             } catch (Exception $e) {
                 $error = 'خطا در افزودن دسته‌بندی: ' . $e->getMessage();
             }
         } else {
             try {
-                $stmt = $pdo->prepare("UPDATE categories SET name = ?, en_name = ?, icon = ?, description = ?, slug = ?, sort_order = ? WHERE id = ?");
-                $stmt->execute([$name, $en_name, $icon, $description, $slug, $sort_order, $id]);
+                $stmt = $pdo->prepare("UPDATE categories SET name = ?, en_name = ?, icon = ?, description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ?, slug = ?, sort_order = ? WHERE id = ?");
+                $stmt->execute([$name, $en_name, $icon, $description, $h1_title, $page_title, $meta_description, $meta_keywords, $slug, $sort_order, $id]);
                 $message = 'دسته‌بندی با موفقیت بروزرسانی شد.';
             } catch (Exception $e) {
                 $error = 'خطا در بروزرسانی دسته‌بندی: ' . $e->getMessage();
@@ -261,6 +277,35 @@ include __DIR__ . '/layout/editor.php';
                 <textarea name="description" id="cat-description"></textarea>
             </div>
 
+            <div class="p-5 bg-slate-50/50 rounded-xl border border-slate-100 mb-6">
+                <h4 class="font-black text-slate-800 text-[11px] uppercase tracking-wider mb-5 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                    تنظیمات SEO و تایتل‌ها
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="form-group">
+                        <label>عنوان اصلی (H1)</label>
+                        <input type="text" name="h1_title" id="cat-h1_title" placeholder="مثلاً قیمت لحظه‌ای طلا و سکه">
+                    </div>
+                    <div class="form-group">
+                        <label>عنوان تایتل (Meta Title)</label>
+                        <input type="text" name="page_title" id="cat-page_title" placeholder="عنوان مرورگر">
+                    </div>
+                </div>
+                <div class="form-group mb-4">
+                    <label>توضیحات متا (Meta Description)</label>
+                    <textarea name="meta_description" id="cat-meta_description" rows="2" placeholder="توضیحات سئو برای موتورهای جستجو..."></textarea>
+                </div>
+                <div class="form-group mb-0">
+                    <label>کلمات کلیدی (Meta Keywords)</label>
+                    <div id="keywords-container" class="flex flex-wrap gap-2 p-2 bg-white border border-slate-200 rounded-lg min-h-[42px] mb-2">
+                        <input type="text" id="keyword-input" class="!border-none !p-0 !ring-0 text-xs flex-grow min-w-[120px]" placeholder="تایپ کنید و اینتر بزنید...">
+                    </div>
+                    <input type="hidden" name="meta_keywords" id="cat-meta_keywords">
+                    <p class="text-[9px] text-slate-400 mt-1">کلمات کلیدی را وارد کرده و Enter یا کاما بزنید.</p>
+                </div>
+            </div>
+
             <div class="flex items-center gap-4">
                 <button type="submit" class="btn-v3 btn-v3-primary flex-grow">
                     <i data-lucide="save" class="w-4 h-4"></i>
@@ -339,6 +384,11 @@ include __DIR__ . '/layout/editor.php';
         document.getElementById('cat-icon').value = 'coins';
         document.getElementById('cat-slug').value = '';
         document.getElementById('cat-sort_order').value = '0';
+        document.getElementById('cat-h1_title').value = '';
+        document.getElementById('cat-page_title').value = '';
+        document.getElementById('cat-meta_description').value = '';
+        document.getElementById('cat-meta_keywords').value = '';
+        renderKeywords([]);
 
         if (tinymce.get('cat-description')) {
             tinymce.get('cat-description').setContent('');
@@ -359,6 +409,11 @@ include __DIR__ . '/layout/editor.php';
         document.getElementById('cat-icon').value = cat.icon || 'coins';
         document.getElementById('cat-slug').value = cat.slug;
         document.getElementById('cat-sort_order').value = cat.sort_order;
+        document.getElementById('cat-h1_title').value = cat.h1_title || '';
+        document.getElementById('cat-page_title').value = cat.page_title || '';
+        document.getElementById('cat-meta_description').value = cat.meta_description || '';
+        document.getElementById('cat-meta_keywords').value = cat.meta_keywords || '';
+        renderKeywords(cat.meta_keywords ? cat.meta_keywords.split(',') : []);
 
         if (tinymce.get('cat-description')) {
             tinymce.get('cat-description').setContent(cat.description || '');
@@ -386,6 +441,54 @@ include __DIR__ . '/layout/editor.php';
         const modal = document.getElementById('categoryModal');
         if (event.target == modal) closeModal();
     }
+
+    // Keywords Tags Logic
+    const keywordInput = document.getElementById('keyword-input');
+    const keywordsContainer = document.getElementById('keywords-container');
+    const metaKeywordsHidden = document.getElementById('cat-meta_keywords');
+    let keywords = [];
+
+    function renderKeywords(tags) {
+        keywords = tags.map(t => t.trim()).filter(t => t !== '');
+
+        // Remove existing tags except input
+        const tagsElements = keywordsContainer.querySelectorAll('.keyword-tag');
+        tagsElements.forEach(el => el.remove());
+
+        keywords.forEach((tag, index) => {
+            const tagEl = document.createElement('span');
+            tagEl.className = 'keyword-tag inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[10px] font-bold border border-indigo-100';
+            tagEl.innerHTML = `${tag} <button type="button" onclick="removeTag(${index})" class="hover:text-rose-500 transition-colors"><i data-lucide="x" class="w-3 h-3"></i></button>`;
+            keywordsContainer.insertBefore(tagEl, keywordInput);
+        });
+
+        metaKeywordsHidden.value = keywords.join(',');
+        if (window.refreshIcons) window.refreshIcons();
+    }
+
+    function removeTag(index) {
+        keywords.splice(index, 1);
+        renderKeywords(keywords);
+    }
+
+    keywordInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            const val = keywordInput.value.trim().replace(',', '');
+            if (val && !keywords.includes(val)) {
+                keywords.push(val);
+                renderKeywords(keywords);
+                keywordInput.value = '';
+            }
+        } else if (e.key === 'Backspace' && keywordInput.value === '' && keywords.length > 0) {
+            keywords.pop();
+            renderKeywords(keywords);
+        }
+    });
+
+    keywordsContainer.addEventListener('click', () => {
+        keywordInput.focus();
+    });
 </script>
 
 <?php include __DIR__ . '/layout/footer.php'; ?>
