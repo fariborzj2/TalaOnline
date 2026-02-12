@@ -50,7 +50,7 @@
 
         <div class="container">
             <div class="center d-column gap-md">
-                <div class="hader mb-2">
+                <div class="hader">
                     <div class="d-flex-wrap gap-1 just-between align-center">
                         <h1><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
                         <div class="d-flex gap-1">
