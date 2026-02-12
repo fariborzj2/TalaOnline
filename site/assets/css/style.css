@@ -83,6 +83,7 @@ a {
 }
 input , button {
     font-family: estedad;
+    background: transparent
 }
 body {
     font: 13px/28px 'estedad', Tahoma, Geneva, Verdana, sans-serif;
