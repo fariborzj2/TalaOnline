@@ -26,7 +26,7 @@ if ($pdo) {
             <i data-lucide="info" class="text-primary icon-size-4"></i>
             <h3 class="font-size-2 font-bold">راهنمای استفاده</h3>
         </div>
-        <p class="font-size-1 text-gray line-height-1-6">
+        <p class="font-size-1 line-height-1">
             قیمت‌ها هر ۱۰ دقیقه به صورت خودکار بروزرسانی می‌شوند. برای مشاهده نمودار تغییرات هر مورد، روی آن کلیک کنید.
         </p>
     </div>
