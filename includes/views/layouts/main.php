@@ -52,7 +52,7 @@
             <div class="center d-column gap-md">
                 <div class="hader">
                     <div class="d-flex-wrap gap-1 just-between align-center">
-                        <h1><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
+                        <h1 class="font-size-3"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
                         <div class="d-flex gap-1">
                             <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
                                 <i data-lucide="bell" class="icon-size-3"></i>
