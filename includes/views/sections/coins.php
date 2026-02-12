@@ -10,7 +10,7 @@
             </div>
         </div>
         <?php if (isset($slug)): ?>
-        <a href="/category/<?= $slug ?>" class="btn btn-secondary btn-sm radius-10">
+        <a href="/<?= $slug ?>" class="btn btn-secondary btn-sm radius-10">
             <span class="font-size-1">مشاهده همه</span>
             <i data-lucide="chevron-left" class="icon-size-2"></i>
         </a>
