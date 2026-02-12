@@ -9,6 +9,12 @@
                 <span class="text-gray"><?= $subtitle ?? 'gold market' ?></span>
             </div>
         </div>
+        <?php if (isset($slug)): ?>
+        <a href="/category/<?= $slug ?>" class="btn btn-secondary btn-sm radius-10">
+            <span class="font-size-1">مشاهده همه</span>
+            <i data-lucide="chevron-left" class="icon-size-2"></i>
+        </a>
+        <?php endif; ?>
     </div>
 
     <div class="p-1 d-column" id="<?= $id ?? 'coins-list' ?>">

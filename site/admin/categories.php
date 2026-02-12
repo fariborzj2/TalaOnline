@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . '/../../includes/helpers.php';
 check_login();
 
 // Schema Self-Healing for Categories
@@ -13,6 +14,7 @@ try {
         name VARCHAR(100) NOT NULL,
         en_name VARCHAR(100) DEFAULT NULL,
         icon VARCHAR(50) DEFAULT 'coins',
+        description TEXT DEFAULT NULL,
         sort_order INT DEFAULT 0
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 }
@@ -25,6 +27,9 @@ try {
     }
     if (!in_array('icon', $columns)) {
         $pdo->exec("ALTER TABLE categories ADD COLUMN icon VARCHAR(50) DEFAULT 'coins' AFTER en_name");
+    }
+    if (!in_array('description', $columns)) {
+        $pdo->exec("ALTER TABLE categories ADD COLUMN description TEXT DEFAULT NULL AFTER icon");
     }
 } catch (Exception $e) {}
 
@@ -52,21 +57,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $name = $_POST['name'] ?? '';
         $en_name = $_POST['en_name'] ?? '';
         $icon = $_POST['icon'] ?? 'coins';
+        $description = $_POST['description'] ?? '';
         $slug = $_POST['slug'] ?? '';
         $sort_order = (int)($_POST['sort_order'] ?? 0);
 
         if ($action === 'add') {
             try {
-                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, slug, sort_order) VALUES (?, ?, ?, ?, ?)");
-                $stmt->execute([$name, $en_name, $icon, $slug, $sort_order]);
+                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, description, slug, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $en_name, $icon, $description, $slug, $sort_order]);
                 $message = 'دسته‌بندی جدید با موفقیت اضافه شد.';
             } catch (Exception $e) {
                 $error = 'خطا در افزودن دسته‌بندی: ' . $e->getMessage();
             }
         } else {
             try {
-                $stmt = $pdo->prepare("UPDATE categories SET name = ?, en_name = ?, icon = ?, slug = ?, sort_order = ? WHERE id = ?");
-                $stmt->execute([$name, $en_name, $icon, $slug, $sort_order, $id]);
+                $stmt = $pdo->prepare("UPDATE categories SET name = ?, en_name = ?, icon = ?, description = ?, slug = ?, sort_order = ? WHERE id = ?");
+                $stmt->execute([$name, $en_name, $icon, $description, $slug, $sort_order, $id]);
                 $message = 'دسته‌بندی با موفقیت بروزرسانی شد.';
             } catch (Exception $e) {
                 $error = 'خطا در بروزرسانی دسته‌بندی: ' . $e->getMessage();
@@ -100,7 +106,12 @@ $page_subtitle = 'مدیریت دسته‌بندی‌های ارز، طلا و �
 $header_action = '<button onclick="openAddModal()" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن دسته‌بندی جدید</button>';
 
 include __DIR__ . '/layout/header.php';
+include __DIR__ . '/layout/editor.php';
 ?>
+
+<script>
+  initTinyMCE('#cat-description');
+</script>
 
 <?php if ($message): ?>
     <div class="mb-6">
@@ -197,7 +208,7 @@ include __DIR__ . '/layout/header.php';
 
 <!-- Category Modal -->
 <div id="categoryModal" class="hidden fixed inset-0 z-[1000] bg-slate-900/40 backdrop-blur-sm items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-xl p-6 md:p-8 transform transition-all animate-modal-up modal-container">
+    <div class="bg-white w-full max-w-3xl rounded-xl p-6 md:p-8 transform transition-all animate-modal-up modal-container">
         <div class="flex items-center justify-between border-b border-slate-50 pb-6 mb-6">
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center">
@@ -238,9 +249,16 @@ include __DIR__ . '/layout/header.php';
                 </div>
             </div>
 
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-group mb-4">
+                    <label>ترتیب نمایش</label>
+                    <input type="number" name="sort_order" id="cat-sort_order" value="0">
+                </div>
+            </div>
+
             <div class="form-group mb-6">
-                <label>ترتیب نمایش</label>
-                <input type="number" name="sort_order" id="cat-sort_order" value="0">
+                <label>محتوای متنی دسته‌بندی</label>
+                <textarea name="description" id="cat-description"></textarea>
             </div>
 
             <div class="flex items-center gap-4">
@@ -322,6 +340,12 @@ include __DIR__ . '/layout/header.php';
         document.getElementById('cat-slug').value = '';
         document.getElementById('cat-sort_order').value = '0';
 
+        if (tinymce.get('cat-description')) {
+            tinymce.get('cat-description').setContent('');
+        } else {
+            document.getElementById('cat-description').value = '';
+        }
+
         showModal();
     }
 
@@ -335,6 +359,12 @@ include __DIR__ . '/layout/header.php';
         document.getElementById('cat-icon').value = cat.icon || 'coins';
         document.getElementById('cat-slug').value = cat.slug;
         document.getElementById('cat-sort_order').value = cat.sort_order;
+
+        if (tinymce.get('cat-description')) {
+            tinymce.get('cat-description').setContent(cat.description || '');
+        } else {
+            document.getElementById('cat-description').value = cat.description || '';
+        }
 
         showModal();
     }
