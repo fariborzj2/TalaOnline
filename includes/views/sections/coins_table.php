@@ -1,4 +1,4 @@
-<div class="bg-block border radius-16 nowrap">
+<div class="bg-block border radius-16 nowrap overflow-hidden">
     <div class="d-flex just-between align-center gap-1 pd-md border-bottom">
         <div class="d-flex align-center gap-1">
             <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
