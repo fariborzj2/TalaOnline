@@ -40,6 +40,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('modal-high').textContent = formatPrice(assetData.high);
         document.getElementById('modal-low').textContent = formatPrice(assetData.low);
 
+        const detailsLink = document.getElementById('modal-details-link');
+        if (detailsLink) {
+            detailsLink.href = '/' + assetData.slug;
+        }
+
         lucide.createIcons();
         modal.classList.remove('d-none');
 

@@ -1,5 +1,6 @@
-<div class="card asset-item" id="<?= $id ?? '' ?>" data-asset='<?= json_encode([
+<div class="card asset-item" id="<?= $id ?? '' ?>" data-asset='<?= htmlspecialchars(json_encode([
     "symbol" => $symbol,
+    "slug" => $slug ?? $symbol,
     "name" => $title,
     "price" => $price,
     "change" => $change,
@@ -7,7 +8,7 @@
     "image" => $image ?? "assets/images/gold/gold.png",
     "high" => $high ?? $price,
     "low" => $low ?? $price
-]) ?>'>
+]), ENT_QUOTES, "UTF-8") ?>'>
     <div class="d-flex just-between align-center gap-1">
         <div class="d-flex align-center gap-1 mb-1">
             <div class="w-12 h-12 border radius-12 p-05 bg-secondary">

@@ -1,5 +1,6 @@
-<div class="item-list asset-item" data-asset='<?= json_encode([
+<div class="item-list asset-item" data-asset='<?= htmlspecialchars(json_encode([
     "symbol" => $coin["symbol"],
+    "slug" => $coin["slug"] ?? $coin["symbol"],
     "name" => $coin["name"],
     "price" => $coin["price"],
     "change" => $coin["change_percent"],
@@ -7,7 +8,7 @@
     "image" => $image ?? "assets/images/gold/gold.png",
     "high" => $coin["high"] ?? $coin["price"],
     "low" => $coin["low"] ?? $coin["price"]
-]) ?>'>
+]), ENT_QUOTES, "UTF-8") ?>'>
     <div class="d-flex align-center gap-1">
         <div class="w-10 h-10 border radius-10 p-05 bg-secondary">
             <img src="<?= $image ?? 'assets/images/gold/gold.png' ?>" alt="<?= htmlspecialchars($coin['name']) ?>">
