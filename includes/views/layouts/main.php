@@ -170,7 +170,6 @@
         }
         .d-none { display: none !important; }
         .asset-item { cursor: pointer; transition: transform 0.2s; }
-        .asset-item:hover { transform: translateY(-4px); }
     </style>
 
     <script src="assets/js/charts.js"></script>

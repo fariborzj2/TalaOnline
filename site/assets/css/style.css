@@ -85,6 +85,9 @@ input , button {
     font-family: estedad;
     background: transparent
 }
+button {
+    cursor: pointer;
+}
 body {
     font: 13px/28px 'estedad', Tahoma, Geneva, Verdana, sans-serif;
     background: var(--color-body);
@@ -544,4 +547,8 @@ input:focus {
 }
 .toc-list a:hover {
     color: var(--color-primary);
+}
+
+.faq-question:hover {
+    cursor: pointer;
 }

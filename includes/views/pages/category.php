@@ -85,3 +85,9 @@
         items: <?= json_encode($items) ?>
     };
 </script>
+
+<style>
+    .faq-question:hover {
+        cursor: pointer;
+    }
+</style>
