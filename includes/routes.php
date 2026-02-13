@@ -170,6 +170,56 @@ $router->add('/about-us', function() {
     ]);
 });
 
+$router->add('/:category/:slug', function($params) {
+    global $pdo;
+    $category_slug = $params['category'];
+    $slug = $params['slug'];
+
+    if (!$pdo) {
+        http_response_code(404);
+        echo "404 Not Found";
+        exit;
+    }
+
+    try {
+        // Find the item with the given slug that belongs to the given category
+        $stmt = $pdo->prepare("SELECT i.* FROM items i
+                               WHERE (i.slug = ? OR (i.slug IS NULL AND i.symbol = ?))
+                               AND i.category = ?");
+        $stmt->execute([$slug, $slug, $category_slug]);
+        $item_db = $stmt->fetch();
+
+        if ($item_db) {
+            $navasan = new NavasanService($pdo);
+            $all_items = $navasan->getDashboardData();
+            $item_data = null;
+            foreach ($all_items as $it) {
+                if ($it['symbol'] === $item_db['symbol']) {
+                    $item_data = array_merge($item_db, $it);
+                    break;
+                }
+            }
+
+            if (!$item_data) {
+                $item_data = $item_db;
+            }
+
+            return View::renderPage('asset', [
+                'item' => $item_data,
+                'page_title' => $item_data['page_title'] ?: $item_data['name'],
+                'h1_title' => $item_data['h1_title'] ?: $item_data['name'],
+                'meta_description' => $item_data['meta_description'],
+                'meta_keywords' => $item_data['meta_keywords'],
+                'site_title' => $item_data['page_title'] ?: ($item_data['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
+            ]);
+        }
+    } catch (Exception $e) {}
+
+    http_response_code(404);
+    echo "404 Not Found";
+    exit;
+});
+
 $router->add('/:slug', function($params) {
     global $pdo;
     $slug = $params['slug'];
