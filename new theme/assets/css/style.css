@@ -7,9 +7,9 @@
 :root {
     --color-body: #f4f4f4;
     --color-primary: #f59e0c;
-    --secondary-color: #f4f4f4;
+    --color-secondary: #f4f4f4;
     --color-text: #64748b;
-    --color-title: #1e1e1e;
+    --color-title: #1C274C;
     --color-border: #eee;
     --color-white: #fff;
     --color-gray: #999;
@@ -31,7 +31,7 @@
     background-color: var(--color-primary);
 }
 .bg-secondary {
-    background-color: var(--secondary-color);
+    background-color: var(--color-secondary);
 }
 .bg-success {
     background-color: var(--bg-success);
@@ -46,7 +46,7 @@
     color: var(--color-primary);
 }
 .text-secondary {
-    color: var(--secondary-color);
+    color: var(--color-secondary);
 }
 .text-success {
     color: var(--color-success);
@@ -122,7 +122,7 @@ body {
     transition: background-color 0.3s;
 }
 .side-menu ul li a:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--color-secondary);
 }
 .side-menu ul li a.active {
     background-color: var(--bg-warning);

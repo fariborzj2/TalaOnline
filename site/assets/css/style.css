@@ -7,9 +7,9 @@
 :root {
     --color-body: #f1f5f9;
     --color-primary: #f59e0c;
-    --secondary-color: #f1f5f9;
+    --color-secondary: #f1f5f9;
     --color-text: #64748b;
-    --color-title: #1e1e1e;
+    --color-title: #1C274C;
     --color-border: #eee;
     --color-white: #fff;
     --color-gray: #999;
@@ -31,7 +31,7 @@
     background-color: var(--color-primary);
 }
 .bg-secondary {
-    background-color: var(--secondary-color);
+    background-color: var(--color-secondary);
 }
 .bg-success {
     background-color: var(--bg-success);
@@ -46,7 +46,7 @@
     color: var(--color-primary);
 }
 .text-secondary {
-    color: var(--secondary-color);
+    color: var(--color-secondary);
 }
 .text-success {
     color: var(--color-success);
@@ -131,7 +131,7 @@ body {
     transition: background-color 0.3s;
 }
 .side-menu ul li a:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--color-secondary);
 }
 .side-menu ul li a.active {
     background-color: var(--bg-warning);
@@ -350,7 +350,7 @@ input:focus {
 }
 .pill-btn.active {
     background-color: #ffffff;
-    color: #1e1e1e;
+    color: #1C274C;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
@@ -433,7 +433,7 @@ input:focus {
 }
 .content-text blockquote {
     border-right: 4px solid var(--color-primary);
-    background: var(--secondary-color);
+    background: var(--color-secondary);
     padding: 1.5rem;
     margin: 1.5rem 0;
     border-radius: 0 12px 12px 0;
@@ -464,7 +464,7 @@ input:focus {
     display: table; /* Reset from potential block/flex */
 }
 .content-text table thead tr {
-    background: var(--secondary-color);
+    background: var(--color-secondary);
 }
 .content-text table th, .content-text table td {
     padding: 12px 15px;
@@ -486,7 +486,7 @@ input:focus {
 }
 
 .content-text code {
-    background: var(--secondary-color);
+    background: var(--color-secondary);
     padding: 2px 6px;
     border-radius: 4px;
     font-family: monospace;
@@ -509,7 +509,7 @@ input:focus {
 
 /* Table of Contents Styling */
 .toc-container {
-    background: var(--secondary-color);
+    background: var(--color-secondary);
     padding: var(--pd-block);
     border-radius: 16px;
     margin-bottom: 1rem;

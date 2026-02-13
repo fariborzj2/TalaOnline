@@ -41,7 +41,7 @@
         width: 64px;
         min-width: 64px;
         height: 64px;
-        background: var(--secondary-color);
+        background: var(--color-secondary);
     }
     .news-image img {
         width: 100%;
