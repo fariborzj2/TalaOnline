@@ -173,51 +173,82 @@ $router->add('/about-us', function() {
 $router->add('/:slug', function($params) {
     global $pdo;
     $slug = $params['slug'];
-    $category = null;
-    $items = [];
-    $faqs = [];
 
-    if ($pdo) {
-        try {
-            $stmt = $pdo->prepare("SELECT * FROM categories WHERE slug = ?");
-            $stmt->execute([$slug]);
-            $category = $stmt->fetch();
-
-            if ($category) {
-                // Fetch Items
-                $navasan = new NavasanService($pdo);
-                $all_items = $navasan->getDashboardData();
-                foreach ($all_items as $item) {
-                    if ($item['category'] === $slug) {
-                        $items[] = $item;
-                    }
-                }
-
-                // Fetch FAQs
-                $stmt = $pdo->prepare("SELECT * FROM category_faqs WHERE category_id = ? ORDER BY sort_order ASC");
-                $stmt->execute([$category['id']]);
-                $faqs = $stmt->fetchAll();
-            }
-        } catch (Exception $e) {}
-    }
-
-
-
-    if (!$category) {
-        // Fallback to 404 if not a category
+    if (!$pdo) {
         http_response_code(404);
         echo "404 Not Found";
         exit;
     }
 
-    return View::renderPage('category', [
-        'category' => $category,
-        'items' => $items,
-        'faqs' => $faqs,
-        'page_title' => $category['page_title'] ?: $category['name'],
-        'h1_title' => $category['h1_title'],
-        'meta_description' => $category['meta_description'],
-        'meta_keywords' => $category['meta_keywords'],
-        'site_title' => $category['page_title'] ?: ($category['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
-    ]);
+    // 1. Check if it's a category
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM categories WHERE slug = ?");
+        $stmt->execute([$slug]);
+        $category = $stmt->fetch();
+
+        if ($category) {
+            // Fetch Items
+            $navasan = new NavasanService($pdo);
+            $all_items = $navasan->getDashboardData();
+            $items = [];
+            foreach ($all_items as $item) {
+                if ($item['category'] === $slug) {
+                    $items[] = $item;
+                }
+            }
+
+            // Fetch FAQs
+            $stmt = $pdo->prepare("SELECT * FROM category_faqs WHERE category_id = ? ORDER BY sort_order ASC");
+            $stmt->execute([$category['id']]);
+            $faqs = $stmt->fetchAll();
+
+            return View::renderPage('category', [
+                'category' => $category,
+                'items' => $items,
+                'faqs' => $faqs,
+                'page_title' => $category['page_title'] ?: $category['name'],
+                'h1_title' => $category['h1_title'],
+                'meta_description' => $category['meta_description'],
+                'meta_keywords' => $category['meta_keywords'],
+                'site_title' => $category['page_title'] ?: ($category['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
+            ]);
+        }
+    } catch (Exception $e) {}
+
+    // 2. Check if it's an asset (item)
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM items WHERE slug = ? OR (slug IS NULL AND symbol = ?)");
+        $stmt->execute([$slug, $slug]);
+        $item_db = $stmt->fetch();
+
+        if ($item_db) {
+            $navasan = new NavasanService($pdo);
+            $all_items = $navasan->getDashboardData();
+            $item_data = null;
+            foreach ($all_items as $it) {
+                if ($it['symbol'] === $item_db['symbol']) {
+                    $item_data = array_merge($item_db, $it);
+                    break;
+                }
+            }
+
+            if (!$item_data) {
+                $item_data = $item_db; // Fallback to DB data if API data not found
+            }
+
+            return View::renderPage('asset', [
+                'item' => $item_data,
+                'page_title' => $item_data['page_title'] ?: $item_data['name'],
+                'h1_title' => $item_data['h1_title'] ?: $item_data['name'],
+                'meta_description' => $item_data['meta_description'],
+                'meta_keywords' => $item_data['meta_keywords'],
+                'site_title' => $item_data['page_title'] ?: ($item_data['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
+            ]);
+        }
+    } catch (Exception $e) {}
+
+    // Fallback to 404
+    http_response_code(404);
+    echo "404 Not Found";
+    exit;
 });

@@ -18,6 +18,24 @@ try {
     if (!in_array('show_chart', $columns)) {
         $pdo->exec("ALTER TABLE items ADD COLUMN show_chart TINYINT(1) DEFAULT 0");
     }
+    if (!in_array('slug', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN slug VARCHAR(100) DEFAULT NULL AFTER symbol");
+    }
+    if (!in_array('h1_title', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN h1_title VARCHAR(255) DEFAULT NULL");
+    }
+    if (!in_array('page_title', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN page_title VARCHAR(255) DEFAULT NULL");
+    }
+    if (!in_array('meta_description', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN meta_description TEXT DEFAULT NULL");
+    }
+    if (!in_array('meta_keywords', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN meta_keywords TEXT DEFAULT NULL");
+    }
+    if (!in_array('long_description', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN long_description TEXT DEFAULT NULL");
+    }
 } catch (Exception $e) {}
 
 $message = '';
@@ -103,7 +121,7 @@ foreach ($categories as $cat) {
 $page_title = 'مدیریت ارزها';
 $page_subtitle = 'مدیریت کامل ارزها، دسته‌بندی‌ها و قیمت‌های دستی';
 
-$header_action = '<button onclick="openAddModal()" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن دارایی جدید</button>';
+$header_action = '<a href="item_edit.php" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن دارایی جدید</a>';
 
 include __DIR__ . '/layout/header.php';
 ?>
@@ -241,9 +259,9 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <button class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn" onclick='editItem(<?= json_encode($item) ?>)'>
+                            <a href="item_edit.php?id=<?= $item['id'] ?>" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn">
                                 <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
-                            </button>
+                            </a>
                             <form method="POST" class="inline" onsubmit="handleDelete(event, this, 'دارایی')">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $item['id'] ?>">
@@ -257,128 +275,6 @@ include __DIR__ . '/layout/header.php';
                 <?php endforeach; ?>
             </tbody>
         </table>
-    </div>
-</div>
-
-<!-- Item Modal -->
-<div id="itemModal" class="hidden fixed inset-0 z-[1000] bg-slate-900/40 backdrop-blur-sm items-center justify-center p-4">
-    <div class="bg-white w-full max-w-xl rounded-xl p-6 md:p-8 transform transition-all animate-modal-up modal-container">
-        <div class="flex items-center justify-between border-b border-slate-50 pb-6 mb-6">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center">
-                    <i data-lucide="package" class="w-6 h-6" id="modalIcon"></i>
-                </div>
-                <div>
-                    <h2 class="text-lg font-black text-slate-900" id="modalTitle">افزودن دارایی جدید</h2>
-                    <p class="text-[10px] text-slate-400 font-bold mt-1">تنظیمات قیمت، مشخصات و دسته‌بندی</p>
-                </div>
-            </div>
-            <button onclick="closeModal()" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-lg flex items-center justify-center hover:bg-slate-100 transition-colors">
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
-
-        <form method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="action" id="formAction" value="add">
-            <input type="hidden" name="id" id="item-id">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div class="form-group">
-                    <label>نام فارسی دارایی</label>
-                    <input type="text" name="name" id="item-name" required placeholder="مثلاً طلا 18 عیار">
-                </div>
-                <div class="form-group">
-                    <label>نام انگلیسی (EN Name)</label>
-                    <input type="text" name="en_name" id="item-en_name" class="ltr-input" placeholder="مثلاً Gold 18K">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div class="form-group">
-                    <label>نماد در API (نوسان)</label>
-                    <input type="text" name="symbol" id="item-symbol" required class="ltr-input" placeholder="18ayar">
-                </div>
-                <div class="form-group">
-                    <label>دسته‌بندی</label>
-                    <select name="category" id="item-category">
-                        <?php foreach ($categories as $cat): ?>
-                            <option value="<?= htmlspecialchars($cat['slug']) ?>"><?= htmlspecialchars($cat['name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group mb-4">
-                <label>لوگوی دارایی</label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="file-input-wrapper">
-                        <div class="file-input-custom">
-                            <span class="file-name-label text-[11px] text-slate-400 truncate">انتخاب تصویر...</span>
-                            <i data-lucide="upload-cloud" class="w-4 h-4 text-slate-400"></i>
-                            <input type="file" name="logo_file" class="file-input-real">
-                        </div>
-                        <p class="text-[9px] text-slate-400 mt-1">آپلود مستقیم تصویر (PNG/JPG)</p>
-                    </div>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="link" class="w-3.5 h-3.5"></i></span>
-                        <input type="text" name="logo_url" id="item-logo" class="ltr-input text-xs !py-2.5" placeholder="یا لینک تصویر...">
-                    </div>
-                </div>
-                <input type="hidden" name="current_logo" id="item-current_logo">
-            </div>
-
-            <div class="form-group mb-4">
-                <label>توضیح کوتاه</label>
-                <textarea name="description" id="item-description" rows="2" placeholder="توضیحات کوتاهی در مورد این دارایی..."></textarea>
-            </div>
-
-            <div class="p-5 bg-slate-50/50 rounded-xl border border-slate-100 mb-6">
-                <h4 class="font-black text-slate-800 text-[11px] uppercase tracking-wider mb-5 flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                    تنظیمات پیشرفته
-                </h4>
-                <div class="grid grid-cols-2 gap-y-5 gap-x-8">
-                    <label class="relative inline-flex items-center cursor-pointer group">
-                        <input type="checkbox" name="is_active" id="item-is_active" class="sr-only peer" checked>
-                        <div class="toggle-dot toggle-emerald"></div>
-                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">وضعیت فعال</span>
-                    </label>
-                    <label class="relative inline-flex items-center cursor-pointer group">
-                        <input type="checkbox" name="is_manual" id="item-is_manual" class="sr-only peer">
-                        <div class="toggle-dot"></div>
-                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">قیمت دستی</span>
-                    </label>
-                    <label class="relative inline-flex items-center cursor-pointer group">
-                        <input type="checkbox" name="show_in_summary" id="item-show_in_summary" class="sr-only peer">
-                        <div class="toggle-dot toggle-indigo"></div>
-                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">نمایش در خلاصه بالا</span>
-                    </label>
-                    <label class="relative inline-flex items-center cursor-pointer group">
-                        <input type="checkbox" name="show_chart" id="item-show_chart" class="sr-only peer">
-                        <div class="toggle-dot toggle-amber"></div>
-                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">نمایش در نمودار</span>
-                    </label>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="form-group mb-0">
-                        <label class="text-[10px] text-slate-400">قیمت دستی (تومان)</label>
-                        <input type="text" name="manual_price" id="item-manual_price" class="ltr-input" placeholder="0">
-                    </div>
-                    <div class="form-group mb-0">
-                        <label class="text-[10px] text-slate-400">ترتیب نمایش</label>
-                        <input type="number" name="sort_order" id="item-sort_order" value="0">
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <button type="submit" class="btn-v3 btn-v3-primary flex-grow">
-                    <i data-lucide="save" class="w-4 h-4"></i>
-                    ذخیره اطلاعات دارایی
-                </button>
-                <button type="button" class="btn-v3 btn-v3-outline" onclick="closeModal()">انصراف</button>
-            </div>
-        </form>
     </div>
 </div>
 
@@ -463,66 +359,6 @@ include __DIR__ . '/layout/header.php';
         if (confirmed) {
             form.submit();
         }
-    }
-
-    function openAddModal() {
-        document.getElementById('formAction').value = 'add';
-        document.getElementById('modalTitle').innerText = 'افزودن دارایی جدید';
-        document.getElementById('modalIcon').setAttribute('data-lucide', 'plus');
-        document.getElementById('item-id').value = '';
-        document.getElementById('item-name').value = '';
-        document.getElementById('item-en_name').value = '';
-        document.getElementById('item-symbol').value = '';
-        document.getElementById('item-logo').value = '';
-        document.getElementById('item-description').value = '';
-        document.getElementById('item-manual_price').value = '';
-        document.getElementById('item-is_manual').checked = false;
-        document.getElementById('item-is_active').checked = true;
-        document.getElementById('item-show_in_summary').checked = false;
-        document.getElementById('item-show_chart').checked = false;
-        document.getElementById('item-sort_order').value = '0';
-
-        showModal();
-    }
-
-    function editItem(item) {
-        document.getElementById('formAction').value = 'edit';
-        document.getElementById('modalTitle').innerText = 'ویرایش دارایی';
-        document.getElementById('modalIcon').setAttribute('data-lucide', 'edit-2');
-        document.getElementById('item-id').value = item.id;
-        document.getElementById('item-name').value = item.name;
-        document.getElementById('item-en_name').value = item.en_name;
-        document.getElementById('item-symbol').value = item.symbol;
-        document.getElementById('item-logo').value = item.logo;
-        document.getElementById('item-current_logo').value = item.logo;
-        document.getElementById('item-category').value = item.category;
-        document.getElementById('item-description').value = item.description;
-        document.getElementById('item-manual_price').value = item.manual_price;
-        document.getElementById('item-is_manual').checked = item.is_manual == 1;
-        document.getElementById('item-is_active').checked = item.is_active == 1;
-        document.getElementById('item-show_in_summary').checked = item.show_in_summary == 1;
-        document.getElementById('item-show_chart').checked = item.show_chart == 1;
-        document.getElementById('item-sort_order').value = item.sort_order;
-
-        showModal();
-    }
-
-    function showModal() {
-        const modal = document.getElementById('itemModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        window.refreshIcons();
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('itemModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-
-    window.onclick = function(event) {
-        const modal = document.getElementById('itemModal');
-        if (event.target == modal) closeModal();
     }
 </script>
 

@@ -111,6 +111,7 @@ class NavasanService {
 
             $processed[] = [
                 'symbol' => $item['symbol'],
+                'slug' => $item['slug'] ?? $item['symbol'],
                 'name' => $item['name'],
                 'en_name' => $item['en_name'],
                 'logo' => $item['logo'],

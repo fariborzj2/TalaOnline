@@ -142,6 +142,12 @@
                      </div>
                 </div>
             </div>
+            <div class="modal-footer pd-md border-top text-center bg-secondary-05">
+                <a id="modal-details-link" href="#" class="btn btn-primary btn-sm w-full d-flex align-center just-center gap-05">
+                    <i data-lucide="line-chart" class="w-4 h-4"></i>
+                    مشاهده جزئیات بیشتر و تحلیل کامل
+                </a>
+            </div>
         </div>
     </div>
 
