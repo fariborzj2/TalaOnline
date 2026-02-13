@@ -1,6 +1,7 @@
 <div class="item-list asset-item" data-asset='<?= htmlspecialchars(json_encode([
     "symbol" => $coin["symbol"],
     "slug" => $coin["slug"] ?? $coin["symbol"],
+    "category" => $coin["category"] ?? "",
     "name" => $coin["name"],
     "price" => $coin["price"],
     "change" => $coin["change_percent"],

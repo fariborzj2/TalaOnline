@@ -1,6 +1,7 @@
 <div class="card asset-item" id="<?= $id ?? '' ?>" data-asset='<?= htmlspecialchars(json_encode([
     "symbol" => $symbol,
     "slug" => $slug ?? $symbol,
+    "category" => $category ?? "",
     "name" => $title,
     "price" => $price,
     "change" => $change,

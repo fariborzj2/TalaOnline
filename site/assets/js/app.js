@@ -42,7 +42,11 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const detailsLink = document.getElementById('modal-details-link');
         if (detailsLink) {
-            detailsLink.href = '/' + assetData.slug;
+            if (assetData.category) {
+                detailsLink.href = '/' + assetData.category + '/' + assetData.slug;
+            } else {
+                detailsLink.href = '/' + assetData.slug;
+            }
         }
 
         lucide.createIcons();
