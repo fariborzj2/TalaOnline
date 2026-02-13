@@ -26,7 +26,10 @@
             </thead>
             <tbody id="<?= $id ?? 'coins-list' ?>">
                 <?php foreach ($coins as $coin):
-                    $image = ($coin['logo'] ?? '') ?: 'assets/images/gold/' . (strpos($coin['name'] ?? '', 'نیم') !== false ? 'nim' : (strpos($coin['name'] ?? '', 'ربع') !== false ? 'rob' : 'gold')) . '.png';
+                    $image = ($coin['logo'] ?? '') ?: '/assets/images/gold/' . (strpos($coin['name'] ?? '', 'نیم') !== false ? 'nim' : (strpos($coin['name'] ?? '', 'ربع') !== false ? 'rob' : 'gold')) . '.png';
+                    if ($image && !str_starts_with($image, '/') && !str_starts_with($image, 'http')) {
+                        $image = '/' . $image;
+                    }
                 ?>
                     <tr class="asset-item" data-asset="<?= htmlspecialchars(json_encode([
                         "symbol" => $coin["symbol"],

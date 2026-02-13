@@ -5,10 +5,10 @@
                 <?php
                 $logo_path = $item['logo'];
                 if (empty($logo_path)) {
-                    $logo_path = 'assets/images/gold/' . $item['symbol'] . '.png';
+                    $logo_path = '/assets/images/gold/' . $item['symbol'] . '.png';
                 }
-                if (!str_starts_with($logo_path, 'http') && !str_starts_with($logo_path, 'assets/') && !str_starts_with($logo_path, 'uploads/')) {
-                    $logo_path = 'assets/images/gold/' . $logo_path;
+                if (!str_starts_with($logo_path, '/') && !str_starts_with($logo_path, 'http')) {
+                    $logo_path = '/' . $logo_path;
                 }
                 ?>
                 <img src="<?= htmlspecialchars($logo_path) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="w-full h-full object-contain">
