@@ -7,9 +7,9 @@
     <meta name="description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
     <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? $site_keywords ?? '') ?>">
 
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/grid.css">
-    <link rel="stylesheet" href="assets/css/font.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/grid.css">
+    <link rel="stylesheet" href="/assets/css/font.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
@@ -48,7 +48,7 @@
     ?>
     <main class="app">
         <div class="side-menu">
-            <div class="logo"><img src="assets/images/logo.svg" alt="طلا آنلاین"></div>
+            <div class="logo"><img src="/assets/images/logo.svg" alt="طلا آنلاین"></div>
             <ul>
                 <li><a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>"><i data-lucide="house" class="w-6 h-6"></i></a></li>
                 <li><a href="/calculator" class="<?= $current_path == '/calculator' ? 'active' : '' ?>"><i data-lucide="calculator" class="w-6 h-6"></i></a></li>
@@ -97,7 +97,7 @@
             <div class="modal-header d-flex just-between align-center pd-md border-bottom">
                 <div class="d-flex align-center gap-1">
                     <div class="modal-icon w-12 h-12 border radius-12 p-05 bg-secondary d-flex align-center just-center">
-                        <img id="modal-asset-icon" src="assets/images/gold/gold.png" alt="">
+                        <img id="modal-asset-icon" src="/assets/images/gold/gold.png" alt="">
                     </div>
                     <div>
                         <h2 id="modal-title" class="text-title font-size-2">---</h2>
@@ -178,7 +178,7 @@
         .asset-item { cursor: pointer; transition: transform 0.2s; }
     </style>
 
-    <script src="assets/js/charts.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="/assets/js/charts.js"></script>
+    <script src="/assets/js/app.js"></script>
 </body>
 </html>
