@@ -36,6 +36,9 @@ try {
     if (!in_array('long_description', $columns)) {
         $pdo->exec("ALTER TABLE items ADD COLUMN long_description TEXT DEFAULT NULL");
     }
+    if (!in_array('related_item_symbol', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN related_item_symbol VARCHAR(50) DEFAULT NULL");
+    }
 } catch (Exception $e) {}
 
 $message = '';

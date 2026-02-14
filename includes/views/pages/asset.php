@@ -74,6 +74,12 @@
                 <span class="text-gray font-size-0-9">کمترین (۲۴ساعته):</span>
                 <strong class="text-error ltr font-size-0-9"><?= fa_num(number_format($item['low'] ?? $item['price'])) ?></strong>
             </div>
+            <?php if (!empty($related_item)): ?>
+            <div class="d-flex just-between align-center border-top pt-1">
+                <span class="text-gray font-size-0-9"><?= htmlspecialchars($related_item['name']) ?>:</span>
+                <strong class="text-title ltr font-size-0-9"><?= fa_num(number_format($related_item['price'])) ?> تومان</strong>
+            </div>
+            <?php endif; ?>
             <div class="d-flex just-between align-center border-top pt-1">
                 <span class="text-gray font-size-0-9">آخرین بروزرسانی:</span>
                 <span class="font-size-0-8 font-bold"><?= jalali_date() ?></span>
