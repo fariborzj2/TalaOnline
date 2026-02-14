@@ -25,7 +25,7 @@
         <div class="d-flex d-column align-end">
             <div class="font-size-2-5 font-black text-title ltr">
                 <?= fa_num(number_format($item['price'])) ?>
-                <span class="font-size-1 text-gray">تومان</span>
+                <span class="font-size-2 text-gray">تومان</span>
             </div>
             <div class="d-flex align-center gap-05 mt-05" dir="ltr">
                 <?php
