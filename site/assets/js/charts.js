@@ -1,3 +1,21 @@
+let apexPromise = null;
+const loadApexCharts = () => {
+    if (window.ApexCharts) return Promise.resolve(window.ApexCharts);
+    if (apexPromise) return apexPromise;
+
+    apexPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = '/assets/js/vendor/apexcharts.js';
+        script.onload = () => resolve(window.ApexCharts);
+        script.onerror = (err) => {
+            apexPromise = null;
+            reject(err);
+        };
+        document.head.appendChild(script);
+    });
+    return apexPromise;
+};
+
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Charts script initialized');
 
@@ -123,8 +141,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 el.innerHTML = ''; // Clear "no data" message if any
             }
 
-            this.chart = new ApexCharts(el, options);
-            this.chart.render();
+            loadApexCharts().then(ApexCharts => {
+                this.chart = new ApexCharts(el, options);
+                this.chart.render();
+            });
         }
 
         async updatePeriod(days) {
