@@ -75,5 +75,12 @@
     "Recommendation": "Define explicit width/height for above-the-fold images and add missing dimension utility classes.",
     "Sample Fix": "Add width='64' height='64' and loading='eager' to hero images; add .w-16, .h-16 to grid.css.",
     "Priority": "High"
+  },
+  {
+    "Issue": "Unused JavaScript (ApexCharts)",
+    "Severity": "Critical",
+    "Recommendation": "Conditionally load and defer heavy libraries like ApexCharts.",
+    "Sample Fix": "Use dynamic Promise-based loading in charts.js and only load charts.js on routes that require it.",
+    "Priority": "High"
   }
 ]

@@ -108,6 +108,7 @@ $router->add('/', function() {
 
     return View::renderPage('home', [
         'is_home' => true,
+        'load_charts' => true,
         'site_title' => get_setting('site_title', 'طلا آنلاین'),
         'site_description' => get_setting('site_description', 'مرجع تخصصی قیمت لحظه‌ای طلا، سکه و ارز.'),
         'site_keywords' => get_setting('site_keywords', 'قیمت طلا, قیمت سکه'),
@@ -231,6 +232,7 @@ $router->add('/:category/:slug', function($params) {
 
             return View::renderPage('asset', [
                 'item' => $item_data,
+                'load_charts' => true,
                 'related_item' => $related_item,
                 'faqs' => $faqs,
                 'hide_layout_h1' => true,
@@ -289,6 +291,7 @@ $router->add('/:slug', function($params) {
 
             return View::renderPage('category', [
                 'category' => $category,
+                'load_charts' => true,
                 'items' => $items,
                 'faqs' => $faqs,
                 'page_title' => $category['page_title'] ?: $category['name'],
@@ -340,6 +343,7 @@ $router->add('/:slug', function($params) {
 
             return View::renderPage('asset', [
                 'item' => $item_data,
+                'load_charts' => true,
                 'related_item' => $related_item,
                 'faqs' => $faqs,
                 'hide_layout_h1' => true,

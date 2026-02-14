@@ -21,7 +21,6 @@
     </style>
 
     <script src="/assets/js/vendor/lucide.js" defer></script>
-    <script src="/assets/js/vendor/apexcharts.js" defer></script>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -219,7 +218,9 @@
         .asset-item { cursor: pointer; transition: transform 0.2s; }
     </style>
 
+    <?php if (!empty($load_charts)): ?>
     <script src="/assets/js/charts.js" defer></script>
+    <?php endif; ?>
     <script src="/assets/js/app.js" defer></script>
 </body>
 </html>

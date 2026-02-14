@@ -32,6 +32,7 @@ This report details the findings of an SEO audit performed on the "طلا آنل
         *   Converted all core fallback assets (gold, nim, rob) to the modern WebP format.
         *   Standardized all decorative and non-critical images with `loading="lazy"`, `decoding="async"`, and explicit dimensions to avoid layout shifts (CLS) and improve PageSpeed scores.
         *   Resolved significant Cumulative Layout Shift (CLS) on asset pages (reduced from 0.43 to < 0.1) by adding missing dimension utility classes to the global grid system and implementing explicit `width`, `height`, and `loading="eager"` attributes for above-the-fold hero images.
+        *   Implemented a sophisticated **Dynamic Script Loading** strategy for heavy libraries. ApexCharts (143KiB) is no longer loaded globally; instead, it is conditionally included only on relevant routes and further deferred via a dynamic Promise-based loader in `charts.js` that only triggers when a chart is actually rendered. This eliminated over 80KiB of unused JavaScript from the initial critical path.
         *   Updated third-party libraries (ApexCharts v4) to the latest versions to minimize legacy JavaScript transforms and improve execution speed.
 *   **Sitemap:**
     *   *Issue:* The sitemap only included the home page and used a hardcoded `localhost` URL.
