@@ -11,7 +11,7 @@
         </div>
         <div class="d-flex d-column align-end gap-1 chart-controls">
             <?php if (!empty($chart_items)): ?>
-            <div class="pill-toggle-group" id="chart-assets-toggle">
+            <div class="pill-toggle-group" id="chart-assets-toggle" <?= count($chart_items) <= 1 ? 'style="display: none;"' : '' ?>>
                 <?php foreach ($chart_items as $index => $item): ?>
                     <button class="pill-btn chart-toggle-btn <?= $index === 0 ? 'active' : '' ?>"
                             data-symbol="<?= htmlspecialchars($item['symbol']) ?>"
