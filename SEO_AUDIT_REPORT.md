@@ -25,6 +25,9 @@ This report details the findings of an SEO audit performed on the "طلا آنل
         *   Implemented an advanced font preloading strategy (preloading Regular, Medium, SemiBold, and Bold weights) to eliminate chained critical requests and improve LCP.
         *   Localized external libraries (`apexcharts.js`, `lucide.js`) to eliminate dependency on third-party CDN cache headers and reduce DNS lookup overhead.
         *   Implemented long-term browser caching via `.htaccess` (1 year for fonts/images, 1 month for JS) to speed up repeat visits and satisfy PageSpeed requirements.
+        *   Optimized image delivery by implementing lazy loading (`loading="lazy"`), asynchronous decoding (`decoding="async"`), and explicit dimension attributes across all components.
+        *   Enhanced the file upload system with automatic WebP conversion for JPG/PNG/GIF images to significantly reduce payload sizes for user-uploaded content.
+        *   Standardized all decorative and non-critical images with `loading="lazy"`, `decoding="async"`, and explicit dimensions to avoid layout shifts (CLS) and improve PageSpeed scores.
 *   **Sitemap:**
     *   *Issue:* The sitemap only included the home page and used a hardcoded `localhost` URL.
     *   *Fix:* Refactored `site/sitemap.php` to dynamically include all active categories and items with proper priorities and change frequencies.

@@ -28,6 +28,13 @@
     "Priority": "High"
   },
   {
+    "Issue": "Suboptimal Image Delivery",
+    "Severity": "Warning",
+    "Recommendation": "Implement lazy loading, async decoding, and modern image formats (WebP).",
+    "Sample Fix": "Use loading='lazy' and automatic WebP conversion on upload.",
+    "Priority": "Medium"
+  },
+  {
     "Issue": "Missing Canonical Tags",
     "Severity": "Warning",
     "Recommendation": "Add canonical tags to consolidate link equity.",
