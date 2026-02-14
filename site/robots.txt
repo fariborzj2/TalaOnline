@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-Allow: /assets/
-Disallow: /admin/
-Disallow: /api/
-Disallow: /installer.php
-
-Sitemap: /sitemap.php

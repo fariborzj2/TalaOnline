@@ -26,7 +26,7 @@ This report details the findings of an SEO audit performed on the "طلا آنل
 *   **Structured Data (JSON-LD):**
     *   *Improvement:* Added `BreadcrumbList` for all pages, `FAQPage` for pages with FAQ sections, and `FinancialProduct` for individual assets to improve Rich Snippets.
 *   **Robots.txt:**
-    *   *Fix:* Updated the Sitemap URL to be relative, ensuring it works across different domains/environments.
+    *   *Fix:* Implemented a dynamic `robots.txt` route that provides an absolute sitemap URL (required by standard specifications) using the site's base URL.
 
 ## 3. Actionable Fixes Table
 
@@ -45,7 +45,7 @@ All recommendations have been implemented in the codebase. Key files modified:
 - `includes/views/layouts/main.php`: Updated meta tags, added canonicals, Twitter cards, conditional H1 logic, and optimized script loading (defer/preconnect).
 - `includes/routes.php`: Added breadcrumbs, dynamic OG images, and H1 toggles.
 - `site/sitemap.php`: Fully refactored for dynamic crawling.
-- `site/robots.txt`: Corrected sitemap path.
+- `includes/routes.php`: Implemented dynamic `robots.txt` and sitemap routing.
 - `includes/views/pages/asset.php` & `category.php`: Added JSON-LD schemas.
 
 ---
