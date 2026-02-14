@@ -1,0 +1,37 @@
+[
+  {
+    "Issue": "Redundant H1 Tags",
+    "Severity": "Critical",
+    "Recommendation": "Ensure only one H1 tag exists per page.",
+    "Sample Fix": "Hide layout H1 if page H1 is present: <?php if (empty($hide_layout_h1)): ?><h1>...</h1><?php endif; ?>",
+    "Priority": "High"
+  },
+  {
+    "Issue": "Missing Canonical Tags",
+    "Severity": "Warning",
+    "Recommendation": "Add canonical tags to consolidate link equity.",
+    "Sample Fix": "<link rel=\"canonical\" href=\"<?= get_current_url() ?>\">",
+    "Priority": "High"
+  },
+  {
+    "Issue": "Incomplete Sitemap",
+    "Severity": "Warning",
+    "Recommendation": "Dynamically include all active categories and items.",
+    "Sample Fix": "Refactor sitemap.php to query the database and iterate through all items.",
+    "Priority": "High"
+  },
+  {
+    "Issue": "Missing Twitter Cards",
+    "Severity": "Info",
+    "Recommendation": "Add Twitter Card meta tags for better social visibility.",
+    "Sample Fix": "<meta name=\"twitter:card\" content=\"summary_large_image\">",
+    "Priority": "Medium"
+  },
+  {
+    "Issue": "Basic Structured Data",
+    "Severity": "Info",
+    "Recommendation": "Implement BreadcrumbList, FAQPage, and FinancialProduct schemas.",
+    "Sample Fix": "Add <script type=\"application/ld+json\"> blocks to relevant views.",
+    "Priority": "Medium"
+  }
+]

@@ -6,6 +6,7 @@
     <title><?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?> | قیمت لحظه‌ای طلا، سکه و ارز</title>
     <meta name="description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
     <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? $site_keywords ?? '') ?>">
+    <link rel="canonical" href="<?= get_current_url() ?>">
 
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/grid.css">
@@ -15,10 +16,18 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" ?>">
-    <meta property="og:title" content="<?= htmlspecialchars($site_title ?? '') ?> | قیمت لحظه‌ای طلا، سکه و ارز">
-    <meta property="og:description" content="<?= htmlspecialchars($site_description ?? '') ?>">
-    <meta property="og:image" content="<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]" ?>/assets/images/logo.svg">
+    <meta property="og:site_name" content="طلا آنلاین">
+    <meta property="og:url" content="<?= get_current_url() ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($site_title ?? '') ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
+    <meta property="og:image" content="<?= $og_image ?? (get_base_url() . "/assets/images/logo.svg") ?>">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="<?= get_current_url() ?>">
+    <meta name="twitter:title" content="<?= htmlspecialchars($site_title ?? '') ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
+    <meta name="twitter:image" content="<?= $og_image ?? (get_base_url() . "/assets/images/logo.svg") ?>">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -26,15 +35,37 @@
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": "<?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?>",
-      "url": "<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]" ?>",
-      "description": "<?= htmlspecialchars($site_description ?? '') ?>",
+      "url": "<?= get_base_url() ?>",
+      "description": "<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>",
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "<?= (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]" ?>/?q={search_term_string}",
+        "target": "<?= get_base_url() ?>/?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     }
     </script>
+    <?php if (isset($breadcrumbs) && is_array($breadcrumbs)): ?>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "خانه",
+          "item": "<?= get_base_url() ?>/"
+        }<?php foreach ($breadcrumbs as $i => $bc): ?>,
+        {
+          "@type": "ListItem",
+          "position": <?= $i + 2 ?>,
+          "name": "<?= htmlspecialchars($bc['name']) ?>",
+          "item": "<?= get_base_url() ?><?= $bc['url'] ?>"
+        }<?php endforeach; ?>
+      ]
+    }
+    </script>
+    <?php endif; ?>
 </head>
 <body>
     <?php
@@ -62,7 +93,11 @@
                 <div class="main-content d-column gap-md grow-8 overflow-hidden basis-700" >
                     <div class="hader">
                         <div class="d-flex-wrap gap-1 just-between align-center">
-                            <h1 class="font-size-3"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
+                            <?php if (empty($hide_layout_h1)): ?>
+                                <h1 class="font-size-3"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
+                            <?php else: ?>
+                                <div class="font-size-3 font-bold"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></div>
+                            <?php endif; ?>
                             <div class="d-flex gap-1">
                                 <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
                                     <i data-lucide="bell" class="icon-size-3"></i>
