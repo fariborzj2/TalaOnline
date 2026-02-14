@@ -6,14 +6,14 @@
     "price" => $price,
     "change" => $change,
     "change_amount" => $change_amount ?? 0,
-    "image" => $image ?? "/assets/images/gold/gold.png",
+    "image" => $image ?? "/assets/images/gold/gold.webp",
     "high" => $high ?? $price,
     "low" => $low ?? $price
 ]), ENT_QUOTES, "UTF-8") ?>'>
     <div class="d-flex just-between align-center gap-1">
         <div class="d-flex align-center gap-1 mb-1">
             <div class="w-12 h-12 border radius-12 p-05 bg-secondary">
-                <img src="<?= $image ?? '/assets/images/gold/gold.png' ?>" alt="<?= htmlspecialchars($title) ?>" decoding="async" width="40" height="40">
+                <img src="<?= $image ?? '/assets/images/gold/gold.webp' ?>" alt="<?= htmlspecialchars($title) ?>" decoding="async" width="40" height="40">
             </div>
             <div class="line-height-1-5">
                 <h2 class="font-size-2"><?= htmlspecialchars($title) ?></h2>
