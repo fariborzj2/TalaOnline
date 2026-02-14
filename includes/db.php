@@ -61,23 +61,47 @@ function set_setting($key, $value) {
 }
 
 /**
- * Handle File Uploads
+ * Handle File Uploads with WebP conversion
  */
 function handle_upload($file, $target_dir = 'uploads/') {
     if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
         return null;
     }
 
-    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = uniqid() . '.' . $extension;
-    $full_target_dir = __DIR__ . '/../site/' . $target_dir;
+    $info = getimagesize($file['tmp_name']);
+    $extension = $info ? image_type_to_extension($info[2], false) : pathinfo($file['name'], PATHINFO_EXTENSION);
 
+    $full_target_dir = __DIR__ . '/../site/' . $target_dir;
     if (!is_dir($full_target_dir)) {
         mkdir($full_target_dir, 0755, true);
     }
 
-    $target_path = $full_target_dir . $filename;
+    $filename = uniqid();
 
+    // Convert to WebP if GD is available and it's a standard image
+    if (function_exists('imagewebp') && in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) {
+        $img = null;
+        switch ($extension) {
+            case 'jpg':
+            case 'jpeg': $img = imagecreatefromjpeg($file['tmp_name']); break;
+            case 'png':  $img = imagecreatefrompng($file['tmp_name']); break;
+            case 'gif':  $img = imagecreatefromgif($file['tmp_name']); break;
+        }
+
+        if ($img) {
+            imagepalettetotruecolor($img);
+            imagealphablending($img, true);
+            imagesavealpha($img, true);
+            $filename .= '.webp';
+            imagewebp($img, $full_target_dir . $filename, 80);
+            imagedestroy($img);
+            return $target_dir . $filename;
+        }
+    }
+
+    // Fallback to original
+    $filename .= '.' . $extension;
+    $target_path = $full_target_dir . $filename;
     if (move_uploaded_file($file['tmp_name'], $target_path)) {
         return $target_dir . $filename;
     }

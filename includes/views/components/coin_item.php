@@ -12,7 +12,7 @@
 ]), ENT_QUOTES, "UTF-8") ?>'>
     <div class="d-flex align-center gap-1">
         <div class="w-10 h-10 border radius-10 p-05 bg-secondary">
-            <img src="<?= $image ?? '/assets/images/gold/gold.png' ?>" alt="<?= htmlspecialchars($coin['name']) ?>">
+            <img src="<?= $image ?? '/assets/images/gold/gold.png' ?>" alt="<?= htmlspecialchars($coin['name']) ?>" loading="lazy" decoding="async" width="32" height="32">
         </div>
         <div class="line-height-1-5">
             <h2 class="font-size-2"><?= htmlspecialchars($coin['name']) ?></h2>

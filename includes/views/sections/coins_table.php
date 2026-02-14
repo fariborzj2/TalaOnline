@@ -45,7 +45,7 @@
                     ]), ENT_QUOTES, 'UTF-8') ?>">
                         <td>
                              <div class="w-10 h-10 border radius-10 p-05 bg-secondary mg-auto">
-                                <img src="<?= $image ?>" alt="<?= htmlspecialchars($coin['name']) ?>" class="radius-8">
+                                <img src="<?= $image ?>" alt="<?= htmlspecialchars($coin['name']) ?>" class="radius-8" loading="lazy" decoding="async" width="32" height="32">
                             </div>
                         </td>
                         <td class="just-start">

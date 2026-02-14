@@ -14,7 +14,7 @@
                 <a href="<?= htmlspecialchars($item['link']) ?>" target="_blank" class="news-item d-flex gap-1 text-decoration-none group align-start">
                     <?php if (!empty($item['image'])): ?>
                         <div class="news-image radius-8 overflow-hidden flex-shrink-0">
-                            <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['title']) ?>" class="w-full h-full object-cover">
+                            <img src="<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['title']) ?>" class="w-full h-full object-cover" loading="lazy" decoding="async" width="64" height="64">
                         </div>
                     <?php endif; ?>
                     <div class="d-column gap-025 flex-1 overflow-hidden">
