@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <div class="d-flex flex-column align-end">
+        <div class="d-flex d-column align-end">
             <div class="font-size-2-5 font-black text-title ltr">
                 <?= fa_num(number_format($item['price'])) ?>
                 <span class="font-size-1 text-gray">تومان</span>
@@ -46,48 +46,47 @@
 </div>
 
 <div class="section">
-    <div class="d-flex-wrap gap-md align-stretch">
-        <div class="grow-2 basis-500">
-            <?= View::renderSection('chart', [
-                'chart_items' => [$item],
-                'title' => 'نمودار قیمت ' . $item['name'],
-                'desc' => 'نوسانات قیمت ' . $item['name'] . ' در بازه‌های زمانی مختلف',
-                'hide_stats' => true
-            ]) ?>
+    <?php if (!empty($item['description'])): ?>
+    <div class="bg-block pd-md border radius-16 shadow-sm grow-1">
+        <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
+            <i data-lucide="text-quote" class="w-5 h-5 text-primary"></i>
+            <h3 class="font-size-1 font-black">درباره این دارایی</h3>
         </div>
-        <div class="d-column gap-md grow-1 basis-300">
-            <div class="bg-block pd-md border radius-16 shadow-sm">
-                <div class="d-flex align-center gap-05 mb-15 border-bottom pb-1">
-                    <i data-lucide="info" class="w-5 h-5 text-primary"></i>
-                    <h3 class="font-size-1 font-black">اطلاعات تکمیلی</h3>
-                </div>
-                <div class="d-flex-column gap-1">
-                    <div class="d-flex just-between align-center">
-                        <span class="text-gray font-size-0-9">بیشترین (۲۴ساعته):</span>
-                        <strong class="text-success ltr font-size-0-9"><?= fa_num(number_format($item['high'] ?? $item['price'])) ?></strong>
-                    </div>
-                    <div class="d-flex just-between align-center">
-                        <span class="text-gray font-size-0-9">کمترین (۲۴ساعته):</span>
-                        <strong class="text-error ltr font-size-0-9"><?= fa_num(number_format($item['low'] ?? $item['price'])) ?></strong>
-                    </div>
-                    <div class="d-flex just-between align-center border-top pt-1 mt-05">
-                        <span class="text-gray font-size-0-9">آخرین بروزرسانی:</span>
-                        <span class="font-size-0-8 font-bold"><?= jalali_date() ?></span>
-                    </div>
-                </div>
-            </div>
+        <p class="font-size-0-9 line-height-1-8 text-justify">
+            <?= htmlspecialchars($item['description']) ?>
+        </p>
+    </div>
+    <?php endif; ?>
+</div>
 
-            <?php if (!empty($item['description'])): ?>
-            <div class="bg-block pd-md border radius-16 shadow-sm grow-1">
-                <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
-                    <i data-lucide="text-quote" class="w-5 h-5 text-primary"></i>
-                    <h3 class="font-size-1 font-black">درباره این دارایی</h3>
-                </div>
-                <p class="font-size-0-9 line-height-1-8 text-justify">
-                    <?= htmlspecialchars($item['description']) ?>
-                </p>
+<div class="section">
+    <?= View::renderSection('chart', [
+        'chart_items' => [$item],
+        'title' => 'نمودار قیمت ' . $item['name'],
+        'desc' => 'نوسانات قیمت ' . $item['name'] . ' در بازه‌های زمانی مختلف',
+        'hide_stats' => true
+    ]) ?>
+</div>
+
+<div class="section">
+    <div class="bg-block pd-md border radius-16 shadow-sm">
+        <div class="d-flex align-center gap-05 mb-15 border-bottom pb-1">
+            <i data-lucide="info" class="w-5 h-5 text-primary"></i>
+            <h3 class="font-size-1 font-black">اطلاعات تکمیلی</h3>
+        </div>
+        <div class="d-d-column gap-1">
+            <div class="d-flex just-between align-center">
+                <span class="text-gray font-size-0-9">بیشترین (۲۴ساعته):</span>
+                <strong class="text-success ltr font-size-0-9"><?= fa_num(number_format($item['high'] ?? $item['price'])) ?></strong>
             </div>
-            <?php endif; ?>
+            <div class="d-flex just-between align-center">
+                <span class="text-gray font-size-0-9">کمترین (۲۴ساعته):</span>
+                <strong class="text-error ltr font-size-0-9"><?= fa_num(number_format($item['low'] ?? $item['price'])) ?></strong>
+            </div>
+            <div class="d-flex just-between align-center border-top pt-1 mt-05">
+                <span class="text-gray font-size-0-9">آخرین بروزرسانی:</span>
+                <span class="font-size-0-8 font-bold"><?= jalali_date() ?></span>
+            </div>
         </div>
     </div>
 </div>

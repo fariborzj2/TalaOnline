@@ -9,7 +9,7 @@
                 <span class="font-size-0-9 chart-section-desc"><?= $desc ?? 'نوسانات قیمت طلا در بازه‌های زمانی مختلف' ?></span>
             </div>
         </div>
-        <div class="d-flex flex-column align-end gap-1 chart-controls">
+        <div class="d-flex d-column align-end gap-1 chart-controls">
             <?php if (!empty($chart_items)): ?>
             <div class="pill-toggle-group" id="chart-assets-toggle">
                 <?php foreach ($chart_items as $index => $item): ?>
