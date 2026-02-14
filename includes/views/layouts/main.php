@@ -89,10 +89,10 @@
         <div class="side-menu">
             <div class="logo"><img src="/assets/images/logo.svg" alt="طلا آنلاین"></div>
             <ul>
-                <li><a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>"><i data-lucide="house" class="w-6 h-6"></i></a></li>
-                <li><a href="/calculator" class="<?= $current_path == '/calculator' ? 'active' : '' ?>"><i data-lucide="calculator" class="w-6 h-6"></i></a></li>
-                <li><a href="/about-us" class="<?= $current_path == '/about-us' ? 'active' : '' ?>"><i data-lucide="book-open-text" class="w-6 h-6"></i></a></li>
-                <li><a href="/feedback" class="<?= $current_path == '/feedback' ? 'active' : '' ?>"><i data-lucide="message-square-more" class="w-6 h-6"></i></a></li>
+                <li><a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>" aria-label="خانه"><i data-lucide="house" class="w-6 h-6"></i></a></li>
+                <li><a href="/calculator" class="<?= $current_path == '/calculator' ? 'active' : '' ?>" aria-label="ماشین حساب"><i data-lucide="calculator" class="w-6 h-6"></i></a></li>
+                <li><a href="/about-us" class="<?= $current_path == '/about-us' ? 'active' : '' ?>" aria-label="درباره ما"><i data-lucide="book-open-text" class="w-6 h-6"></i></a></li>
+                <li><a href="/feedback" class="<?= $current_path == '/feedback' ? 'active' : '' ?>" aria-label="ارسال بازخورد"><i data-lucide="message-square-more" class="w-6 h-6"></i></a></li>
             </ul>
         </div>
 
@@ -136,15 +136,15 @@
         <div class="modal-content bg-block radius-16 shadow-lg">
             <div class="modal-header d-flex just-between align-center pd-md border-bottom">
                 <div class="d-flex align-center gap-1">
-                    <div class="modal-icon w-12 h-12 border radius-12 p-05 bg-secondary d-flex align-center just-center">
-                        <img id="modal-asset-icon" src="/assets/images/gold/gold.png" alt="">
+                    <div class="modal-icon w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
+                        <img id="modal-asset-icon" src="/assets/images/gold/gold.png" alt="" width="30" height="30" class="object-contain">
                     </div>
                     <div>
                         <h2 id="modal-title" class="text-title font-size-2">---</h2>
                         <span id="modal-symbol" class="text-gray font-size-0-9">---</span>
                     </div>
                 </div>
-                <button id="close-modal" class="btn btn-secondary btn-sm radius-10">
+                <button id="close-modal" class="btn btn-secondary btn-sm radius-10" aria-label="بستن">
                     <i data-lucide="x" class="icon-size-4"></i>
                 </button>
             </div>
