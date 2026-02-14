@@ -7,6 +7,13 @@
     "Priority": "High"
   },
   {
+    "Issue": "Render-Blocking Assets",
+    "Severity": "Critical",
+    "Recommendation": "Defer non-critical JS and inline critical CSS to improve LCP and FCP.",
+    "Sample Fix": "Add 'defer' to scripts and inline CSS: <style><?php include 'style.css'; ?></style>",
+    "Priority": "High"
+  },
+  {
     "Issue": "Missing Canonical Tags",
     "Severity": "Warning",
     "Recommendation": "Add canonical tags to consolidate link equity.",

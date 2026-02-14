@@ -10,10 +10,16 @@
 
     <link rel="preconnect" href="https://unpkg.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Bold.woff2" as="font" type="font/woff2" crossorigin>
 
-    <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/grid.css">
-    <link rel="stylesheet" href="/assets/css/font.css">
+    <style>
+        /* CSS Inlining for Performance */
+        <?php echo file_get_contents(__DIR__ . '/../../../site/assets/css/font.css'); ?>
+        <?php echo file_get_contents(__DIR__ . '/../../../site/assets/css/grid.css'); ?>
+        <?php echo file_get_contents(__DIR__ . '/../../../site/assets/css/style.css'); ?>
+    </style>
+
     <script src="https://unpkg.com/lucide@latest" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
 

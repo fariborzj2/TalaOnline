@@ -18,8 +18,12 @@ This report details the findings of an SEO audit performed on the "طلا آنل
 
 ### Technical SEO
 *   **Performance Optimization (PageSpeed):**
-    *   *Issue:* External JS libraries (Lucide, ApexCharts) were render-blocking in the `<head>`, causing significant delays (est. 2.4s).
-    *   *Fix:* Added `defer` attribute to all external and internal scripts. Added `preconnect` hints for CDNs to reduce connection overhead.
+    *   *Issue:* External JS libraries (Lucide, ApexCharts) and multiple CSS files (`style.css`, `grid.css`, `font.css`) were render-blocking in the `<head>`, causing significant delays (est. 2.4s for JS and 1.1s for CSS).
+    *   *Fix:*
+        *   Added `defer` attribute to all external and internal scripts.
+        *   Inlined all critical CSS (`font.css`, `grid.css`, `style.css`) directly into the HTML to eliminate render-blocking network requests.
+        *   Added `link rel="preload"` for primary font files to improve First Contentful Paint (FCP).
+        *   Added `preconnect` hints for CDNs to reduce connection overhead.
 *   **Sitemap:**
     *   *Issue:* The sitemap only included the home page and used a hardcoded `localhost` URL.
     *   *Fix:* Refactored `site/sitemap.php` to dynamically include all active categories and items with proper priorities and change frequencies.
@@ -33,6 +37,7 @@ This report details the findings of an SEO audit performed on the "طلا آنل
 | Issue | Severity | Recommendation | Priority |
 | :--- | :--- | :--- | :--- |
 | **Redundant H1 Tags** | Critical | Ensure only one H1 tag exists per page to avoid confusing search engines. | High |
+| **Render-Blocking Assets** | Critical | Defer non-critical JS and inline critical CSS to improve LCP and FCP. | High |
 | **Incomplete Sitemap** | Warning | Dynamically list all assets and categories to ensure they are crawled. | High |
 | **Missing Canonical Tags** | Warning | Prevent duplicate content issues by explicitly stating the preferred URL. | High |
 | **Missing Twitter Cards** | Info | Enhance social media visibility with dedicated Twitter metadata. | Medium |
@@ -42,7 +47,7 @@ This report details the findings of an SEO audit performed on the "طلا آنل
 ## 4. Implementation Details
 All recommendations have been implemented in the codebase. Key files modified:
 - `includes/helpers.php`: Added `get_base_url()` and `get_current_url()`.
-- `includes/views/layouts/main.php`: Updated meta tags, added canonicals, Twitter cards, conditional H1 logic, and optimized script loading (defer/preconnect).
+- `includes/views/layouts/main.php`: Updated meta tags, added canonicals, Twitter cards, conditional H1 logic, and optimized asset delivery (JS defer, CSS inlining, font preloading).
 - `includes/routes.php`: Added breadcrumbs, dynamic OG images, and H1 toggles.
 - `site/sitemap.php`: Fully refactored for dynamic crawling.
 - `includes/routes.php`: Implemented dynamic `robots.txt` and sitemap routing.
