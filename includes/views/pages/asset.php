@@ -38,7 +38,7 @@
                     <?= $change_val >= 0 ? '+' : '' ?><?= fa_num(abs($change_val)) ?>%
                 </span>
                 <span class="font-size-0-9 text-gray">
-                    <?= fa_num(number_format(abs($item['change_amount'] ?? 0))) ?>
+                    <?= $change_val >= 0 ? '+' : '-' ?><?= fa_num(number_format(abs($item['change_amount'] ?? 0))) ?>
                 </span>
             </div>
         </div>
