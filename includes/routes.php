@@ -204,8 +204,17 @@ $router->add('/:category/:slug', function($params) {
                 $item_data = $item_db;
             }
 
+            // Fetch FAQs
+            $faqs = [];
+            try {
+                $stmt = $pdo->prepare("SELECT * FROM item_faqs WHERE item_id = ? ORDER BY sort_order ASC");
+                $stmt->execute([$item_db['id']]);
+                $faqs = $stmt->fetchAll();
+            } catch (Exception $e) {}
+
             return View::renderPage('asset', [
                 'item' => $item_data,
+                'faqs' => $faqs,
                 'page_title' => $item_data['page_title'] ?: $item_data['name'],
                 'h1_title' => $item_data['h1_title'] ?: $item_data['name'],
                 'meta_description' => $item_data['meta_description'],
@@ -286,8 +295,17 @@ $router->add('/:slug', function($params) {
                 $item_data = $item_db; // Fallback to DB data if API data not found
             }
 
+            // Fetch FAQs
+            $faqs = [];
+            try {
+                $stmt = $pdo->prepare("SELECT * FROM item_faqs WHERE item_id = ? ORDER BY sort_order ASC");
+                $stmt->execute([$item_db['id']]);
+                $faqs = $stmt->fetchAll();
+            } catch (Exception $e) {}
+
             return View::renderPage('asset', [
                 'item' => $item_data,
+                'faqs' => $faqs,
                 'page_title' => $item_data['page_title'] ?: $item_data['name'],
                 'h1_title' => $item_data['h1_title'] ?: $item_data['name'],
                 'meta_description' => $item_data['meta_description'],
