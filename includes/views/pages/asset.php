@@ -27,7 +27,7 @@
                 <?= fa_num(number_format($item['price'])) ?>
                 <span class="font-size-1 text-gray">تومان</span>
             </div>
-            <div class="d-flex align-center gap-05 mt-05">
+            <div class="d-flex align-center gap-05 mt-05" dir="ltr">
                 <?php
                 $change_val = $item['change_percent'] ?? 0;
                 $change_class = $change_val >= 0 ? 'text-success' : 'text-error';
@@ -38,7 +38,7 @@
                     <?= $change_val >= 0 ? '+' : '' ?><?= fa_num(abs($change_val)) ?>%
                 </span>
                 <span class="font-size-0-9 text-gray ltr">
-                    (<?= fa_num(number_format(abs($item['change_amount'] ?? 0))) ?>)
+                    <?= fa_num(number_format(abs($item['change_amount'] ?? 0))) ?>
                 </span>
             </div>
         </div>
@@ -91,8 +91,6 @@
         'hide_stats' => true
     ]) ?>
 </div>
-
-
 
 <?php if (!empty($item['long_description'])): ?>
 <div class="section">
