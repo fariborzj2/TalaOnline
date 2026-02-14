@@ -274,4 +274,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     await initApp();
     enhanceContent();
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
 });

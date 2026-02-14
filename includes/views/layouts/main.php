@@ -8,11 +8,14 @@
     <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? $site_keywords ?? '') ?>">
     <link rel="canonical" href="<?= get_current_url() ?>">
 
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/grid.css">
     <link rel="stylesheet" href="/assets/css/font.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -123,9 +126,6 @@
         </div>
     </main>
 
-    <script>
-        lucide.createIcons();
-    </script>
     <!-- Detail Modal -->
     <div id="detail-modal" class="modal-overlay d-none">
         <div class="modal-content bg-block radius-16 shadow-lg">
@@ -213,7 +213,7 @@
         .asset-item { cursor: pointer; transition: transform 0.2s; }
     </style>
 
-    <script src="/assets/js/charts.js"></script>
-    <script src="/assets/js/app.js"></script>
+    <script src="/assets/js/charts.js" defer></script>
+    <script src="/assets/js/app.js" defer></script>
 </body>
 </html>
