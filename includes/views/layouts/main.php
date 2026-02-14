@@ -87,7 +87,7 @@
     ?>
     <main class="app">
         <div class="side-menu">
-            <div class="logo"><img src="/assets/images/logo.svg" alt="طلا آنلاین"></div>
+            <div class="logo"><img src="/assets/images/logo.svg" alt="طلا آنلاین" width="30" height="35"></div>
             <ul>
                 <li><a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>" aria-label="خانه"><i data-lucide="house" class="w-6 h-6"></i></a></li>
                 <li><a href="/calculator" class="<?= $current_path == '/calculator' ? 'active' : '' ?>" aria-label="ماشین حساب"><i data-lucide="calculator" class="w-6 h-6"></i></a></li>
