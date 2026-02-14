@@ -23,21 +23,21 @@
         </div>
 
         <div class="d-flex d-column align-end">
-            <div class="font-size-2-5 font-black text-title ltr">
-                <?= fa_num(number_format($item['price'])) ?>
+            <div class="font-black ltr">
+                <span class="font-size-4 text-title font-bold"><?= fa_num(number_format($item['price'])) ?></span>
                 <span class="font-size-2 text-gray">تومان</span>
             </div>
-            <div class="d-flex align-center gap-05 mt-05" dir="ltr">
+            <div class="d-flex align-center gap-05 ltr">
                 <?php
                 $change_val = $item['change_percent'] ?? 0;
                 $change_class = $change_val >= 0 ? 'text-success' : 'text-error';
                 $change_icon = $change_val >= 0 ? 'trending-up' : 'trending-down';
                 ?>
-                <span class="font-size-1 font-bold <?= $change_class ?> ltr d-flex align-center gap-025">
+                <span class="font-size-1 font-bold <?= $change_class ?> d-flex align-center gap-025">
                     <i data-lucide="<?= $change_icon ?>" class="w-4 h-4"></i>
                     <?= $change_val >= 0 ? '+' : '' ?><?= fa_num(abs($change_val)) ?>%
                 </span>
-                <span class="font-size-0-9 text-gray ltr">
+                <span class="font-size-0-9 text-gray">
                     <?= fa_num(number_format(abs($item['change_amount'] ?? 0))) ?>
                 </span>
             </div>

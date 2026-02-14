@@ -698,6 +698,9 @@
 .pointer {
     cursor: pointer
 }
+.ltr {
+    direction: ltr;
+}
 /* ================= Table Container ================= */
 .table-box {
   position: relative;
