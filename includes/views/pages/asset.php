@@ -23,7 +23,7 @@
         </div>
 
         <div class="d-flex d-column align-end">
-            <div class="font-black ltr">
+            <div class="font-black">
                 <span class="font-size-4 text-title font-bold"><?= fa_num(number_format($item['price'])) ?></span>
                 <span class="font-size-2 text-gray">تومان</span>
             </div>
