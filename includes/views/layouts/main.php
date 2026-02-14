@@ -89,10 +89,10 @@
         <div class="side-menu">
             <div class="logo"><img src="/assets/images/logo.svg" alt="طلا آنلاین"></div>
             <ul>
-                <li><a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>"><i data-lucide="house" class="w-6 h-6"></i></a></li>
-                <li><a href="/calculator" class="<?= $current_path == '/calculator' ? 'active' : '' ?>"><i data-lucide="calculator" class="w-6 h-6"></i></a></li>
-                <li><a href="/about-us" class="<?= $current_path == '/about-us' ? 'active' : '' ?>"><i data-lucide="book-open-text" class="w-6 h-6"></i></a></li>
-                <li><a href="/feedback" class="<?= $current_path == '/feedback' ? 'active' : '' ?>"><i data-lucide="message-square-more" class="w-6 h-6"></i></a></li>
+                <li><a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>" aria-label="خانه"><i data-lucide="house" class="w-6 h-6"></i></a></li>
+                <li><a href="/calculator" class="<?= $current_path == '/calculator' ? 'active' : '' ?>" aria-label="ماشین حساب"><i data-lucide="calculator" class="w-6 h-6"></i></a></li>
+                <li><a href="/about-us" class="<?= $current_path == '/about-us' ? 'active' : '' ?>" aria-label="درباره ما"><i data-lucide="book-open-text" class="w-6 h-6"></i></a></li>
+                <li><a href="/feedback" class="<?= $current_path == '/feedback' ? 'active' : '' ?>" aria-label="ارسال بازخورد"><i data-lucide="message-square-more" class="w-6 h-6"></i></a></li>
             </ul>
         </div>
 
@@ -144,7 +144,7 @@
                         <span id="modal-symbol" class="text-gray font-size-0-9">---</span>
                     </div>
                 </div>
-                <button id="close-modal" class="btn btn-secondary btn-sm radius-10">
+                <button id="close-modal" class="btn btn-secondary btn-sm radius-10" aria-label="بستن">
                     <i data-lucide="x" class="icon-size-4"></i>
                 </button>
             </div>
