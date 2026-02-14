@@ -17,6 +17,9 @@ This report details the findings of an SEO audit performed on the "طلا آنل
     *   *Improvement:* Centralized URL generation to ensure consistency.
 
 ### Technical SEO
+*   **Performance Optimization (PageSpeed):**
+    *   *Issue:* External JS libraries (Lucide, ApexCharts) were render-blocking in the `<head>`, causing significant delays (est. 2.4s).
+    *   *Fix:* Added `defer` attribute to all external and internal scripts. Added `preconnect` hints for CDNs to reduce connection overhead.
 *   **Sitemap:**
     *   *Issue:* The sitemap only included the home page and used a hardcoded `localhost` URL.
     *   *Fix:* Refactored `site/sitemap.php` to dynamically include all active categories and items with proper priorities and change frequencies.
@@ -39,7 +42,7 @@ This report details the findings of an SEO audit performed on the "طلا آنل
 ## 4. Implementation Details
 All recommendations have been implemented in the codebase. Key files modified:
 - `includes/helpers.php`: Added `get_base_url()` and `get_current_url()`.
-- `includes/views/layouts/main.php`: Updated meta tags, added canonicals, Twitter cards, and conditional H1 logic.
+- `includes/views/layouts/main.php`: Updated meta tags, added canonicals, Twitter cards, conditional H1 logic, and optimized script loading (defer/preconnect).
 - `includes/routes.php`: Added breadcrumbs, dynamic OG images, and H1 toggles.
 - `site/sitemap.php`: Fully refactored for dynamic crawling.
 - `site/robots.txt`: Corrected sitemap path.
