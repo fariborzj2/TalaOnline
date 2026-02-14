@@ -33,6 +33,7 @@
         <div id="chart"></div>
     </div>
 
+    <?php if (!isset($hide_stats) || !$hide_stats): ?>
     <div class="d-flex-wrap just-between mt-1 pt-1 border-top">
          <div class="d-flex gap-1">
              <span class="text-gray">بالاترین قیمت (۲۴ساعته):</span>
@@ -43,4 +44,5 @@
              <strong class="text-error chart-low-price">---</strong>
          </div>
     </div>
+    <?php endif; ?>
 </div>

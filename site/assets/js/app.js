@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // --- Search & Dashboard Data ---
     const fetchData = async () => {
         try {
-            const response = await fetch('api/dashboard.php');
+            const response = await fetch('/api/dashboard.php');
             if (!response.ok) throw new Error('Failed to fetch dashboard data');
             return await response.json();
         } catch (error) {
