@@ -136,13 +136,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return;
             }
 
-            if (this.chart) {
-                this.chart.destroy();
-                el.innerHTML = ''; // Clear "no data" message if any
-            }
-
             loadApexCharts().then(ApexCharts => {
                 requestAnimationFrame(() => {
+                    if (this.chart) {
+                        this.chart.destroy();
+                    }
+                    el.innerHTML = ''; // Clear existing chart or "no data" message
                     this.chart = new ApexCharts(el, options);
                     this.chart.render();
                 });

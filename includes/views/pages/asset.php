@@ -68,7 +68,7 @@
     <div class="bg-block pd-md border radius-16 grow-1">
         <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
             <i data-lucide="text-quote" class="w-5 h-5 text-primary"></i>
-            <h3 class="font-size-1 font-black">درباره این دارایی</h3>
+            <h2 class="font-size-2 font-black">درباره این دارایی</h2>
         </div>
         <div class="content-text font-size-0-9 line-height-1-8 text-justify">
             <?= $item['description'] ?>
@@ -81,7 +81,7 @@
     <div class="bg-block pd-md border radius-16">
         <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
             <i data-lucide="info" class="w-5 h-5 text-primary"></i>
-            <h3 class="font-size-1 font-black">اطلاعات تکمیلی</h3>
+            <h2 class="font-size-2 font-black">اطلاعات تکمیلی</h2>
         </div>
         <div class="d-column gap-1">
             <div class="d-flex just-between align-center">

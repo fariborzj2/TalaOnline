@@ -2,7 +2,7 @@
     <div class="d-flex align-center just-between mb-05">
         <div class="d-flex align-center gap-05">
             <i data-lucide="newspaper" class="text-primary icon-size-4"></i>
-            <h3 class="font-size-2 font-bold">اخبار روز</h3>
+            <h2 class="font-size-2 font-bold">اخبار روز</h2>
         </div>
     </div>
 
@@ -25,7 +25,7 @@
                     <?php endif; ?>
                     <div class="d-column gap-025 flex-1 overflow-hidden">
                         <span class="d-flex text-gray font-size-0-8 gap-05 font-medium"><span><?= htmlspecialchars($item['source']) ?></span> • <span><?= jalali_date($item['pubDate']) ?></span></span>
-                        <h4 class="font-size-1 text-title line-height-1-5 ellipsis-x"><?= htmlspecialchars($item['title']) ?></h4>
+                        <h3 class="font-size-1 text-title line-height-1-5 ellipsis-x"><?= htmlspecialchars($item['title']) ?></h3>
                     </div>
                 </a>
                 <?php if ($index < count($news) - 1): ?>
