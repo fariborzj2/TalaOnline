@@ -14,6 +14,13 @@
     "Priority": "High"
   },
   {
+    "Issue": "Chained Critical Requests (Fonts)",
+    "Severity": "Warning",
+    "Recommendation": "Preload multiple font weights to break dependency chains.",
+    "Sample Fix": "<link rel=\"preload\" href=\"font.woff2\" as=\"font\" type=\"font/woff2\" crossorigin>",
+    "Priority": "High"
+  },
+  {
     "Issue": "Inefficient Cache Lifetimes",
     "Severity": "Warning",
     "Recommendation": "Implement long-term browser caching for static assets.",

@@ -22,7 +22,7 @@ This report details the findings of an SEO audit performed on the "طلا آنل
     *   *Fix:*
         *   Added `defer` attribute to all external and internal scripts.
         *   Inlined all critical CSS (`font.css`, `grid.css`, `style.css`) directly into the HTML to eliminate render-blocking network requests.
-        *   Added `link rel="preload"` for primary font files to improve First Contentful Paint (FCP).
+        *   Implemented an advanced font preloading strategy (preloading Regular, Medium, SemiBold, and Bold weights) to eliminate chained critical requests and improve LCP.
         *   Added `preconnect` hints for CDNs to reduce connection overhead.
         *   Implemented long-term browser caching via `.htaccess` (1 year for fonts/images, 1 month for JS) to speed up repeat visits.
 *   **Sitemap:**
