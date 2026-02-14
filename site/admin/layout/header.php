@@ -135,7 +135,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         }
         .toggle-dot::after {
             content: '';
-            @apply absolute top-[2px] right-[2px] bg-white rounded-full h-4 w-4 transition-all duration-300 shadow-sm border border-slate-200;
+            @apply absolute top-[2px] right-[2px] bg-white rounded-full h-4 w-4 transition-all duration-300  border border-slate-200;
         }
         .peer:checked ~ .toggle-dot {
             @apply bg-indigo-600;

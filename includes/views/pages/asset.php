@@ -1,7 +1,7 @@
 <div class="section">
-    <div class="bg-block pd-md border radius-16 d-flex-wrap align-center just-between gap-1 shadow-sm">
+    <div class="bg-block pd-md border radius-16 d-flex-wrap align-center just-between gap-1 ">
         <div class="d-flex align-center gap-1">
-            <div class="w-16 h-16 border radius-16 p-05 bg-white d-flex align-center just-center shadow-sm shrink-0">
+            <div class="w-16 h-16 border radius-16 p-05 bg-white d-flex align-center just-center  shrink-0">
                 <?php
                 $logo_path = $item['logo'];
                 if (empty($logo_path)) {
@@ -48,7 +48,7 @@
 <?php if (!empty($item['description'])): ?>
 <div class="section">
     
-    <div class="bg-block pd-md border radius-16 shadow-sm grow-1">
+    <div class="bg-block pd-md border radius-16  grow-1">
         <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
             <i data-lucide="text-quote" class="w-5 h-5 text-primary"></i>
             <h3 class="font-size-1 font-black">درباره این دارایی</h3>
@@ -61,12 +61,12 @@
 <?php endif; ?>
 
 <div class="section">
-    <div class="bg-block pd-md border radius-16 shadow-sm">
-        <div class="d-flex align-center gap-05 mb-15 border-bottom pb-1">
+    <div class="bg-block pd-md border radius-16">
+        <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
             <i data-lucide="info" class="w-5 h-5 text-primary"></i>
             <h3 class="font-size-1 font-black">اطلاعات تکمیلی</h3>
         </div>
-        <div class="d-d-column gap-1">
+        <div class="d-column gap-1">
             <div class="d-flex just-between align-center">
                 <span class="text-gray font-size-0-9">بیشترین (۲۴ساعته):</span>
                 <strong class="text-success ltr font-size-0-9"><?= fa_num(number_format($item['high'] ?? $item['price'])) ?></strong>
@@ -75,7 +75,7 @@
                 <span class="text-gray font-size-0-9">کمترین (۲۴ساعته):</span>
                 <strong class="text-error ltr font-size-0-9"><?= fa_num(number_format($item['low'] ?? $item['price'])) ?></strong>
             </div>
-            <div class="d-flex just-between align-center border-top pt-1 mt-05">
+            <div class="d-flex just-between align-center border-top pt-1 mt-1">
                 <span class="text-gray font-size-0-9">آخرین بروزرسانی:</span>
                 <span class="font-size-0-8 font-bold"><?= jalali_date() ?></span>
             </div>
@@ -96,9 +96,9 @@
 
 <?php if (!empty($item['long_description'])): ?>
 <div class="section">
-    <div class="bg-block pd-md border radius-16 shadow-sm">
+    <div class="bg-block pd-md border radius-16 ">
         <div class="d-flex align-center gap-1 pb-1 mb-2 border-bottom">
-            <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center shadow-sm">
+            <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center ">
                 <i data-lucide="file-text" color="var(--color-primary)" class="w-6 h-6"></i>
             </div>
             <h2 class="font-size-2 font-black">تحلیل و بررسی <?= $item['name'] ?></h2>
