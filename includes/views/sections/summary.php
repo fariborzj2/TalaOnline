@@ -9,7 +9,7 @@
             'price' => $gold_data['price'] ?? 0,
             'change' => $gold_data['change_percent'] ?? 0,
             'change_amount' => $gold_data['change_amount'] ?? 0,
-            'image' => '/assets/images/gold/gold.png'
+            'image' => 'assets/images/gold/gold.webp'
         ]) ?>
 
         <?= View::renderComponent('price_card', [
@@ -21,7 +21,7 @@
             'price' => $silver_data['price'] ?? 0,
             'change' => $silver_data['change_percent'] ?? 0,
             'change_amount' => $silver_data['change_amount'] ?? 0,
-            'image' => '/assets/images/gold/gold.png'
+            'image' => 'assets/images/gold/gold.webp'
         ]) ?>
     <?php else: ?>
         <?php foreach ($coins as $coin): ?>
@@ -33,7 +33,7 @@
             'price' => $coin['price'],
             'change' => $coin['change_percent'],
             'change_amount' => $coin['change_amount'] ?? 0,
-            'image' => ($coin['logo'] ?? '') ?: '/assets/images/gold/' . (strpos($coin['name'], 'نیم') !== false ? 'nim' : (strpos($coin['name'], 'ربع') !== false ? 'rob' : 'gold')) . '.png'
+            'image' => ($coin['logo'] ?? '') ?: 'assets/images/gold/' . (strpos($coin['name'], 'نیم') !== false ? 'nim' : (strpos($coin['name'], 'ربع') !== false ? 'rob' : 'gold')) . '.webp'
         ]) ?>
         <?php endforeach; ?>
     <?php endif; ?>

@@ -26,10 +26,8 @@
             </thead>
             <tbody id="<?= $id ?? 'coins-list' ?>">
                 <?php foreach ($coins as $coin):
-                    $image = ($coin['logo'] ?? '') ?: '/assets/images/gold/' . (strpos($coin['name'] ?? '', 'نیم') !== false ? 'nim' : (strpos($coin['name'] ?? '', 'ربع') !== false ? 'rob' : 'gold')) . '.webp';
-                    if ($image && !str_starts_with($image, '/') && !str_starts_with($image, 'http')) {
-                        $image = '/' . $image;
-                    }
+                    $image_path = ($coin['logo'] ?? '') ?: 'assets/images/gold/' . (strpos($coin['name'] ?? '', 'نیم') !== false ? 'nim' : (strpos($coin['name'] ?? '', 'ربع') !== false ? 'rob' : 'gold')) . '.webp';
+                    $image = get_asset_url($image_path);
                 ?>
                     <tr class="asset-item" data-asset="<?= htmlspecialchars(json_encode([
                         "symbol" => $coin["symbol"],

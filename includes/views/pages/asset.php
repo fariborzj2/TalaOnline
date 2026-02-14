@@ -25,13 +25,11 @@
                 <?php
                 $logo_path = $item['logo'];
                 if (empty($logo_path)) {
-                    $logo_path = '/assets/images/gold/' . $item['symbol'] . '.png';
+                    $logo_path = 'assets/images/gold/' . $item['symbol'] . '.webp';
                 }
-                if (!str_starts_with($logo_path, '/') && !str_starts_with($logo_path, 'http')) {
-                    $logo_path = '/' . $logo_path;
-                }
+                $image = get_asset_url($logo_path);
                 ?>
-                <img src="<?= htmlspecialchars($logo_path) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="object-contain" width="32" height="32" loading="eager" decoding="async">
+                <img src="<?= htmlspecialchars($image) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="object-contain" width="32" height="32" loading="eager" decoding="async">
             </div>
             <div>
                 <h1 class="font-size-2 font-black text-title"><?= htmlspecialchars($h1_title) ?></h1>

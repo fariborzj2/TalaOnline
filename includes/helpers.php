@@ -51,3 +51,27 @@ function get_base_url() {
 function get_current_url() {
     return get_base_url() . $_SERVER['REQUEST_URI'];
 }
+
+/**
+ * Returns optimized asset URL (prefers WebP)
+ */
+function get_asset_url($path) {
+    if (empty($path)) return '/assets/images/gold/gold.webp';
+
+    if (str_starts_with($path, 'http')) return $path;
+
+    $clean_path = ltrim($path, '/');
+    $ext = pathinfo($clean_path, PATHINFO_EXTENSION);
+
+    if (strtolower($ext) === 'webp') {
+        return '/' . $clean_path;
+    }
+
+    // Check if webp exists
+    $webp_path = preg_replace('/\.(png|jpg|jpeg)$/i', '.webp', $clean_path);
+    if (file_exists(__DIR__ . '/../site/' . $webp_path)) {
+        return '/' . $webp_path;
+    }
+
+    return '/' . $clean_path;
+}

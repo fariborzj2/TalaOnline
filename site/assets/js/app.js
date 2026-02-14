@@ -49,7 +49,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         }
 
-        lucide.createIcons();
+        if (window.lucide) {
+            window.lucide.createIcons({
+                attrs: { 'data-lucide': true },
+                root: modal
+            });
+        }
         modal.classList.remove('d-none');
 
         // Initialize Chart
@@ -171,7 +176,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                 </td>
             </tr>
         `;}).join('');
-        lucide.createIcons();
+        if (window.lucide) {
+            window.lucide.createIcons({
+                attrs: { 'data-lucide': true },
+                root: tbody
+            });
+        }
     };
 
     const initSearch = () => {
@@ -266,7 +276,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
                     tocContainer.appendChild(tocList);
                     tocPlaceholder.appendChild(tocContainer);
-                    lucide.createIcons();
+            if (window.lucide) {
+                window.lucide.createIcons({
+                    attrs: { 'data-lucide': true },
+                    root: tocContainer
+                });
+            }
                 }
             }
         });

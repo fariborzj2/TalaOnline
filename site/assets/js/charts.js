@@ -5,7 +5,7 @@ const loadApexCharts = () => {
 
     apexPromise = new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = '/assets/js/vendor/apexcharts.js';
+        script.src = '/assets/js/vendor/apexcharts.min.js';
         script.onload = () => resolve(window.ApexCharts);
         script.onerror = (err) => {
             apexPromise = null;
@@ -142,8 +142,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             loadApexCharts().then(ApexCharts => {
-                this.chart = new ApexCharts(el, options);
-                this.chart.render();
+                requestAnimationFrame(() => {
+                    this.chart = new ApexCharts(el, options);
+                    this.chart.render();
+                });
             });
         }
 

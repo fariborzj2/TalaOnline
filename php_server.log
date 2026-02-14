@@ -1,48 +1,92 @@
-[Sat Feb 14 15:42:49 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Sat Feb 14 15:42:54 2026] [::1]:55602 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55602 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55604 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55618 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55624 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55630 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55632 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55604 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2
-[Sat Feb 14 15:42:54 2026] [::1]:55618 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2
-[Sat Feb 14 15:42:54 2026] [::1]:55624 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2
-[Sat Feb 14 15:42:54 2026] [::1]:55630 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2
-[Sat Feb 14 15:42:54 2026] [::1]:55632 [200]: GET /assets/images/logo.svg
-[Sat Feb 14 15:42:54 2026] [::1]:55604 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55618 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55624 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55630 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55632 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55644 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55658 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55668 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55680 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55644 [200]: GET /assets/js/vendor/lucide.js
-[Sat Feb 14 15:42:54 2026] [::1]:55658 [200]: GET /assets/images/gold/gold.png
-[Sat Feb 14 15:42:54 2026] [::1]:55668 [200]: GET /assets/js/charts.js
-[Sat Feb 14 15:42:54 2026] [::1]:55680 [200]: GET /assets/js/app.js
-[Sat Feb 14 15:42:54 2026] [::1]:55658 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55668 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55680 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55644 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55690 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55700 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55708 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55690 [200]: GET /assets/images/gold/rob.png
-[Sat Feb 14 15:42:54 2026] [::1]:55700 [200]: GET /assets/images/platforms/gerami.png
-[Sat Feb 14 15:42:54 2026] [::1]:55708 [200]: GET /assets/images/platforms/milli.png
-[Sat Feb 14 15:42:54 2026] [::1]:55690 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55700 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55708 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55724 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55724 [200]: GET /api/prices.php?symbol=18ayar
-[Sat Feb 14 15:42:54 2026] [::1]:55724 Closing
-[Sat Feb 14 15:42:54 2026] [::1]:55732 Accepted
-[Sat Feb 14 15:42:54 2026] [::1]:55732 [200]: GET /assets/js/vendor/apexcharts.js
-[Sat Feb 14 15:42:54 2026] [::1]:55732 Closing
-[Sat Feb 14 15:42:55 2026] [::1]:55744 Accepted
-[Sat Feb 14 15:42:55 2026] [::1]:55744 [200]: GET /api/prices.php?symbol=18AYAR
-[Sat Feb 14 15:42:55 2026] [::1]:55744 Closing
+[Sat Feb 14 16:31:58 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Sat Feb 14 16:32:03 2026] [::1]:54854 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54854 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54870 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54884 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54890 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54906 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54922 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54870 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2
+[Sat Feb 14 16:32:03 2026] [::1]:54884 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2
+[Sat Feb 14 16:32:03 2026] [::1]:54890 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2
+[Sat Feb 14 16:32:03 2026] [::1]:54906 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2
+[Sat Feb 14 16:32:03 2026] [::1]:54922 [200]: GET /assets/images/logo.svg
+[Sat Feb 14 16:32:03 2026] [::1]:54870 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54884 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54890 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54906 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54922 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54926 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54928 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54934 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54926 [200]: GET /assets/js/vendor/lucide.js
+[Sat Feb 14 16:32:03 2026] [::1]:54928 [200]: GET /assets/images/gold/gold.webp
+[Sat Feb 14 16:32:03 2026] [::1]:54936 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54938 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:54928 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54926 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54934 [200]: GET /assets/images/gold/gold.png
+[Sat Feb 14 16:32:03 2026] [::1]:54934 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54936 [200]: GET /assets/js/charts.js
+[Sat Feb 14 16:32:03 2026] [::1]:54938 [200]: GET /assets/js/app.js
+[Sat Feb 14 16:32:03 2026] [::1]:54936 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:54938 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:40106 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:40118 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:40122 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:40106 [200]: GET /assets/images/gold/rob.png
+[Sat Feb 14 16:32:03 2026] [::1]:40118 [200]: GET /assets/images/platforms/gerami.png
+[Sat Feb 14 16:32:03 2026] [::1]:40122 [200]: GET /assets/images/platforms/milli.png
+[Sat Feb 14 16:32:03 2026] [::1]:40106 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:40118 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:40122 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:40128 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:40128 [200]: GET /api/prices.php?symbol=18ayar
+[Sat Feb 14 16:32:03 2026] [::1]:40128 Closing
+[Sat Feb 14 16:32:03 2026] [::1]:40140 Accepted
+[Sat Feb 14 16:32:03 2026] [::1]:40140 [200]: GET /assets/js/vendor/apexcharts.min.js
+[Sat Feb 14 16:32:03 2026] [::1]:40140 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38320 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38320 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38326 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38342 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38346 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38348 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38350 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38326 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2
+[Sat Feb 14 16:40:05 2026] [::1]:38342 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2
+[Sat Feb 14 16:40:05 2026] [::1]:38346 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2
+[Sat Feb 14 16:40:05 2026] [::1]:38348 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2
+[Sat Feb 14 16:40:05 2026] [::1]:38350 [200]: GET /assets/images/logo.svg
+[Sat Feb 14 16:40:05 2026] [::1]:38326 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38342 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38346 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38348 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38350 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38356 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38370 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38380 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38388 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38356 [200]: GET /assets/js/vendor/lucide.js
+[Sat Feb 14 16:40:05 2026] [::1]:38370 [200]: GET /assets/images/gold/gold.webp
+[Sat Feb 14 16:40:05 2026] [::1]:38380 [200]: GET /assets/js/charts.js
+[Sat Feb 14 16:40:05 2026] [::1]:38388 [200]: GET /assets/js/app.js
+[Sat Feb 14 16:40:05 2026] [::1]:38356 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38370 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38380 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38388 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38402 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38410 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38424 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38402 [200]: GET /assets/images/gold/rob.webp
+[Sat Feb 14 16:40:05 2026] [::1]:38410 [200]: GET /assets/images/platforms/gerami.webp
+[Sat Feb 14 16:40:05 2026] [::1]:38424 [200]: GET /assets/images/platforms/milli.webp
+[Sat Feb 14 16:40:05 2026] [::1]:38402 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38410 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38424 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38440 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38440 [200]: GET /api/prices.php?symbol=18ayar
+[Sat Feb 14 16:40:05 2026] [::1]:38440 Closing
+[Sat Feb 14 16:40:05 2026] [::1]:38450 Accepted
+[Sat Feb 14 16:40:05 2026] [::1]:38450 [200]: GET /assets/js/vendor/apexcharts.min.js
+[Sat Feb 14 16:40:05 2026] [::1]:38450 Closing

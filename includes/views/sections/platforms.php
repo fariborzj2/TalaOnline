@@ -76,7 +76,7 @@
                     ?>
                     <tr>
                         <td>
-                            <div class="brand-logo"> <img src="<?= htmlspecialchars($platform['logo']) ?>" alt="<?= htmlspecialchars($platform['name']) ?>" loading="lazy" decoding="async" width="32" height="32"> </div>
+                            <div class="brand-logo"> <img src="<?= htmlspecialchars(get_asset_url($platform['logo'])) ?>" alt="<?= htmlspecialchars($platform['name']) ?>" loading="lazy" decoding="async" width="32" height="32"> </div>
                         </td>
                         <td>
                             <div class="line20">
