@@ -55,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $is_active = isset($_POST['is_active']) ? 1 : 0;
         $show_in_summary = isset($_POST['show_in_summary']) ? 1 : 0;
         $show_chart = isset($_POST['show_chart']) ? 1 : 0;
+        $related_item_symbol = $_POST['related_item_symbol'] ?? null;
 
         // Handle Image Upload
         $logo = $_POST['current_logo'] ?? '';
@@ -71,11 +72,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->beginTransaction();
 
             if ($id) {
-                $stmt = $pdo->prepare("UPDATE items SET name = ?, en_name = ?, symbol = ?, slug = ?, category = ?, sort_order = ?, description = ?, long_description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ?, manual_price = ?, is_manual = ?, is_active = ?, show_in_summary = ?, show_chart = ?, logo = ? WHERE id = ?");
-                $stmt->execute([$name, $en_name, $symbol, $slug, $category, $sort_order, $description, $long_description, $h1_title, $page_title, $meta_description, $meta_keywords, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $logo, $id]);
+                $stmt = $pdo->prepare("UPDATE items SET name = ?, en_name = ?, symbol = ?, slug = ?, category = ?, sort_order = ?, description = ?, long_description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ?, manual_price = ?, is_manual = ?, is_active = ?, show_in_summary = ?, show_chart = ?, logo = ?, related_item_symbol = ? WHERE id = ?");
+                $stmt->execute([$name, $en_name, $symbol, $slug, $category, $sort_order, $description, $long_description, $h1_title, $page_title, $meta_description, $meta_keywords, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $logo, $related_item_symbol, $id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO items (name, en_name, symbol, slug, category, sort_order, description, long_description, h1_title, page_title, meta_description, meta_keywords, manual_price, is_manual, is_active, show_in_summary, show_chart, logo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$name, $en_name, $symbol, $slug, $category, $sort_order, $description, $long_description, $h1_title, $page_title, $meta_description, $meta_keywords, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $logo]);
+                $stmt = $pdo->prepare("INSERT INTO items (name, en_name, symbol, slug, category, sort_order, description, long_description, h1_title, page_title, meta_description, meta_keywords, manual_price, is_manual, is_active, show_in_summary, show_chart, logo, related_item_symbol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $en_name, $symbol, $slug, $category, $sort_order, $description, $long_description, $h1_title, $page_title, $meta_description, $meta_keywords, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $logo, $related_item_symbol]);
                 $id = $pdo->lastInsertId();
             }
 
@@ -108,17 +109,19 @@ try {
     $categories = [];
 }
 
+// Fetch all items for related item dropdown
+try {
+    $all_items = $pdo->query("SELECT symbol, name FROM items ORDER BY name ASC")->fetchAll();
+} catch (Exception $e) {
+    $all_items = [];
+}
+
 $page_title = $id ? 'ویرایش دارایی' : 'افزودن دارایی جدید';
 $page_subtitle = 'تنظیمات قیمت، محتوای سئو و جزئیات دارایی';
 
 include __DIR__ . '/layout/header.php';
 include __DIR__ . '/layout/editor.php';
 ?>
-
-<script>
-  initTinyMCE('#item-description');
-  initTinyMCE('#item-long_description');
-</script>
 
 <div class="max-w-4xl mx-auto">
     <form method="POST" enctype="multipart/form-data">
@@ -164,7 +167,7 @@ include __DIR__ . '/layout/editor.php';
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div class="form-group">
                         <label>قیمت دستی (تومان)</label>
                         <input type="text" name="manual_price" value="<?= htmlspecialchars($item['manual_price'] ?? '') ?>" placeholder="0" class="ltr-input">
@@ -172,6 +175,18 @@ include __DIR__ . '/layout/editor.php';
                     <div class="form-group">
                         <label>ترتیب نمایش</label>
                         <input type="number" name="sort_order" value="<?= htmlspecialchars($item['sort_order'] ?? '0') ?>">
+                    </div>
+                    <div class="form-group">
+                        <label>ارز مرتبط (نمایش در اطلاعات تکمیلی)</label>
+                        <select name="related_item_symbol">
+                            <option value="">عدم نمایش</option>
+                            <?php foreach ($all_items as $ai): ?>
+                                <?php if ($ai['symbol'] === ($item['symbol'] ?? '')) continue; ?>
+                                <option value="<?= htmlspecialchars($ai['symbol']) ?>" <?= ($item['related_item_symbol'] ?? '') === $ai['symbol'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($ai['name']) ?> (<?= htmlspecialchars($ai['symbol']) ?>)
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
 
@@ -408,6 +423,11 @@ include __DIR__ . '/layout/editor.php';
         container.appendChild(clone);
         window.refreshIcons();
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initTinyMCE('#item-description');
+        initTinyMCE('#item-long_description');
+    });
 </script>
 
 <?php include __DIR__ . '/layout/footer.php'; ?>

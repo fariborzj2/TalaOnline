@@ -192,17 +192,15 @@ $router->add('/:category/:slug', function($params) {
         if ($item_db) {
             $navasan = new NavasanService($pdo);
             $all_items = $navasan->getDashboardData();
-            $item_data = null;
+
+            // Create lookup for all items to quickly find current and related items
+            $items_lookup = [];
             foreach ($all_items as $it) {
-                if ($it['symbol'] === $item_db['symbol']) {
-                    $item_data = array_merge($item_db, $it);
-                    break;
-                }
+                $items_lookup[$it['symbol']] = $it;
             }
 
-            if (!$item_data) {
-                $item_data = $item_db;
-            }
+            $item_data = array_merge($item_db, $items_lookup[$item_db['symbol']] ?? []);
+            $related_item = $items_lookup[$item_db['related_item_symbol'] ?? ''] ?? null;
 
             // Fetch FAQs
             $faqs = [];
@@ -214,6 +212,7 @@ $router->add('/:category/:slug', function($params) {
 
             return View::renderPage('asset', [
                 'item' => $item_data,
+                'related_item' => $related_item,
                 'faqs' => $faqs,
                 'page_title' => $item_data['page_title'] ?: $item_data['name'],
                 'h1_title' => $item_data['h1_title'] ?: $item_data['name'],
@@ -283,17 +282,15 @@ $router->add('/:slug', function($params) {
         if ($item_db) {
             $navasan = new NavasanService($pdo);
             $all_items = $navasan->getDashboardData();
-            $item_data = null;
+
+            // Create lookup for all items to quickly find current and related items
+            $items_lookup = [];
             foreach ($all_items as $it) {
-                if ($it['symbol'] === $item_db['symbol']) {
-                    $item_data = array_merge($item_db, $it);
-                    break;
-                }
+                $items_lookup[$it['symbol']] = $it;
             }
 
-            if (!$item_data) {
-                $item_data = $item_db; // Fallback to DB data if API data not found
-            }
+            $item_data = array_merge($item_db, $items_lookup[$item_db['symbol']] ?? []);
+            $related_item = $items_lookup[$item_db['related_item_symbol'] ?? ''] ?? null;
 
             // Fetch FAQs
             $faqs = [];
@@ -305,6 +302,7 @@ $router->add('/:slug', function($params) {
 
             return View::renderPage('asset', [
                 'item' => $item_data,
+                'related_item' => $related_item,
                 'faqs' => $faqs,
                 'page_title' => $item_data['page_title'] ?: $item_data['name'],
                 'h1_title' => $item_data['h1_title'] ?: $item_data['name'],
