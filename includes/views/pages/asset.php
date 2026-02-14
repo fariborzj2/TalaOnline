@@ -31,7 +31,7 @@
                     $logo_path = '/' . $logo_path;
                 }
                 ?>
-                <img src="<?= htmlspecialchars($logo_path) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="w-full h-full object-contain">
+                <img src="<?= htmlspecialchars($logo_path) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="w-full h-full object-contain" width="64" height="64" loading="eager" decoding="async">
             </div>
             <div>
                 <h1 class="font-size-2 font-black text-title"><?= htmlspecialchars($h1_title) ?></h1>

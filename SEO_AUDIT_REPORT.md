@@ -31,6 +31,7 @@ This report details the findings of an SEO audit performed on the "طلا آنل
         *   Developed a proactive image optimization maintenance script (`admin/optimize_images.php`) to handle legacy assets.
         *   Converted all core fallback assets (gold, nim, rob) to the modern WebP format.
         *   Standardized all decorative and non-critical images with `loading="lazy"`, `decoding="async"`, and explicit dimensions to avoid layout shifts (CLS) and improve PageSpeed scores.
+        *   Resolved significant Cumulative Layout Shift (CLS) on asset pages (reduced from 0.43 to < 0.1) by adding missing dimension utility classes to the global grid system and implementing explicit `width`, `height`, and `loading="eager"` attributes for above-the-fold hero images.
         *   Updated third-party libraries (ApexCharts v4) to the latest versions to minimize legacy JavaScript transforms and improve execution speed.
 *   **Sitemap:**
     *   *Issue:* The sitemap only included the home page and used a hardcoded `localhost` URL.
