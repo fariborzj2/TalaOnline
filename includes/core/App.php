@@ -22,11 +22,17 @@ class App {
         }
 
         $uri = $_SERVER['REQUEST_URI'];
-        // Handle subdirectory if any (e.g. /site/index.php)
-        // If index.php is used, we might need to adjust URI
+        // Remove query string for base path comparison
+        $uri_path = explode('?', $uri)[0];
+
         $script_name = $_SERVER['SCRIPT_NAME'];
-        $base_path = str_replace('index.php', '', $script_name);
-        if (strpos($uri, $base_path) === 0) {
+        // Ensure we handle cases where SCRIPT_NAME might not be index.php (like in some CLI server setups)
+        $base_path = '/';
+        if (strpos($script_name, 'index.php') !== false) {
+            $base_path = str_replace('index.php', '', $script_name);
+        }
+
+        if ($base_path !== '/' && strpos($uri_path, $base_path) === 0) {
             $uri = substr($uri, strlen($base_path));
         }
         $uri = '/' . ltrim($uri, '/');

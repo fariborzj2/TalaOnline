@@ -170,6 +170,18 @@ $router->add('/about-us', function() {
     ]);
 });
 
+$router->add('/robots.txt', function() {
+    header('Content-Type: text/plain');
+    echo "User-agent: *\n";
+    echo "Allow: /\n";
+    echo "Allow: /assets/\n";
+    echo "Disallow: /admin/\n";
+    echo "Disallow: /api/\n";
+    echo "Disallow: /installer.php\n\n";
+    echo "Sitemap: " . get_base_url() . "/sitemap.php\n";
+    exit;
+});
+
 $router->add('/:category/:slug', function($params) {
     global $pdo;
     $category_slug = $params['category'];
