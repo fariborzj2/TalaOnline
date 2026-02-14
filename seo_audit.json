@@ -82,5 +82,12 @@
     "Recommendation": "Conditionally load and defer heavy libraries like ApexCharts.",
     "Sample Fix": "Use dynamic Promise-based loading in charts.js and only load charts.js on routes that require it.",
     "Priority": "High"
+  },
+  {
+    "Issue": "Insufficient Color Contrast",
+    "Severity": "Critical",
+    "Recommendation": "Darken semantic and neutral colors to meet WCAG AA standards (4.5:1).",
+    "Sample Fix": "Update color variables in style.css: --color-success: #117856; --color-error: #c81e1e; --color-gray: #626262;",
+    "Priority": "High"
   }
 ]
