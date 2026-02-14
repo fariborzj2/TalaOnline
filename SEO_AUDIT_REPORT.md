@@ -24,6 +24,7 @@ This report details the findings of an SEO audit performed on the "طلا آنل
         *   Inlined all critical CSS (`font.css`, `grid.css`, `style.css`) directly into the HTML to eliminate render-blocking network requests.
         *   Added `link rel="preload"` for primary font files to improve First Contentful Paint (FCP).
         *   Added `preconnect` hints for CDNs to reduce connection overhead.
+        *   Implemented long-term browser caching via `.htaccess` (1 year for fonts/images, 1 month for JS) to speed up repeat visits.
 *   **Sitemap:**
     *   *Issue:* The sitemap only included the home page and used a hardcoded `localhost` URL.
     *   *Fix:* Refactored `site/sitemap.php` to dynamically include all active categories and items with proper priorities and change frequencies.
