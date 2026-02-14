@@ -11,6 +11,8 @@
     <link rel="preconnect" href="https://unpkg.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Medium.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Bold.woff2" as="font" type="font/woff2" crossorigin>
 
     <style>

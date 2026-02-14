@@ -117,3 +117,41 @@
 [Sat Feb 14 11:54:49 2026] [::1]:52912 Accepted
 [Sat Feb 14 11:54:49 2026] [::1]:52912 [200]: GET /api/prices.php?symbol=18ayar
 [Sat Feb 14 11:54:49 2026] [::1]:52912 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59106 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59106 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59112 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59120 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59124 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59130 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59146 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59162 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59112 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2
+[Sat Feb 14 13:25:33 2026] [::1]:59120 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2
+[Sat Feb 14 13:25:33 2026] [::1]:59124 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2
+[Sat Feb 14 13:25:33 2026] [::1]:59130 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2
+[Sat Feb 14 13:25:33 2026] [::1]:59146 [200]: GET /assets/images/logo.svg
+[Sat Feb 14 13:25:33 2026] [::1]:59162 [200]: GET /assets/images/gold/gold.png
+[Sat Feb 14 13:25:33 2026] [::1]:59112 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59120 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59124 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59130 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59146 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59162 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59166 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59170 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59166 [200]: GET /assets/images/gold/rob.png
+[Sat Feb 14 13:25:33 2026] [::1]:59166 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59182 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59194 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59200 Accepted
+[Sat Feb 14 13:25:33 2026] [::1]:59182 [200]: GET /assets/images/platforms/milli.png
+[Sat Feb 14 13:25:33 2026] [::1]:59170 [200]: GET /assets/images/platforms/gerami.png
+[Sat Feb 14 13:25:33 2026] [::1]:59194 [200]: GET /assets/js/charts.js
+[Sat Feb 14 13:25:33 2026] [::1]:59200 [200]: GET /assets/js/app.js
+[Sat Feb 14 13:25:33 2026] [::1]:59182 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59170 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59194 Closing
+[Sat Feb 14 13:25:33 2026] [::1]:59200 Closing
+[Sat Feb 14 13:25:34 2026] [::1]:59212 Accepted
+[Sat Feb 14 13:25:34 2026] [::1]:59212 [200]: GET /api/prices.php?symbol=18ayar
+[Sat Feb 14 13:25:34 2026] [::1]:59212 Closing
