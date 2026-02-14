@@ -23,8 +23,8 @@ This report details the findings of an SEO audit performed on the "طلا آنل
         *   Added `defer` attribute to all external and internal scripts.
         *   Inlined all critical CSS (`font.css`, `grid.css`, `style.css`) directly into the HTML to eliminate render-blocking network requests.
         *   Implemented an advanced font preloading strategy (preloading Regular, Medium, SemiBold, and Bold weights) to eliminate chained critical requests and improve LCP.
-        *   Added `preconnect` hints for CDNs to reduce connection overhead.
-        *   Implemented long-term browser caching via `.htaccess` (1 year for fonts/images, 1 month for JS) to speed up repeat visits.
+        *   Localized external libraries (`apexcharts.js`, `lucide.js`) to eliminate dependency on third-party CDN cache headers and reduce DNS lookup overhead.
+        *   Implemented long-term browser caching via `.htaccess` (1 year for fonts/images, 1 month for JS) to speed up repeat visits and satisfy PageSpeed requirements.
 *   **Sitemap:**
     *   *Issue:* The sitemap only included the home page and used a hardcoded `localhost` URL.
     *   *Fix:* Refactored `site/sitemap.php` to dynamically include all active categories and items with proper priorities and change frequencies.

@@ -8,8 +8,6 @@
     <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? $site_keywords ?? '') ?>">
     <link rel="canonical" href="<?= get_current_url() ?>">
 
-    <link rel="preconnect" href="https://unpkg.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Regular.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Medium.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
@@ -22,8 +20,8 @@
         <?php echo file_get_contents(__DIR__ . '/../../../site/assets/css/style.css'); ?>
     </style>
 
-    <script src="https://unpkg.com/lucide@latest" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
+    <script src="/assets/js/vendor/lucide.js" defer></script>
+    <script src="/assets/js/vendor/apexcharts.js" defer></script>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">

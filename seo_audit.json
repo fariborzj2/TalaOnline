@@ -23,8 +23,8 @@
   {
     "Issue": "Inefficient Cache Lifetimes",
     "Severity": "Warning",
-    "Recommendation": "Implement long-term browser caching for static assets.",
-    "Sample Fix": "Add mod_expires rules to .htaccess: ExpiresByType font/woff2 \"access plus 1 year\"",
+    "Recommendation": "Localize external assets and implement long-term browser caching.",
+    "Sample Fix": "Host libs locally and add mod_expires rules to .htaccess.",
     "Priority": "High"
   },
   {
