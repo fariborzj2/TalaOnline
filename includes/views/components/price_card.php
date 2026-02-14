@@ -12,8 +12,8 @@
 ]), ENT_QUOTES, "UTF-8") ?>'>
     <div class="d-flex just-between align-center gap-1">
         <div class="d-flex align-center gap-1 mb-1">
-            <div class="w-12 h-12 border radius-12 p-05 bg-secondary">
-                <img src="<?= $image ?? '/assets/images/gold/gold.webp' ?>" alt="<?= htmlspecialchars($title) ?>" decoding="async" width="40" height="40">
+            <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
+                <img src="<?= $image ?? '/assets/images/gold/gold.webp' ?>" alt="<?= htmlspecialchars($title) ?>" decoding="async" width="30" height="30" class="object-contain">
             </div>
             <div class="line-height-1-5">
                 <h2 class="font-size-2"><?= htmlspecialchars($title) ?></h2>

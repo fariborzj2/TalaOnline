@@ -89,5 +89,12 @@
     "Recommendation": "Darken semantic and neutral colors to meet WCAG AA standards (4.5:1).",
     "Sample Fix": "Update color variables in style.css: --color-success: #117856; --color-error: #c81e1e; --color-gray: #626262;",
     "Priority": "High"
+  },
+  {
+    "Issue": "Low Resolution Images (Pixel Density)",
+    "Severity": "Warning",
+    "Recommendation": "Ensure image natural dimensions are at least 1.5x-2x the displayed size.",
+    "Sample Fix": "Standardize display size to 30px for 48px icons to achieve 1.6x density: <img width='30' height='30'>",
+    "Priority": "Medium"
   }
 ]

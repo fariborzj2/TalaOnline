@@ -21,7 +21,7 @@
 <div class="section">
     <div class="bg-block pd-md border radius-16 d-flex-wrap align-center just-between gap-1 ">
         <div class="d-flex align-center gap-1">
-            <div class="w-16 h-16 border radius-16 p-05 bg-white d-flex align-center just-center  shrink-0">
+            <div class="w-16 h-16 border radius-16 p-1 bg-white d-flex align-center just-center shrink-0">
                 <?php
                 $logo_path = $item['logo'];
                 if (empty($logo_path)) {
@@ -31,7 +31,7 @@
                     $logo_path = '/' . $logo_path;
                 }
                 ?>
-                <img src="<?= htmlspecialchars($logo_path) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="w-full h-full object-contain" width="64" height="64" loading="eager" decoding="async">
+                <img src="<?= htmlspecialchars($logo_path) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="object-contain" width="32" height="32" loading="eager" decoding="async">
             </div>
             <div>
                 <h1 class="font-size-2 font-black text-title"><?= htmlspecialchars($h1_title) ?></h1>
