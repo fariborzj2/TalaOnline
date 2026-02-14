@@ -46,15 +46,16 @@
 </div>
 
 <div class="section">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-        <div class="md:col-span-2">
+    <div class="d-flex-wrap gap-md align-stretch">
+        <div class="grow-2 basis-500">
             <?= View::renderSection('chart', [
                 'chart_items' => [$item],
                 'title' => 'نمودار قیمت ' . $item['name'],
-                'desc' => 'نوسانات قیمت ' . $item['name'] . ' در بازه‌های زمانی مختلف'
+                'desc' => 'نوسانات قیمت ' . $item['name'] . ' در بازه‌های زمانی مختلف',
+                'hide_stats' => true
             ]) ?>
         </div>
-        <div class="d-flex-column gap-md">
+        <div class="d-column gap-md grow-1 basis-300">
             <div class="bg-block pd-md border radius-16 shadow-sm">
                 <div class="d-flex align-center gap-05 mb-15 border-bottom pb-1">
                     <i data-lucide="info" class="w-5 h-5 text-primary"></i>
@@ -77,7 +78,7 @@
             </div>
 
             <?php if (!empty($item['description'])): ?>
-            <div class="bg-block pd-md border radius-16 shadow-sm">
+            <div class="bg-block pd-md border radius-16 shadow-sm grow-1">
                 <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
                     <i data-lucide="text-quote" class="w-5 h-5 text-primary"></i>
                     <h3 class="font-size-1 font-black">درباره این دارایی</h3>
