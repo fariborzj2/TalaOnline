@@ -6,18 +6,18 @@
 }
 :root {
     --color-body: #f1f5f9;
-    --color-primary: #f59e0c;
+    --color-primary: #c27803;
     --color-secondary: #f1f5f9;
-    --color-text: #64748b;
+    --color-text: #475569;
     --color-title: #1C274C;
     --color-border: #eee;
     --color-white: #fff;
-    --color-gray: #999;
-    --color-success: #10b981;
-    --bg-success: rgba(16, 185, 129, 0.1);
-    --color-error: #ef4444;
-    --bg-error: rgba(239, 68, 68, 0.1);
-    --color-warning: #e1ae13;
+    --color-gray: #626262;
+    --color-success: #117856;
+    --bg-success: rgba(17, 120, 86, 0.1);
+    --color-error: #c81e1e;
+    --bg-error: rgba(200, 30, 30, 0.1);
+    --color-warning: #92400e;
     --bg-warning: #fff3cd;
     --color-block: #fff;
     --pd-block: 20px;
@@ -341,7 +341,7 @@ input:focus {
     border-radius: 9999px;
     font-size: 11px;
     font-weight: 700;
-    color: #64748b;
+    color: var(--color-text);
     background: transparent;
     cursor: pointer;
     transition: all 0.2s ease;
