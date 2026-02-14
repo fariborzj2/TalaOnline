@@ -210,14 +210,27 @@ $router->add('/:category/:slug', function($params) {
                 $faqs = $stmt->fetchAll();
             } catch (Exception $e) {}
 
+            $og_image = $item_data['logo'] ? (get_base_url() . '/' . ltrim($item_data['logo'], '/')) : null;
+
+            $stmt_cat = $pdo->prepare("SELECT name FROM categories WHERE slug = ?");
+            $stmt_cat->execute([$category_slug]);
+            $cat_data = $stmt_cat->fetch();
+            $category_name = $cat_data ? $cat_data['name'] : $category_slug;
+
             return View::renderPage('asset', [
                 'item' => $item_data,
                 'related_item' => $related_item,
                 'faqs' => $faqs,
+                'hide_layout_h1' => true,
                 'page_title' => $item_data['page_title'] ?: $item_data['name'],
                 'h1_title' => $item_data['h1_title'] ?: $item_data['name'],
                 'meta_description' => $item_data['meta_description'],
                 'meta_keywords' => $item_data['meta_keywords'],
+                'og_image' => $og_image,
+                'breadcrumbs' => [
+                    ['name' => $category_name, 'url' => '/' . $category_slug],
+                    ['name' => $item_data['name'], 'url' => '/' . $category_slug . '/' . ($item_data['slug'] ?: $item_data['symbol'])]
+                ],
                 'site_title' => $item_data['page_title'] ?: ($item_data['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
             ]);
         }
@@ -260,6 +273,8 @@ $router->add('/:slug', function($params) {
             $stmt->execute([$category['id']]);
             $faqs = $stmt->fetchAll();
 
+            $og_image = $category['logo'] ? (get_base_url() . '/' . ltrim($category['logo'], '/')) : null;
+
             return View::renderPage('category', [
                 'category' => $category,
                 'items' => $items,
@@ -268,6 +283,10 @@ $router->add('/:slug', function($params) {
                 'h1_title' => $category['h1_title'],
                 'meta_description' => $category['meta_description'],
                 'meta_keywords' => $category['meta_keywords'],
+                'og_image' => $og_image,
+                'breadcrumbs' => [
+                    ['name' => $category['name'], 'url' => '/' . $category['slug']]
+                ],
                 'site_title' => $category['page_title'] ?: ($category['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
             ]);
         }
@@ -300,14 +319,27 @@ $router->add('/:slug', function($params) {
                 $faqs = $stmt->fetchAll();
             } catch (Exception $e) {}
 
+            $og_image = $item_data['logo'] ? (get_base_url() . '/' . ltrim($item_data['logo'], '/')) : null;
+
+            $stmt_cat = $pdo->prepare("SELECT name FROM categories WHERE slug = ?");
+            $stmt_cat->execute([$item_db['category']]);
+            $cat_data = $stmt_cat->fetch();
+            $category_name = $cat_data ? $cat_data['name'] : $item_db['category'];
+
             return View::renderPage('asset', [
                 'item' => $item_data,
                 'related_item' => $related_item,
                 'faqs' => $faqs,
+                'hide_layout_h1' => true,
                 'page_title' => $item_data['page_title'] ?: $item_data['name'],
                 'h1_title' => $item_data['h1_title'] ?: $item_data['name'],
                 'meta_description' => $item_data['meta_description'],
                 'meta_keywords' => $item_data['meta_keywords'],
+                'og_image' => $og_image,
+                'breadcrumbs' => [
+                    ['name' => $category_name, 'url' => '/' . $item_db['category']],
+                    ['name' => $item_data['name'], 'url' => '/' . $item_db['category'] . '/' . ($item_data['slug'] ?: $item_data['symbol'])]
+                ],
                 'site_title' => $item_data['page_title'] ?: ($item_data['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
             ]);
         }

@@ -36,6 +36,25 @@
 <?php endif; ?>
 
 <?php if (!empty($faqs)): ?>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    <?php foreach ($faqs as $i => $faq): ?>
+    {
+      "@type": "Question",
+      "name": "<?= htmlspecialchars($faq['question']) ?>",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "<?= htmlspecialchars(strip_tags($faq['answer'])) ?>"
+      }
+    }<?= ($i < count($faqs) - 1) ? ',' : '' ?>
+    <?php endforeach; ?>
+  ]
+}
+</script>
+
 <div class="section">
     <div class="bg-block pd-md border radius-16">
         <div class="d-flex align-center gap-1 pb-1 mb-2 border-bottom">

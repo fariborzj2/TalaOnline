@@ -41,3 +41,13 @@ function get_trend_arrow($change) {
     if ($change < 0) return '<span class="trend-arrow trend-down"></span>';
     return '';
 }
+
+function get_base_url() {
+    $protocol = (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? 'http' : 'https';
+    $host = $_SERVER['HTTP_HOST'];
+    return "$protocol://$host";
+}
+
+function get_current_url() {
+    return get_base_url() . $_SERVER['REQUEST_URI'];
+}

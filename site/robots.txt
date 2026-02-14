@@ -5,4 +5,4 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /installer.php
 
-Sitemap: http://localhost/sitemap.php
+Sitemap: /sitemap.php

@@ -1,3 +1,23 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FinancialProduct",
+  "name": "<?= htmlspecialchars($item['name']) ?>",
+  "description": "<?= htmlspecialchars($meta_description ?? '') ?>",
+  "brand": {
+    "@type": "Brand",
+    "name": "طلا آنلاین"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "<?= $item['price'] ?>",
+    "priceCurrency": "IRR",
+    "availability": "https://schema.org/InStock",
+    "url": "<?= get_current_url() ?>"
+  }
+}
+</script>
+
 <div class="section">
     <div class="bg-block pd-md border radius-16 d-flex-wrap align-center just-between gap-1 ">
         <div class="d-flex align-center gap-1">
@@ -115,6 +135,25 @@
 <?php endif; ?>
 
 <?php if (!empty($faqs)): ?>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    <?php foreach ($faqs as $i => $faq): ?>
+    {
+      "@type": "Question",
+      "name": "<?= htmlspecialchars($faq['question']) ?>",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "<?= htmlspecialchars(strip_tags($faq['answer'])) ?>"
+      }
+    }<?= ($i < count($faqs) - 1) ? ',' : '' ?>
+    <?php endforeach; ?>
+  ]
+}
+</script>
+
 <div class="section">
     <div class="bg-block pd-md border radius-16">
         <div class="d-flex align-center gap-1 pb-1 mb-2 border-bottom">
