@@ -137,7 +137,7 @@
             <div class="modal-header d-flex just-between align-center pd-md border-bottom">
                 <div class="d-flex align-center gap-1">
                     <div class="modal-icon w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
-                        <img id="modal-asset-icon" src="/assets/images/gold/gold.png" alt="" width="30" height="30" class="object-contain">
+                        <img id="modal-asset-icon" src="/assets/images/gold/gold.webp" alt="" width="30" height="30" class="object-contain">
                     </div>
                     <div>
                         <h2 id="modal-title" class="text-title font-size-2">---</h2>
