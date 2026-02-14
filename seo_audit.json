@@ -30,9 +30,16 @@
   {
     "Issue": "Suboptimal Image Delivery",
     "Severity": "Warning",
-    "Recommendation": "Implement lazy loading, async decoding, and modern image formats (WebP).",
-    "Sample Fix": "Use loading='lazy', width/height attributes, and automatic WebP conversion on upload.",
+    "Recommendation": "Implement lazy loading, async decoding, modern image formats (WebP), and local image proxy for external assets.",
+    "Sample Fix": "Use loading='lazy', width/height attributes, and automatic WebP conversion on upload. Use an image proxy for RSS images.",
     "Priority": "Medium"
+  },
+  {
+    "Issue": "Legacy JavaScript (Third-party)",
+    "Severity": "Info",
+    "Recommendation": "Use modern builds of vendor libraries where possible to reduce transpilation overhead.",
+    "Sample Fix": "Upgrade to ApexCharts v4 and use minified production builds.",
+    "Priority": "Low"
   },
   {
     "Issue": "Missing Canonical Tags",
