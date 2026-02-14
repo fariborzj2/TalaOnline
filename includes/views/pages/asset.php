@@ -45,8 +45,9 @@
     </div>
 </div>
 
+<?php if (!empty($item['description'])): ?>
 <div class="section">
-    <?php if (!empty($item['description'])): ?>
+    
     <div class="bg-block pd-md border radius-16 shadow-sm grow-1">
         <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
             <i data-lucide="text-quote" class="w-5 h-5 text-primary"></i>
@@ -56,17 +57,8 @@
             <?= htmlspecialchars($item['description']) ?>
         </p>
     </div>
-    <?php endif; ?>
 </div>
-
-<div class="section">
-    <?= View::renderSection('chart', [
-        'chart_items' => [$item],
-        'title' => 'نمودار قیمت ' . $item['name'],
-        'desc' => 'نوسانات قیمت ' . $item['name'] . ' در بازه‌های زمانی مختلف',
-        'hide_stats' => true
-    ]) ?>
-</div>
+<?php endif; ?>
 
 <div class="section">
     <div class="bg-block pd-md border radius-16 shadow-sm">
@@ -90,6 +82,17 @@
         </div>
     </div>
 </div>
+
+<div class="section">
+    <?= View::renderSection('chart', [
+        'chart_items' => [$item],
+        'title' => 'نمودار قیمت ' . $item['name'],
+        'desc' => 'نوسانات قیمت ' . $item['name'] . ' در بازه‌های زمانی مختلف',
+        'hide_stats' => true
+    ]) ?>
+</div>
+
+
 
 <?php if (!empty($item['long_description'])): ?>
 <div class="section">
