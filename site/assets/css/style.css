@@ -79,6 +79,21 @@ img[src=""],
 img:not([src]) {
   visibility: hidden 
 }
+
+/* Icons & SVGs Layout Stability */
+i[data-lucide] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    line-height: 1;
+    flex-shrink: 0;
+}
+svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
 a {
     text-decoration: none
 }
