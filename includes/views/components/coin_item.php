@@ -15,7 +15,7 @@
             <img src="<?= $image ?? '/assets/images/gold/gold.webp' ?>" alt="<?= htmlspecialchars($coin['name']) ?>" loading="lazy" decoding="async" width="32" height="32">
         </div>
         <div class="line-height-1-5">
-            <h2 class="font-size-2"><?= htmlspecialchars($coin['name']) ?></h2>
+            <h3 class="font-size-2"><?= htmlspecialchars($coin['name']) ?></h3>
             <span class="text-gray"><?= htmlspecialchars($coin['symbol']) ?></span>
         </div>
     </div>
