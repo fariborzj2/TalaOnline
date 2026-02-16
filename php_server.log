@@ -1,11 +1,11 @@
-[Mon Feb 16 14:34:53 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Mon Feb 16 14:34:56 2026] [::1]:34602 Accepted
-[Mon Feb 16 14:34:56 2026] PHP Fatal error:  Uncaught Error: Call to a member function exec() on null in /app/site/admin/item_edit.php:9
-Stack trace:
-#0 {main}
-  thrown in /app/site/admin/item_edit.php on line 9
-[Mon Feb 16 14:34:56 2026] [::1]:34602 [500]: GET /admin/item_edit.php - Uncaught Error: Call to a member function exec() on null in /app/site/admin/item_edit.php:9
-Stack trace:
-#0 {main}
-  thrown in /app/site/admin/item_edit.php on line 9
-[Mon Feb 16 14:34:56 2026] [::1]:34602 Closing
+[Mon Feb 16 14:53:33 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Mon Feb 16 14:53:36 2026] [::1]:58176 Accepted
+[Mon Feb 16 14:53:36 2026] PHP Warning:  Undefined array key "admin_username" in /app/site/admin/layout/sidebar.php on line 85
+[Mon Feb 16 14:53:36 2026] PHP Warning:  Undefined array key "admin_username" in /app/site/admin/layout/sidebar.php on line 88
+[Mon Feb 16 14:53:36 2026] [::1]:58176 [200]: GET /admin/item_edit.php
+[Mon Feb 16 14:53:36 2026] [::1]:58176 Closing
+[Mon Feb 16 14:53:41 2026] [::1]:59834 Accepted
+[Mon Feb 16 14:53:41 2026] PHP Warning:  Undefined array key "admin_username" in /app/site/admin/layout/sidebar.php on line 85
+[Mon Feb 16 14:53:41 2026] PHP Warning:  Undefined array key "admin_username" in /app/site/admin/layout/sidebar.php on line 88
+[Mon Feb 16 14:53:41 2026] [::1]:59834 [200]: GET /admin/category_edit.php
+[Mon Feb 16 14:53:41 2026] [::1]:59834 Closing
