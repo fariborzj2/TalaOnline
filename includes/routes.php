@@ -185,21 +185,25 @@ $router->add('/robots.txt', function() {
 
 // Sitemap Routes
 $router->add('/sitemap.xml', function() {
+    global $pdo;
     require_once __DIR__ . '/../site/sitemap.php';
     exit;
 });
 
 $router->add('/sitemap-pages.xml', function() {
+    global $pdo;
     require_once __DIR__ . '/../site/sitemap-pages.php';
     exit;
 });
 
 $router->add('/sitemap-categories.xml', function() {
+    global $pdo;
     require_once __DIR__ . '/../site/sitemap-categories.php';
     exit;
 });
 
 $router->add('/sitemap-items.xml', function() {
+    global $pdo;
     require_once __DIR__ . '/../site/sitemap-items.php';
     exit;
 });

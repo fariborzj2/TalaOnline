@@ -2,6 +2,7 @@
 header("Content-type: text/xml; charset=utf-8");
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/helpers.php';
+global $pdo;
 
 $base_url = rtrim(get_base_url(), '/');
 
