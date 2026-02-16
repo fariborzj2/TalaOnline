@@ -1,15 +1,4 @@
-<div class="card asset-item" id="<?= $id ?? '' ?>" data-asset='<?= htmlspecialchars(json_encode([
-    "symbol" => $symbol,
-    "slug" => $slug ?? $symbol,
-    "category" => $category ?? "",
-    "name" => $title,
-    "price" => $price,
-    "change" => $change,
-    "change_amount" => $change_amount ?? 0,
-    "image" => get_asset_url($image ?? ""),
-    "high" => $high ?? $price,
-    "low" => $low ?? $price
-]), ENT_QUOTES, "UTF-8") ?>'>
+<a href="/<?= ($category ? $category . '/' : '') ?><?= $slug ?? $symbol ?>" class="price-card bg-block border radius-16 pd-md flex-1 min-w-160 asset-item" id="<?= $id ?? '' ?>">
     <div class="d-flex just-between align-center gap-1">
         <div class="d-flex align-center gap-1 mb-1">
             <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
@@ -33,4 +22,4 @@
             </span>
         </div>
     </div>
-</div>
+</a>

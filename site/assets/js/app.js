@@ -7,74 +7,88 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     const formatPrice = (price) => toPersianDigits(price);
 
-    // --- Modal Logic ---
-    const modal = document.getElementById('detail-modal');
-    const closeModal = document.getElementById('close-modal');
-    let modalChartInstance = null;
-
-    const openModal = async (assetData) => {
-        if (!modal) return;
-        document.getElementById('modal-title').textContent = assetData.name;
-        document.getElementById('modal-symbol').textContent = assetData.symbol;
-        document.getElementById('modal-price').textContent = formatPrice(assetData.price);
-        document.getElementById('modal-asset-icon').src = assetData.image;
-
-        const isPos = assetData.change >= 0;
-        const changePercentEl = document.getElementById('modal-change-percent');
-        changePercentEl.innerHTML = `<span>${toPersianDigits(Math.abs(assetData.change))}%</span><i data-lucide="${isPos ? 'arrow-up' : 'arrow-down'}" class="icon-size-1"></i>`;
-        changePercentEl.className = `d-flex align-center gap-05 font-bold ${isPos ? 'text-success' : 'text-error'}`;
-        document.getElementById('modal-change-amount').textContent = (isPos ? '+ ' : '- ') + formatPrice(Math.abs(assetData.change_amount));
-        document.getElementById('modal-high').textContent = formatPrice(assetData.high);
-        document.getElementById('modal-low').textContent = formatPrice(assetData.low);
-
-        const detailsLink = document.getElementById('modal-details-link');
-        if (detailsLink) detailsLink.href = (assetData.category ? '/' + assetData.category : '') + '/' + assetData.slug;
-
-        if (window.lucide) window.lucide.createIcons({ attrs: { 'data-lucide': true }, root: modal });
-        modal.classList.remove('d-none');
-
-        if (window.AssetChart) {
-            modalChartInstance = new window.AssetChart('#modal-chart', assetData.symbol);
-            if (await modalChartInstance.fetchData()) modalChartInstance.render();
-        }
+    const getAssetUrl = (path) => {
+        if (!path) return '/assets/images/gold/gold.webp';
+        if (path.startsWith('http')) return path;
+        let clean = path.startsWith('/') ? path : '/' + path;
+        return clean.replace(/\.(png|jpg|jpeg)$/i, '.webp');
     };
 
-    if (closeModal) {
-        closeModal.addEventListener('click', () => {
-            modal.classList.add('d-none');
-            if (modalChartInstance && modalChartInstance.chart) {
-                modalChartInstance.chart.destroy();
-                modalChartInstance = null;
+    const populatePlatforms = (platforms) => {
+        const list = document.getElementById('platforms-list');
+        if (!list) return;
+
+        // Calculate best buy/sell
+        let minBuy = null;
+        let maxSell = null;
+        platforms.forEach(p => {
+            const buy = parseFloat(p.buy_price || 0);
+            const sell = parseFloat(p.sell_price || 0);
+            const fee = parseFloat(p.fee || 0);
+            const effBuy = buy * (1 + fee / 100);
+            const effSell = sell * (1 - fee / 100);
+            if (minBuy === null || effBuy < minBuy) minBuy = effBuy;
+            if (maxSell === null || effSell > maxSell) maxSell = effSell;
+        });
+
+        list.innerHTML = platforms.map(platform => {
+            const buy = parseFloat(platform.buy_price || 0);
+            const sell = parseFloat(platform.sell_price || 0);
+            const fee = parseFloat(platform.fee || 0);
+            const effBuy = buy * (1 + fee / 100);
+            const effSell = sell * (1 - fee / 100);
+
+            let statusText = 'عادی';
+            let statusClass = 'warning';
+
+            if (minBuy !== null && effBuy <= minBuy) {
+                statusText = 'مناسب خرید';
+                statusClass = 'success';
+            } else if (maxSell !== null && effSell >= maxSell) {
+                statusText = 'مناسب فروش';
+                statusClass = 'info';
             }
-        });
-    }
 
-    document.querySelectorAll('#modal-period-toggle button').forEach(btn => {
-        btn.addEventListener('click', function() {
-            this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const period = this.getAttribute('data-period');
-            const days = period === '7d' ? 7 : (period === '30d' ? 30 : 365);
-            if (modalChartInstance) modalChartInstance.updatePeriod(days);
-        });
-    });
-
-    document.addEventListener('click', (e) => {
-        const assetItem = e.target.closest('.asset-item');
-        if (assetItem) {
-            try {
-                openModal(JSON.parse(assetItem.getAttribute('data-asset')));
-            } catch (err) { console.error(err); }
-        }
-    });
+            return `
+                <tr>
+                    <td>
+                        <div class="brand-logo"> <img src="${getAssetUrl(platform.logo)}" alt="${platform.name}" loading="lazy" decoding="async" width="32" height="32"> </div>
+                    </td>
+                    <td>
+                        <div class="line20">
+                            <div class="text-title">${platform.name}</div>
+                            <div class="font-size-0-8">${platform.en_name || ''}</div>
+                        </div>
+                    </td>
+                    <td class="font-size-2 font-bold text-title">${formatPrice(platform.buy_price)}</td>
+                    <td class="font-size-2 font-bold text-title">${formatPrice(platform.sell_price)}</td>
+                    <td class="font-size-2 " dir="ltr">${toPersianDigits(platform.fee)}%</td>
+                    <td>
+                        <span class="status-badge ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="${platform.link}" class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer">
+                            <i data-lucide="external-link" class="h-4 w-4"></i> خرید طلا
+                        </a>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+        if (window.lucide) window.lucide.createIcons({ root: list });
+    };
 
     const initSearch = (platforms) => {
         const searchInput = document.getElementById('platform-search');
         if (!searchInput) return;
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
-            const filtered = platforms.filter(p => p.name.toLowerCase().includes(query) || (p.en_name && p.en_name.toLowerCase().includes(query)));
-            // Note: populatePlatforms logic would go here if platforms list needs dynamic filtering
+            const filtered = platforms.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                (p.en_name && p.en_name.toLowerCase().includes(query))
+            );
+            populatePlatforms(filtered);
         });
     };
 
@@ -116,7 +130,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     };
 
-    if (window.__INITIAL_STATE__) {
+    if (window.__INITIAL_STATE__ && window.__INITIAL_STATE__.platforms) {
         initSearch(window.__INITIAL_STATE__.platforms);
     } else {
         try {
