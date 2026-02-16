@@ -23,7 +23,7 @@ if ($pdo) {
     <div class="bg-block radius-16 pd-md border">
         <div class="d-flex align-center gap-05 mb-1">
             <i data-lucide="info" class="text-primary icon-size-4"></i>
-            <h3 class="font-size-2 font-bold">راهنمای استفاده</h3>
+            <h2 class="font-size-2 font-bold">راهنمای استفاده</h2>
         </div>
         <p class="font-size-1-2 line-height-2">
             قیمت‌ها هر ۱۰ دقیقه به صورت خودکار بروزرسانی می‌شوند. برای مشاهده نمودار تغییرات هر مورد، روی آن کلیک کنید.
