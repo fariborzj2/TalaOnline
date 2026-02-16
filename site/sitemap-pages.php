@@ -8,30 +8,36 @@ date_default_timezone_set('Asia/Tehran');
 
 $base_url = rtrim(get_base_url(), '/');
 
-$latest_update = date('Y-m-d\TH:i:sP');
-$about_update = date('Y-m-d\TH:i:sP', strtotime('-1 month'));
+$latest_update_ts = strtotime('2025-01-01');
+$about_update_ts = strtotime('2025-01-01');
 
 if ($pdo) {
     try {
-        $stmt = $pdo->query("SELECT MAX(updated_at) as latest FROM (
-            SELECT updated_at FROM items
-            UNION
-            SELECT updated_at FROM categories
-            UNION
-            SELECT updated_at FROM settings
-        ) as updates");
-        $res = $stmt->fetch();
-        if ($res && $res['latest']) {
-            $latest_update = date('Y-m-d\TH:i:sP', strtotime($res['latest']));
+        $updates = [];
+        $tables = ['items', 'categories', 'settings'];
+        foreach ($tables as $table) {
+            try {
+                $stmt = $pdo->query("SELECT MAX(updated_at) FROM $table");
+                if ($stmt) {
+                    $val = $stmt->fetchColumn();
+                    if ($val) $updates[] = strtotime($val);
+                }
+            } catch (Exception $e) {}
+        }
+        if (!empty($updates)) {
+            $latest_update_ts = max($updates);
         }
 
         $stmt = $pdo->query("SELECT updated_at FROM settings WHERE setting_key = 'about_us_content'");
         $row = $stmt->fetch();
         if ($row && $row['updated_at']) {
-            $about_update = date('Y-m-d\TH:i:sP', strtotime($row['updated_at']));
+            $about_update_ts = strtotime($row['updated_at']);
         }
     } catch (Exception $e) {}
 }
+
+$latest_update = date('Y-m-d\TH:i:sP', $latest_update_ts);
+$about_update = date('Y-m-d\TH:i:sP', $about_update_ts);
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
 echo '<?xml-stylesheet type="text/xsl" href="' . $base_url . '/sitemap.xsl"?>' . PHP_EOL;
@@ -51,7 +57,7 @@ echo '<?xml-stylesheet type="text/xsl" href="' . $base_url . '/sitemap.xsl"?>' .
     </url>
     <url>
         <loc><?= $base_url ?>/feedback</loc>
-        <lastmod><?= date('Y-m-d\TH:i:sP', strtotime('-1 month')) ?></lastmod>
+        <lastmod><?= date('Y-m-d\TH:i:sP', strtotime('2025-01-01')) ?></lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.3</priority>
     </url>

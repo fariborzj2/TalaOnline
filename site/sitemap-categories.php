@@ -18,7 +18,7 @@ if ($pdo) {
         $stmt = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC");
         if ($stmt) {
             while ($row = $stmt->fetch()) {
-                $lastmod = (!empty($row['updated_at'])) ? date('Y-m-d\TH:i:sP', strtotime($row['updated_at'])) : date('Y-m-d\TH:i:sP');
+                $lastmod = (!empty($row['updated_at'])) ? date('Y-m-d\TH:i:sP', strtotime($row['updated_at'])) : date('Y-m-d\TH:i:sP', strtotime('2025-01-01'));
                 $loc = $base_url . '/' . htmlspecialchars($row['slug']);
 
                 echo "    <url>\n";

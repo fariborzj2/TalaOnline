@@ -25,7 +25,7 @@ if ($pdo) {
                 $cat = $row['category'];
                 if (empty($cat)) continue;
 
-                $lastmod = (!empty($row['updated_at'])) ? date('Y-m-d\TH:i:sP', strtotime($row['updated_at'])) : date('Y-m-d\TH:i:sP');
+                $lastmod = (!empty($row['updated_at'])) ? date('Y-m-d\TH:i:sP', strtotime($row['updated_at'])) : date('Y-m-d\TH:i:sP', strtotime('2025-01-01'));
 
                 $loc = $base_url . '/' . htmlspecialchars($cat) . '/' . htmlspecialchars($slug);
 

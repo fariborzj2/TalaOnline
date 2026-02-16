@@ -11,26 +11,31 @@ $base_url = rtrim(get_base_url(), '/');
 echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
 echo '<?xml-stylesheet type="text/xsl" href="' . $base_url . '/sitemap.xsl"?>' . PHP_EOL;
 
-$lastmod = date('Y-m-d\TH:i:sP');
+// Default fallback to a stable date (project launch approx)
+$lastmod_ts = strtotime('2025-01-01');
 
 if ($pdo) {
     try {
-        // Robust way to get last update across items, categories and settings
-        $stmt = $pdo->query("SELECT MAX(updated_at) as last_update FROM (
-            SELECT updated_at FROM items
-            UNION
-            SELECT updated_at FROM categories
-            UNION
-            SELECT updated_at FROM settings
-        ) as updates");
-        $res = $stmt->fetch();
-        if ($res && $res['last_update']) {
-            $lastmod = date('Y-m-d\TH:i:sP', strtotime($res['last_update']));
+        $updates = [];
+        // Check tables individually to avoid total failure
+        $tables = ['items', 'categories', 'settings'];
+        foreach ($tables as $table) {
+            try {
+                $stmt = $pdo->query("SELECT MAX(updated_at) FROM $table");
+                if ($stmt) {
+                    $val = $stmt->fetchColumn();
+                    if ($val) $updates[] = strtotime($val);
+                }
+            } catch (Exception $e) {}
         }
-    } catch (Exception $e) {
-        // Fallback to current time
-    }
+
+        if (!empty($updates)) {
+            $lastmod_ts = max($updates);
+        }
+    } catch (Exception $e) {}
 }
+
+$lastmod = date('Y-m-d\TH:i:sP', $lastmod_ts);
 ?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <sitemap>
