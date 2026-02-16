@@ -179,7 +179,28 @@ $router->add('/robots.txt', function() {
     echo "Disallow: /admin/\n";
     echo "Disallow: /api/\n";
     echo "Disallow: /installer.php\n\n";
-    echo "Sitemap: " . get_base_url() . "/sitemap.php\n";
+    echo "Sitemap: " . get_base_url() . "/sitemap.xml\n";
+    exit;
+});
+
+// Sitemap Routes
+$router->add('/sitemap.xml', function() {
+    require_once __DIR__ . '/../site/sitemap.php';
+    exit;
+});
+
+$router->add('/sitemap-pages.xml', function() {
+    require_once __DIR__ . '/../site/sitemap-pages.php';
+    exit;
+});
+
+$router->add('/sitemap-categories.xml', function() {
+    require_once __DIR__ . '/../site/sitemap-categories.php';
+    exit;
+});
+
+$router->add('/sitemap-items.xml', function() {
+    require_once __DIR__ . '/../site/sitemap-items.php';
     exit;
 });
 
