@@ -92,45 +92,73 @@
             <div class="container">
                 <h1>نقشه سایت (Sitemap)</h1>
                 <p>این یک فایل XML سیت‌مپ است که برای موتورهای جستجو بهینه شده است.</p>
-                <p>تعداد کل آدرس‌ها: <xsl:value-of select="count(sitemap:urlset/sitemap:url)"/></p>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th width="5%">ردیف</th>
-                            <th width="45%">آدرس (URL)</th>
-                            <th width="10%">اولویت</th>
-                            <th width="15%">تغییرات</th>
-                            <th width="25%">آخرین بروزرسانی</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <xsl:for-each select="sitemap:urlset/sitemap:url">
+                <xsl:if test="sitemap:sitemapindex">
+                    <p>تعداد کل بخش‌ها: <xsl:value-of select="count(sitemap:sitemapindex/sitemap:sitemap)"/></p>
+                    <table>
+                        <thead>
                             <tr>
-                                <td><xsl:value-of select="position()"/></td>
-                                <td>
-                                    <div style="display: flex; align-items: center; gap: 10px; direction: ltr; justify-content: flex-end;">
-                                        <xsl:if test="image:image">
-                                            <img src="{image:image/image:loc}" class="logo-img" />
-                                        </xsl:if>
-                                        <a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="priority">
-                                        <xsl:value-of select="sitemap:priority"/>
-                                    </span>
-                                </td>
-                                <td>
-                                    <xsl:value-of select="sitemap:changefreq"/>
-                                </td>
-                                <td class="lastmod">
-                                    <xsl:value-of select="sitemap:lastmod"/>
-                                </td>
+                                <th width="10%">ردیف</th>
+                                <th width="60%">آدرس سیت‌مپ (Sitemap URL)</th>
+                                <th width="30%">آخرین بروزرسانی</th>
                             </tr>
-                        </xsl:for-each>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <xsl:for-each select="sitemap:sitemapindex/sitemap:sitemap">
+                                <tr>
+                                    <td><xsl:value-of select="position()"/></td>
+                                    <td dir="ltr" style="text-align: right;">
+                                        <a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a>
+                                    </td>
+                                    <td class="lastmod">
+                                        <xsl:value-of select="sitemap:lastmod"/>
+                                    </td>
+                                </tr>
+                            </xsl:for-each>
+                        </tbody>
+                    </table>
+                </xsl:if>
+
+                <xsl:if test="sitemap:urlset">
+                    <p>تعداد کل آدرس‌ها: <xsl:value-of select="count(sitemap:urlset/sitemap:url)"/></p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="5%">ردیف</th>
+                                <th width="45%">آدرس (URL)</th>
+                                <th width="10%">اولویت</th>
+                                <th width="15%">تغییرات</th>
+                                <th width="25%">آخرین بروزرسانی</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <xsl:for-each select="sitemap:urlset/sitemap:url">
+                                <tr>
+                                    <td><xsl:value-of select="position()"/></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 10px; direction: ltr; justify-content: flex-end;">
+                                            <xsl:if test="image:image">
+                                                <img src="{image:image/image:loc}" class="logo-img" />
+                                            </xsl:if>
+                                            <a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="priority">
+                                            <xsl:value-of select="sitemap:priority"/>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <xsl:value-of select="sitemap:changefreq"/>
+                                    </td>
+                                    <td class="lastmod">
+                                        <xsl:value-of select="sitemap:lastmod"/>
+                                    </td>
+                                </tr>
+                            </xsl:for-each>
+                        </tbody>
+                    </table>
+                </xsl:if>
             </div>
         </body>
         </html>
