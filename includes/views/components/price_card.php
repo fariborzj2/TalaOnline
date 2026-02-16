@@ -16,7 +16,7 @@
                 <img src="<?= get_asset_url($image ?? '') ?>" alt="<?= htmlspecialchars($title) ?>" decoding="async" width="30" height="30" class="object-contain">
             </div>
             <div class="line-height-1-5">
-                <h2 class="font-size-2"><?= htmlspecialchars($title) ?></h2>
+                <h3 class="font-size-2"><?= htmlspecialchars($title) ?></h3>
                 <span class="text-gray"><?= htmlspecialchars($symbol) ?></span>
             </div>
         </div>
