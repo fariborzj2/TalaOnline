@@ -5,15 +5,17 @@ require_once __DIR__ . '/../../includes/helpers.php';
 check_login();
 
 // Schema Self-Healing
-try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS item_faqs (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        item_id INT NOT NULL,
-        question TEXT NOT NULL,
-        answer TEXT NOT NULL,
-        sort_order INT DEFAULT 0
-    )");
-} catch (Exception $e) {}
+if ($pdo) {
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS item_faqs (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            item_id INT NOT NULL,
+            question TEXT NOT NULL,
+            answer TEXT NOT NULL,
+            sort_order INT DEFAULT 0
+        )");
+    } catch (Exception $e) {}
+}
 
 $id = $_GET['id'] ?? null;
 $item = null;
@@ -104,17 +106,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fetch categories for dropdown
-try {
-    $categories = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->fetchAll();
-} catch (Exception $e) {
-    $categories = [];
+$categories = [];
+if ($pdo) {
+    try {
+        $categories = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->fetchAll();
+    } catch (Exception $e) {}
 }
 
 // Fetch all items for related item dropdown
-try {
-    $all_items = $pdo->query("SELECT symbol, name FROM items ORDER BY name ASC")->fetchAll();
-} catch (Exception $e) {
-    $all_items = [];
+$all_items = [];
+if ($pdo) {
+    try {
+        $all_items = $pdo->query("SELECT symbol, name FROM items ORDER BY name ASC")->fetchAll();
+    } catch (Exception $e) {}
 }
 
 $page_title = $id ? 'ویرایش دارایی' : 'افزودن دارایی جدید';
@@ -124,246 +128,252 @@ include __DIR__ . '/layout/header.php';
 include __DIR__ . '/layout/editor.php';
 ?>
 
-<div class="max-w-4xl mx-auto">
-    <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="action" value="save">
+<form method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="action" value="save">
 
-        <div class="glass-card rounded-xl overflow-hidden border border-slate-200 mb-6">
-            <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
-                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
-                    <i data-lucide="package" class="w-5 h-5"></i>
-                </div>
-                <h2 class="text-lg font-black text-slate-800">اطلاعات پایه و قیمت</h2>
-            </div>
-            <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="form-group">
-                        <label>نام دارایی (فارسی)</label>
-                        <input type="text" name="name" value="<?= htmlspecialchars($item['name'] ?? '') ?>" required placeholder="مثلاً طلای ۱۸ عیار">
-                    </div>
-                    <div class="form-group">
-                        <label>نام انگلیسی</label>
-                        <input type="text" name="en_name" value="<?= htmlspecialchars($item['en_name'] ?? '') ?>" placeholder="مثلاً 18k Gold">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="form-group">
-                        <label>نماد در API (نوسان)</label>
-                        <input type="text" name="symbol" value="<?= htmlspecialchars($item['symbol'] ?? '') ?>" required class="ltr-input" placeholder="مثلاً 18ayar">
-                    </div>
-                    <div class="form-group">
-                        <label>نامک (Slug)</label>
-                        <input type="text" name="slug" value="<?= htmlspecialchars($item['slug'] ?? $item['symbol'] ?? '') ?>" required class="ltr-input" placeholder="مثلاً gold-18k">
-                    </div>
-                    <div class="form-group">
-                        <label>دسته‌بندی</label>
-                        <select name="category">
-                            <?php foreach ($categories as $cat): ?>
-                                <option value="<?= htmlspecialchars($cat['slug']) ?>" <?= ($item['category'] ?? 'gold') === $cat['slug'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($cat['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="form-group">
-                        <label>قیمت دستی (تومان)</label>
-                        <input type="text" name="manual_price" value="<?= htmlspecialchars($item['manual_price'] ?? '') ?>" placeholder="0" class="ltr-input">
-                    </div>
-                    <div class="form-group">
-                        <label>ترتیب نمایش</label>
-                        <input type="number" name="sort_order" value="<?= htmlspecialchars($item['sort_order'] ?? '0') ?>">
-                    </div>
-                    <div class="form-group">
-                        <label>ارز مرتبط (نمایش در اطلاعات تکمیلی)</label>
-                        <select name="related_item_symbol">
-                            <option value="">عدم نمایش</option>
-                            <?php foreach ($all_items as $ai): ?>
-                                <?php if ($ai['symbol'] === ($item['symbol'] ?? '')) continue; ?>
-                                <option value="<?= htmlspecialchars($ai['symbol']) ?>" <?= ($item['related_item_symbol'] ?? '') === $ai['symbol'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($ai['name']) ?> (<?= htmlspecialchars($ai['symbol']) ?>)
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="form-group">
-                        <label>تاریخ بروزرسانی (شمسی)</label>
-                        <div class="input-icon-wrapper">
-                            <span class="icon"><i data-lucide="calendar" class="w-3.5 h-3.5"></i></span>
-                            <input type="text" id="updated_at_picker" class="font-bold cursor-pointer" placeholder="انتخاب تاریخ و زمان...">
-                        </div>
-                        <input type="hidden" name="updated_at" id="updated_at_value" value="<?= htmlspecialchars($item['updated_at'] ?? '') ?>">
-                    </div>
-                    <div class="form-group flex items-end">
-                        <p class="text-[10px] text-slate-400 font-bold mb-3">این تاریخ در نقشه سایت (Lastmod) تاثیر می‌گذارد. در صورت خالی بودن، زمان کنونی ثبت می‌شود.</p>
-                    </div>
-                </div>
-
-                <div class="form-group mb-0">
-                    <label>لوگوی دارایی</label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="file-input-wrapper">
-                            <div class="file-input-custom">
-                                <span class="file-name-label text-[11px] text-slate-400 truncate">انتخاب تصویر...</span>
-                                <i data-lucide="upload-cloud" class="w-4 h-4 text-slate-400"></i>
-                                <input type="file" name="logo_file" class="file-input-real">
-                            </div>
-                        </div>
-                        <div class="input-icon-wrapper">
-                            <span class="icon"><i data-lucide="link" class="w-3.5 h-3.5"></i></span>
-                            <input type="text" name="logo_url" value="<?= htmlspecialchars($item['logo'] ?? '') ?>" class="ltr-input text-xs !py-2.5" placeholder="یا لینک تصویر...">
-                        </div>
-                    </div>
-                    <input type="hidden" name="current_logo" value="<?= htmlspecialchars($item['logo'] ?? '') ?>">
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-card rounded-xl overflow-hidden border border-slate-200 mb-6">
-            <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
-                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
-                    <i data-lucide="file-text" class="w-5 h-5"></i>
-                </div>
-                <h2 class="text-lg font-black text-slate-800">محتوای متنی</h2>
-            </div>
-            <div class="p-8">
-                <div class="form-group mb-6">
-                    <label>توضیح کوتاه (بالای صفحه)</label>
-                    <textarea name="description" id="item-description"><?= htmlspecialchars($item['description'] ?? '') ?></textarea>
-                </div>
-                <div class="form-group">
-                    <label>توضیحات کامل (پایین صفحه)</label>
-                    <textarea name="long_description" id="item-long_description"><?= htmlspecialchars($item['long_description'] ?? '') ?></textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-card rounded-xl overflow-hidden border border-slate-200 mb-6">
-            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
-                <div class="flex items-center gap-3">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Column -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+                <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
                     <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
-                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                        <i data-lucide="package" class="w-5 h-5"></i>
                     </div>
-                    <h2 class="text-lg font-black text-slate-800">سوالات متداول (FAQ)</h2>
+                    <h2 class="text-lg font-black text-slate-800">اطلاعات پایه و قیمت</h2>
                 </div>
-                <button type="button" onclick="addFaqRow()" class="btn-v3 btn-v3-outline !py-1 text-[10px]">
-                    <i data-lucide="plus" class="w-3 h-3"></i> افزودن سوال
-                </button>
-            </div>
-            <div class="p-8" id="faq-container">
-                <?php if (empty($faqs)): ?>
-                    <div class="faq-row grid grid-cols-1 gap-4 mb-6 p-4 bg-slate-50 rounded-lg relative group">
-                        <button type="button" onclick="this.parentElement.remove()" class="absolute -left-2 -top-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
-                            <i data-lucide="x" class="w-3 h-3"></i>
-                        </button>
-                        <div class="form-group !mb-0">
-                            <label class="text-[10px]">سوال</label>
-                            <input type="text" name="faq_questions[]" placeholder="سوال خود را بنویسید...">
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="form-group">
+                            <label>نام دارایی (فارسی)</label>
+                            <input type="text" name="name" value="<?= htmlspecialchars($item['name'] ?? '') ?>" required placeholder="مثلاً طلای ۱۸ عیار">
                         </div>
-                        <div class="form-group !mb-0">
-                            <label class="text-[10px]">پاسخ</label>
-                            <textarea name="faq_answers[]" rows="2" placeholder="پاسخ سوال..."></textarea>
+                        <div class="form-group">
+                            <label>نام انگلیسی</label>
+                            <input type="text" name="en_name" value="<?= htmlspecialchars($item['en_name'] ?? '') ?>" placeholder="مثلاً 18k Gold">
                         </div>
                     </div>
-                <?php else: ?>
-                    <?php foreach ($faqs as $faq): ?>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="form-group">
+                            <label>نماد در API (نوسان)</label>
+                            <input type="text" name="symbol" value="<?= htmlspecialchars($item['symbol'] ?? '') ?>" required class="ltr-input" placeholder="مثلاً 18ayar">
+                        </div>
+                        <div class="form-group">
+                            <label>نامک (Slug)</label>
+                            <input type="text" name="slug" value="<?= htmlspecialchars($item['slug'] ?? $item['symbol'] ?? '') ?>" required class="ltr-input" placeholder="مثلاً gold-18k">
+                        </div>
+                        <div class="form-group">
+                            <label>دسته‌بندی</label>
+                            <select name="category">
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= htmlspecialchars($cat['slug']) ?>" <?= ($item['category'] ?? 'gold') === $cat['slug'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($cat['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="form-group">
+                            <label>قیمت دستی (تومان)</label>
+                            <input type="text" name="manual_price" value="<?= htmlspecialchars($item['manual_price'] ?? '') ?>" placeholder="0" class="ltr-input">
+                        </div>
+                        <div class="form-group">
+                            <label>ترتیب نمایش</label>
+                            <input type="number" name="sort_order" value="<?= htmlspecialchars($item['sort_order'] ?? '0') ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>ارز مرتبط</label>
+                            <select name="related_item_symbol">
+                                <option value="">عدم نمایش</option>
+                                <?php foreach ($all_items as $ai): ?>
+                                    <?php if ($ai['symbol'] === ($item['symbol'] ?? '')) continue; ?>
+                                    <option value="<?= htmlspecialchars($ai['symbol']) ?>" <?= ($item['related_item_symbol'] ?? '') === $ai['symbol'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($ai['name']) ?> (<?= htmlspecialchars($ai['symbol']) ?>)
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+                <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-lg font-black text-slate-800">محتوای متنی</h2>
+                </div>
+                <div class="p-8">
+                    <div class="form-group mb-6">
+                        <label>توضیح کوتاه (بالای صفحه)</label>
+                        <textarea name="description" id="item-description"><?= htmlspecialchars($item['description'] ?? '') ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>توضیحات کامل (پایین صفحه)</label>
+                        <textarea name="long_description" id="item-long_description"><?= htmlspecialchars($item['long_description'] ?? '') ?></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+                <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
+                            <i data-lucide="help-circle" class="w-5 h-5"></i>
+                        </div>
+                        <h2 class="text-lg font-black text-slate-800">سوالات متداول (FAQ)</h2>
+                    </div>
+                    <button type="button" onclick="addFaqRow()" class="btn-v3 btn-v3-outline !py-1 text-[10px]">
+                        <i data-lucide="plus" class="w-3 h-3"></i> افزودن سوال
+                    </button>
+                </div>
+                <div class="p-8" id="faq-container">
+                    <?php if (empty($faqs)): ?>
                         <div class="faq-row grid grid-cols-1 gap-4 mb-6 p-4 bg-slate-50 rounded-lg relative group">
                             <button type="button" onclick="this.parentElement.remove()" class="absolute -left-2 -top-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
                                 <i data-lucide="x" class="w-3 h-3"></i>
                             </button>
                             <div class="form-group !mb-0">
                                 <label class="text-[10px]">سوال</label>
-                                <input type="text" name="faq_questions[]" value="<?= htmlspecialchars($faq['question']) ?>" placeholder="سوال خود را بنویسید...">
+                                <input type="text" name="faq_questions[]" placeholder="سوال خود را بنویسید...">
                             </div>
                             <div class="form-group !mb-0">
                                 <label class="text-[10px]">پاسخ</label>
-                                <textarea name="faq_answers[]" rows="2" placeholder="پاسخ سوال..."><?= htmlspecialchars($faq['answer']) ?></textarea>
+                                <textarea name="faq_answers[]" rows="2" placeholder="پاسخ سوال..."></textarea>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <template id="faq-template">
-            <div class="faq-row grid grid-cols-1 gap-4 mb-6 p-4 bg-slate-50 rounded-lg relative group">
-                <button type="button" onclick="this.parentElement.remove()" class="absolute -left-2 -top-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
-                    <i data-lucide="x" class="w-3 h-3"></i>
-                </button>
-                <div class="form-group !mb-0">
-                    <label class="text-[10px]">سوال</label>
-                    <input type="text" name="faq_questions[]" placeholder="سوال خود را بنویسید...">
-                </div>
-                <div class="form-group !mb-0">
-                    <label class="text-[10px]">پاسخ</label>
-                    <textarea name="faq_answers[]" rows="2" placeholder="پاسخ سوال..."></textarea>
-                </div>
-            </div>
-        </template>
-
-        <div class="glass-card rounded-xl overflow-hidden border border-slate-200 mb-6">
-            <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
-                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
-                    <i data-lucide="search" class="w-5 h-5"></i>
-                </div>
-                <h2 class="text-lg font-black text-slate-800">تنظیمات SEO</h2>
-            </div>
-            <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div class="form-group">
-                        <label>عنوان اصلی (H1)</label>
-                        <input type="text" name="h1_title" value="<?= htmlspecialchars($item['h1_title'] ?? '') ?>" placeholder="مثلاً قیمت لحظه‌ای طلای ۱۸ عیار امروز">
-                    </div>
-                    <div class="form-group">
-                        <label>عنوان تایتل (Meta Title)</label>
-                        <input type="text" name="page_title" value="<?= htmlspecialchars($item['page_title'] ?? '') ?>" placeholder="عنوان مرورگر">
-                    </div>
-                </div>
-                <div class="form-group mb-6">
-                    <label>توضیحات متا (Meta Description)</label>
-                    <textarea name="meta_description" rows="2" placeholder="توضیحات سئو..."><?= htmlspecialchars($item['meta_description'] ?? '') ?></textarea>
-                </div>
-                <div class="form-group">
-                    <label>کلمات کلیدی (Meta Keywords)</label>
-                    <div id="keywords-container" class="flex flex-wrap gap-2 p-2 bg-white border border-slate-200 rounded-lg min-h-[42px] mb-2">
-                        <input type="text" id="keyword-input" class="!border-none !p-0 !ring-0 text-xs flex-grow min-w-[120px]" placeholder="تایپ کنید و اینتر بزنید...">
-                    </div>
-                    <input type="hidden" name="meta_keywords" id="item-meta_keywords" value="<?= htmlspecialchars($item['meta_keywords'] ?? '') ?>">
+                    <?php else: ?>
+                        <?php foreach ($faqs as $faq): ?>
+                            <div class="faq-row grid grid-cols-1 gap-4 mb-6 p-4 bg-slate-50 rounded-lg relative group">
+                                <button type="button" onclick="this.parentElement.remove()" class="absolute -left-2 -top-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                                    <i data-lucide="x" class="w-3 h-3"></i>
+                                </button>
+                                <div class="form-group !mb-0">
+                                    <label class="text-[10px]">سوال</label>
+                                    <input type="text" name="faq_questions[]" value="<?= htmlspecialchars($faq['question']) ?>" placeholder="سوال خود را بنویسید...">
+                                </div>
+                                <div class="form-group !mb-0">
+                                    <label class="text-[10px]">پاسخ</label>
+                                    <textarea name="faq_answers[]" rows="2" placeholder="پاسخ سوال..."><?= htmlspecialchars($faq['answer']) ?></textarea>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
 
-        <div class="glass-card rounded-xl overflow-hidden border border-slate-200 mb-6">
-            <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
-                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
-                    <i data-lucide="sliders" class="w-5 h-5"></i>
+        <!-- Sidebar Column -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Actions -->
+            <div class="glass-card rounded-xl p-6 bg-slate-50/50 sticky top-4 z-10">
+                <div class="flex flex-col gap-3">
+                    <button type="submit" class="btn-v3 btn-v3-primary w-full h-11 text-sm">
+                        <i data-lucide="save" class="w-5 h-5"></i>
+                        ذخیره نهایی اطلاعات
+                    </button>
+                    <a href="items.php" class="btn-v3 btn-v3-outline w-full h-11 text-sm">انصراف</a>
                 </div>
-                <h2 class="text-lg font-black text-slate-800">سایر تنظیمات</h2>
             </div>
-            <div class="p-8">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <label class="relative inline-flex items-center cursor-pointer group">
+
+            <!-- Image Upload -->
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+                    <i data-lucide="image" class="w-4 h-4 text-slate-400"></i>
+                    <h2 class="text-sm font-black text-slate-800">تصویر لوگو</h2>
+                </div>
+                <div class="p-6">
+                    <div class="form-group mb-4">
+                        <div class="file-input-wrapper">
+                            <div class="file-input-custom">
+                                <span class="file-name-label text-[10px] text-slate-400 truncate">انتخاب فایل تصویر...</span>
+                                <i data-lucide="upload-cloud" class="w-4 h-4 text-slate-400"></i>
+                                <input type="file" name="logo_file" class="file-input-real">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-[10px]">یا لینک مستقیم تصویر</label>
+                        <input type="text" name="logo_url" value="<?= htmlspecialchars($item['logo'] ?? '') ?>" class="ltr-input text-xs" placeholder="https://...">
+                    </div>
+                    <input type="hidden" name="current_logo" value="<?= htmlspecialchars($item['logo'] ?? '') ?>">
+                </div>
+            </div>
+
+            <!-- Manual Date -->
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+                    <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                    <h2 class="text-sm font-black text-slate-800">زمان بروزرسانی</h2>
+                </div>
+                <div class="p-6">
+                    <div class="form-group mb-0">
+                        <label class="text-[10px]">تاریخ شمسی</label>
+                        <div class="input-icon-wrapper">
+                            <span class="icon"><i data-lucide="calendar" class="w-3.5 h-3.5"></i></span>
+                            <input type="text" id="updated_at_picker" class="font-bold cursor-pointer text-xs" placeholder="انتخاب تاریخ...">
+                        </div>
+                        <input type="hidden" name="updated_at" id="updated_at_value" value="<?= htmlspecialchars($item['updated_at'] ?? '') ?>">
+                        <p class="text-[9px] text-slate-400 mt-2 leading-relaxed">این تاریخ در نقشه سایت (Lastmod) استفاده می‌شود.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO Settings -->
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                    <h2 class="text-sm font-black text-slate-800">تنظیمات SEO</h2>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="form-group">
+                        <label class="text-[10px]">عنوان اصلی (H1)</label>
+                        <input type="text" name="h1_title" value="<?= htmlspecialchars($item['h1_title'] ?? '') ?>" placeholder="مثلاً قیمت لحظه‌ای طلا">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-[10px]">عنوان مرورگر (Title)</label>
+                        <input type="text" name="page_title" value="<?= htmlspecialchars($item['page_title'] ?? '') ?>" placeholder="Meta Title">
+                    </div>
+                    <div class="form-group">
+                        <label class="text-[10px]">توضیحات متا</label>
+                        <textarea name="meta_description" rows="3" class="text-xs" placeholder="توضیحات سئو..."><?= htmlspecialchars($item['meta_description'] ?? '') ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-[10px]">کلمات کلیدی</label>
+                        <div id="keywords-container" class="flex flex-wrap gap-2 p-2 bg-white border border-slate-200 rounded-lg min-h-[42px] mb-2">
+                            <input type="text" id="keyword-input" class="!border-none !p-0 !ring-0 text-[10px] flex-grow min-w-[100px]" placeholder="تایپ کنید...">
+                        </div>
+                        <input type="hidden" name="meta_keywords" id="item-meta_keywords" value="<?= htmlspecialchars($item['meta_keywords'] ?? '') ?>">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Settings -->
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+                    <i data-lucide="sliders" class="w-4 h-4 text-slate-400"></i>
+                    <h2 class="text-sm font-black text-slate-800">سایر تنظیمات</h2>
+                </div>
+                <div class="p-6 space-y-4">
+                    <label class="relative inline-flex items-center cursor-pointer group w-full">
                         <input type="checkbox" name="is_active" class="sr-only peer" <?= ($item['is_active'] ?? 1) ? 'checked' : '' ?>>
                         <div class="toggle-dot toggle-emerald"></div>
                         <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">وضعیت فعال</span>
                     </label>
-                    <label class="relative inline-flex items-center cursor-pointer group">
+                    <label class="relative inline-flex items-center cursor-pointer group w-full">
                         <input type="checkbox" name="is_manual" class="sr-only peer" <?= ($item['is_manual'] ?? 0) ? 'checked' : '' ?>>
                         <div class="toggle-dot"></div>
                         <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">قیمت دستی</span>
                     </label>
-                    <label class="relative inline-flex items-center cursor-pointer group">
+                    <label class="relative inline-flex items-center cursor-pointer group w-full">
                         <input type="checkbox" name="show_in_summary" class="sr-only peer" <?= ($item['show_in_summary'] ?? 0) ? 'checked' : '' ?>>
                         <div class="toggle-dot toggle-indigo"></div>
-                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">نمایش در بالا</span>
+                        <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">نمایش در خلاصه</span>
                     </label>
-                    <label class="relative inline-flex items-center cursor-pointer group">
+                    <label class="relative inline-flex items-center cursor-pointer group w-full">
                         <input type="checkbox" name="show_chart" class="sr-only peer" <?= ($item['show_chart'] ?? 0) ? 'checked' : '' ?>>
                         <div class="toggle-dot toggle-amber"></div>
                         <span class="mr-3 text-[11px] font-black text-slate-600 group-hover:text-slate-900 transition-colors">نمایش در نمودار</span>
@@ -371,16 +381,24 @@ include __DIR__ . '/layout/editor.php';
                 </div>
             </div>
         </div>
+    </div>
+</form>
 
-        <div class="flex items-center gap-4 mb-12">
-            <button type="submit" class="btn-v3 btn-v3-primary flex-grow h-12 text-sm">
-                <i data-lucide="save" class="w-5 h-5"></i>
-                ذخیره نهایی اطلاعات دارایی
-            </button>
-            <a href="items.php" class="btn-v3 btn-v3-outline h-12 px-8">انصراف</a>
+<template id="faq-template">
+    <div class="faq-row grid grid-cols-1 gap-4 mb-6 p-4 bg-slate-50 rounded-lg relative group">
+        <button type="button" onclick="this.parentElement.remove()" class="absolute -left-2 -top-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+            <i data-lucide="x" class="w-3 h-3"></i>
+        </button>
+        <div class="form-group !mb-0">
+            <label class="text-[10px]">سوال</label>
+            <input type="text" name="faq_questions[]" placeholder="سوال خود را بنویسید...">
         </div>
-    </form>
-</div>
+        <div class="form-group !mb-0">
+            <label class="text-[10px]">پاسخ</label>
+            <textarea name="faq_answers[]" rows="2" placeholder="پاسخ سوال..."></textarea>
+        </div>
+    </div>
+</template>
 
 <script>
     // Keywords Tags Logic
@@ -454,9 +472,6 @@ include __DIR__ . '/layout/editor.php';
                 second: {
                     enabled: false
                 }
-            },
-            onSelect: function(unix) {
-                // Ensure the hidden field is updated
             }
         });
 
