@@ -9,7 +9,9 @@
     <link rel="canonical" href="<?= get_current_url() ?>">
 
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Regular.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
+    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Medium.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-SemiBold.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
+    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Bold.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-ExtraBold.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
 
     <?php if (isset($og_image)): ?>
