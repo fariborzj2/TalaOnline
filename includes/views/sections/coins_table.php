@@ -28,29 +28,19 @@
                 <?php foreach ($coins as $coin):
                     $image_path = ($coin['logo'] ?? '') ?: 'assets/images/gold/' . (strpos($coin['name'] ?? '', 'نیم') !== false ? 'nim' : (strpos($coin['name'] ?? '', 'ربع') !== false ? 'rob' : 'gold')) . '.webp';
                     $image = get_asset_url($image_path);
+                    $item_url = '/' . ($coin['category'] ? $coin['category'] . '/' : '') . ($coin['slug'] ?? $coin['symbol']);
                 ?>
-                    <tr class="asset-item" data-asset="<?= htmlspecialchars(json_encode([
-                        "symbol" => $coin["symbol"],
-                        "slug" => $coin["slug"] ?? $coin["symbol"],
-                        "category" => $coin["category"] ?? "",
-                        "name" => $coin["name"],
-                        "price" => $coin["price"],
-                        "change" => $coin["change_percent"],
-                        "change_amount" => $coin["change_amount"] ?? 0,
-                        "image" => $image,
-                        "high" => $coin["high"] ?? $coin["price"],
-                        "low" => $coin["low"] ?? $coin["price"]
-                    ]), ENT_QUOTES, 'UTF-8') ?>">
+                    <tr class="asset-item">
                         <td>
-                             <div class="w-10 h-10 border radius-10 p-05 bg-secondary mg-auto d-flex align-center just-center">
+                             <a href="<?= $item_url ?>" class="w-10 h-10 border radius-10 p-05 bg-secondary mg-auto d-flex align-center just-center">
                                 <img src="<?= $image ?>" alt="<?= htmlspecialchars($coin['name']) ?>" class="radius-8 object-contain" loading="lazy" decoding="async" width="30" height="30">
-                            </div>
+                            </a>
                         </td>
                         <td class="just-start">
-                            <div class="line-height-1-5 text-right pr-1">
+                            <a href="<?= $item_url ?>" class="line-height-1-5 text-right pr-1">
                                 <div class="text-title font-bold"><?= htmlspecialchars($coin['name']) ?></div>
                                 <div class="font-size-0-8 text-gray"><?= htmlspecialchars($coin['symbol']) ?></div>
-                            </div>
+                            </a>
                         </td>
                         <td class="font-size-2 font-bold text-title" dir="ltr"><?= fa_price($coin['price']) ?></td>
                         <td class="font-size-2 text-success font-bold" dir="ltr"><?= fa_price($coin['high'] ?? $coin['price']) ?></td>
@@ -62,10 +52,10 @@
                             </div>
                         </td>
                         <td>
-                            <button class="btn btn-secondary btn-sm radius-10 mg-auto">
+                            <a href="<?= $item_url ?>" class="btn btn-secondary btn-sm radius-10 mg-auto">
                                 <i data-lucide="line-chart" class="icon-size-4"></i>
-                                نمودار
-                            </button>
+                                مشاهده
+                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

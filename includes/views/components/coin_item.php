@@ -1,15 +1,4 @@
-<div class="item-list asset-item" data-asset='<?= htmlspecialchars(json_encode([
-    "symbol" => $coin["symbol"],
-    "slug" => $coin["slug"] ?? $coin["symbol"],
-    "category" => $coin["category"] ?? "",
-    "name" => $coin["name"],
-    "price" => $coin["price"],
-    "change" => $coin["change_percent"],
-    "change_amount" => $coin["change_amount"] ?? 0,
-    "image" => $image ?? "/assets/images/gold/gold.webp",
-    "high" => $coin["high"] ?? $coin["price"],
-    "low" => $coin["low"] ?? $coin["price"]
-]), ENT_QUOTES, "UTF-8") ?>'>
+<a href="/<?= ($coin['category'] ? $coin['category'] . '/' : '') ?><?= $coin['slug'] ?? $coin['symbol'] ?>" class="item-list asset-item">
     <div class="d-flex align-center gap-1">
         <div class="w-10 h-10 border radius-10 p-05 bg-secondary">
             <img src="<?= $image ?? '/assets/images/gold/gold.webp' ?>" alt="<?= htmlspecialchars($coin['name']) ?>" loading="lazy" decoding="async" width="32" height="32">
@@ -31,4 +20,4 @@
             <?php endif; ?>
         </div>
     </div>
-</div>
+</a>
