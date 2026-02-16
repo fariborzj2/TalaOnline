@@ -12,21 +12,21 @@ echo '<?xml-stylesheet type="text/xsl" href="' . $base_url . '/sitemap.xsl"?>' .
 <?php
 if ($pdo) {
     try {
-        $columns = $pdo->query("DESCRIBE categories")->fetchAll(PDO::FETCH_COLUMN);
-        $has_updated_at = in_array('updated_at', $columns);
-        $query = "SELECT name, slug" . ($has_updated_at ? ", updated_at" : "") . " FROM categories ORDER BY sort_order ASC";
+        // Safe query without relying on specific columns for the WHERE clause
+        $stmt = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC");
+        if ($stmt) {
+            while ($row = $stmt->fetch()) {
+                // Check for updated_at column or fallback to current date
+                $lastmod = (!empty($row['updated_at'])) ? date('Y-m-d', strtotime($row['updated_at'])) : date('Y-m-d');
+                $loc = $base_url . '/' . htmlspecialchars($row['slug']);
 
-        $stmt = $pdo->query($query);
-        while ($row = $stmt->fetch()) {
-            $lastmod = ($has_updated_at && !empty($row['updated_at'])) ? date('Y-m-d', strtotime($row['updated_at'])) : date('Y-m-d');
-            $loc = $base_url . '/' . htmlspecialchars($row['slug']);
-
-            echo "    <url>\n";
-            echo "        <loc>$loc</loc>\n";
-            echo "        <lastmod>$lastmod</lastmod>\n";
-            echo "        <changefreq>daily</changefreq>\n";
-            echo "        <priority>0.8</priority>\n";
-            echo "    </url>\n";
+                echo "    <url>\n";
+                echo "        <loc>$loc</loc>\n";
+                echo "        <lastmod>$lastmod</lastmod>\n";
+                echo "        <changefreq>daily</changefreq>\n";
+                echo "        <priority>0.8</priority>\n";
+                echo "    </url>\n";
+            }
         }
     } catch (Exception $e) {}
 }
