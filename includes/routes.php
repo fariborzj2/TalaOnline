@@ -223,7 +223,7 @@ $router->add('/:category/:slug', function($params) {
                 $faqs = $stmt->fetchAll();
             } catch (Exception $e) {}
 
-            $og_image = $item_data['logo'] ? (get_base_url() . '/' . ltrim($item_data['logo'], '/')) : null;
+            $og_image = !empty($item_data['logo']) ? (get_base_url() . '/' . ltrim($item_data['logo'], '/')) : null;
 
             $stmt_cat = $pdo->prepare("SELECT name FROM categories WHERE slug = ?");
             $stmt_cat->execute([$category_slug]);
@@ -287,7 +287,7 @@ $router->add('/:slug', function($params) {
             $stmt->execute([$category['id']]);
             $faqs = $stmt->fetchAll();
 
-            $og_image = $category['logo'] ? (get_base_url() . '/' . ltrim($category['logo'], '/')) : null;
+            $og_image = !empty($category['logo']) ? (get_base_url() . '/' . ltrim($category['logo'], '/')) : null;
 
             return View::renderPage('category', [
                 'category' => $category,
@@ -334,7 +334,7 @@ $router->add('/:slug', function($params) {
                 $faqs = $stmt->fetchAll();
             } catch (Exception $e) {}
 
-            $og_image = $item_data['logo'] ? (get_base_url() . '/' . ltrim($item_data['logo'], '/')) : null;
+            $og_image = !empty($item_data['logo']) ? (get_base_url() . '/' . ltrim($item_data['logo'], '/')) : null;
 
             $stmt_cat = $pdo->prepare("SELECT name FROM categories WHERE slug = ?");
             $stmt_cat->execute([$item_db['category']]);
