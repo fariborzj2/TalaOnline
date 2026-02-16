@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $show_in_summary = isset($_POST['show_in_summary']) ? 1 : 0;
         $show_chart = isset($_POST['show_chart']) ? 1 : 0;
         $related_item_symbol = $_POST['related_item_symbol'] ?? null;
+        $updated_at = !empty($_POST['updated_at']) ? $_POST['updated_at'] : date('Y-m-d H:i:s');
 
         // Handle Image Upload
         $logo = $_POST['current_logo'] ?? '';
@@ -72,11 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->beginTransaction();
 
             if ($id) {
-                $stmt = $pdo->prepare("UPDATE items SET name = ?, en_name = ?, symbol = ?, slug = ?, category = ?, sort_order = ?, description = ?, long_description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ?, manual_price = ?, is_manual = ?, is_active = ?, show_in_summary = ?, show_chart = ?, logo = ?, related_item_symbol = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-                $stmt->execute([$name, $en_name, $symbol, $slug, $category, $sort_order, $description, $long_description, $h1_title, $page_title, $meta_description, $meta_keywords, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $logo, $related_item_symbol, $id]);
+                $stmt = $pdo->prepare("UPDATE items SET name = ?, en_name = ?, symbol = ?, slug = ?, category = ?, sort_order = ?, description = ?, long_description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ?, manual_price = ?, is_manual = ?, is_active = ?, show_in_summary = ?, show_chart = ?, logo = ?, related_item_symbol = ?, updated_at = ? WHERE id = ?");
+                $stmt->execute([$name, $en_name, $symbol, $slug, $category, $sort_order, $description, $long_description, $h1_title, $page_title, $meta_description, $meta_keywords, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $logo, $related_item_symbol, $updated_at, $id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO items (name, en_name, symbol, slug, category, sort_order, description, long_description, h1_title, page_title, meta_description, meta_keywords, manual_price, is_manual, is_active, show_in_summary, show_chart, logo, related_item_symbol, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)");
-                $stmt->execute([$name, $en_name, $symbol, $slug, $category, $sort_order, $description, $long_description, $h1_title, $page_title, $meta_description, $meta_keywords, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $logo, $related_item_symbol]);
+                $stmt = $pdo->prepare("INSERT INTO items (name, en_name, symbol, slug, category, sort_order, description, long_description, h1_title, page_title, meta_description, meta_keywords, manual_price, is_manual, is_active, show_in_summary, show_chart, logo, related_item_symbol, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $en_name, $symbol, $slug, $category, $sort_order, $description, $long_description, $h1_title, $page_title, $meta_description, $meta_keywords, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $logo, $related_item_symbol, $updated_at]);
                 $id = $pdo->lastInsertId();
             }
 
@@ -187,6 +188,20 @@ include __DIR__ . '/layout/editor.php';
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="form-group">
+                        <label>تاریخ بروزرسانی (شمسی)</label>
+                        <div class="input-icon-wrapper">
+                            <span class="icon"><i data-lucide="calendar" class="w-3.5 h-3.5"></i></span>
+                            <input type="text" id="updated_at_picker" class="font-bold cursor-pointer" placeholder="انتخاب تاریخ و زمان...">
+                        </div>
+                        <input type="hidden" name="updated_at" id="updated_at_value" value="<?= htmlspecialchars($item['updated_at'] ?? '') ?>">
+                    </div>
+                    <div class="form-group flex items-end">
+                        <p class="text-[10px] text-slate-400 font-bold mb-3">این تاریخ در نقشه سایت (Lastmod) تاثیر می‌گذارد. در صورت خالی بودن، زمان کنونی ثبت می‌شود.</p>
                     </div>
                 </div>
 
@@ -427,6 +442,28 @@ include __DIR__ . '/layout/editor.php';
     document.addEventListener('DOMContentLoaded', () => {
         initTinyMCE('#item-description');
         initTinyMCE('#item-long_description');
+
+        // Initialize Persian Datepicker
+        const initialDate = $('#updated_at_value').val();
+        $('#updated_at_picker').persianDatepicker({
+            format: 'YYYY/MM/DD HH:mm:ss',
+            altField: '#updated_at_value',
+            altFormat: 'YYYY-MM-DD HH:mm:ss',
+            timePicker: {
+                enabled: true,
+                second: {
+                    enabled: false
+                }
+            },
+            onSelect: function(unix) {
+                // Ensure the hidden field is updated
+            }
+        });
+
+        if (initialDate) {
+            const pDate = new persianDate(new Date(initialDate));
+            $('#updated_at_picker').val(pDate.format('YYYY/MM/DD HH:mm:ss'));
+        }
     });
 </script>
 

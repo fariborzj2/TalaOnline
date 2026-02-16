@@ -1,0 +1,11 @@
+[Mon Feb 16 14:34:53 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Mon Feb 16 14:34:56 2026] [::1]:34602 Accepted
+[Mon Feb 16 14:34:56 2026] PHP Fatal error:  Uncaught Error: Call to a member function exec() on null in /app/site/admin/item_edit.php:9
+Stack trace:
+#0 {main}
+  thrown in /app/site/admin/item_edit.php on line 9
+[Mon Feb 16 14:34:56 2026] [::1]:34602 [500]: GET /admin/item_edit.php - Uncaught Error: Call to a member function exec() on null in /app/site/admin/item_edit.php:9
+Stack trace:
+#0 {main}
+  thrown in /app/site/admin/item_edit.php on line 9
+[Mon Feb 16 14:34:56 2026] [::1]:34602 Closing
