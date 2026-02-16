@@ -1,6 +1,6 @@
 <div class="glass-card !p-0 overflow-hidden">
     <div class="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-        <h3 class="text-xl font-black text-slate-900 dark:text-white">عملکرد بازار</h3>
+        <h2 class="text-xl font-black text-slate-900 dark:text-white">عملکرد بازار</h2>
         <div class="flex gap-4">
              <button class="p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 text-slate-400 hover:text-primary transition-colors" aria-label="تنظیمات">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="2" y1="14" x2="6" y2="14"></line><line x1="10" y1="8" x2="14" y2="8"></line><line x1="18" y1="16" x2="22" y2="16"></line></svg>
