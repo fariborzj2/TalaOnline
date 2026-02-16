@@ -306,18 +306,34 @@ include __DIR__ . '/layout/editor.php';
         renderKeywords();
     }
 
+    function addKeywords(value) {
+        const parts = value.split(',').map(p => p.trim()).filter(p => p !== '');
+        let changed = false;
+        parts.forEach(val => {
+            if (val && !keywords.includes(val)) {
+                keywords.push(val);
+                changed = true;
+            }
+        });
+        if (changed) {
+            renderKeywords();
+            keywordInput.value = '';
+        }
+    }
+
     keywordInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
-            const val = keywordInput.value.trim().replace(',', '');
-            if (val && !keywords.includes(val)) {
-                keywords.push(val);
-                renderKeywords();
-                keywordInput.value = '';
-            }
+            addKeywords(keywordInput.value);
         } else if (e.key === 'Backspace' && keywordInput.value === '' && keywords.length > 0) {
             keywords.pop();
             renderKeywords();
+        }
+    });
+
+    keywordInput.addEventListener('input', (e) => {
+        if (keywordInput.value.includes(',')) {
+            addKeywords(keywordInput.value);
         }
     });
 
