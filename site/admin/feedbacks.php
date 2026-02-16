@@ -38,7 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$feedbacks = $pdo->query("SELECT * FROM feedbacks ORDER BY created_at DESC")->fetchAll();
+$feedbacks_raw = $pdo->query("SELECT * FROM feedbacks ORDER BY created_at DESC")->fetchAll();
+$feedbacks = [];
+foreach ($feedbacks_raw as $row) {
+    $row['formatted_date'] = jalali_date($row['created_at'], 'time');
+    $feedbacks[] = $row;
+}
 
 $page_title = 'پیام‌های کاربران';
 $page_subtitle = 'مدیریت و مشاهده بازخوردهای ارسال شده از طرف کاربران';
@@ -104,7 +109,7 @@ include __DIR__ . '/layout/header.php';
                         <span class="font-bold text-slate-700"><?= htmlspecialchars($fb['subject'] ?? 'بدون موضوع') ?></span>
                     </td>
                     <td>
-                        <span class="text-[10px] font-black text-slate-500"><?= $fb['created_at'] ?></span>
+                        <span class="text-[10px] font-black text-slate-500"><?= jalali_date($fb['created_at'], 'time') ?></span>
                     </td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
@@ -219,13 +224,21 @@ include __DIR__ . '/layout/header.php';
         }
     }
 
+    // Helper to format date in JS if needed, but easier to pass it from PHP if possible.
+    // For now, we will pass the formatted date in the JSON if we can, or just use the raw one.
+    // Actually, let's just use the raw created_at in the modal for now, or pre-format it.
+
     function viewFeedback(fb) {
         document.getElementById('fb-id').value = fb.id;
         document.getElementById('fb-name').innerText = fb.name || 'ناشناس';
         document.getElementById('fb-email').innerText = fb.email || 'بدون ایمیل';
         document.getElementById('fb-subject').innerText = fb.subject || 'بدون موضوع';
         document.getElementById('fb-message').innerText = fb.message;
-        document.getElementById('fb-date').innerText = fb.created_at;
+
+        // Use a hidden span or similar to get the formatted date from the row if possible,
+        // or just accept raw for the modal for now.
+        // Better: Pre-format in PHP.
+        document.getElementById('fb-date').innerText = fb.formatted_date;
 
         const statusInput = document.getElementById('fb-status');
         const toggleReadBtn = document.getElementById('toggleReadBtn');

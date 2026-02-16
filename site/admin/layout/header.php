@@ -1,6 +1,20 @@
 <?php
 require_once __DIR__ . '/../auth.php';
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Global Schema Self-Healing for updated_at
+// This ensures sitemaps and other freshness tracking works correctly
+if (isset($pdo) && $pdo) {
+    $tables_to_check = ['items', 'categories', 'settings'];
+    foreach ($tables_to_check as $table) {
+        try {
+            $cols = $pdo->query("DESCRIBE $table")->fetchAll(PDO::FETCH_COLUMN);
+            if (!in_array('updated_at', $cols)) {
+                $pdo->exec("ALTER TABLE $table ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+            }
+        } catch (Exception $e) {}
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
