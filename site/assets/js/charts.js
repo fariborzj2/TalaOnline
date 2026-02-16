@@ -194,9 +194,18 @@ document.addEventListener('DOMContentLoaded', async function() {
     const mainChart = new AssetChart('#chart', initialSymbol);
     window.mainChart = mainChart;
 
-    if (await mainChart.fetchData()) {
-        mainChart.render();
-        updateMainChartStats(initialSymbol);
+    const startCharts = async () => {
+        if (await mainChart.fetchData()) {
+            mainChart.render();
+            updateMainChartStats(initialSymbol);
+        }
+    };
+
+    // Wait for app.js to finish DOM manipulations to prevent forced reflow
+    if (document.readyState === 'complete') {
+        startCharts();
+    } else {
+        document.addEventListener('app:content-ready', startCharts, { once: true });
     }
 
     // Modal Chart Global Access

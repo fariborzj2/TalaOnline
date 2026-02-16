@@ -18,9 +18,9 @@ $count = 0;
 foreach ($dirs as $dir) {
     if (!is_dir($dir)) continue;
 
-    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
 
-    foreach ($files as $file) {
+    foreach ($iterator as $file) {
         if ($file->isDir()) continue;
 
         $path = $file->getRealPath();
@@ -32,8 +32,8 @@ foreach ($dirs as $dir) {
             if (file_exists($webp_path)) continue;
 
             $img = null;
-            if ($ext === 'png') $img = imagecreatefrompng($path);
-            else $img = imagecreatefromjpeg($path);
+            if ($ext === 'png') $img = @imagecreatefrompng($path);
+            else $img = @imagecreatefromjpeg($path);
 
             if ($img) {
                 imagepalettetotruecolor($img);
@@ -43,25 +43,7 @@ foreach ($dirs as $dir) {
                 imagedestroy($img);
                 $count++;
 
-                // Try to update DB if it points to this asset
-                $relative_path = str_replace($base_dir, '', $path);
-                $new_relative_path = str_replace($base_dir, '', $webp_path);
-
-                try {
-                    require_once __DIR__ . '/../../includes/db.php';
-                    if ($pdo) {
-                        $stmt = $pdo->prepare("UPDATE items SET logo = ? WHERE logo = ?");
-                        $stmt->execute([$new_relative_path, $relative_path]);
-
-                        $stmt = $pdo->prepare("UPDATE platforms SET logo = ? WHERE logo = ?");
-                        $stmt->execute([$new_relative_path, $relative_path]);
-
-                        $stmt = $pdo->prepare("UPDATE categories SET logo = ? WHERE logo = ?");
-                        $stmt->execute([$new_relative_path, $relative_path]);
-                    }
-                } catch(Exception $e) {}
-
-                echo "Optimized: " . $relative_path . " -> webp\n";
+                echo "Optimized: " . str_replace($base_dir, '', $path) . " -> webp\n";
             }
         }
     }
