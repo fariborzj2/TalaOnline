@@ -38,16 +38,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $page_title = $_POST['page_title'] ?? '';
         $meta_description = $_POST['meta_description'] ?? '';
         $meta_keywords = $_POST['meta_keywords'] ?? '';
+        $updated_at = !empty($_POST['updated_at']) ? $_POST['updated_at'] : date('Y-m-d H:i:s');
 
         try {
             $pdo->beginTransaction();
 
             if ($id) {
-                $stmt = $pdo->prepare("UPDATE categories SET name = ?, en_name = ?, icon = ?, slug = ?, sort_order = ?, description = ?, short_description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-                $stmt->execute([$name, $en_name, $icon, $slug, $sort_order, $description, $short_description, $h1_title, $page_title, $meta_description, $meta_keywords, $id]);
+                $stmt = $pdo->prepare("UPDATE categories SET name = ?, en_name = ?, icon = ?, slug = ?, sort_order = ?, description = ?, short_description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ?, updated_at = ? WHERE id = ?");
+                $stmt->execute([$name, $en_name, $icon, $slug, $sort_order, $description, $short_description, $h1_title, $page_title, $meta_description, $meta_keywords, $updated_at, $id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, slug, sort_order, description, short_description, h1_title, page_title, meta_description, meta_keywords, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)");
-                $stmt->execute([$name, $en_name, $icon, $slug, $sort_order, $description, $short_description, $h1_title, $page_title, $meta_description, $meta_keywords]);
+                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, slug, sort_order, description, short_description, h1_title, page_title, meta_description, meta_keywords, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $en_name, $icon, $slug, $sort_order, $description, $short_description, $h1_title, $page_title, $meta_description, $meta_keywords, $updated_at]);
                 $id = $pdo->lastInsertId();
             }
 
@@ -120,6 +121,20 @@ include __DIR__ . '/layout/editor.php';
                     <div class="form-group">
                         <label>ترتیب نمایش</label>
                         <input type="number" name="sort_order" value="<?= htmlspecialchars($category['sort_order'] ?? '0') ?>">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="form-group">
+                        <label>تاریخ بروزرسانی (شمسی)</label>
+                        <div class="input-icon-wrapper">
+                            <span class="icon"><i data-lucide="calendar" class="w-3.5 h-3.5"></i></span>
+                            <input type="text" id="updated_at_picker" class="font-bold cursor-pointer" placeholder="انتخاب تاریخ و زمان...">
+                        </div>
+                        <input type="hidden" name="updated_at" id="updated_at_value" value="<?= htmlspecialchars($category['updated_at'] ?? '') ?>">
+                    </div>
+                    <div class="form-group flex items-end">
+                        <p class="text-[10px] text-slate-400 font-bold mb-3">این تاریخ در نقشه سایت (Lastmod) تاثیر می‌گذارد. در صورت خالی بودن، زمان کنونی ثبت می‌شود.</p>
                     </div>
                 </div>
             </div>
@@ -307,6 +322,27 @@ include __DIR__ . '/layout/editor.php';
 
     // Initial render
     renderKeywords();
+
+    $(document).ready(function() {
+        // Initialize Persian Datepicker
+        const initialDate = $('#updated_at_value').val();
+        $('#updated_at_picker').persianDatepicker({
+            format: 'YYYY/MM/DD HH:mm:ss',
+            altField: '#updated_at_value',
+            altFormat: 'YYYY-MM-DD HH:mm:ss',
+            timePicker: {
+                enabled: true,
+                second: {
+                    enabled: false
+                }
+            }
+        });
+
+        if (initialDate) {
+            const pDate = new persianDate(new Date(initialDate));
+            $('#updated_at_picker').val(pDate.format('YYYY/MM/DD HH:mm:ss'));
+        }
+    });
 </script>
 
 <?php include __DIR__ . '/layout/footer.php'; ?>
