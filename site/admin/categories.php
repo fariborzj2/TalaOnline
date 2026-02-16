@@ -46,6 +46,9 @@ try {
     if (!in_array('short_description', $columns)) {
         $pdo->exec("ALTER TABLE categories ADD COLUMN short_description TEXT DEFAULT NULL AFTER description");
     }
+    if (!in_array('updated_at', $columns)) {
+        $pdo->exec("ALTER TABLE categories ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+    }
 } catch (Exception $e) {}
 
 // Create FAQs table
