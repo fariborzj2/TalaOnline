@@ -8,6 +8,8 @@ $config_file = __DIR__ . '/../config.php';
 // Initialize $pdo as null to prevent "undefined variable" errors
 $pdo = null;
 
+date_default_timezone_set('Asia/Tehran');
+
 if (file_exists($config_file)) {
     require_once $config_file;
 
@@ -51,9 +53,21 @@ function set_setting($key, $value) {
     global $pdo;
     if (!isset($pdo) || !$pdo) return false;
 
+    // Schema Self-Healing for Settings (add updated_at if not exists)
+    static $migration_checked = false;
+    if (!$migration_checked) {
+        try {
+            $cols = $pdo->query("DESCRIBE settings")->fetchAll(PDO::FETCH_COLUMN);
+            if (!in_array('updated_at', $cols)) {
+                $pdo->exec("ALTER TABLE settings ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+            }
+        } catch (Exception $e) {}
+        $migration_checked = true;
+    }
+
     try {
         $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)
-                               ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
+                               ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = CURRENT_TIMESTAMP");
         return $stmt->execute([$key, $value]);
     } catch (Exception $e) {
         return false;

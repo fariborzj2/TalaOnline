@@ -4,6 +4,8 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/helpers.php';
 global $pdo;
 
+date_default_timezone_set('Asia/Tehran');
+
 $base_url = rtrim(get_base_url(), '/');
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
@@ -13,23 +15,20 @@ $lastmod = date('Y-m-d\TH:i:sP');
 
 if ($pdo) {
     try {
-        // Robust way to get last update without breaking if column doesn't exist
-        $stmt = $pdo->query("SELECT updated_at FROM items LIMIT 1");
-        $has_updated_at = ($stmt !== false);
-
-        if ($has_updated_at) {
-            $stmt = $pdo->query("SELECT MAX(updated_at) as last_update FROM (
-                SELECT updated_at FROM items
-                UNION
-                SELECT updated_at FROM categories
-            ) as updates");
-            $res = $stmt->fetch();
-            if ($res && $res['last_update']) {
-                $lastmod = date('Y-m-d\TH:i:sP', strtotime($res['last_update']));
-            }
+        // Robust way to get last update across items, categories and settings
+        $stmt = $pdo->query("SELECT MAX(updated_at) as last_update FROM (
+            SELECT updated_at FROM items
+            UNION
+            SELECT updated_at FROM categories
+            UNION
+            SELECT updated_at FROM settings
+        ) as updates");
+        $res = $stmt->fetch();
+        if ($res && $res['last_update']) {
+            $lastmod = date('Y-m-d\TH:i:sP', strtotime($res['last_update']));
         }
     } catch (Exception $e) {
-        // Fallback to current time is already set
+        // Fallback to current time
     }
 }
 ?>
