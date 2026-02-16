@@ -39,6 +39,9 @@ try {
     if (!in_array('related_item_symbol', $columns)) {
         $pdo->exec("ALTER TABLE items ADD COLUMN related_item_symbol VARCHAR(50) DEFAULT NULL");
     }
+    if (!in_array('updated_at', $columns)) {
+        $pdo->exec("ALTER TABLE items ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+    }
 } catch (Exception $e) {}
 
 $message = '';
@@ -75,14 +78,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         if ($action === 'add') {
             try {
-                $stmt = $pdo->prepare("INSERT INTO items (symbol, name, en_name, description, logo, manual_price, is_manual, is_active, show_in_summary, show_chart, category, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO items (symbol, name, en_name, description, logo, manual_price, is_manual, is_active, show_in_summary, show_chart, category, sort_order, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)");
                 $stmt->execute([$symbol, $name, $en_name, $description, $logo, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $category, $sort_order]);
                 $message = 'دارایی جدید با موفقیت اضافه شد.';
             } catch (Exception $e) {
                 $error = 'خطا در افزودن دارایی: ' . $e->getMessage();
             }
         } else {
-            $stmt = $pdo->prepare("UPDATE items SET symbol = ?, name = ?, en_name = ?, description = ?, logo = ?, manual_price = ?, is_manual = ?, is_active = ?, show_in_summary = ?, show_chart = ?, category = ?, sort_order = ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE items SET symbol = ?, name = ?, en_name = ?, description = ?, logo = ?, manual_price = ?, is_manual = ?, is_active = ?, show_in_summary = ?, show_chart = ?, category = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
             $stmt->execute([$symbol, $name, $en_name, $description, $logo, $manual_price, $is_manual, $is_active, $show_in_summary, $show_chart, $category, $sort_order, $id]);
             $message = 'دارایی با موفقیت بروزرسانی شد.';
         }

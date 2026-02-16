@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare("UPDATE categories SET name = ?, en_name = ?, icon = ?, slug = ?, sort_order = ?, description = ?, short_description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ? WHERE id = ?");
                 $stmt->execute([$name, $en_name, $icon, $slug, $sort_order, $description, $short_description, $h1_title, $page_title, $meta_description, $meta_keywords, $id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, slug, sort_order, description, short_description, h1_title, page_title, meta_description, meta_keywords) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO categories (name, en_name, icon, slug, sort_order, description, short_description, h1_title, page_title, meta_description, meta_keywords, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)");
                 $stmt->execute([$name, $en_name, $icon, $slug, $sort_order, $description, $short_description, $h1_title, $page_title, $meta_description, $meta_keywords]);
                 $id = $pdo->lastInsertId();
             }
