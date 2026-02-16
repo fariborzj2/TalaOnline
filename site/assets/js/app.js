@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const isPos = assetData.change >= 0;
         const changePercentEl = document.getElementById('modal-change-percent');
-        changePercentEl.innerHTML = \`<span>\${toPersianDigits(Math.abs(assetData.change))}%</span><i data-lucide="\${isPos ? 'arrow-up' : 'arrow-down'}" class="icon-size-1"></i>\`;
-        changePercentEl.className = \`d-flex align-center gap-05 font-bold \${isPos ? 'text-success' : 'text-error'}\`;
+        changePercentEl.innerHTML = `<span>${toPersianDigits(Math.abs(assetData.change))}%</span><i data-lucide="${isPos ? 'arrow-up' : 'arrow-down'}" class="icon-size-1"></i>`;
+        changePercentEl.className = `d-flex align-center gap-05 font-bold ${isPos ? 'text-success' : 'text-error'}`;
         document.getElementById('modal-change-amount').textContent = (isPos ? '+ ' : '- ') + formatPrice(Math.abs(assetData.change_amount));
         document.getElementById('modal-high').textContent = formatPrice(assetData.high);
         document.getElementById('modal-low').textContent = formatPrice(assetData.low);
@@ -98,12 +98,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const tocList = document.createElement('ul');
                 tocList.className = 'toc-list';
                 headings.forEach((heading, index) => {
-                    const id = \`heading-\${index}\`;
+                    const id = `heading-${index}`;
                     heading.id = id;
                     const li = document.createElement('li');
-                    li.className = \`toc-\${heading.tagName.toLowerCase()}\`;
+                    li.className = `toc-${heading.tagName.toLowerCase()}`;
                     const a = document.createElement('a');
-                    a.href = \`#\${id}\`;
+                    a.href = `#${id}`;
                     a.textContent = heading.textContent;
                     a.onclick = (e) => { e.preventDefault(); heading.scrollIntoView({ behavior: 'smooth' }); };
                     li.appendChild(a);
