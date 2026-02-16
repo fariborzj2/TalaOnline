@@ -288,8 +288,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     };
 
     await initApp();
-    enhanceContent();
-    if (window.lucide) {
-        window.lucide.createIcons();
-    }
+
+    // Batch DOM operations to prevent forced reflow
+    requestAnimationFrame(() => {
+        enhanceContent();
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+    });
 });
