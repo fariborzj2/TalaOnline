@@ -18,18 +18,6 @@ if (file_exists($config_file)) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         $pdo->exec("SET time_zone = '+03:30'");
-
-        // Global Schema Self-Healing for updated_at
-        // This ensures sitemaps and other freshness tracking works immediately
-        $tables_to_check = ['items', 'categories', 'settings'];
-        foreach ($tables_to_check as $table) {
-            try {
-                $cols = $pdo->query("DESCRIBE $table")->fetchAll(PDO::FETCH_COLUMN);
-                if (!in_array('updated_at', $cols)) {
-                    $pdo->exec("ALTER TABLE $table ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
-                }
-            } catch (Exception $e) {}
-        }
     } catch (PDOException $e) {
         // Just continue, we'll handle null $pdo in other places
     }

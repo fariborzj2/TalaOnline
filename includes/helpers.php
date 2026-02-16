@@ -19,21 +19,40 @@ function fa_price($num) {
     return fa_num($num);
 }
 
-function jalali_date($date = 'now') {
+function jalali_date($date = 'now', $format = 'long') {
+    date_default_timezone_set('Asia/Tehran');
+
+    $timestamp = is_numeric($date) ? $date : strtotime($date);
+    if (!$timestamp) $timestamp = time();
+
     if (!class_exists('IntlDateFormatter')) {
-        return date('Y/m/d');
+        return date('Y/m/d', $timestamp);
+    }
+
+    $date_type = IntlDateFormatter::LONG;
+    $time_type = IntlDateFormatter::NONE;
+    $pattern = 'd MMMM y';
+
+    if ($format === 'time') {
+        $time_type = IntlDateFormatter::SHORT;
+        $pattern = 'd MMMM y | HH:mm';
+    } elseif ($format === 'full') {
+        $time_type = IntlDateFormatter::FULL;
+        $pattern = 'd MMMM y ساعت HH:mm';
+    } elseif ($format === 'compact') {
+        $pattern = 'y/MM/dd';
     }
 
     $fmt = new IntlDateFormatter(
         'fa_IR@calendar=persian',
-        IntlDateFormatter::LONG,
-        IntlDateFormatter::NONE,
+        $date_type,
+        $time_type,
         'Asia/Tehran',
         IntlDateFormatter::TRADITIONAL,
-        'd MMMM y'
+        $pattern
     );
 
-    return fa_num($fmt->format(strtotime($date)));
+    return fa_num($fmt->format($timestamp));
 }
 
 function get_trend_arrow($change) {
