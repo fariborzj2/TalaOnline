@@ -103,12 +103,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             });
 
-            const tocPlaceholder = area.querySelector('#toc-placeholder') || document.getElementById('toc-container');
+            const tocPlaceholder = area.querySelector('#toc-placeholder') || document.getElementById('toc-container-main');
             const headings = area.querySelectorAll('h2, h3');
             if (tocPlaceholder && headings.length > 1) {
-                const isSidebar = tocPlaceholder.id === 'toc-container';
+                const isSidebar = tocPlaceholder.id === 'toc-container-main';
                 const tocList = document.createElement('ul');
                 tocList.className = isSidebar ? 'd-column gap-02 mt-1' : 'toc-list';
+                const targetContainer = isSidebar ? document.getElementById('toc-content') : tocPlaceholder;
 
                 headings.forEach((heading, index) => {
                     const id = `heading-${index}`;
@@ -131,7 +132,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                     li.appendChild(a);
                     tocList.appendChild(li);
                 });
-                tocPlaceholder.appendChild(tocList);
+                targetContainer.appendChild(tocList);
+                if (isSidebar) tocPlaceholder.classList.remove('d-none');
                 if (!isSidebar) {
                     tocPlaceholder.classList.add('toc-container');
                     tocPlaceholder.insertAdjacentHTML('afterbegin', '<div class="toc-title"><i data-lucide="list"></i> فهرست مطالب</div>');
