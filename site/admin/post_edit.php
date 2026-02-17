@@ -7,6 +7,7 @@ check_login();
 $id = $_GET['id'] ?? null;
 $post = null;
 $post_categories = [];
+$faqs = [];
 
 if ($id) {
     $stmt = $pdo->prepare("SELECT p.*, c.slug as category_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id WHERE p.id = ?");
@@ -22,6 +23,11 @@ if ($id) {
         if ($post['category_id'] && !in_array($post['category_id'], $post_categories)) {
             array_unshift($post_categories, $post['category_id']);
         }
+
+        // Fetch FAQs
+        $stmt = $pdo->prepare("SELECT * FROM blog_post_faqs WHERE post_id = ? ORDER BY sort_order ASC");
+        $stmt->execute([$id]);
+        $faqs = $stmt->fetchAll();
     }
 }
 
@@ -88,6 +94,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
+            // Handle FAQs
+            $pdo->prepare("DELETE FROM blog_post_faqs WHERE post_id = ?")->execute([$id]);
+            $faq_questions = $_POST['faq_questions'] ?? [];
+            $faq_answers = $_POST['faq_answers'] ?? [];
+
+            foreach ($faq_questions as $index => $question) {
+                if (!empty($question) && !empty($faq_answers[$index])) {
+                    $stmt = $pdo->prepare("INSERT INTO blog_post_faqs (post_id, question, answer, sort_order) VALUES (?, ?, ?, ?)");
+                    $stmt->execute([$id, $question, $faq_answers[$index], $index]);
+                }
+            }
+
             header("Location: posts.php?message=success");
             exit;
         } catch (Exception $e) {
@@ -143,6 +161,54 @@ include __DIR__ . '/layout/editor.php';
                         <input type="hidden" name="tags" id="post-tags" value="<?= htmlspecialchars($post['tags'] ?? '') ?>">
                         <p class="text-[9px] text-slate-400">برچسب‌ها برای دسته‌بندی غیررسمی و نمایش در انتهای مقاله استفاده می‌شوند.</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+                <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
+                            <i data-lucide="help-circle" class="w-5 h-5"></i>
+                        </div>
+                        <h2 class="text-lg font-black text-slate-800">سوالات متداول (FAQ)</h2>
+                    </div>
+                    <button type="button" onclick="addFaqRow()" class="btn-v3 btn-v3-outline !py-1 text-[10px]">
+                        <i data-lucide="plus" class="w-3 h-3"></i> افزودن سوال
+                    </button>
+                </div>
+                <div class="p-8" id="faq-container">
+                    <?php if (empty($faqs)): ?>
+                        <div class="faq-row grid grid-cols-1 gap-4 mb-6 p-4 bg-slate-50 rounded-lg relative group">
+                            <button type="button" onclick="this.parentElement.remove()" class="absolute -left-2 -top-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                                <i data-lucide="x" class="w-3 h-3"></i>
+                            </button>
+                            <div class="form-group !mb-0">
+                                <label class="text-[10px]">سوال</label>
+                                <input type="text" name="faq_questions[]" placeholder="سوال خود را بنویسید...">
+                            </div>
+                            <div class="form-group !mb-0">
+                                <label class="text-[10px]">پاسخ</label>
+                                <textarea name="faq_answers[]" rows="2" placeholder="پاسخ سوال..."></textarea>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($faqs as $faq): ?>
+                            <div class="faq-row grid grid-cols-1 gap-4 mb-6 p-4 bg-slate-50 rounded-lg relative group">
+                                <button type="button" onclick="this.parentElement.remove()" class="absolute -left-2 -top-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                                    <i data-lucide="x" class="w-3 h-3"></i>
+                                </button>
+                                <div class="form-group !mb-0">
+                                    <label class="text-[10px]">سوال</label>
+                                    <input type="text" name="faq_questions[]" value="<?= htmlspecialchars($faq['question']) ?>" placeholder="سوال خود را بنویسید...">
+                                </div>
+                                <div class="form-group !mb-0">
+                                    <label class="text-[10px]">پاسخ</label>
+                                    <textarea name="faq_answers[]" rows="2" placeholder="پاسخ سوال..."><?= htmlspecialchars($faq['answer']) ?></textarea>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -295,6 +361,22 @@ include __DIR__ . '/layout/editor.php';
     </div>
 </form>
 
+<template id="faq-template">
+    <div class="faq-row grid grid-cols-1 gap-4 mb-6 p-4 bg-slate-50 rounded-lg relative group">
+        <button type="button" onclick="this.parentElement.remove()" class="absolute -left-2 -top-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+            <i data-lucide="x" class="w-3 h-3"></i>
+        </button>
+        <div class="form-group !mb-0">
+            <label class="text-[10px]">سوال</label>
+            <input type="text" name="faq_questions[]" placeholder="سوال خود را بنویسید...">
+        </div>
+        <div class="form-group !mb-0">
+            <label class="text-[10px]">پاسخ</label>
+            <textarea name="faq_answers[]" rows="2" placeholder="پاسخ سوال..."></textarea>
+        </div>
+    </div>
+</template>
+
 <script>
     // Slug Generation
     const titleInput = document.getElementById('post-title');
@@ -381,6 +463,14 @@ include __DIR__ . '/layout/editor.php';
     }
 
     setupCategorySelector();
+
+    function addFaqRow() {
+        const container = document.getElementById('faq-container');
+        const template = document.getElementById('faq-template');
+        const clone = template.content.cloneNode(true);
+        container.appendChild(clone);
+        window.refreshIcons();
+    }
 
     // Generic Tag Input Logic
     function setupTagInput(inputId, containerId, hiddenId) {

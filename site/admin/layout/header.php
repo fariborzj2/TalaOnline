@@ -71,6 +71,14 @@ if (isset($pdo) && $pdo) {
                 FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE,
                 FOREIGN KEY (`category_id`) REFERENCES `blog_categories`(`id`) ON DELETE CASCADE
             )");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_post_faqs` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `post_id` INTEGER NOT NULL,
+                `question` TEXT NOT NULL,
+                `answer` TEXT NOT NULL,
+                `sort_order` INTEGER DEFAULT 0,
+                FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE
+            )");
         } else {
             $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_categories` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -107,6 +115,15 @@ if (isset($pdo) && $pdo) {
                 PRIMARY KEY (`post_id`, `category_id`),
                 FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE,
                 FOREIGN KEY (`category_id`) REFERENCES `blog_categories`(`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_post_faqs` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `post_id` INT NOT NULL,
+                `question` TEXT NOT NULL,
+                `answer` TEXT NOT NULL,
+                `sort_order` INT DEFAULT 0,
+                FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
         }
     } catch (Exception $e) {}
