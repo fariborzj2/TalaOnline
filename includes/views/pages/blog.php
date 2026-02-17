@@ -44,98 +44,52 @@
     </section>
     <?php endif; ?>
 
-    <div class="d-flex-wrap gap-md align-stretch">
-        <div class="grow-8 basis-600 d-column gap-md">
-            <section class="posts-list">
-                <div class="d-flex just-between align-center mb-1-5 pr-1">
-                    <div class="d-flex align-center gap-1">
-                        <div class="w-1 h-8 bg-primary radius-100"></div>
-                        <h2 class="font-size-3 font-black"><?= isset($current_category) ? 'مقالات ' . htmlspecialchars($current_category['name']) : 'آخرین نوشته‌ها' ?></h2>
-                    </div>
-                    <?php if (isset($current_category)): ?>
-                    <a href="/blog" class="btn-blog-outline">مشاهده همه</a>
-                    <?php endif; ?>
+    <div class="grow-8 d-column gap-md">
+        <section class="posts-list">
+            <div class="d-flex just-between align-center mb-1-5 pr-1">
+                <div class="d-flex align-center gap-1">
+                    <div class="w-1 h-8 bg-primary radius-100"></div>
+                    <h2 class="font-size-3 font-black"><?= isset($current_category) ? 'مقالات ' . htmlspecialchars($current_category['name']) : 'آخرین نوشته‌ها' ?></h2>
                 </div>
-
-                <div class="d-flex-wrap gap-md">
-                    <?php foreach ($posts as $post): ?>
-                    <a href="/blog/<?= htmlspecialchars($post['slug']) ?>" class="blog-card basis-300 grow-1 bg-block border radius-20 overflow-hidden d-column">
-                        <div class="aspect-video relative overflow-hidden bg-slate-100">
-                            <?php if ($post['thumbnail']): ?>
-                            <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
-                                 alt="<?= htmlspecialchars($post['title']) ?>"
-                                 class="w-full h-full object-cover transition-all duration-700">
-                            <?php else: ?>
-                            <div class="w-full h-full d-flex align-center justify-center text-slate-300">
-                                <i data-lucide="image" class="w-12 h-12 opacity-20"></i>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="p-1-5 d-column gap-05">
-                            <div class="d-flex align-center gap-05 mb-02">
-                                <span class="text-primary text-[10px] font-black"><?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?></span>
-                                <span class="text-subtitle opacity-30">•</span>
-                                <span class="text-subtitle text-[10px] font-bold"><?= jalali_date($post['created_at']) ?></span>
-                            </div>
-                            <h3 class="font-bold font-size-1-2 text-title line-clamp-2 h-12"><?= htmlspecialchars($post['title']) ?></h3>
-                            <p class="text-subtitle text-[11px] line-clamp-2 leading-relaxed opacity-80"><?= htmlspecialchars($post['excerpt']) ?></p>
-                        </div>
-                    </a>
-                    <?php endforeach; ?>
-
-                    <?php if (empty($posts)): ?>
-                    <div class="basis-100 text-center py-10 bg-block border radius-20 d-column align-center gap-1 opacity-50">
-                        <i data-lucide="newspaper" class="w-16 h-16 text-subtitle"></i>
-                        <p class="text-subtitle font-black font-size-2">مقاله‌ای یافت نشد.</p>
-                    </div>
-                    <?php endif; ?>
-                </div>
-            </section>
-        </div>
-
-        <aside class="grow-2 basis-250 d-column gap-md">
-            <div class="blog-sidebar-card bg-block border radius-20 p-2 sticky-sidebar">
-                <div class="d-flex align-center gap-05 mb-2 border-bottom pb-1">
-                    <i data-lucide="layers-3" class="icon-size-4 text-primary"></i>
-                    <h3 class="font-black font-size-1-2">دسته‌بندی‌ها</h3>
-                </div>
-                <ul class="d-column gap-02">
-                    <?php foreach ($categories as $cat): ?>
-                    <li>
-                        <a href="/blog/category/<?= htmlspecialchars($cat['slug']) ?>"
-                           class="cat-link d-flex just-between align-center p-1 radius-12 transition-all <?= (isset($current_category) && $current_category['id'] == $cat['id']) ? 'active' : '' ?>">
-                            <span class="font-bold text-[13px]"><?= htmlspecialchars($cat['name']) ?></span>
-                            <div class="cat-arrow"><i data-lucide="chevron-left" class="icon-size-2"></i></div>
-                        </a>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
+                <?php if (isset($current_category)): ?>
+                <a href="/blog" class="btn-blog-outline">مشاهده همه</a>
+                <?php endif; ?>
             </div>
 
-            <div class="blog-sidebar-card bg-block border radius-20 p-2">
-                <div class="d-flex align-center gap-05 mb-2 border-bottom pb-1">
-                    <i data-lucide="flame" class="icon-size-4 text-error"></i>
-                    <h3 class="font-black font-size-1-2">داغ‌ترین مطالب</h3>
-                </div>
-                <div class="d-column gap-1-5">
-                    <?php
-                    $popular = array_slice($posts, 0, 5);
-                    foreach ($popular as $idx => $p):
-                    ?>
-                    <a href="/blog/<?= htmlspecialchars($p['slug']) ?>" class="popular-item d-flex gap-1 group">
-                        <div class="popular-number"><?= $idx + 1 ?></div>
-                        <div class="d-column gap-02">
-                            <h4 class="text-[12px] font-black text-title line-clamp-2 transition-colors"><?= htmlspecialchars($p['title']) ?></h4>
-                            <div class="d-flex align-center gap-05 opacity-50">
-                                <i data-lucide="eye" class="icon-size-1"></i>
-                                <span class="text-[9px]"><?= number_format($p['views']) ?> بازدید</span>
-                            </div>
+            <div class="d-flex-wrap gap-md">
+                <?php foreach ($posts as $post): ?>
+                <a href="/blog/<?= htmlspecialchars($post['slug']) ?>" class="blog-card basis-250 grow-1 bg-block border radius-20 overflow-hidden d-column">
+                    <div class="aspect-video relative overflow-hidden bg-slate-100">
+                        <?php if ($post['thumbnail']): ?>
+                        <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
+                             alt="<?= htmlspecialchars($post['title']) ?>"
+                             class="w-full h-full object-cover transition-all duration-700">
+                        <?php else: ?>
+                        <div class="w-full h-full d-flex align-center justify-center text-slate-300">
+                            <i data-lucide="image" class="w-12 h-12 opacity-20"></i>
                         </div>
-                    </a>
-                    <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="p-1-5 d-column gap-05">
+                        <div class="d-flex align-center gap-05 mb-02">
+                            <span class="text-primary text-[10px] font-black"><?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?></span>
+                            <span class="text-subtitle opacity-30">•</span>
+                            <span class="text-subtitle text-[10px] font-bold"><?= jalali_date($post['created_at']) ?></span>
+                        </div>
+                        <h3 class="font-bold font-size-1-2 text-title line-clamp-2 h-12"><?= htmlspecialchars($post['title']) ?></h3>
+                        <p class="text-subtitle text-[11px] line-clamp-2 leading-relaxed opacity-80"><?= htmlspecialchars($post['excerpt']) ?></p>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+
+                <?php if (empty($posts)): ?>
+                <div class="basis-100 text-center py-10 bg-block border radius-20 d-column align-center gap-1 opacity-50">
+                    <i data-lucide="newspaper" class="w-16 h-16 text-subtitle"></i>
+                    <p class="text-subtitle font-black font-size-2">مقاله‌ای یافت نشد.</p>
                 </div>
+                <?php endif; ?>
             </div>
-        </aside>
+        </section>
     </div>
 </div>
 

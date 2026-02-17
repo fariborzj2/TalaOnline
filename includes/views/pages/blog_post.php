@@ -106,38 +106,6 @@
         <?php endif; ?>
     </div>
 
-    <aside class="grow-2 basis-280 d-column gap-md">
-        <div class="sidebar-box bg-block border radius-24 p-2 sticky-sidebar shadow-sm">
-            <div id="toc-container">
-                <div class="d-flex align-center gap-05 mb-2 border-bottom pb-1">
-                    <i data-lucide="list-ordered" class="icon-size-4 text-primary"></i>
-                    <h3 class="font-black font-size-1-2">فهرست مطالب</h3>
-                </div>
-                <!-- TOC will be injected by app.js -->
-            </div>
-        </div>
-
-        <div class="sidebar-box newsletter-card radius-24 p-2-5 text-white relative overflow-hidden">
-            <div class="newsletter-glow"></div>
-            <div class="relative z-10 d-column gap-1">
-                <div class="w-12 h-12 bg-white/20 radius-12 d-flex align-center justify-center mb-05">
-                    <i data-lucide="mail-plus" class="w-6 h-6"></i>
-                </div>
-                <h3 class="font-black font-size-3 leading-tight">عضویت در خبرنامه طلایی</h3>
-                <p class="text-[11px] leading-relaxed opacity-90">تحلیل‌های روزانه بازار طلا و ارز را رایگان دریافت کنید.</p>
-                <form class="d-column gap-05 mt-05" onsubmit="return false">
-                    <div class="relative">
-                        <input type="email" placeholder="ایمیل شما..." class="newsletter-input">
-                    </div>
-                    <button class="newsletter-btn">
-                        <span>تایید و عضویت</span>
-                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                    </button>
-                </form>
-            </div>
-            <i data-lucide="sparkles" class="absolute -right-4 -bottom-4 w-32 h-32 opacity-10"></i>
-        </div>
-    </aside>
 </article>
 
 <style>

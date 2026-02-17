@@ -4,10 +4,21 @@ require_once __DIR__ . '/../../db.php';
 
 global $pdo;
 $news = [];
+$blog_categories = [];
+$popular_posts = [];
+
 if ($pdo) {
     $rssService = new RssService($pdo);
     $news_count = get_setting('news_count', 5);
     $news = $rssService->getLatestNews($news_count);
+
+    try {
+        // Fetch blog categories
+        $blog_categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
+
+        // Fetch popular posts (by views)
+        $popular_posts = $pdo->query("SELECT * FROM blog_posts WHERE status = 'published' ORDER BY views DESC LIMIT 5")->fetchAll();
+    } catch (Exception $e) {}
 } else {
     // Mock news for verification when DB is not available
     $news = [
@@ -31,7 +42,142 @@ if ($pdo) {
     </div>
 
      <?= View::renderComponent('news_card', ['news' => $news]) ?>
+
+    <?php if (!empty($blog_categories)): ?>
+    <div class="bg-block border radius-20 p-1-5 shadow-sm">
+        <div class="d-flex align-center gap-05 mb-1-5 border-bottom pb-1">
+            <i data-lucide="layers-3" class="icon-size-4 text-primary"></i>
+            <h3 class="font-black font-size-1-2">دسته‌بندی‌های وبلاگ</h3>
+        </div>
+        <ul class="d-column gap-02">
+            <?php
+            $current_uri = $_SERVER['REQUEST_URI'];
+            foreach ($blog_categories as $cat):
+                $cat_url = '/blog/category/' . $cat['slug'];
+                $is_active = (strpos($current_uri, $cat_url) !== false);
+            ?>
+            <li>
+                <a href="<?= $cat_url ?>"
+                   class="cat-link d-flex just-between align-center p-07 radius-10 transition-all <?= $is_active ? 'active' : '' ?>">
+                    <span class="font-bold text-[12px]"><?= htmlspecialchars($cat['name']) ?></span>
+                    <i data-lucide="chevron-left" class="icon-size-2 <?= $is_active ? '' : 'opacity-30' ?>"></i>
+                </a>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($popular_posts)): ?>
+    <div class="bg-block border radius-20 p-1-5 shadow-sm">
+        <div class="d-flex align-center gap-05 mb-1-5 border-bottom pb-1">
+            <i data-lucide="flame" class="icon-size-4 text-error"></i>
+            <h3 class="font-black font-size-1-2">داغ‌ترین مطالب</h3>
+        </div>
+        <div class="d-column gap-1">
+            <?php foreach ($popular_posts as $idx => $p): ?>
+            <a href="/blog/<?= htmlspecialchars($p['slug']) ?>" class="popular-item d-flex gap-1 group">
+                <div class="popular-number"><?= $idx + 1 ?></div>
+                <div class="d-column gap-02">
+                    <h4 class="text-[11px] font-black text-title line-clamp-2 transition-colors"><?= htmlspecialchars($p['title']) ?></h4>
+                    <span class="text-[9px] opacity-50"><?= number_format($p['views']) ?> بازدید</span>
+                </div>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Table of Contents Placeholder (shown only on blog posts via JS) -->
+    <div id="toc-container-main" class="bg-block border radius-20 p-1-5 shadow-sm d-none">
+        <div class="d-flex align-center gap-05 mb-1-5 border-bottom pb-1">
+            <i data-lucide="list-ordered" class="icon-size-4 text-primary"></i>
+            <h3 class="font-black font-size-1-2">فهرست مطالب</h3>
+        </div>
+        <div id="toc-content"></div>
+    </div>
+
+    <div class="newsletter-card radius-24 p-2 text-white relative overflow-hidden shadow-lg">
+        <div class="newsletter-glow"></div>
+        <div class="relative z-10 d-column gap-1">
+            <div class="w-10 h-10 bg-white/20 radius-12 d-flex align-center justify-center mb-05">
+                <i data-lucide="mail-plus" class="w-5 h-5"></i>
+            </div>
+            <h3 class="font-black font-size-2 leading-tight">عضویت در خبرنامه طلایی</h3>
+            <p class="text-[10px] leading-relaxed opacity-90">تحلیل‌های روزانه بازار طلا و ارز را رایگان دریافت کنید.</p>
+            <form class="d-column gap-05 mt-05" onsubmit="return false">
+                <input type="email" placeholder="ایمیل شما..." class="newsletter-input">
+                <button class="newsletter-btn">
+                    <span>تایید و عضویت</span>
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+            </form>
+        </div>
+        <i data-lucide="sparkles" class="absolute -right-4 -bottom-4 w-24 h-24 opacity-10"></i>
+    </div>
 </aside>
+
+<style>
+    .cat-link { color: var(--color-text); }
+    .cat-link:hover { background: #f8fafc; color: var(--color-primary); }
+    .cat-link.active { background: var(--bg-warning); color: var(--color-warning); }
+
+    .popular-item { text-decoration: none; }
+    .popular-number {
+        font-size: 20px;
+        font-weight: 900;
+        color: var(--color-primary);
+        opacity: 0.15;
+        line-height: 1;
+        transition: opacity 0.3s;
+    }
+    .popular-item:hover .popular-number { opacity: 0.8; }
+    .popular-item:hover h4 { color: var(--color-primary); }
+
+    .newsletter-card {
+        background: linear-gradient(135deg, var(--color-primary), #8b5702);
+    }
+    .newsletter-glow {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .newsletter-input {
+        width: 100%;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 10px 14px;
+        border-radius: 12px;
+        color: white;
+        font-size: 12px;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .newsletter-input::placeholder { color: rgba(255,255,255,0.6); }
+    .newsletter-input:focus { background: rgba(255,255,255,0.25); border-color: white; }
+
+    .newsletter-btn {
+        width: 100%;
+        background: white;
+        color: var(--color-primary);
+        padding: 10px;
+        border-radius: 12px;
+        font-weight: 900;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+    .newsletter-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+</style>
 
 <style>
     .sidebar {
