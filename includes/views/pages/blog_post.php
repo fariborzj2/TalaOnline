@@ -1,84 +1,103 @@
-<article class="blog-post-container d-flex-wrap gap-md align-stretch">
+<article class="blog-post-page d-flex-wrap gap-md align-stretch">
     <div class="grow-8 basis-600 d-column gap-md">
-        <div class="bg-block border radius-20 overflow-hidden">
+        <div class="post-main-card bg-block border radius-24 overflow-hidden">
             <?php if ($post['thumbnail']): ?>
-            <div class="post-header-image aspect-[21/9] w-full overflow-hidden">
+            <div class="post-hero-image relative overflow-hidden">
                 <img src="/<?= ltrim($post['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="w-full h-full object-cover">
+                <div class="hero-overlay"></div>
             </div>
             <?php endif; ?>
 
-            <div class="p-2 md:p-3">
-                <div class="d-flex align-center gap-1 mb-1-5">
-                    <a href="/blog/category/<?= htmlspecialchars($post['category_slug']) ?>" class="bg-primary-light text-primary text-[11px] font-black px-3 py-07 radius-10 border border-primary/10">
+            <div class="p-2 md:p-4">
+                <div class="d-flex-wrap align-center gap-1-5 mb-2">
+                    <a href="/blog/category/<?= htmlspecialchars($post['category_slug']) ?>" class="category-badge">
+                        <i data-lucide="hash" class="icon-size-2"></i>
                         <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
                     </a>
-                    <div class="d-flex align-center gap-05 text-subtitle text-[11px] font-bold">
+                    <div class="meta-item">
                         <i data-lucide="calendar" class="icon-size-3"></i>
-                        <?= jalali_date($post['created_at']) ?>
+                        <span><?= jalali_date($post['created_at']) ?></span>
                     </div>
-                    <div class="d-flex align-center gap-05 text-subtitle text-[11px] font-bold">
+                    <div class="meta-item">
                         <i data-lucide="eye" class="icon-size-3"></i>
-                        <?= number_format($post['views']) ?> بازدید
+                        <span><?= number_format($post['views']) ?> بازدید</span>
+                    </div>
+                    <div class="meta-item">
+                        <i data-lucide="clock" class="icon-size-3"></i>
+                        <span><?= ceil(str_word_count(strip_tags($post['content'])) / 200) ?> دقیقه مطالعه</span>
                     </div>
                 </div>
 
-                <h1 class="font-size-3 font-black text-title mb-2 leading-tight"><?= htmlspecialchars($post['title']) ?></h1>
+                <h1 class="post-title font-black text-title mb-2-5"><?= htmlspecialchars($post['title']) ?></h1>
 
                 <?php if ($post['excerpt']): ?>
-                <div class="bg-slate-50 border-r-4 border-primary p-1-5 radius-10 mb-2-5">
-                    <p class="text-subtitle font-bold leading-relaxed"><?= htmlspecialchars($post['excerpt']) ?></p>
+                <div class="post-excerpt bg-slate-50 radius-16 p-2 mb-3">
+                    <div class="d-flex gap-1">
+                        <i data-lucide="quote" class="w-10 h-10 text-primary opacity-20 shrink-0"></i>
+                        <p class="font-bold text-subtitle line-height-2"><?= htmlspecialchars($post['excerpt']) ?></p>
+                    </div>
                 </div>
                 <?php endif; ?>
 
-                <div class="content-text font-size-1-1 leading-loose text-title">
+                <div class="content-text font-size-2 line-height-2-5 text-title">
                     <?= $post['content'] ?>
                 </div>
 
-                <div class="mt-4 pt-3 border-t d-flex just-between align-center">
+                <div class="post-footer mt-5 pt-3 border-top d-flex-wrap just-between align-center gap-2">
                     <div class="d-flex align-center gap-1">
-                        <span class="text-subtitle text-[11px] font-bold">اشتراک‌گذاری:</span>
+                        <span class="font-black text-subtitle text-[12px]">اشتراک‌گذاری:</span>
                         <div class="d-flex gap-05">
-                            <a href="https://telegram.me/share/url?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="w-8 h-8 radius-10 border d-flex align-center justify-center text-subtitle hover:bg-blue-500 hover:text-white transition-all">
+                            <a href="https://telegram.me/share/url?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn telegram">
                                 <i data-lucide="send" class="icon-size-3"></i>
                             </a>
-                            <a href="https://twitter.com/intent/tweet?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="w-8 h-8 radius-10 border d-flex align-center justify-center text-subtitle hover:bg-sky-400 hover:text-white transition-all">
+                            <a href="https://twitter.com/intent/tweet?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn twitter">
                                 <i data-lucide="twitter" class="icon-size-3"></i>
+                            </a>
+                            <a href="https://wa.me/?text=<?= urlencode($post['title'] . ' ' . get_current_url()) ?>" target="_blank" class="share-btn whatsapp">
+                                <i data-lucide="message-circle" class="icon-size-3"></i>
                             </a>
                         </div>
                     </div>
-                    <div class="d-flex gap-05">
-                        <?php if ($post['tags']): ?>
-                            <?php
-                            $tags = explode(',', $post['tags']);
-                            foreach ($tags as $tag):
-                                if (!trim($tag)) continue;
-                            ?>
-                            <span class="text-[10px] font-bold text-subtitle bg-slate-50 px-2 py-05 radius-5 border">#<?= htmlspecialchars(trim($tag)) ?></span>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+
+                    <?php if ($post['tags']): ?>
+                    <div class="d-flex-wrap gap-05">
+                        <?php
+                        $tags = explode(',', $post['tags']);
+                        foreach ($tags as $tag):
+                            if (!trim($tag)) continue;
+                        ?>
+                        <span class="tag-pill">#<?= htmlspecialchars(trim($tag)) ?></span>
+                        <?php endforeach; ?>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
 
         <?php if (!empty($related_posts)): ?>
-        <section class="related-posts mt-2">
-            <h2 class="font-size-2 font-black mb-1-5">مطالب مرتبط</h2>
-            <div class="grid-3 gap-md">
+        <section class="related-section mt-3">
+            <div class="d-flex align-center gap-1 mb-2 pr-1">
+                <div class="w-1 h-8 bg-primary radius-100"></div>
+                <h2 class="font-size-3 font-black">مطالب مرتبط پیشنهادی</h2>
+            </div>
+            <div class="d-flex-wrap gap-md">
                 <?php foreach ($related_posts as $rp): ?>
-                <a href="/blog/<?= htmlspecialchars($rp['slug']) ?>" class="blog-card bg-block border radius-15 overflow-hidden d-column">
+                <a href="/blog/<?= htmlspecialchars($rp['slug']) ?>" class="blog-card basis-250 grow-1 bg-block border radius-20 overflow-hidden d-column">
                     <div class="aspect-video relative overflow-hidden bg-slate-100">
                         <?php if ($rp['thumbnail']): ?>
-                        <img src="/<?= ltrim($rp['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($rp['title']) ?>" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                        <img src="/<?= ltrim($rp['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($rp['title']) ?>" class="w-full h-full object-cover transition-all duration-500 hover:scale-110">
                         <?php else: ?>
-                        <div class="w-full h-full d-flex align-center justify-center text-slate-300">
-                            <i data-lucide="image" class="icon-size-5"></i>
+                        <div class="w-full h-full d-flex align-center justify-center text-slate-200">
+                            <i data-lucide="image" class="w-10 h-10"></i>
                         </div>
                         <?php endif; ?>
                     </div>
-                    <div class="p-1 d-column gap-05">
-                        <h3 class="font-bold text-[12px] line-clamp-2 leading-snug"><?= htmlspecialchars($rp['title']) ?></h3>
-                        <span class="text-[9px] text-subtitle"><?= jalali_date($rp['created_at']) ?></span>
+                    <div class="p-1-5 d-column gap-05">
+                        <h3 class="font-black text-[13px] line-clamp-2 leading-snug text-title"><?= htmlspecialchars($rp['title']) ?></h3>
+                        <div class="d-flex align-center gap-05 opacity-50">
+                            <i data-lucide="calendar" class="icon-size-1"></i>
+                            <span class="text-[9px]"><?= jalali_date($rp['created_at']) ?></span>
+                        </div>
                     </div>
                 </a>
                 <?php endforeach; ?>
@@ -87,42 +106,172 @@
         <?php endif; ?>
     </div>
 
-    <aside class="grow-2 basis-250 d-column gap-md">
-        <div class="bg-block border radius-15 p-1-5 sticky-sidebar">
-            <div class="toc-container" id="toc-container">
-                <h3 class="font-black font-size-1-1 mb-1-5 border-b pb-1 d-flex align-center gap-05">
-                    <i data-lucide="list-ordered" class="icon-size-3 text-primary"></i>
-                    فهرست مطالب
-                </h3>
+    <aside class="grow-2 basis-280 d-column gap-md">
+        <div class="sidebar-box bg-block border radius-24 p-2 sticky-sidebar shadow-sm">
+            <div id="toc-container">
+                <div class="d-flex align-center gap-05 mb-2 border-bottom pb-1">
+                    <i data-lucide="list-ordered" class="icon-size-4 text-primary"></i>
+                    <h3 class="font-black font-size-1-2">فهرست مطالب</h3>
+                </div>
                 <!-- TOC will be injected by app.js -->
             </div>
         </div>
 
-        <div class="bg-primary rounded-20 p-2 text-white d-column gap-1-5 relative overflow-hidden">
-            <i data-lucide="sparkles" class="absolute -right-2 -top-2 icon-size-20 opacity-10"></i>
-            <h3 class="font-black font-size-1-2 relative z-10">عضویت در خبرنامه</h3>
-            <p class="text-[11px] leading-relaxed opacity-90 relative z-10">آخرین تحلیل‌های بازار طلا و ارز را مستقیماً در ایمیل خود دریافت کنید.</p>
-            <div class="relative z-10 d-column gap-05">
-                <input type="email" placeholder="ایمیل شما..." class="w-full bg-white/10 border border-white/20 radius-10 p-1 text-[11px] text-white placeholder:text-white/50 outline-none focus:bg-white/20 transition-all">
-                <button class="w-full bg-white text-primary font-black py-1 radius-10 text-[11px] hover:bg-opacity-90 transition-all">عضویت رایگان</button>
+        <div class="sidebar-box newsletter-card radius-24 p-2-5 text-white relative overflow-hidden">
+            <div class="newsletter-glow"></div>
+            <div class="relative z-10 d-column gap-1">
+                <div class="w-12 h-12 bg-white/20 radius-12 d-flex align-center justify-center mb-05">
+                    <i data-lucide="mail-plus" class="w-6 h-6"></i>
+                </div>
+                <h3 class="font-black font-size-3 leading-tight">عضویت در خبرنامه طلایی</h3>
+                <p class="text-[11px] leading-relaxed opacity-90">تحلیل‌های روزانه بازار طلا و ارز را رایگان دریافت کنید.</p>
+                <form class="d-column gap-05 mt-05" onsubmit="return false">
+                    <div class="relative">
+                        <input type="email" placeholder="ایمیل شما..." class="newsletter-input">
+                    </div>
+                    <button class="newsletter-btn">
+                        <span>تایید و عضویت</span>
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                    </button>
+                </form>
             </div>
+            <i data-lucide="sparkles" class="absolute -right-4 -bottom-4 w-32 h-32 opacity-10"></i>
         </div>
     </aside>
 </article>
 
 <style>
-    .post-header-image { position: relative; }
-    .content-text { color: #2d3748; }
-    .content-text h2 { font-size: 1.5rem; font-weight: 800; margin-top: 2rem; margin-bottom: 1rem; color: #1a202c; }
-    .content-text h3 { font-size: 1.25rem; font-weight: 800; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #1a202c; }
-    .content-text p { margin-bottom: 1.5rem; }
-    .content-text ul, .content-text ol { margin-bottom: 1.5rem; padding-right: 1.5rem; }
-    .content-text li { margin-bottom: 0.5rem; }
-    .content-text img { border-radius: 1rem; margin: 2rem 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-
-    .toc-link { display: block; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; color: var(--text-subtitle); transition: all 0.2s; }
-    .toc-link:hover { color: var(--primary); background: rgba(79, 70, 229, 0.05); }
-    .toc-link.active { color: var(--primary); background: rgba(79, 70, 229, 0.1); }
-
     .aspect-video { aspect-ratio: 16 / 9; }
+    .radius-24 { border-radius: 24px; }
+    .radius-16 { border-radius: 16px; }
+
+    .post-hero-image { height: 400px; }
+    @media (max-width: 768px) { .post-hero-image { height: 250px; } }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4));
+    }
+
+    .category-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--bg-warning);
+        color: var(--color-warning);
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-size: 11px;
+        font-weight: 800;
+        transition: all 0.3s;
+    }
+    .category-badge:hover { filter: brightness(0.95); transform: translateY(-1px); }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--color-text);
+        opacity: 0.6;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .post-title {
+        font-size: 2.8rem;
+        line-height: 1.2;
+        letter-spacing: -0.04em;
+    }
+    @media (max-width: 768px) { .post-title { font-size: 1.8rem; } }
+
+    .share-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        border: 1px solid #eee;
+        color: #888;
+    }
+    .share-btn:hover { transform: translateY(-3px); color: white; border-color: transparent; }
+    .share-btn.telegram:hover { background: #0088cc; }
+    .share-btn.twitter:hover { background: #1da1f2; }
+    .share-btn.whatsapp:hover { background: #25d366; }
+
+    .tag-pill {
+        background: #f8fafc;
+        color: #64748b;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        border: 1px solid #edf2f7;
+        transition: all 0.2s;
+    }
+    .tag-pill:hover { background: #edf2f7; color: var(--color-primary); }
+
+    .sticky-sidebar { position: sticky; top: 1.5rem; }
+
+    .newsletter-card {
+        background: linear-gradient(135deg, var(--color-primary), #8b5702);
+        box-shadow: 0 15px 30px -10px rgba(194, 120, 3, 0.4);
+    }
+    .newsletter-glow {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .newsletter-input {
+        width: 100%;
+        background: rgba(255,255,255,0.15);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 12px 16px;
+        border-radius: 14px;
+        color: white;
+        font-size: 13px;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .newsletter-input::placeholder { color: rgba(255,255,255,0.6); }
+    .newsletter-input:focus { background: rgba(255,255,255,0.25); border-color: white; }
+
+    .newsletter-btn {
+        width: 100%;
+        background: white;
+        color: var(--color-primary);
+        padding: 12px;
+        border-radius: 14px;
+        font-weight: 900;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s;
+    }
+    .newsletter-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+    .blog-card { transition: all 0.3s; }
+    .blog-card:hover { transform: translateY(-5px); border-color: var(--color-primary); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+    .toc-item {
+        display: block;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--color-text);
+        transition: all 0.2s;
+    }
+    .toc-item:hover { background: #f8fafc; color: var(--color-primary); }
+    .toc-item.active { background: rgba(194, 120, 3, 0.05); color: var(--color-primary); border-right: 3px solid var(--color-primary); }
 </style>

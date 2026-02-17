@@ -103,29 +103,40 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
             });
 
-            const tocPlaceholder = area.querySelector('#toc-placeholder');
+            const tocPlaceholder = area.querySelector('#toc-placeholder') || document.getElementById('toc-container');
             const headings = area.querySelectorAll('h2, h3');
             if (tocPlaceholder && headings.length > 1) {
-                const tocContainer = document.createElement('div');
-                tocContainer.className = 'toc-container';
-                tocContainer.innerHTML = '<div class="toc-title"><i data-lucide="list"></i> فهرست مطالب</div>';
+                const isSidebar = tocPlaceholder.id === 'toc-container';
                 const tocList = document.createElement('ul');
-                tocList.className = 'toc-list';
+                tocList.className = isSidebar ? 'd-column gap-02 mt-1' : 'toc-list';
+
                 headings.forEach((heading, index) => {
                     const id = `heading-${index}`;
                     heading.id = id;
                     const li = document.createElement('li');
-                    li.className = `toc-${heading.tagName.toLowerCase()}`;
                     const a = document.createElement('a');
                     a.href = `#${id}`;
                     a.textContent = heading.textContent;
-                    a.onclick = (e) => { e.preventDefault(); heading.scrollIntoView({ behavior: 'smooth' }); };
+                    a.className = isSidebar ? 'toc-item' : '';
+                    if (heading.tagName.toLowerCase() === 'h3' && isSidebar) a.style.paddingRight = '20px';
+
+                    a.onclick = (e) => {
+                        e.preventDefault();
+                        heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        if (isSidebar) {
+                            tocList.querySelectorAll('a').forEach(el => el.classList.remove('active'));
+                            a.classList.add('active');
+                        }
+                    };
                     li.appendChild(a);
                     tocList.appendChild(li);
                 });
-                tocContainer.appendChild(tocList);
-                tocPlaceholder.appendChild(tocContainer);
-                if (window.lucide) window.lucide.createIcons({ attrs: { 'data-lucide': true }, root: tocContainer });
+                tocPlaceholder.appendChild(tocList);
+                if (!isSidebar) {
+                    tocPlaceholder.classList.add('toc-container');
+                    tocPlaceholder.insertAdjacentHTML('afterbegin', '<div class="toc-title"><i data-lucide="list"></i> فهرست مطالب</div>');
+                }
+                if (window.lucide) window.lucide.createIcons({ attrs: { 'data-lucide': true }, root: tocPlaceholder });
             }
         });
     };
