@@ -335,7 +335,7 @@ include __DIR__ . '/layout/editor.php';
                 if (!option) return;
 
                 const catEl = document.createElement('span');
-                catEl.className = 'cat-item inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[10px] font-bold border border-indigo-100';
+                catEl.className = 'cat-item inline-flex items-center gap-1.5 px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[11px] font-bold border border-indigo-100 shadow-sm';
 
                 if (index === 0) {
                     catEl.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-100');
@@ -344,20 +344,22 @@ include __DIR__ . '/layout/editor.php';
                     categoryPreview.innerText = option.dataset.slug;
                 }
 
-                const textNode = document.createTextNode(option.dataset.name + ' ');
+                const textNode = document.createTextNode(option.dataset.name);
                 catEl.appendChild(textNode);
 
                 const btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = 'remove-btn hover:text-rose-500 transition-colors';
-                btn.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i>';
+                btn.className = 'remove-btn text-current/50 hover:text-rose-500 transition-colors';
+                btn.innerHTML = '<i data-lucide="x" style="width: 12px; height: 12px;"></i>';
 
                 btn.addEventListener('click', (e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     selectedIds.splice(index, 1);
                     render();
                 });
 
+                catEl.appendChild(btn);
                 container.insertBefore(catEl, dropdown);
             });
 
@@ -392,23 +394,25 @@ include __DIR__ . '/layout/editor.php';
 
             tags.forEach((tag, index) => {
                 const tagEl = document.createElement('span');
-                tagEl.className = 'tag-item inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[10px] font-bold border border-indigo-100';
+                tagEl.className = 'tag-item inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-[11px] font-bold border border-slate-200 shadow-sm';
 
                 // Use textContent for the tag text to prevent XSS
-                const textNode = document.createTextNode(tag + ' ');
+                const textNode = document.createTextNode(tag);
                 tagEl.appendChild(textNode);
 
                 const btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = 'remove-btn hover:text-rose-500 transition-colors';
-                btn.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i>';
+                btn.className = 'remove-btn text-current/50 hover:text-rose-500 transition-colors';
+                btn.innerHTML = '<i data-lucide="x" style="width: 12px; height: 12px;"></i>';
 
                 btn.addEventListener('click', (e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     tags.splice(index, 1);
                     render();
                 });
 
+                tagEl.appendChild(btn);
                 container.insertBefore(tagEl, input);
             });
 
