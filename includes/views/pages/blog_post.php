@@ -10,10 +10,19 @@
 
             <div class="p-2 md:p-4">
                 <div class="d-flex-wrap align-center gap-1-5 mb-2">
-                    <a href="/blog/<?= htmlspecialchars($post['category_slug']) ?>" class="category-badge">
-                        <i data-lucide="hash" class="icon-size-2"></i>
-                        <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
-                    </a>
+                    <?php if (!empty($all_categories)): ?>
+                        <?php foreach ($all_categories as $cat): ?>
+                            <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="category-badge">
+                                <i data-lucide="hash" class="icon-size-2"></i>
+                                <?= htmlspecialchars($cat['name']) ?>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>" class="category-badge">
+                            <i data-lucide="hash" class="icon-size-2"></i>
+                            <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
+                        </a>
+                    <?php endif; ?>
                     <div class="meta-item">
                         <i data-lucide="calendar" class="icon-size-3"></i>
                         <span><?= jalali_time_tag($post['created_at'], 'weekday') ?></span>

@@ -6,11 +6,23 @@ check_login();
 
 $id = $_GET['id'] ?? null;
 $post = null;
+$post_categories = [];
 
 if ($id) {
     $stmt = $pdo->prepare("SELECT p.*, c.slug as category_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id WHERE p.id = ?");
     $stmt->execute([$id]);
     $post = $stmt->fetch();
+
+    if ($post) {
+        $stmt = $pdo->prepare("SELECT category_id FROM blog_post_categories WHERE post_id = ?");
+        $stmt->execute([$id]);
+        $post_categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        // Ensure primary category is in the list if it's set
+        if ($post['category_id'] && !in_array($post['category_id'], $post_categories)) {
+            array_unshift($post_categories, $post['category_id']);
+        }
+    }
 }
 
 $message = '';
@@ -24,7 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $slug = $_POST['slug'] ?? '';
         $excerpt = $_POST['excerpt'] ?? '';
         $content = $_POST['content'] ?? '';
-        $category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
+
+        $category_ids = !empty($_POST['category_ids']) ? explode(',', $_POST['category_ids']) : [];
+        $category_id = !empty($category_ids) ? $category_ids[0] : null; // First one is primary
+
         $status = $_POST['status'] ?? 'draft';
         $is_featured = isset($_POST['is_featured']) ? 1 : 0;
         $meta_title = $_POST['meta_title'] ?? '';
@@ -60,6 +75,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $stmt = $pdo->prepare("INSERT INTO blog_posts (title, slug, excerpt, content, thumbnail, category_id, status, is_featured, meta_title, meta_description, meta_keywords, tags, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$title, $slug, $excerpt, $content, $thumbnail, $category_id, $status, $is_featured, $meta_title, $meta_description, $meta_keywords, $tags, $created_at, $updated_at]);
+                $id = $pdo->lastInsertId();
+            }
+
+            // Sync Categories
+            $pdo->prepare("DELETE FROM blog_post_categories WHERE post_id = ?")->execute([$id]);
+            if (!empty($category_ids)) {
+                $stmt = $pdo->prepare("INSERT INTO blog_post_categories (post_id, category_id) VALUES (?, ?)");
+                foreach ($category_ids as $cat_id) {
+                    if (empty($cat_id)) continue;
+                    $stmt->execute([$id, $cat_id]);
+                }
             }
 
             header("Location: posts.php?message=success");
@@ -149,15 +175,19 @@ include __DIR__ . '/layout/editor.php';
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="text-[10px]">دسته‌بندی</label>
-                        <select name="category_id" id="category_id_select">
-                            <option value="" data-slug="uncategorized">بدون دسته</option>
-                            <?php foreach ($categories as $cat): ?>
-                                <option value="<?= $cat['id'] ?>" data-slug="<?= htmlspecialchars($cat['slug']) ?>" <?= ($post['category_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($cat['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                        <label class="text-[10px]">دسته‌بندی‌ها</label>
+                        <div id="categories-container" class="flex flex-wrap gap-2 p-3 bg-white border border-slate-200 rounded-lg min-h-[46px] mb-2 cursor-text">
+                            <select id="category-dropdown" class="!border-none !p-0 !ring-0 text-[11px] flex-grow min-w-[120px] bg-transparent">
+                                <option value="">انتخاب دسته...</option>
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= $cat['id'] ?>" data-slug="<?= htmlspecialchars($cat['slug']) ?>" data-name="<?= htmlspecialchars($cat['name']) ?>">
+                                        <?= htmlspecialchars($cat['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <input type="hidden" name="category_ids" id="post-category_ids" value="<?= implode(',', $post_categories) ?>">
+                        <p class="text-[9px] text-slate-400">اولین دسته انتخابی به عنوان دسته اصلی برای آدرس مقاله استفاده می‌شود.</p>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer group w-full">
                         <input type="checkbox" name="is_featured" class="sr-only peer" <?= ($post['is_featured'] ?? 0) ? 'checked' : '' ?>>
@@ -288,14 +318,67 @@ include __DIR__ . '/layout/editor.php';
         slugPreview.innerText = slugInput.value || '...';
     });
 
-    const categorySelect = document.getElementById('category_id_select');
     const categoryPreview = document.getElementById('category-preview');
 
-    categorySelect.addEventListener('change', () => {
-        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
-        const slug = selectedOption.dataset.slug || 'uncategorized';
-        categoryPreview.innerText = slug;
-    });
+    // Multi-Category Selector Logic
+    function setupCategorySelector() {
+        const dropdown = document.getElementById('category-dropdown');
+        const container = document.getElementById('categories-container');
+        const hidden = document.getElementById('post-category_ids');
+        let selectedIds = hidden.value ? hidden.value.split(',').filter(id => id.trim() !== '') : [];
+
+        function render() {
+            container.querySelectorAll('.cat-item').forEach(el => el.remove());
+
+            selectedIds.forEach((id, index) => {
+                const option = Array.from(dropdown.options).find(opt => opt.value == id);
+                if (!option) return;
+
+                const catEl = document.createElement('span');
+                catEl.className = 'cat-item inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[10px] font-bold border border-indigo-100';
+
+                if (index === 0) {
+                    catEl.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-100');
+                    catEl.classList.add('bg-amber-50', 'text-amber-600', 'border-amber-100');
+                    catEl.title = 'دسته اصلی';
+                    categoryPreview.innerText = option.dataset.slug;
+                }
+
+                const textNode = document.createTextNode(option.dataset.name + ' ');
+                catEl.appendChild(textNode);
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'remove-btn hover:text-rose-500 transition-colors';
+                btn.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i>';
+
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectedIds.splice(index, 1);
+                    render();
+                });
+
+                container.insertBefore(catEl, dropdown);
+            });
+
+            hidden.value = selectedIds.join(',');
+            if (selectedIds.length === 0) categoryPreview.innerText = 'uncategorized';
+            if (window.refreshIcons) window.refreshIcons();
+        }
+
+        dropdown.addEventListener('change', () => {
+            const val = dropdown.value;
+            if (val && !selectedIds.includes(val)) {
+                selectedIds.push(val);
+                render();
+            }
+            dropdown.value = '';
+        });
+
+        render();
+    }
+
+    setupCategorySelector();
 
     // Generic Tag Input Logic
     function setupTagInput(inputId, containerId, hiddenId) {

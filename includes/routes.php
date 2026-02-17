@@ -225,8 +225,9 @@ $router->add('/blog/:category_slug', function($params) {
             if ($category) {
                 $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
                                      FROM blog_posts p
+                                     INNER JOIN blog_post_categories pc ON p.id = pc.post_id
                                      LEFT JOIN blog_categories c ON p.category_id = c.id
-                                     WHERE p.status = 'published' AND p.category_id = ?
+                                     WHERE p.status = 'published' AND pc.category_id = ?
                                      ORDER BY p.created_at DESC");
                 $stmt->execute([$category['id']]);
                 $posts = $stmt->fetchAll();
@@ -267,14 +268,21 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
         try {
             $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
                                  FROM blog_posts p
+                                 INNER JOIN blog_post_categories pc ON p.id = pc.post_id
+                                 INNER JOIN blog_categories current_c ON pc.category_id = current_c.id
                                  LEFT JOIN blog_categories c ON p.category_id = c.id
-                                 WHERE p.slug = ? AND p.status = 'published' AND c.slug = ?");
+                                 WHERE p.slug = ? AND p.status = 'published' AND current_c.slug = ?");
             $stmt->execute([$post_slug, $category_slug]);
             $post = $stmt->fetch();
 
             if ($post) {
                 // Update views
                 $pdo->prepare("UPDATE blog_posts SET views = views + 1 WHERE id = ?")->execute([$post['id']]);
+
+                // Fetch all categories for this post
+                $stmt_cats = $pdo->prepare("SELECT c.* FROM blog_categories c INNER JOIN blog_post_categories pc ON c.id = pc.category_id WHERE pc.post_id = ? ORDER BY c.sort_order ASC");
+                $stmt_cats->execute([$post['id']]);
+                $post['all_categories'] = $stmt_cats->fetchAll();
 
                 // Related posts
                 if ($post['category_id']) {
@@ -296,9 +304,13 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
         exit;
     }
 
+    $canonical_url = get_base_url() . '/blog/' . ($post['category_slug'] ?: 'uncategorized') . '/' . $post['slug'];
+
     return View::renderPage('blog_post', [
         'post' => $post,
+        'all_categories' => $post['all_categories'] ?? [],
         'related_posts' => $related_posts,
+        'canonical_url' => $canonical_url,
         'hide_layout_h1' => true,
         'page_title' => $post['title'],
         'site_title' => ($post['meta_title'] ?: $post['title']) . ' | وبلاگ طلا آنلاین',

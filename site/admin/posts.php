@@ -31,7 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$posts = $pdo->query("SELECT p.*, c.name as category_name, c.slug as category_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id ORDER BY p.created_at DESC")->fetchAll();
+$posts = $pdo->query("SELECT p.*, c.name as category_name, c.slug as category_slug,
+    (SELECT GROUP_CONCAT(cat.name) FROM blog_categories cat INNER JOIN blog_post_categories pc ON cat.id = pc.category_id WHERE pc.post_id = p.id) as all_categories
+    FROM blog_posts p
+    LEFT JOIN blog_categories c ON p.category_id = c.id
+    ORDER BY p.created_at DESC")->fetchAll();
 
 $page_title = 'مدیریت مقالات وبلاگ';
 $page_subtitle = 'نوشتن، ویرایش و مدیریت محتوای وبلاگ';
@@ -102,9 +106,18 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </td>
                     <td>
-                        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-black border border-slate-200">
-                            <?= htmlspecialchars($post['category_name'] ?? 'بدون دسته') ?>
-                        </span>
+                        <div class="flex flex-wrap gap-1">
+                            <?php
+                            $all_cats = !empty($post['all_categories']) ? explode(',', $post['all_categories']) : [];
+                            if (empty($all_cats)) $all_cats = [$post['category_name'] ?? 'بدون دسته'];
+                            foreach ($all_cats as $idx => $cat_name):
+                                $is_primary = ($cat_name === $post['category_name']);
+                            ?>
+                                <span class="px-2 py-0.5 <?= $is_primary ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-slate-100 text-slate-600 border-slate-200' ?> rounded text-[10px] font-black border">
+                                    <?= htmlspecialchars($cat_name) ?>
+                                </span>
+                            <?php endforeach; ?>
+                        </div>
                     </td>
                     <td class="text-center">
                         <form method="POST" class="inline">

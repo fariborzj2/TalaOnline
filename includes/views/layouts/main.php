@@ -6,7 +6,7 @@
     <title><?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?> | قیمت لحظه‌ای طلا، سکه و ارز</title>
     <meta name="description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
     <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? $site_keywords ?? '') ?>">
-    <link rel="canonical" href="<?= get_current_url() ?>">
+    <link rel="canonical" href="<?= $canonical_url ?? get_current_url() ?>">
 
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Regular.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
     <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Medium.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
