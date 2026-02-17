@@ -122,7 +122,7 @@
                                         <span class="pulse-dot"></span>
                                     </div>
                                     <i data-lucide="calendar-days" class="icon-size-3"></i>
-                                    <span><?= jalali_date() ?></span>
+                                    <span><?= jalali_time_tag() ?></span>
                                 </div>
                             </div>
                         </div>

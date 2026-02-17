@@ -24,7 +24,7 @@
                         </div>
                     <?php endif; ?>
                     <div class="d-column gap-025 flex-1 overflow-hidden">
-                        <span class="d-flex text-gray font-size-0-8 gap-05 font-medium"><span><?= htmlspecialchars($item['source']) ?></span> • <span><?= jalali_date($item['pubDate']) ?></span></span>
+                        <span class="d-flex text-gray font-size-0-8 gap-05 font-medium"><span><?= htmlspecialchars($item['source']) ?></span> • <span><?= jalali_time_tag($item['pubDate']) ?></span></span>
                         <h3 class="font-size-1 text-title line-height-1-5 ellipsis-x"><?= htmlspecialchars($item['title']) ?></h3>
                     </div>
                 </a>

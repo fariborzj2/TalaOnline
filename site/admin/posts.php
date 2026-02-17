@@ -127,7 +127,7 @@ include __DIR__ . '/layout/header.php';
                         </form>
                     </td>
                     <td>
-                        <span class="text-[10px] font-bold text-slate-500"><?= jalali_date($post['created_at']) ?></span>
+                        <span class="text-[10px] font-bold text-slate-500"><?= jalali_time_tag($post['created_at']) ?></span>
                     </td>
                     <td class="text-center font-bold text-slate-600 text-[11px]">
                         <?= number_format($post['views']) ?>

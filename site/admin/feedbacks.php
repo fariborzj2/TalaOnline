@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $feedbacks_raw = $pdo->query("SELECT * FROM feedbacks ORDER BY created_at DESC")->fetchAll();
 $feedbacks = [];
 foreach ($feedbacks_raw as $row) {
-    $row['formatted_date'] = jalali_date($row['created_at'], 'time');
+    $row['formatted_date'] = jalali_time_tag($row['created_at'], 'time');
     $feedbacks[] = $row;
 }
 
@@ -109,7 +109,7 @@ include __DIR__ . '/layout/header.php';
                         <span class="font-bold text-slate-700"><?= htmlspecialchars($fb['subject'] ?? 'بدون موضوع') ?></span>
                     </td>
                     <td>
-                        <span class="text-[10px] font-black text-slate-500"><?= jalali_date($fb['created_at'], 'time') ?></span>
+                        <span class="text-[10px] font-black text-slate-500"><?= jalali_time_tag($fb['created_at'], 'time') ?></span>
                     </td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
@@ -238,7 +238,7 @@ include __DIR__ . '/layout/header.php';
         // Use a hidden span or similar to get the formatted date from the row if possible,
         // or just accept raw for the modal for now.
         // Better: Pre-format in PHP.
-        document.getElementById('fb-date').innerText = fb.formatted_date;
+        document.getElementById('fb-date').innerHTML = fb.formatted_date;
 
         const statusInput = document.getElementById('fb-status');
         const toggleReadBtn = document.getElementById('toggleReadBtn');

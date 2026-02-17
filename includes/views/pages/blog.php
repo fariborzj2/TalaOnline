@@ -31,7 +31,7 @@
                     <div class="d-flex just-between align-center mt-05 pt-1 border-top">
                         <span class="text-[10px] text-subtitle d-flex align-center gap-05 font-bold">
                             <i data-lucide="calendar-days" class="icon-size-2 text-primary"></i>
-                            <?= jalali_date($post['created_at']) ?>
+                            <?= jalali_time_tag($post['created_at']) ?>
                         </span>
                         <div class="text-primary text-[11px] font-black d-flex align-center gap-05">
                             مطالعه مقاله <i data-lucide="arrow-left" class="icon-size-2"></i>
@@ -74,7 +74,7 @@
                         <div class="d-flex align-center gap-05 mb-02">
                             <span class="text-primary text-[10px] font-black"><?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?></span>
                             <span class="text-subtitle opacity-30">•</span>
-                            <span class="text-subtitle text-[10px] font-bold"><?= jalali_date($post['created_at']) ?></span>
+                            <span class="text-subtitle text-[10px] font-bold"><?= jalali_time_tag($post['created_at']) ?></span>
                         </div>
                         <h3 class="font-bold font-size-1-2 text-title line-clamp-2 h-12"><?= htmlspecialchars($post['title']) ?></h3>
                         <p class="text-subtitle text-[11px] line-clamp-2 leading-relaxed opacity-80"><?= htmlspecialchars($post['excerpt']) ?></p>

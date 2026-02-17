@@ -157,7 +157,7 @@ include __DIR__ . '/layout/header.php';
                             </span>
                         </div>
                     </td>
-                    <td class="text-slate-400 font-medium text-xs"><?= jalali_date($update['updated_at'], 'time') ?></td>
+                    <td class="text-slate-400 font-medium text-xs"><?= jalali_time_tag($update['updated_at'], 'time') ?></td>
                     <td class="text-center">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-600 border border-emerald-100">
                             فعال
