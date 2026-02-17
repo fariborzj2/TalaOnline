@@ -47,9 +47,9 @@
                         </div>
                     </div>
                     <div class="d-flex gap-05">
-                        <?php if ($post['meta_keywords']): ?>
+                        <?php if ($post['tags']): ?>
                             <?php
-                            $tags = explode(',', $post['meta_keywords']);
+                            $tags = explode(',', $post['tags']);
                             foreach ($tags as $tag):
                                 if (!trim($tag)) continue;
                             ?>
