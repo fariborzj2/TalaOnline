@@ -5,49 +5,92 @@ $current_page = basename($_SERVER['PHP_SELF']);
 // Global Schema Self-Healing for updated_at
 // This ensures sitemaps and other freshness tracking works correctly
 if (isset($pdo) && $pdo) {
+    $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+
     // Check and create blog tables if they don't exist
     try {
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_categories` (
-            `id` INT AUTO_INCREMENT PRIMARY KEY,
-            `name` VARCHAR(100) NOT NULL,
-            `slug` VARCHAR(100) NOT NULL UNIQUE,
-            `description` TEXT,
-            `sort_order` INT DEFAULT 0,
-            `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+        if ($driver === 'sqlite') {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_categories` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `name` VARCHAR(100) NOT NULL,
+                `slug` VARCHAR(100) NOT NULL UNIQUE,
+                `description` TEXT,
+                `sort_order` INTEGER DEFAULT 0,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_posts` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `title` VARCHAR(255) NOT NULL,
+                `slug` VARCHAR(255) NOT NULL UNIQUE,
+                `excerpt` TEXT,
+                `content` TEXT,
+                `thumbnail` VARCHAR(255),
+                `category_id` INTEGER,
+                `status` VARCHAR(20) DEFAULT 'draft',
+                `views` INTEGER DEFAULT 0,
+                `is_featured` INTEGER DEFAULT 0,
+                `meta_title` VARCHAR(255),
+                `meta_description` VARCHAR(255),
+                `meta_keywords` VARCHAR(255),
+                `tags` TEXT,
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (`category_id`) REFERENCES `blog_categories`(`id`) ON DELETE SET NULL
+            )");
+        } else {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_categories` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(100) NOT NULL,
+                `slug` VARCHAR(100) NOT NULL UNIQUE,
+                `description` TEXT,
+                `sort_order` INT DEFAULT 0,
+                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_posts` (
-            `id` INT AUTO_INCREMENT PRIMARY KEY,
-            `title` VARCHAR(255) NOT NULL,
-            `slug` VARCHAR(255) NOT NULL UNIQUE,
-            `excerpt` TEXT,
-            `content` LONGTEXT,
-            `thumbnail` VARCHAR(255),
-            `category_id` INT,
-            `status` ENUM('draft', 'published') DEFAULT 'draft',
-            `views` INT DEFAULT 0,
-            `is_featured` TINYINT(1) DEFAULT 0,
-            `meta_title` VARCHAR(255),
-            `meta_description` VARCHAR(255),
-            `meta_keywords` VARCHAR(255),
-            `tags` TEXT,
-            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (`category_id`) REFERENCES `blog_categories`(`id`) ON DELETE SET NULL
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_posts` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `title` VARCHAR(255) NOT NULL,
+                `slug` VARCHAR(255) NOT NULL UNIQUE,
+                `excerpt` TEXT,
+                `content` LONGTEXT,
+                `thumbnail` VARCHAR(255),
+                `category_id` INT,
+                `status` ENUM('draft', 'published') DEFAULT 'draft',
+                `views` INT DEFAULT 0,
+                `is_featured` TINYINT(1) DEFAULT 0,
+                `meta_title` VARCHAR(255),
+                `meta_description` VARCHAR(255),
+                `meta_keywords` VARCHAR(255),
+                `tags` TEXT,
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                FOREIGN KEY (`category_id`) REFERENCES `blog_categories`(`id`) ON DELETE SET NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+        }
     } catch (Exception $e) {}
 
     $tables_to_check = ['items', 'categories', 'settings', 'blog_categories', 'blog_posts'];
     foreach ($tables_to_check as $table) {
         try {
-            $cols = $pdo->query("DESCRIBE $table")->fetchAll(PDO::FETCH_COLUMN);
-            if (!in_array('updated_at', $cols)) {
-                $pdo->exec("ALTER TABLE $table ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+            $cols = [];
+            if ($driver === 'sqlite') {
+                $stmt = $pdo->query("PRAGMA table_info($table)");
+                while ($row = $stmt->fetch()) {
+                    $cols[] = $row['name'];
+                }
+            } else {
+                $cols = $pdo->query("DESCRIBE $table")->fetchAll(PDO::FETCH_COLUMN);
             }
 
-            // Check for tags in blog_posts specifically if it already existed
-            if ($table === 'blog_posts' && !in_array('tags', $cols)) {
-                $pdo->exec("ALTER TABLE blog_posts ADD COLUMN tags TEXT AFTER meta_keywords");
+            if (!empty($cols) && !in_array('updated_at', $cols)) {
+                $column_def = ($driver === 'sqlite')
+                    ? "DATETIME DEFAULT CURRENT_TIMESTAMP"
+                    : "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+                $pdo->exec("ALTER TABLE $table ADD COLUMN updated_at $column_def");
+            }
+
+            if ($table === 'blog_posts' && !empty($cols) && !in_array('tags', $cols)) {
+                $pdo->exec("ALTER TABLE blog_posts ADD COLUMN tags TEXT");
             }
         } catch (Exception $e) {}
     }
