@@ -100,7 +100,7 @@
             <?php endif; ?>
             <div class="d-flex just-between align-center border-top pt-1">
                 <span class="text-gray font-size-0-9">آخرین بروزرسانی:</span>
-                <span class="font-size-0-8 font-bold"><?= jalali_date() ?></span>
+                <span class="font-size-0-8 font-bold"><?= jalali_time_tag() ?></span>
             </div>
         </div>
     </div>

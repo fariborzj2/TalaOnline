@@ -16,7 +16,7 @@
                     </a>
                     <div class="meta-item">
                         <i data-lucide="calendar" class="icon-size-3"></i>
-                        <span><?= jalali_date($post['created_at'], 'weekday') ?></span>
+                        <span><?= jalali_time_tag($post['created_at'], 'weekday') ?></span>
                     </div>
                     <div class="meta-item">
                         <i data-lucide="eye" class="icon-size-3"></i>
@@ -103,7 +103,7 @@
                         <h3 class="font-black text-[13px] line-clamp-2 leading-snug text-title"><?= htmlspecialchars($rp['title']) ?></h3>
                         <div class="d-flex align-center gap-05 opacity-50">
                             <i data-lucide="calendar" class="icon-size-1"></i>
-                            <span class="text-[9px]"><?= jalali_date($rp['created_at']) ?></span>
+                            <span class="text-[9px]"><?= jalali_time_tag($rp['created_at']) ?></span>
                         </div>
                     </div>
                 </a>

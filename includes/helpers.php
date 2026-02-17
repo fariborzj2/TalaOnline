@@ -19,7 +19,7 @@ function fa_price($num) {
     return fa_num($num);
 }
 
-function jalali_date($date = 'now', $format = 'long') {
+function jalali_date($date = 'now', $format = 'long', $as_tag = false) {
     // Standardize 'now' and empty values
     if (!$date || trim($date) === '' || $date === 'now') {
         $date = 'now';
@@ -60,37 +60,50 @@ function jalali_date($date = 'now', $format = 'long') {
 
     if (!class_exists('IntlDateFormatter')) {
         // Very basic fallback if Intl is missing
-        return fa_num($dt->format('Y/m/d'));
+        $human_date = fa_num($dt->format('Y/m/d'));
+    } else {
+        // Standard formats
+        $pattern = 'd MMMM y'; // Default: 28 Bahman 1404
+
+        if ($format === 'weekday') {
+            $pattern = 'EEEE d MMMM y'; // Tuesday 28 Bahman 1404
+        } elseif ($format === 'time') {
+            $pattern = 'd MMMM y | HH:mm';
+        } elseif ($format === 'full') {
+            $pattern = 'EEEE d MMMM y ساعت HH:mm';
+        } elseif ($format === 'compact') {
+            $pattern = 'yyyy/MM/dd';
+        } elseif ($format === 'day_month') {
+            $pattern = 'd MMMM';
+        }
+
+        $fmt = new IntlDateFormatter(
+            'fa_IR@calendar=persian',
+            IntlDateFormatter::FULL,
+            IntlDateFormatter::FULL,
+            'Asia/Tehran',
+            IntlDateFormatter::TRADITIONAL,
+            $pattern
+        );
+
+        $result = $fmt->format($timestamp);
+
+        // Some Intl implementations might return western digits even for fa_IR
+        $human_date = fa_num($result);
     }
 
-    // Standard formats
-    $pattern = 'd MMMM y'; // Default: 28 Bahman 1404
-
-    if ($format === 'weekday') {
-        $pattern = 'EEEE d MMMM y'; // Tuesday 28 Bahman 1404
-    } elseif ($format === 'time') {
-        $pattern = 'd MMMM y | HH:mm';
-    } elseif ($format === 'full') {
-        $pattern = 'EEEE d MMMM y ساعت HH:mm';
-    } elseif ($format === 'compact') {
-        $pattern = 'yyyy/MM/dd';
-    } elseif ($format === 'day_month') {
-        $pattern = 'd MMMM';
+    if ($as_tag) {
+        return '<time datetime="' . $dt->format('Y-m-d\TH:i:sP') . '">' . $human_date . '</time>';
     }
 
-    $fmt = new IntlDateFormatter(
-        'fa_IR@calendar=persian',
-        IntlDateFormatter::FULL,
-        IntlDateFormatter::FULL,
-        'Asia/Tehran',
-        IntlDateFormatter::TRADITIONAL,
-        $pattern
-    );
+    return $human_date;
+}
 
-    $result = $fmt->format($timestamp);
-
-    // Some Intl implementations might return western digits even for fa_IR
-    return fa_num($result);
+/**
+ * Returns the Jalali date wrapped in a <time> tag
+ */
+function jalali_time_tag($date = 'now', $format = 'long') {
+    return jalali_date($date, $format, true);
 }
 
 function get_trend_arrow($change) {
