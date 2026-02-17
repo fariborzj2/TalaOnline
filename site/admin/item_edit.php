@@ -491,8 +491,10 @@ include __DIR__ . '/layout/editor.php';
             }
         });
 
-        if (initialDate) {
-            const pDate = new persianDate(new Date(initialDate));
+        if (initialDate && initialDate !== '0000-00-00 00:00:00') {
+            let d = new Date(initialDate.replace(/-/g, "/"));
+            if (isNaN(d.getTime())) d = new Date();
+            const pDate = new persianDate(d);
             $('#updated_at_picker').val(pDate.format('YYYY/MM/DD HH:mm:ss'));
         }
     });

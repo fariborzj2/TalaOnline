@@ -377,8 +377,10 @@ include __DIR__ . '/layout/editor.php';
                 altFormat: 'YYYY-MM-DD HH:mm:ss',
                 timePicker: { enabled: true, second: { enabled: false } }
             });
-            if (initialDate) {
-                const pDate = new persianDate(new Date(initialDate));
+            if (initialDate && initialDate !== '0000-00-00 00:00:00') {
+                let d = new Date(initialDate.replace(/-/g, "/"));
+                if (isNaN(d.getTime())) d = new Date();
+                const pDate = new persianDate(d);
                 $(pickerId).val(pDate.format('YYYY/MM/DD HH:mm:ss'));
             }
         };
