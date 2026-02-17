@@ -5,7 +5,38 @@ $current_page = basename($_SERVER['PHP_SELF']);
 // Global Schema Self-Healing for updated_at
 // This ensures sitemaps and other freshness tracking works correctly
 if (isset($pdo) && $pdo) {
-    $tables_to_check = ['items', 'categories', 'settings'];
+    // Check and create blog tables if they don't exist
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_categories` (
+            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `name` VARCHAR(100) NOT NULL,
+            `slug` VARCHAR(100) NOT NULL UNIQUE,
+            `description` TEXT,
+            `sort_order` INT DEFAULT 0,
+            `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_posts` (
+            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `title` VARCHAR(255) NOT NULL,
+            `slug` VARCHAR(255) NOT NULL UNIQUE,
+            `excerpt` TEXT,
+            `content` LONGTEXT,
+            `thumbnail` VARCHAR(255),
+            `category_id` INT,
+            `status` ENUM('draft', 'published') DEFAULT 'draft',
+            `views` INT DEFAULT 0,
+            `is_featured` TINYINT(1) DEFAULT 0,
+            `meta_title` VARCHAR(255),
+            `meta_description` VARCHAR(255),
+            `meta_keywords` VARCHAR(255),
+            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (`category_id`) REFERENCES `blog_categories`(`id`) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+    } catch (Exception $e) {}
+
+    $tables_to_check = ['items', 'categories', 'settings', 'blog_categories', 'blog_posts'];
     foreach ($tables_to_check as $table) {
         try {
             $cols = $pdo->query("DESCRIBE $table")->fetchAll(PDO::FETCH_COLUMN);

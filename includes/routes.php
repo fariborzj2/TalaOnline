@@ -171,6 +171,147 @@ $router->add('/about-us', function() {
     ]);
 });
 
+// Blog Routes
+$router->add('/blog', function() {
+    global $pdo;
+    $posts = [];
+    $categories = [];
+    $featured_posts = [];
+
+    if ($pdo) {
+        try {
+            $posts = $pdo->query("SELECT p.*, c.name as category_name, c.slug as category_slug
+                                 FROM blog_posts p
+                                 LEFT JOIN blog_categories c ON p.category_id = c.id
+                                 WHERE p.status = 'published'
+                                 ORDER BY p.created_at DESC")->fetchAll();
+
+            $categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
+
+            $featured_posts = $pdo->query("SELECT p.*, c.name as category_name
+                                          FROM blog_posts p
+                                          LEFT JOIN blog_categories c ON p.category_id = c.id
+                                          WHERE p.status = 'published' AND p.is_featured = 1
+                                          ORDER BY p.created_at DESC LIMIT 3")->fetchAll();
+        } catch (Exception $e) {}
+    }
+
+    return View::renderPage('blog', [
+        'page_title' => 'وبلاگ طلا آنلاین',
+        'posts' => $posts,
+        'categories' => $categories,
+        'featured_posts' => $featured_posts,
+        'site_title' => 'وبلاگ و اخبار طلا و ارز | ' . get_setting('site_title', 'طلا آنلاین'),
+        'meta_description' => 'آخرین اخبار، مقالات تخصصی و تحلیل‌های بازار طلا، سکه و ارز را در وبلاگ طلا آنلاین بخوانید.',
+        'breadcrumbs' => [
+            ['name' => 'وبلاگ', 'url' => '/blog']
+        ]
+    ]);
+});
+
+$router->add('/blog/category/:slug', function($params) {
+    global $pdo;
+    $slug = $params['slug'];
+    $posts = [];
+    $category = null;
+    $categories = [];
+
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM blog_categories WHERE slug = ?");
+            $stmt->execute([$slug]);
+            $category = $stmt->fetch();
+
+            if ($category) {
+                $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
+                                     FROM blog_posts p
+                                     LEFT JOIN blog_categories c ON p.category_id = c.id
+                                     WHERE p.status = 'published' AND p.category_id = ?
+                                     ORDER BY p.created_at DESC");
+                $stmt->execute([$category['id']]);
+                $posts = $stmt->fetchAll();
+            }
+
+            $categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
+        } catch (Exception $e) {}
+    }
+
+    if (!$category) {
+        http_response_code(404);
+        echo "404 Category Not Found";
+        exit;
+    }
+
+    return View::renderPage('blog', [
+        'page_title' => 'دسته‌بندی: ' . $category['name'],
+        'posts' => $posts,
+        'categories' => $categories,
+        'current_category' => $category,
+        'site_title' => $category['name'] . ' | وبلاگ طلا آنلاین',
+        'meta_description' => $category['description'],
+        'breadcrumbs' => [
+            ['name' => 'وبلاگ', 'url' => '/blog'],
+            ['name' => $category['name'], 'url' => '/blog/category/' . $category['slug']]
+        ]
+    ]);
+});
+
+$router->add('/blog/:slug', function($params) {
+    global $pdo;
+    $slug = $params['slug'];
+    $post = null;
+    $related_posts = [];
+
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
+                                 FROM blog_posts p
+                                 LEFT JOIN blog_categories c ON p.category_id = c.id
+                                 WHERE p.slug = ? AND p.status = 'published'");
+            $stmt->execute([$slug]);
+            $post = $stmt->fetch();
+
+            if ($post) {
+                // Update views
+                $pdo->prepare("UPDATE blog_posts SET views = views + 1 WHERE id = ?")->execute([$post['id']]);
+
+                // Related posts
+                if ($post['category_id']) {
+                    $stmt = $pdo->prepare("SELECT p.*, c.name as category_name
+                                         FROM blog_posts p
+                                         LEFT JOIN blog_categories c ON p.category_id = c.id
+                                         WHERE p.status = 'published' AND p.category_id = ? AND p.id != ?
+                                         ORDER BY p.created_at DESC LIMIT 3");
+                    $stmt->execute([$post['category_id'], $post['id']]);
+                    $related_posts = $stmt->fetchAll();
+                }
+            }
+        } catch (Exception $e) {}
+    }
+
+    if (!$post) {
+        http_response_code(404);
+        echo "404 Post Not Found";
+        exit;
+    }
+
+    return View::renderPage('blog_post', [
+        'post' => $post,
+        'related_posts' => $related_posts,
+        'hide_layout_h1' => true,
+        'page_title' => $post['title'],
+        'site_title' => ($post['meta_title'] ?: $post['title']) . ' | وبلاگ طلا آنلاین',
+        'meta_description' => $post['meta_description'] ?: $post['excerpt'],
+        'meta_keywords' => $post['meta_keywords'],
+        'og_image' => $post['thumbnail'] ? (get_base_url() . '/' . ltrim($post['thumbnail'], '/')) : null,
+        'breadcrumbs' => [
+            ['name' => 'وبلاگ', 'url' => '/blog'],
+            ['name' => $post['category_name'] ?: 'بدون دسته', 'url' => $post['category_slug'] ? '/blog/category/' . $post['category_slug'] : '#'],
+            ['name' => $post['title'], 'url' => '/blog/' . $post['slug']]
+        ]
+    ]);
+});
+
 $router->add('/robots.txt', function() {
     header('Content-Type: text/plain');
     echo "User-agent: *\n";
@@ -205,6 +346,12 @@ $router->add('/sitemap-categories.xml', function() {
 $router->add('/sitemap-items.xml', function() {
     global $pdo;
     require_once __DIR__ . '/../site/sitemap-items.php';
+    exit;
+});
+
+$router->add('/sitemap-posts.xml', function() {
+    global $pdo;
+    require_once __DIR__ . '/../site/sitemap-posts.php';
     exit;
 });
 

@@ -1,0 +1,198 @@
+<?php
+require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . '/../../includes/helpers.php';
+check_login();
+
+$message = '';
+$error = '';
+
+// Handle Actions
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $action = $_POST['action'];
+
+    if ($action === 'delete') {
+        $id = $_POST['id'];
+        $stmt = $pdo->prepare("DELETE FROM blog_posts WHERE id = ?");
+        $stmt->execute([$id]);
+        $message = 'مقاله با موفقیت حذف شد.';
+    } elseif ($action === 'toggle_status') {
+        $id = $_POST['id'];
+        $status = $_POST['status'];
+        $stmt = $pdo->prepare("UPDATE blog_posts SET status = ? WHERE id = ?");
+        $stmt->execute([$status, $id]);
+        $message = 'وضعیت مقاله با موفقیت تغییر کرد.';
+    } elseif ($action === 'toggle_featured') {
+        $id = $_POST['id'];
+        $featured = $_POST['featured'];
+        $stmt = $pdo->prepare("UPDATE blog_posts SET is_featured = ? WHERE id = ?");
+        $stmt->execute([$featured, $id]);
+        $message = 'وضعیت ویژه با موفقیت تغییر کرد.';
+    }
+}
+
+$posts = $pdo->query("SELECT p.*, c.name as category_name FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id ORDER BY p.created_at DESC")->fetchAll();
+
+$page_title = 'مدیریت مقالات وبلاگ';
+$page_subtitle = 'نوشتن، ویرایش و مدیریت محتوای وبلاگ';
+
+$header_action = '<a href="post_edit.php" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن مقاله جدید</a>';
+
+include __DIR__ . '/layout/header.php';
+?>
+
+<?php if ($message): ?>
+    <div class="mb-6">
+        <div class="bg-emerald-50 border border-emerald-100 rounded-lg p-4 flex items-center gap-3 text-emerald-700">
+            <div class="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center">
+                <i data-lucide="check" class="w-5 h-5"></i>
+            </div>
+            <span class="font-bold"><?= $message ?></span>
+        </div>
+    </div>
+<?php endif; ?>
+
+<div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+    <div class="px-8 py-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/30">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
+                <i data-lucide="newspaper" class="w-5 h-5"></i>
+            </div>
+            <h2 class="text-lg font-black text-slate-800">لیست مقالات</h2>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div class="relative group w-full md:w-auto">
+                <input type="text" id="tableSearch" placeholder="جستجو در مقالات..." class="text-xs !pr-12 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
+                <i data-lucide="search" class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
+            </div>
+            <span class="text-[10px] font-bold text-slate-400 bg-white px-3 py-2 rounded-lg border border-slate-100">تعداد: <span id="itemCount"><?= count($posts) ?></span></span>
+        </div>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full admin-table">
+            <thead>
+                <tr>
+                    <th>عنوان مقاله</th>
+                    <th>دسته‌بندی</th>
+                    <th class="text-center">وضعیت</th>
+                    <th class="text-center">ویژه</th>
+                    <th>تاریخ انتشار</th>
+                    <th class="text-center">بازدید</th>
+                    <th class="text-center">عملیات</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                <?php foreach ($posts as $post): ?>
+                <tr class="hover:bg-slate-50/50 transition-colors group">
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-100">
+                                <?php if ($post['thumbnail']): ?>
+                                    <img src="../<?= htmlspecialchars($post['thumbnail']) ?>" alt="" class="w-full h-full object-cover">
+                                <?php else: ?>
+                                    <div class="w-full h-full flex items-center justify-center text-slate-300">
+                                        <i data-lucide="image" class="w-5 h-5"></i>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div>
+                                <p class="font-black text-slate-900 line-clamp-1"><?= htmlspecialchars($post['title']) ?></p>
+                                <p class="text-[10px] font-bold text-slate-400 ltr-input">/blog/<?= htmlspecialchars($post['slug']) ?></p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-black border border-slate-200">
+                            <?= htmlspecialchars($post['category_name'] ?? 'بدون دسته') ?>
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <form method="POST" class="inline">
+                            <input type="hidden" name="action" value="toggle_status">
+                            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+                            <input type="hidden" name="status" value="<?= $post['status'] === 'published' ? 'draft' : 'published' ?>">
+                            <button type="submit" class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black <?= $post['status'] === 'published' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-100 text-slate-400 border border-slate-200' ?>">
+                                <?= $post['status'] === 'published' ? 'منتشر شده' : 'پیش‌نویس' ?>
+                            </button>
+                        </form>
+                    </td>
+                    <td class="text-center">
+                        <form method="POST" class="inline">
+                            <input type="hidden" name="action" value="toggle_featured">
+                            <input type="hidden" name="id" value="<?= $post['id'] ?>">
+                            <input type="hidden" name="featured" value="<?= $post['is_featured'] ? 0 : 1 ?>">
+                            <button type="submit" class="w-8 h-8 rounded-lg flex items-center justify-center mx-auto transition-all <?= $post['is_featured'] ? 'text-amber-500 bg-amber-50 border border-amber-100' : 'text-slate-300 hover:text-slate-400' ?>">
+                                <i data-lucide="star" class="w-4 h-4 <?= $post['is_featured'] ? 'fill-amber-500' : '' ?>"></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <span class="text-[10px] font-bold text-slate-500"><?= jalali_date($post['created_at']) ?></span>
+                    </td>
+                    <td class="text-center font-bold text-slate-600 text-[11px]">
+                        <?= number_format($post['views']) ?>
+                    </td>
+                    <td class="text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="post_edit.php?id=<?= $post['id'] ?>" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn">
+                                <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
+                            </a>
+                            <form method="POST" class="inline" onsubmit="handleDelete(event, this, 'مقاله')">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="id" value="<?= $post['id'] ?>">
+                                <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
+                                    <i data-lucide="trash-2" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                <?php if (empty($posts)): ?>
+                    <tr>
+                        <td colspan="7" class="text-center py-12">
+                            <div class="flex flex-col items-center gap-3 text-slate-400">
+                                <i data-lucide="inbox" class="w-12 h-12 stroke-1"></i>
+                                <p class="font-bold">هنوز هیچ مقاله‌ای منتشر نشده است.</p>
+                                <a href="post_edit.php" class="text-indigo-600 text-xs font-black hover:underline">اولین مقاله خود را بنویسید</a>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById('tableSearch');
+    const tableBody = document.querySelector('.admin-table tbody');
+    const itemCountSpan = document.getElementById('itemCount');
+
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        let filteredCount = 0;
+        const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-results)'));
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            if (text.includes(searchTerm)) {
+                row.style.display = '';
+                filteredCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        itemCountSpan.innerText = filteredCount;
+    });
+
+    async function handleDelete(event, form, name) {
+        event.preventDefault();
+        const confirmed = await showConfirm(`آیا از حذف این ${name} اطمینان دارید؟`);
+        if (confirmed) {
+            form.submit();
+        }
+    }
+</script>
+
+<?php include __DIR__ . '/layout/footer.php'; ?>
