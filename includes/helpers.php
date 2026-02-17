@@ -20,6 +20,15 @@ function fa_price($num) {
 }
 
 function jalali_date($date = 'now', $format = 'long') {
+    // Handle invalid or "zero" dates
+    if (!$date || $date === '0000-00-00 00:00:00' || $date === '0000-00-00') {
+        if ($date === 'now') {
+            // continue to normal 'now' handling
+        } else {
+            return '---';
+        }
+    }
+
     // Ensure we have a valid DateTime object in Tehran timezone
     $tz = new DateTimeZone('Asia/Tehran');
     try {
@@ -29,9 +38,14 @@ function jalali_date($date = 'now', $format = 'long') {
             $dt = new DateTime('@' . $date);
             $dt->setTimezone($tz);
         } else {
-            // If it's a string, try to parse it.
-            // If it lacks timezone info, DateTime constructor uses current default timezone (which is Tehran via db.php)
-            $dt = new DateTime($date, $tz);
+            // Clean the date string for PHP DateTime
+            $clean_date = str_replace('0000-00-00 00:00:00', 'now', (string)$date);
+            $dt = new DateTime($clean_date, $tz);
+
+            // If the year is suspiciously low (like -622 Jalali which is near 0 AD), it's likely a zero date
+            if ((int)$dt->format('Y') < 1000) {
+                return '---';
+            }
         }
     } catch (Exception $e) {
         $dt = new DateTime('now', $tz);
