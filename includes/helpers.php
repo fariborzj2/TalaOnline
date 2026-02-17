@@ -20,11 +20,13 @@ function fa_price($num) {
 }
 
 function jalali_date($date = 'now', $format = 'long') {
-    // Basic sanitization
-    if (!$date) $date = 'now';
+    // Standardize 'now' and empty values
+    if (!$date || trim($date) === '' || $date === 'now') {
+        $date = 'now';
+    }
 
-    // Handle invalid or "zero" dates
-    if ($date === '0000-00-00 00:00:00' || $date === '0000-00-00') {
+    // Handle invalid or "zero" dates explicitly
+    if ($date === '0000-00-00 00:00:00' || $date === '0000-00-00' || str_starts_with($date, '0000')) {
         return '---';
     }
 
@@ -37,18 +39,18 @@ function jalali_date($date = 'now', $format = 'long') {
             $dt = new DateTime('@' . $date);
             $dt->setTimezone($tz);
         } else {
-            // Clean the date string for PHP DateTime
+            // Clean and parse the date string
             $dt = new DateTime((string)$date, $tz);
 
-            // If the year is suspiciously low (like -622 Jalali which is near 0 AD), it's likely a zero date
+            // If the Gregorian year is lower than 1000, it's almost certainly an invalid/zero date overflow
             if ((int)$dt->format('Y') < 1000) {
                 return '---';
             }
         }
     } catch (Exception $e) {
-        // Fallback for parsing errors
+        // Fallback for parsing errors: only show current time if requested 'now'
         if ($date === 'now') {
-             $dt = new DateTime('now', $tz);
+             try { $dt = new DateTime('now', $tz); } catch(Exception $ex) { return '---'; }
         } else {
              return '---';
         }

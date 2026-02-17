@@ -119,6 +119,12 @@ if (isset($pdo) && $pdo) {
             if ($table === 'blog_posts' && !empty($cols) && !in_array('tags', $cols)) {
                 $pdo->exec("ALTER TABLE blog_posts ADD COLUMN tags TEXT");
             }
+
+            // Data Self-Healing: Fix any existing "zero dates" that cause display issues
+            $pdo->exec("UPDATE $table SET updated_at = CURRENT_TIMESTAMP WHERE updated_at = '0000-00-00 00:00:00' OR updated_at IS NULL");
+            if ($table === 'blog_posts') {
+                $pdo->exec("UPDATE blog_posts SET created_at = CURRENT_TIMESTAMP WHERE created_at = '0000-00-00 00:00:00' OR created_at IS NULL");
+            }
         } catch (Exception $e) {}
     }
 }
