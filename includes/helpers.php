@@ -20,39 +20,58 @@ function fa_price($num) {
 }
 
 function jalali_date($date = 'now', $format = 'long') {
-    date_default_timezone_set('Asia/Tehran');
-
-    $timestamp = is_numeric($date) ? $date : strtotime($date);
-    if (!$timestamp) $timestamp = time();
-
-    if (!class_exists('IntlDateFormatter')) {
-        return date('Y/m/d', $timestamp);
+    // Ensure we have a valid DateTime object in Tehran timezone
+    $tz = new DateTimeZone('Asia/Tehran');
+    try {
+        if (!$date || $date === 'now') {
+            $dt = new DateTime('now', $tz);
+        } elseif (is_numeric($date)) {
+            $dt = new DateTime('@' . $date);
+            $dt->setTimezone($tz);
+        } else {
+            // If it's a string, try to parse it.
+            // If it lacks timezone info, DateTime constructor uses current default timezone (which is Tehran via db.php)
+            $dt = new DateTime($date, $tz);
+        }
+    } catch (Exception $e) {
+        $dt = new DateTime('now', $tz);
     }
 
-    $date_type = IntlDateFormatter::LONG;
-    $time_type = IntlDateFormatter::NONE;
-    $pattern = 'd MMMM y';
+    $timestamp = $dt->getTimestamp();
 
-    if ($format === 'time') {
-        $time_type = IntlDateFormatter::SHORT;
+    if (!class_exists('IntlDateFormatter')) {
+        // Very basic fallback if Intl is missing
+        return fa_num($dt->format('Y/m/d'));
+    }
+
+    // Standard formats
+    $pattern = 'd MMMM y'; // Default: 28 Bahman 1404
+
+    if ($format === 'weekday') {
+        $pattern = 'EEEE d MMMM y'; // Tuesday 28 Bahman 1404
+    } elseif ($format === 'time') {
         $pattern = 'd MMMM y | HH:mm';
     } elseif ($format === 'full') {
-        $time_type = IntlDateFormatter::FULL;
-        $pattern = 'd MMMM y ساعت HH:mm';
+        $pattern = 'EEEE d MMMM y ساعت HH:mm';
     } elseif ($format === 'compact') {
-        $pattern = 'y/MM/dd';
+        $pattern = 'yyyy/MM/dd';
+    } elseif ($format === 'day_month') {
+        $pattern = 'd MMMM';
     }
 
     $fmt = new IntlDateFormatter(
         'fa_IR@calendar=persian',
-        $date_type,
-        $time_type,
+        IntlDateFormatter::FULL,
+        IntlDateFormatter::FULL,
         'Asia/Tehran',
         IntlDateFormatter::TRADITIONAL,
         $pattern
     );
 
-    return fa_num($fmt->format($timestamp));
+    $result = $fmt->format($timestamp);
+
+    // Some Intl implementations might return western digits even for fa_IR
+    return fa_num($result);
 }
 
 function get_trend_arrow($change) {

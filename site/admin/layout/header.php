@@ -7,9 +7,36 @@ $current_page = basename($_SERVER['PHP_SELF']);
 if (isset($pdo) && $pdo) {
     $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
-    // Check and create blog tables if they don't exist
+    // Check and create core and blog tables if they don't exist
     try {
         if ($driver === 'sqlite') {
+            // Core tables for SQLite
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `categories` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `slug` VARCHAR(100) NOT NULL UNIQUE,
+                `name` VARCHAR(100) NOT NULL,
+                `en_name` VARCHAR(100),
+                `icon` VARCHAR(50),
+                `sort_order` INTEGER DEFAULT 0,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `items` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `symbol` VARCHAR(50) NOT NULL UNIQUE,
+                `name` VARCHAR(100) NOT NULL,
+                `category` VARCHAR(100),
+                `slug` VARCHAR(100),
+                `is_active` INTEGER DEFAULT 1,
+                `sort_order` INTEGER DEFAULT 0,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `settings` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `setting_key` VARCHAR(100) NOT NULL UNIQUE,
+                `setting_value` TEXT,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+
             $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_categories` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `name` VARCHAR(100) NOT NULL,
