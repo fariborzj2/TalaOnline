@@ -16,7 +16,7 @@
                     </a>
                     <div class="meta-item">
                         <i data-lucide="calendar" class="icon-size-3"></i>
-                        <span><?= jalali_date($post['created_at']) ?></span>
+                        <span><?= jalali_date($post['created_at'], 'weekday') ?></span>
                     </div>
                     <div class="meta-item">
                         <i data-lucide="eye" class="icon-size-3"></i>
@@ -24,7 +24,13 @@
                     </div>
                     <div class="meta-item">
                         <i data-lucide="clock" class="icon-size-3"></i>
-                        <span><?= ceil(str_word_count(strip_tags($post['content'])) / 200) ?> دقیقه مطالعه</span>
+                        <?php
+                        $text_only = strip_tags($post['content']);
+                        // UTF-8 compatible word count for Persian
+                        $word_count = count(preg_split('/\s+/u', $text_only, -1, PREG_SPLIT_NO_EMPTY));
+                        $read_time = ceil($word_count / 200);
+                        ?>
+                        <span><?= $read_time ?> دقیقه مطالعه</span>
                     </div>
                 </div>
 

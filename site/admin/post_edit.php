@@ -31,8 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $meta_description = $_POST['meta_description'] ?? '';
         $meta_keywords = $_POST['meta_keywords'] ?? '';
         $tags = $_POST['tags'] ?? '';
-        $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
-        $updated_at = !empty($_POST['updated_at']) ? $_POST['updated_at'] : date('Y-m-d H:i:s');
+
+        $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : ($post['created_at'] ?? date('Y-m-d H:i:s'));
+        $updated_at = date('Y-m-d H:i:s'); // Always update last modified
 
         // Handle Thumbnail Upload
         $thumbnail = $_POST['current_thumbnail'] ?? '';
