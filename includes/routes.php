@@ -188,7 +188,7 @@ $router->add('/blog', function() {
 
             $categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
 
-            $featured_posts = $pdo->query("SELECT p.*, c.name as category_name
+            $featured_posts = $pdo->query("SELECT p.*, c.name as category_name, c.slug as category_slug
                                           FROM blog_posts p
                                           LEFT JOIN blog_categories c ON p.category_id = c.id
                                           WHERE p.status = 'published' AND p.is_featured = 1
@@ -209,9 +209,9 @@ $router->add('/blog', function() {
     ]);
 });
 
-$router->add('/blog/category/:slug', function($params) {
+$router->add('/blog/:category_slug', function($params) {
     global $pdo;
-    $slug = $params['slug'];
+    $slug = $params['category_slug'];
     $posts = [];
     $category = null;
     $categories = [];
@@ -251,14 +251,15 @@ $router->add('/blog/category/:slug', function($params) {
         'meta_description' => $category['description'],
         'breadcrumbs' => [
             ['name' => 'وبلاگ', 'url' => '/blog'],
-            ['name' => $category['name'], 'url' => '/blog/category/' . $category['slug']]
+            ['name' => $category['name'], 'url' => '/blog/' . $category['slug']]
         ]
     ]);
 });
 
-$router->add('/blog/:slug', function($params) {
+$router->add('/blog/:category_slug/:post_slug', function($params) {
     global $pdo;
-    $slug = $params['slug'];
+    $category_slug = $params['category_slug'];
+    $post_slug = $params['post_slug'];
     $post = null;
     $related_posts = [];
 
@@ -267,8 +268,8 @@ $router->add('/blog/:slug', function($params) {
             $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
                                  FROM blog_posts p
                                  LEFT JOIN blog_categories c ON p.category_id = c.id
-                                 WHERE p.slug = ? AND p.status = 'published'");
-            $stmt->execute([$slug]);
+                                 WHERE p.slug = ? AND p.status = 'published' AND c.slug = ?");
+            $stmt->execute([$post_slug, $category_slug]);
             $post = $stmt->fetch();
 
             if ($post) {
@@ -277,7 +278,7 @@ $router->add('/blog/:slug', function($params) {
 
                 // Related posts
                 if ($post['category_id']) {
-                    $stmt = $pdo->prepare("SELECT p.*, c.name as category_name
+                    $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
                                          FROM blog_posts p
                                          LEFT JOIN blog_categories c ON p.category_id = c.id
                                          WHERE p.status = 'published' AND p.category_id = ? AND p.id != ?
@@ -306,8 +307,8 @@ $router->add('/blog/:slug', function($params) {
         'og_image' => $post['thumbnail'] ? (get_base_url() . '/' . ltrim($post['thumbnail'], '/')) : null,
         'breadcrumbs' => [
             ['name' => 'وبلاگ', 'url' => '/blog'],
-            ['name' => $post['category_name'] ?: 'بدون دسته', 'url' => $post['category_slug'] ? '/blog/category/' . $post['category_slug'] : '#'],
-            ['name' => $post['title'], 'url' => '/blog/' . $post['slug']]
+            ['name' => $post['category_name'] ?: 'بدون دسته', 'url' => $post['category_slug'] ? '/blog/' . $post['category_slug'] : '#'],
+            ['name' => $post['title'], 'url' => '/blog/' . $post['category_slug'] . '/' . $post['slug']]
         ]
     ]);
 });

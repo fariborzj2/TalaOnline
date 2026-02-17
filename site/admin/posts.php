@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$posts = $pdo->query("SELECT p.*, c.name as category_name FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id ORDER BY p.created_at DESC")->fetchAll();
+$posts = $pdo->query("SELECT p.*, c.name as category_name, c.slug as category_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id ORDER BY p.created_at DESC")->fetchAll();
 
 $page_title = 'مدیریت مقالات وبلاگ';
 $page_subtitle = 'نوشتن، ویرایش و مدیریت محتوای وبلاگ';
@@ -97,7 +97,7 @@ include __DIR__ . '/layout/header.php';
                             </div>
                             <div>
                                 <p class="font-black text-slate-900 line-clamp-1"><?= htmlspecialchars($post['title']) ?></p>
-                                <p class="text-[10px] font-bold text-slate-400 ltr-input">/blog/<?= htmlspecialchars($post['slug']) ?></p>
+                                <p class="text-[10px] font-bold text-slate-400 ltr-input">/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?></p>
                             </div>
                         </div>
                     </td>

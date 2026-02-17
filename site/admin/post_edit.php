@@ -8,7 +8,7 @@ $id = $_GET['id'] ?? null;
 $post = null;
 
 if ($id) {
-    $stmt = $pdo->prepare("SELECT * FROM blog_posts WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT p.*, c.slug as category_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id WHERE p.id = ?");
     $stmt->execute([$id]);
     $post = $stmt->fetch();
 }
@@ -150,10 +150,10 @@ include __DIR__ . '/layout/editor.php';
                     </div>
                     <div class="form-group">
                         <label class="text-[10px]">دسته‌بندی</label>
-                        <select name="category_id">
-                            <option value="">بدون دسته</option>
+                        <select name="category_id" id="category_id_select">
+                            <option value="" data-slug="uncategorized">بدون دسته</option>
                             <?php foreach ($categories as $cat): ?>
-                                <option value="<?= $cat['id'] ?>" <?= ($post['category_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>>
+                                <option value="<?= $cat['id'] ?>" data-slug="<?= htmlspecialchars($cat['slug']) ?>" <?= ($post['category_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($cat['name']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -177,7 +177,7 @@ include __DIR__ . '/layout/editor.php';
                     <div class="form-group mb-0">
                         <label class="text-[10px]">نامک (Slug)</label>
                         <input type="text" name="slug" id="post-slug" value="<?= htmlspecialchars($post['slug'] ?? '') ?>" required class="ltr-input text-xs" placeholder="my-blog-post">
-                        <p class="text-[9px] text-slate-400 mt-2">آدرس نهایی: <?= get_base_url() ?>/blog/<span id="slug-preview"><?= $post['slug'] ?? '...' ?></span></p>
+                        <p class="text-[9px] text-slate-400 mt-2">آدرس نهایی: <?= get_base_url() ?>/blog/<span id="category-preview"><?= $post['category_slug'] ?? '...' ?></span>/<span id="slug-preview"><?= $post['slug'] ?? '...' ?></span></p>
                     </div>
                 </div>
             </div>
@@ -286,6 +286,15 @@ include __DIR__ . '/layout/editor.php';
     slugInput.addEventListener('input', () => {
         slugInput.dataset.manual = true;
         slugPreview.innerText = slugInput.value || '...';
+    });
+
+    const categorySelect = document.getElementById('category_id_select');
+    const categoryPreview = document.getElementById('category-preview');
+
+    categorySelect.addEventListener('change', () => {
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+        const slug = selectedOption.dataset.slug || 'uncategorized';
+        categoryPreview.innerText = slug;
     });
 
     // Generic Tag Input Logic
