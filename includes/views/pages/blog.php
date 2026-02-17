@@ -8,7 +8,7 @@
         </div>
         <div class="d-flex-wrap gap-md">
             <?php foreach ($featured_posts as $post): ?>
-            <a href="/blog/<?= htmlspecialchars($post['slug']) ?>" class="blog-card featured basis-300 grow-1 bg-block border radius-20 overflow-hidden d-column relative">
+            <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card featured basis-300 grow-1 bg-block border radius-20 overflow-hidden d-column relative">
                 <div class="aspect-video relative overflow-hidden bg-slate-100">
                     <?php if ($post['thumbnail']): ?>
                     <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
@@ -58,7 +58,7 @@
 
             <div class="d-flex-wrap gap-md">
                 <?php foreach ($posts as $post): ?>
-                <a href="/blog/<?= htmlspecialchars($post['slug']) ?>" class="blog-card basis-250 grow-1 bg-block border radius-20 overflow-hidden d-column">
+                <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card basis-250 grow-1 bg-block border radius-20 overflow-hidden d-column">
                     <div class="aspect-video relative overflow-hidden bg-slate-100">
                         <?php if ($post['thumbnail']): ?>
                         <img src="/<?= ltrim($post['thumbnail'], '/') ?>"

@@ -10,7 +10,7 @@
 
             <div class="p-2 md:p-4">
                 <div class="d-flex-wrap align-center gap-1-5 mb-2">
-                    <a href="/blog/category/<?= htmlspecialchars($post['category_slug']) ?>" class="category-badge">
+                    <a href="/blog/<?= htmlspecialchars($post['category_slug']) ?>" class="category-badge">
                         <i data-lucide="hash" class="icon-size-2"></i>
                         <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
                     </a>
@@ -89,7 +89,7 @@
             </div>
             <div class="d-flex-wrap gap-md">
                 <?php foreach ($related_posts as $rp): ?>
-                <a href="/blog/<?= htmlspecialchars($rp['slug']) ?>" class="blog-card basis-250 grow-1 bg-block border radius-20 overflow-hidden d-column">
+                <a href="/blog/<?= htmlspecialchars($rp['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($rp['slug']) ?>" class="blog-card basis-250 grow-1 bg-block border radius-20 overflow-hidden d-column">
                     <div class="aspect-video relative overflow-hidden bg-slate-100">
                         <?php if ($rp['thumbnail']): ?>
                         <img src="/<?= ltrim($rp['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($rp['title']) ?>" class="w-full h-full object-cover transition-all duration-500 hover:scale-110">

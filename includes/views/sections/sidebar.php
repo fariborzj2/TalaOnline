@@ -17,7 +17,7 @@ if ($pdo) {
         $blog_categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
 
         // Fetch popular posts (by views)
-        $popular_posts = $pdo->query("SELECT * FROM blog_posts WHERE status = 'published' ORDER BY views DESC LIMIT 5")->fetchAll();
+        $popular_posts = $pdo->query("SELECT p.*, c.slug as category_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id WHERE p.status = 'published' ORDER BY p.views DESC LIMIT 5")->fetchAll();
     } catch (Exception $e) {}
 } else {
     // Mock news for verification when DB is not available
@@ -53,7 +53,7 @@ if ($pdo) {
             <?php
             $current_uri = $_SERVER['REQUEST_URI'];
             foreach ($blog_categories as $cat):
-                $cat_url = '/blog/category/' . $cat['slug'];
+                $cat_url = '/blog/' . $cat['slug'];
                 $is_active = (strpos($current_uri, $cat_url) !== false);
             ?>
             <li>
@@ -76,7 +76,7 @@ if ($pdo) {
         </div>
         <div class="d-column gap-1">
             <?php foreach ($popular_posts as $idx => $p): ?>
-            <a href="/blog/<?= htmlspecialchars($p['slug']) ?>" class="popular-item d-flex gap-1 group">
+            <a href="/blog/<?= htmlspecialchars($p['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($p['slug']) ?>" class="popular-item d-flex gap-1 group">
                 <div class="popular-number"><?= $idx + 1 ?></div>
                 <div class="d-column gap-02">
                     <h4 class="text-[11px] font-black text-title line-clamp-2 transition-colors"><?= htmlspecialchars($p['title']) ?></h4>

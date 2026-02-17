@@ -16,12 +16,12 @@ echo '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>';
     <?php
     if ($pdo) {
         try {
-            $stmt = $pdo->query("SELECT slug, thumbnail, updated_at FROM blog_posts WHERE status = 'published' ORDER BY updated_at DESC");
+            $stmt = $pdo->query("SELECT p.slug, p.thumbnail, p.updated_at, c.slug as category_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id WHERE p.status = 'published' ORDER BY p.updated_at DESC");
             while ($post = $stmt->fetch()) {
                 $lastmod = !empty($post['updated_at']) ? date('Y-m-d\TH:i:sP', strtotime($post['updated_at'])) : '2025-01-01T00:00:00+03:30';
                 ?>
                 <url>
-                    <loc><?= get_base_url() ?>/blog/<?= htmlspecialchars($post['slug']) ?></loc>
+                    <loc><?= get_base_url() ?>/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?></loc>
                     <lastmod><?= $lastmod ?></lastmod>
                     <changefreq>monthly</changefreq>
                     <priority>0.7</priority>
@@ -40,7 +40,7 @@ echo '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>';
                 $lastmod = !empty($cat['updated_at']) ? date('Y-m-d\TH:i:sP', strtotime($cat['updated_at'])) : '2025-01-01T00:00:00+03:30';
                 ?>
                 <url>
-                    <loc><?= get_base_url() ?>/blog/category/<?= htmlspecialchars($cat['slug']) ?></loc>
+                    <loc><?= get_base_url() ?>/blog/<?= htmlspecialchars($cat['slug']) ?></loc>
                     <lastmod><?= $lastmod ?></lastmod>
                     <changefreq>weekly</changefreq>
                     <priority>0.6</priority>
