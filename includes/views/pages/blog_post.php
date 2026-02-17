@@ -90,6 +90,70 @@
             </div>
         </div>
 
+        <?php if (!empty($faqs)): ?>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            <?php foreach ($faqs as $i => $faq): ?>
+            {
+              "@type": "Question",
+              "name": "<?= htmlspecialchars($faq['question']) ?>",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<?= htmlspecialchars(strip_tags($faq['answer'])) ?>"
+              }
+            }<?= ($i < count($faqs) - 1) ? ',' : '' ?>
+            <?php endforeach; ?>
+          ]
+        }
+        </script>
+
+        <section class="faq-section mt-4">
+            <div class="bg-block pd-md border radius-24">
+                <div class="d-flex align-center gap-1 pb-1 mb-2 border-bottom">
+                    <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
+                        <i data-lucide="help-circle" color="var(--color-primary)" class="w-6 h-6"></i>
+                    </div>
+                    <h2 class="font-size-3 font-black">سوالات متداول این مقاله</h2>
+                </div>
+
+                <div class="faq-list d-column gap-1">
+                    <?php foreach ($faqs as $faq): ?>
+                        <div class="faq-item border radius-16 overflow-hidden transition-all hover:border-primary/30">
+                            <div class="faq-question pd-md bg-secondary cursor-pointer d-flex just-between align-center" onclick="toggleFaq(this)">
+                                <strong class="font-size-1 text-title"><?= htmlspecialchars($faq['question']) ?></strong>
+                                <i data-lucide="chevron-down" class="w-4 h-4 transition-all opacity-40"></i>
+                            </div>
+                            <div class="faq-answer pd-md border-top d-none bg-white/50">
+                                <p class="font-size-1-1 line-height-2 text-subtitle"><?= nl2br(htmlspecialchars($faq['answer'])) ?></p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            function toggleFaq(el) {
+                const answer = el.nextElementSibling;
+                const icon = el.querySelector('i');
+                const isOpen = !answer.classList.contains('d-none');
+
+                // Close all others in this list
+                const parent = el.closest('.faq-list');
+                parent.querySelectorAll('.faq-answer').forEach(a => a.classList.add('d-none'));
+                parent.querySelectorAll('.faq-question i').forEach(i => i.style.transform = 'rotate(0deg)');
+
+                if (!isOpen) {
+                    answer.classList.remove('d-none');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            }
+        </script>
+        <?php endif; ?>
+
         <?php if (!empty($related_posts)): ?>
         <section class="related-section mt-3">
             <div class="d-flex align-center gap-1 mb-2 pr-1">

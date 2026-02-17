@@ -284,6 +284,11 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
                 $stmt_cats->execute([$post['id']]);
                 $post['all_categories'] = $stmt_cats->fetchAll();
 
+                // Fetch FAQs
+                $stmt_faqs = $pdo->prepare("SELECT * FROM blog_post_faqs WHERE post_id = ? ORDER BY sort_order ASC");
+                $stmt_faqs->execute([$post['id']]);
+                $post['faqs'] = $stmt_faqs->fetchAll();
+
                 // Related posts
                 if ($post['category_id']) {
                     $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
@@ -309,6 +314,7 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
     return View::renderPage('blog_post', [
         'post' => $post,
         'all_categories' => $post['all_categories'] ?? [],
+        'faqs' => $post['faqs'] ?? [],
         'related_posts' => $related_posts,
         'canonical_url' => $canonical_url,
         'hide_layout_h1' => true,
