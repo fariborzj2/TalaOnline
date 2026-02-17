@@ -32,8 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $meta_keywords = $_POST['meta_keywords'] ?? '';
         $tags = $_POST['tags'] ?? '';
 
-        $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : ($post['created_at'] ?? date('Y-m-d H:i:s'));
-        $updated_at = date('Y-m-d H:i:s'); // Always update last modified
+        // Sanitize dates to prevent "zero dates" (0000-00-00)
+        $created_at = $_POST['created_at'] ?? '';
+        if (empty($created_at) || strpos($created_at, '0000') === 0) {
+            $created_at = !empty($post['created_at']) && strpos($post['created_at'], '0000') !== 0
+                ? $post['created_at']
+                : date('Y-m-d H:i:s');
+        }
+
+        $updated_at = date('Y-m-d H:i:s'); // Always update last modified to current time
 
         // Handle Thumbnail Upload
         $thumbnail = $_POST['current_thumbnail'] ?? '';
@@ -377,11 +384,15 @@ include __DIR__ . '/layout/editor.php';
                 altFormat: 'YYYY-MM-DD HH:mm:ss',
                 timePicker: { enabled: true, second: { enabled: false } }
             });
-            if (initialDate && initialDate !== '0000-00-00 00:00:00') {
+            if (initialDate && initialDate !== '0000-00-00 00:00:00' && initialDate !== '0000-00-00') {
                 let d = new Date(initialDate.replace(/-/g, "/"));
                 if (isNaN(d.getTime())) d = new Date();
                 const pDate = new persianDate(d);
                 $(pickerId).val(pDate.format('YYYY/MM/DD HH:mm:ss'));
+            } else {
+                const pDate = new persianDate();
+                $(pickerId).val(pDate.format('YYYY/MM/DD HH:mm:ss'));
+                $(valId).val(pDate.format('YYYY-MM-DD HH:mm:ss'));
             }
         };
 

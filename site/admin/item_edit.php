@@ -58,7 +58,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $show_in_summary = isset($_POST['show_in_summary']) ? 1 : 0;
         $show_chart = isset($_POST['show_chart']) ? 1 : 0;
         $related_item_symbol = $_POST['related_item_symbol'] ?? null;
-        $updated_at = !empty($_POST['updated_at']) ? $_POST['updated_at'] : date('Y-m-d H:i:s');
+
+        // Sanitize updated_at to prevent "zero dates"
+        $updated_at = $_POST['updated_at'] ?? '';
+        if (empty($updated_at) || strpos($updated_at, '0000') === 0) {
+            $updated_at = date('Y-m-d H:i:s');
+        }
 
         // Handle Image Upload
         $logo = $_POST['current_logo'] ?? '';
@@ -491,11 +496,15 @@ include __DIR__ . '/layout/editor.php';
             }
         });
 
-        if (initialDate && initialDate !== '0000-00-00 00:00:00') {
+        if (initialDate && initialDate !== '0000-00-00 00:00:00' && initialDate !== '0000-00-00') {
             let d = new Date(initialDate.replace(/-/g, "/"));
             if (isNaN(d.getTime())) d = new Date();
             const pDate = new persianDate(d);
             $('#updated_at_picker').val(pDate.format('YYYY/MM/DD HH:mm:ss'));
+        } else {
+            const pDate = new persianDate();
+            $('#updated_at_picker').val(pDate.format('YYYY/MM/DD HH:mm:ss'));
+            $('#updated_at_value').val(pDate.format('YYYY-MM-DD HH:mm:ss'));
         }
     });
 </script>
