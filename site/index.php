@@ -11,7 +11,6 @@ if (php_sapi_name() == 'cli-server') {
     }
 }
 
-define('USE_SQLITE', true);
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/core/App.php';
 require_once __DIR__ . '/../includes/helpers.php';
