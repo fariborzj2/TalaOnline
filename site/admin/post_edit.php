@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $meta_title = $_POST['meta_title'] ?? '';
         $meta_description = $_POST['meta_description'] ?? '';
         $meta_keywords = $_POST['meta_keywords'] ?? '';
+        $tags = $_POST['tags'] ?? '';
         $created_at = !empty($_POST['created_at']) ? $_POST['created_at'] : date('Y-m-d H:i:s');
         $updated_at = !empty($_POST['updated_at']) ? $_POST['updated_at'] : date('Y-m-d H:i:s');
 
@@ -46,11 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             if ($id) {
-                $stmt = $pdo->prepare("UPDATE blog_posts SET title = ?, slug = ?, excerpt = ?, content = ?, thumbnail = ?, category_id = ?, status = ?, is_featured = ?, meta_title = ?, meta_description = ?, meta_keywords = ?, created_at = ?, updated_at = ? WHERE id = ?");
-                $stmt->execute([$title, $slug, $excerpt, $content, $thumbnail, $category_id, $status, $is_featured, $meta_title, $meta_description, $meta_keywords, $created_at, $updated_at, $id]);
+                $stmt = $pdo->prepare("UPDATE blog_posts SET title = ?, slug = ?, excerpt = ?, content = ?, thumbnail = ?, category_id = ?, status = ?, is_featured = ?, meta_title = ?, meta_description = ?, meta_keywords = ?, tags = ?, created_at = ?, updated_at = ? WHERE id = ?");
+                $stmt->execute([$title, $slug, $excerpt, $content, $thumbnail, $category_id, $status, $is_featured, $meta_title, $meta_description, $meta_keywords, $tags, $created_at, $updated_at, $id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO blog_posts (title, slug, excerpt, content, thumbnail, category_id, status, is_featured, meta_title, meta_description, meta_keywords, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$title, $slug, $excerpt, $content, $thumbnail, $category_id, $status, $is_featured, $meta_title, $meta_description, $meta_keywords, $created_at, $updated_at]);
+                $stmt = $pdo->prepare("INSERT INTO blog_posts (title, slug, excerpt, content, thumbnail, category_id, status, is_featured, meta_title, meta_description, meta_keywords, tags, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$title, $slug, $excerpt, $content, $thumbnail, $category_id, $status, $is_featured, $meta_title, $meta_description, $meta_keywords, $tags, $created_at, $updated_at]);
             }
 
             header("Location: posts.php?message=success");
@@ -98,6 +99,15 @@ include __DIR__ . '/layout/editor.php';
                     <div class="form-group">
                         <label>محتوای کامل</label>
                         <textarea name="content" id="post-content"><?= htmlspecialchars($post['content'] ?? '') ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="text-[11px] font-black">برچسب‌های مقاله</label>
+                        <div id="tags-container" class="flex flex-wrap gap-2 p-3 bg-white border border-slate-200 rounded-lg min-h-[46px] mb-2 cursor-text">
+                            <input type="text" id="tag-input" class="!border-none !p-0 !ring-0 text-[11px] flex-grow min-w-[120px]" placeholder="تایپ کنید و اینتر بزنید...">
+                        </div>
+                        <input type="hidden" name="tags" id="post-tags" value="<?= htmlspecialchars($post['tags'] ?? '') ?>">
+                        <p class="text-[9px] text-slate-400">برچسب‌ها برای دسته‌بندی غیررسمی و نمایش در انتهای مقاله استفاده می‌شوند.</p>
                     </div>
                 </div>
             </div>
@@ -270,69 +280,83 @@ include __DIR__ . '/layout/editor.php';
         slugPreview.innerText = slugInput.value || '...';
     });
 
-    // Keywords Tags Logic
-    const keywordInput = document.getElementById('keyword-input');
-    const keywordsContainer = document.getElementById('keywords-container');
-    const metaKeywordsHidden = document.getElementById('post-meta_keywords');
-    let keywords = metaKeywordsHidden.value ? metaKeywordsHidden.value.split(',') : [];
+    // Generic Tag Input Logic
+    function setupTagInput(inputId, containerId, hiddenId) {
+        const input = document.getElementById(inputId);
+        const container = document.getElementById(containerId);
+        const hidden = document.getElementById(hiddenId);
+        let tags = hidden.value ? hidden.value.split(',').filter(t => t.trim() !== '') : [];
 
-    function renderKeywords() {
-        const tagsElements = keywordsContainer.querySelectorAll('.keyword-tag');
-        tagsElements.forEach(el => el.remove());
+        function render() {
+            container.querySelectorAll('.tag-item').forEach(el => el.remove());
 
-        keywords.forEach((tag, index) => {
-            if (!tag.trim()) return;
-            const tagEl = document.createElement('span');
-            tagEl.className = 'keyword-tag inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[10px] font-bold border border-indigo-100';
-            tagEl.innerHTML = `${tag} <button type="button" onclick="removeTag(${index})" class="hover:text-rose-500 transition-colors"><i data-lucide="x" class="w-3 h-3"></i></button>`;
-            keywordsContainer.insertBefore(tagEl, keywordInput);
-        });
+            tags.forEach((tag, index) => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'tag-item inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[10px] font-bold border border-indigo-100';
 
-        metaKeywordsHidden.value = keywords.join(',');
-        if (window.refreshIcons) window.refreshIcons();
-    }
+                // Use textContent for the tag text to prevent XSS
+                const textNode = document.createTextNode(tag + ' ');
+                tagEl.appendChild(textNode);
 
-    function removeTag(index) {
-        keywords.splice(index, 1);
-        renderKeywords();
-    }
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'remove-btn hover:text-rose-500 transition-colors';
+                btn.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i>';
 
-    function addKeywords(value) {
-        const parts = value.split(',').map(p => p.trim()).filter(p => p !== '');
-        let changed = false;
-        parts.forEach(val => {
-            if (val && !keywords.includes(val)) {
-                keywords.push(val);
-                changed = true;
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    tags.splice(index, 1);
+                    render();
+                });
+
+                container.insertBefore(tagEl, input);
+            });
+
+            hidden.value = tags.join(',');
+            if (window.refreshIcons) window.refreshIcons();
+        }
+
+        function addTags(value) {
+            const parts = value.split(',').map(p => p.trim()).filter(p => p !== '');
+            let changed = false;
+            parts.forEach(val => {
+                if (val && !tags.includes(val)) {
+                    tags.push(val);
+                    changed = true;
+                }
+            });
+            if (changed) {
+                render();
+                input.value = '';
+            }
+        }
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                addTags(input.value);
+            } else if (e.key === 'Backspace' && input.value === '' && tags.length > 0) {
+                tags.pop();
+                render();
             }
         });
-        if (changed) {
-            renderKeywords();
-            keywordInput.value = '';
-        }
+
+        input.addEventListener('input', (e) => {
+            if (input.value.includes(',')) {
+                addTags(input.value);
+            }
+        });
+
+        container.addEventListener('click', () => {
+            input.focus();
+        });
+
+        render();
     }
 
-    keywordInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ',') {
-            e.preventDefault();
-            addKeywords(keywordInput.value);
-        } else if (e.key === 'Backspace' && keywordInput.value === '' && keywords.length > 0) {
-            keywords.pop();
-            renderKeywords();
-        }
-    });
-
-    keywordInput.addEventListener('input', (e) => {
-        if (keywordInput.value.includes(',')) {
-            addKeywords(keywordInput.value);
-        }
-    });
-
-    keywordsContainer.addEventListener('click', () => {
-        keywordInput.focus();
-    });
-
-    renderKeywords();
+    // Initialize Tag Inputs
+    setupTagInput('keyword-input', 'keywords-container', 'post-meta_keywords');
+    setupTagInput('tag-input', 'tags-container', 'post-tags');
 
     $(document).ready(function() {
         initTinyMCE('#post-content');

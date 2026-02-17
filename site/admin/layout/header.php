@@ -30,6 +30,7 @@ if (isset($pdo) && $pdo) {
             `meta_title` VARCHAR(255),
             `meta_description` VARCHAR(255),
             `meta_keywords` VARCHAR(255),
+            `tags` TEXT,
             `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             FOREIGN KEY (`category_id`) REFERENCES `blog_categories`(`id`) ON DELETE SET NULL
@@ -42,6 +43,11 @@ if (isset($pdo) && $pdo) {
             $cols = $pdo->query("DESCRIBE $table")->fetchAll(PDO::FETCH_COLUMN);
             if (!in_array('updated_at', $cols)) {
                 $pdo->exec("ALTER TABLE $table ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
+            }
+
+            // Check for tags in blog_posts specifically if it already existed
+            if ($table === 'blog_posts' && !in_array('tags', $cols)) {
+                $pdo->exec("ALTER TABLE blog_posts ADD COLUMN tags TEXT AFTER meta_keywords");
             }
         } catch (Exception $e) {}
     }
