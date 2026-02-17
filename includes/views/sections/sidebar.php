@@ -88,14 +88,6 @@ if ($pdo) {
     </div>
     <?php endif; ?>
 
-    <!-- Table of Contents Placeholder (shown only on blog posts via JS) -->
-    <div id="toc-container-main" class="bg-block border radius-20 p-1-5 shadow-sm d-none">
-        <div class="d-flex align-center gap-05 mb-1-5 border-bottom pb-1">
-            <i data-lucide="list-ordered" class="icon-size-4 text-primary"></i>
-            <h3 class="font-black font-size-1-2">فهرست مطالب</h3>
-        </div>
-        <div id="toc-content"></div>
-    </div>
 
     <div class="newsletter-card radius-24 p-2 text-white relative overflow-hidden shadow-lg">
         <div class="newsletter-glow"></div>

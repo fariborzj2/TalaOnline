@@ -46,6 +46,7 @@
                 <?php endif; ?>
 
                 <div class="content-text font-size-2 line-height-2-5 text-title">
+                    <div id="toc-placeholder"></div>
                     <?= $post['content'] ?>
                 </div>
 
@@ -187,65 +188,7 @@
     }
     .tag-pill:hover { background: #edf2f7; color: var(--color-primary); }
 
-    .sticky-sidebar { position: sticky; top: 1.5rem; }
-
-    .newsletter-card {
-        background: linear-gradient(135deg, var(--color-primary), #8b5702);
-        box-shadow: 0 15px 30px -10px rgba(194, 120, 3, 0.4);
-    }
-    .newsletter-glow {
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: rotate 20s linear infinite;
-    }
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-    .newsletter-input {
-        width: 100%;
-        background: rgba(255,255,255,0.15);
-        border: 1px solid rgba(255,255,255,0.2);
-        padding: 12px 16px;
-        border-radius: 14px;
-        color: white;
-        font-size: 13px;
-        outline: none;
-        transition: all 0.3s;
-    }
-    .newsletter-input::placeholder { color: rgba(255,255,255,0.6); }
-    .newsletter-input:focus { background: rgba(255,255,255,0.25); border-color: white; }
-
-    .newsletter-btn {
-        width: 100%;
-        background: white;
-        color: var(--color-primary);
-        padding: 12px;
-        border-radius: 14px;
-        font-weight: 900;
-        font-size: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: all 0.3s;
-    }
-    .newsletter-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-
     .blog-card { transition: all 0.3s; }
     .blog-card:hover { transform: translateY(-5px); border-color: var(--color-primary); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
 
-    .toc-item {
-        display: block;
-        padding: 8px 12px;
-        border-radius: 10px;
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--color-text);
-        transition: all 0.2s;
-    }
-    .toc-item:hover { background: #f8fafc; color: var(--color-primary); }
-    .toc-item.active { background: rgba(194, 120, 3, 0.05); color: var(--color-primary); border-right: 3px solid var(--color-primary); }
 </style>
