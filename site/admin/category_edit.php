@@ -297,8 +297,21 @@ include __DIR__ . '/layout/editor.php';
         keywords.forEach((tag, index) => {
             if (!tag.trim()) return;
             const tagEl = document.createElement('span');
-            tagEl.className = 'keyword-tag inline-flex items-center gap-1 px-2 py-1 bg-indigo-50 text-indigo-600 rounded text-[10px] font-bold border border-indigo-100';
-            tagEl.innerHTML = `${tag} <button type="button" onclick="removeTag(${index})" class="hover:text-rose-500 transition-colors"><i data-lucide="x" class="w-3 h-3"></i></button>`;
+            tagEl.className = 'keyword-tag inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[11px] font-bold border border-indigo-100 shadow-sm';
+
+            const textNode = document.createTextNode(tag);
+            tagEl.appendChild(textNode);
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'remove-btn text-current/50 hover:text-rose-500 transition-colors';
+            btn.innerHTML = '<i data-lucide="x" style="width: 12px; height: 12px;"></i>';
+            btn.onclick = (e) => {
+                e.preventDefault();
+                removeTag(index);
+            };
+
+            tagEl.appendChild(btn);
             keywordsContainer.insertBefore(tagEl, keywordInput);
         });
 

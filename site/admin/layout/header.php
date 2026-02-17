@@ -302,6 +302,14 @@ if (isset($pdo) && $pdo) {
         .custom-dialog-overlay.active .custom-dialog-box {
             @apply scale-100 opacity-100;
         }
+
+        /* Tag/Category Pill Styles */
+        .tag-item, .cat-item {
+            @apply transition-all duration-200 hover:brightness-95;
+        }
+        .remove-btn {
+            @apply flex items-center justify-center w-4 h-4 rounded-full hover:bg-black/10 transition-colors;
+        }
     </style>
 
     <script src="https://unpkg.com/lucide@latest"></script>
