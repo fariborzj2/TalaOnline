@@ -45,6 +45,15 @@ if (isset($pdo)) {
                 <i data-lucide="building-2" class="w-6 h-6"></i>
                 <span>پتلفرم‌ها</span>
             </a>
+            <div class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">وبلاگ</div>
+            <a href="posts.php" class="sidebar-link <?= $current_page == 'posts.php' || $current_page == 'post_edit.php' ? 'active' : '' ?>">
+                <i data-lucide="newspaper" class="w-6 h-6"></i>
+                <span>نوشته‌ها</span>
+            </a>
+            <a href="blog_categories.php" class="sidebar-link <?= $current_page == 'blog_categories.php' ? 'active' : '' ?>">
+                <i data-lucide="tags" class="w-6 h-6"></i>
+                <span>دسته‌بندی وبلاگ</span>
+            </a>
             <a href="feedbacks.php" class="sidebar-link <?= $current_page == 'feedbacks.php' ? 'active' : '' ?> flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <i data-lucide="mail" class="w-6 h-6"></i>

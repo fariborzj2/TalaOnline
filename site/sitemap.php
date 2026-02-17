@@ -18,7 +18,7 @@ if ($pdo) {
     try {
         $updates = [];
         // Check tables individually to avoid total failure
-        $tables = ['items', 'categories', 'settings'];
+        $tables = ['items', 'categories', 'settings', 'blog_posts', 'blog_categories'];
         foreach ($tables as $table) {
             try {
                 $stmt = $pdo->query("SELECT MAX(updated_at) FROM $table");
@@ -48,6 +48,10 @@ $lastmod = date('Y-m-d\TH:i:sP', $lastmod_ts);
     </sitemap>
     <sitemap>
         <loc><?= $base_url ?>/sitemap-items.xml</loc>
+        <lastmod><?= $lastmod ?></lastmod>
+    </sitemap>
+    <sitemap>
+        <loc><?= $base_url ?>/sitemap-posts.xml</loc>
         <lastmod><?= $lastmod ?></lastmod>
     </sitemap>
 </sitemapindex>
