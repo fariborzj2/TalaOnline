@@ -4,13 +4,6 @@
 
             <h1 class="font-black text-title mb-2"><?= htmlspecialchars($post['title']) ?></h1>
 
-            <?php if ($post['excerpt']): ?>
-                <div class="d-flex gap-1 mb-2">
-                    <i data-lucide="quote" class="w-10 h-10 text-primary opacity-20 shrink-0"></i>
-                    <p class="font-bold text-subtitle line-height-2"><?= htmlspecialchars($post['excerpt']) ?></p>
-                </div>
-            <?php endif; ?>
-
             <div class="d-flex-wrap align-center gap-1-5 mb-2">
                 <?php if (!empty($all_categories)): ?>
                     <?php foreach ($all_categories as $cat): ?>
@@ -44,6 +37,13 @@
                     <span><?= $read_time ?> دقیقه مطالعه</span>
                 </div>
             </div>
+
+            <?php if ($post['excerpt']): ?>
+                <div class="d-flex gap-1 mb-2">
+                    <i data-lucide="quote" class="w-10 h-10 text-primary opacity-20 shrink-0"></i>
+                    <p class="font-bold text-subtitle line-height-2"><?= htmlspecialchars($post['excerpt']) ?></p>
+                </div>
+            <?php endif; ?>
 
             <?php if ($post['thumbnail']): ?>
                 <div class="post-hero-image radius-16 relative overflow-hidden mb-2">
@@ -241,10 +241,5 @@
 
     .blog-card { transition: all 0.3s; }
     .blog-card:hover { transform: translateY(-5px); border-color: var(--color-primary); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-
-    .bg-slate-50 { 
-        background: var(--bg-warning);
-        color: var(--color-warning); 
-    }
 
 </style>
