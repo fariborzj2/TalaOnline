@@ -1,14 +1,13 @@
 <article class="blog-post-page d-flex-wrap gap-md align-stretch">
     <div class="grow-8 basis-600 d-column gap-md">
-        <div class="post-main-card bg-block border radius-24 overflow-hidden">
+        <div class="post-main-card bg-block border p-2 radius-24 overflow-hidden ">
             <?php if ($post['thumbnail']): ?>
-            <div class="post-hero-image relative overflow-hidden">
+            <div class="post-hero-image radius-16 relative overflow-hidden">
                 <img src="/<?= ltrim($post['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="w-full h-full object-cover">
-                <div class="hero-overlay"></div>
             </div>
             <?php endif; ?>
 
-            <div class="p-2 md:p-4">
+            <div class="p-2">
                 <div class="d-flex-wrap align-center gap-1-5 mb-2">
                     <?php if (!empty($all_categories)): ?>
                         <?php foreach ($all_categories as $cat): ?>
@@ -43,7 +42,7 @@
                     </div>
                 </div>
 
-                <h1 class="post-title font-black text-title mb-2-5"><?= htmlspecialchars($post['title']) ?></h1>
+                <h1 class="font-black text-title"><?= htmlspecialchars($post['title']) ?></h1>
 
                 <?php if ($post['excerpt']): ?>
                 <div class="post-excerpt bg-slate-50 radius-16 p-2 mb-3">
@@ -190,18 +189,6 @@
 
 <style>
     .aspect-video { aspect-ratio: 16 / 9; }
-    .radius-24 { border-radius: 24px; }
-    .radius-16 { border-radius: 16px; }
-
-    .post-hero-image { height: 400px; }
-    @media (max-width: 768px) { .post-hero-image { height: 250px; } }
-
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4));
-    }
-
     .category-badge {
         display: inline-flex;
         align-items: center;
@@ -225,13 +212,6 @@
         font-size: 11px;
         font-weight: 600;
     }
-
-    .post-title {
-        font-size: 2.8rem;
-        line-height: 1.2;
-        letter-spacing: -0.04em;
-    }
-    @media (max-width: 768px) { .post-title { font-size: 1.8rem; } }
 
     .share-btn {
         width: 36px;
