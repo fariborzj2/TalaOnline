@@ -1,6 +1,9 @@
 <article class="blog-post-page d-flex-wrap gap-md align-stretch">
     <div class="grow-8 basis-600 d-column gap-md">
         <div class="post-main-card bg-block border p-2 radius-24 overflow-hidden ">
+            
+            <h1 class="font-black text-title mb-2"><?= htmlspecialchars($post['title']) ?></h1>
+
             <div class="d-flex-wrap align-center gap-1-5 mb-2">
                 <?php if (!empty($all_categories)): ?>
                     <?php foreach ($all_categories as $cat): ?>
@@ -34,8 +37,6 @@
                     <span><?= $read_time ?> دقیقه مطالعه</span>
                 </div>
             </div>
-
-            <h1 class="font-black text-title mb-2"><?= htmlspecialchars($post['title']) ?></h1>
 
             <?php if ($post['thumbnail']): ?>
                 <div class="post-hero-image radius-16 relative overflow-hidden">
