@@ -70,7 +70,7 @@
                         </div>
                         <?php endif; ?>
                     </div>
-                    <div class="d-column gap-05 grow-1 basis-200">
+                    <div class="d-column gap-05 grow-5 basis-200">
                         <div class="d-flex align-center gap-05 mb-02">
                             <span class="text-primary font-bold"><?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?></span>
                             <span class="text-subtitle opacity-30">•</span>
