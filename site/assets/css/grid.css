@@ -410,6 +410,9 @@
 .h-8 {
     height: 32px;
 }
+.h-full {
+    height: 100%;
+}
 .w-10 {
     width: 40px;
 }
@@ -427,6 +430,9 @@
 }
 .h-16 {
     height: 64px;
+}
+.w-full {
+    width: 100%;
 }
 .max-w100 {
     max-width: 100px;

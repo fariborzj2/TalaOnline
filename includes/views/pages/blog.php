@@ -16,7 +16,7 @@
                                 alt="<?= htmlspecialchars($post['title']) ?>"
                                 class="w-full h-full object-cover transition-all">
                         <?php else: ?>
-                        <div class="w-full h-full d-flex align-center justify-center text-slate-300">
+                        <div class="w-full h-full d-flex align-center justify-center ">
                             <i data-lucide="image" class="w-16 h-16 opacity-20"></i>
                         </div>
                         <?php endif; ?>
@@ -66,7 +66,7 @@
                                 alt="<?= htmlspecialchars($post['title']) ?>"
                                 class="w-full h-full object-cover transition-all">
                             <?php else: ?>
-                            <div class="w-full h-full d-flex align-center justify-center text-slate-300">
+                            <div class="w-full h-full d-flex align-center justify-center ">
                                 <i data-lucide="image" class="w-12 h-12 opacity-20"></i>
                             </div>
                             <?php endif; ?>
@@ -74,7 +74,7 @@
                         <div class="d-flex align-center gap-05 mb-02">
                             <span class="text-primary font-bold"><?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?></span>
                             <span class="text-subtitle opacity-30">•</span>
-                            <span class="text-subtitle  font-bold"><?= jalali_time_tag($post['created_at']) ?></span>
+                            <span class="text-subtitle font-bold"><?= jalali_time_tag($post['created_at']) ?></span>
                         </div>
                         <h3 class="font-bold font-size-4 text-title line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
                         <p class="line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
