@@ -47,7 +47,7 @@ if ($pdo) {
     <div class="bg-block border radius-20 p-1-5 ">
         <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
             <i data-lucide="layers-3" class="icon-size-4 text-primary"></i>
-            <h3 class="font-black font-size-1-2">دسته‌بندی‌های وبلاگ</h3>
+            <h3 class="font-size-2 font-bold">دسته‌بندی‌های وبلاگ</h3>
         </div>
         <ul class="d-column list-none">
             <?php
@@ -72,7 +72,7 @@ if ($pdo) {
     <div class="bg-block border radius-20 p-1-5 ">
         <div class="d-flex align-center gap-05 mb-1-5 border-bottom pb-1">
             <i data-lucide="flame" class="icon-size-4 text-error"></i>
-            <h3 class="font-black font-size-1-2">داغ‌ترین مطالب</h3>
+            <h3 class="font-size-2 font-bold">داغ‌ترین مطالب</h3>
         </div>
         <div class="d-column gap-1">
             <?php foreach ($popular_posts as $idx => $p): ?>
@@ -88,24 +88,6 @@ if ($pdo) {
     </div>
     <?php endif; ?>
 
-    <div class="newsletter-card radius-24 p-2 text-white relative overflow-hidden ">
-        <div class="newsletter-glow"></div>
-        <div class="relative z-10 d-column gap-1">
-            <div class="w-10 h-10 bg-white/20 radius-12 d-flex align-center justify-center mb-05">
-                <i data-lucide="mail-plus" class="w-5 h-5"></i>
-            </div>
-            <h3 class="font-black font-size-2 leading-tight">عضویت در خبرنامه طلایی</h3>
-            <p class="text-[10px] leading-relaxed opacity-90">تحلیل‌های روزانه بازار طلا و ارز را رایگان دریافت کنید.</p>
-            <form class="d-column gap-05 mt-05" onsubmit="return false">
-                <input type="email" placeholder="ایمیل شما..." class="newsletter-input">
-                <button class="newsletter-btn">
-                    <span>تایید و عضویت</span>
-                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                </button>
-            </form>
-        </div>
-        <i data-lucide="sparkles" class="absolute -right-4 -bottom-4 w-24 h-24 opacity-10"></i>
-    </div>
 </aside>
 
 <style>
@@ -125,52 +107,6 @@ if ($pdo) {
     .popular-item:hover .popular-number { opacity: 0.8; }
     .popular-item:hover h4 { color: var(--color-primary); }
 
-    .newsletter-card {
-        background: linear-gradient(135deg, var(--color-primary), #8b5702);
-    }
-    .newsletter-glow {
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: rotate 20s linear infinite;
-    }
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-    .newsletter-input {
-        width: 100%;
-        background: rgba(255,255,255,0.15);
-        border: 1px solid rgba(255,255,255,0.2);
-        padding: 10px 14px;
-        border-radius: 12px;
-        color: white;
-        font-size: 12px;
-        outline: none;
-        transition: all 0.3s;
-    }
-    .newsletter-input::placeholder { color: rgba(255,255,255,0.6); }
-    .newsletter-input:focus { background: rgba(255,255,255,0.25); border-color: white; }
-
-    .newsletter-btn {
-        width: 100%;
-        background: white;
-        color: var(--color-primary);
-        padding: 10px;
-        border-radius: 12px;
-        font-weight: 900;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        transition: all 0.3s;
-    }
-    .newsletter-btn:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-</style>
-
-<style>
     .sidebar {
         width: 350px;
         flex-shrink: 0;
