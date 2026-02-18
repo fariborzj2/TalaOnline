@@ -142,11 +142,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Insert Admin
                 $hashed_pass = password_hash($admin_pass, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO admins (username, password) VALUES (?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO admins (username, password) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password)");
                 $stmt->execute([$admin_user, $hashed_pass]);
 
                 // Insert Initial Settings
-                $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
                 $stmt->execute(['api_key', $api_key]);
                 $stmt->execute(['site_title', 'طلا آنلاین']);
                 $stmt->execute(['api_sync_interval', '10']);
