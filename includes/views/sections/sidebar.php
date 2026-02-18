@@ -79,7 +79,7 @@ if ($pdo) {
             <a href="/blog/<?= htmlspecialchars($p['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($p['slug']) ?>" class="popular-item d-flex gap-1 group">
                 <div class="popular-number"><?= $idx + 1 ?></div>
                 <div class="d-column gap-02">
-                    <h4 class="text-[11px] font-black text-title line-clamp-2 transition-colors"><?= htmlspecialchars($p['title']) ?></h4>
+                    <h4 class="text-[11px] font-black text-title ellipsis-y line-clamp-2 transition-colors"><?= htmlspecialchars($p['title']) ?></h4>
                     <span class="text-[9px] opacity-50"><?= number_format($p['views']) ?> بازدید</span>
                 </div>
             </a>

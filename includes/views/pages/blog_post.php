@@ -170,7 +170,7 @@
                         <?php endif; ?>
                     </div>
                     <div class="p-1-5 d-column gap-05">
-                        <h3 class="font-black text-[13px] line-clamp-2 leading-snug text-title"><?= htmlspecialchars($rp['title']) ?></h3>
+                        <h3 class="font-black text-[13px] ellipsis-y line-clamp-2 leading-snug text-title"><?= htmlspecialchars($rp['title']) ?></h3>
                         <div class="d-flex align-center gap-05 opacity-50">
                             <i data-lucide="calendar" class="icon-size-1"></i>
                             <span class="text-[9px]"><?= jalali_time_tag($rp['created_at']) ?></span>
