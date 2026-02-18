@@ -1,91 +1,89 @@
 <article class="blog-post-page d-flex-wrap gap-md align-stretch">
     <div class="grow-8 basis-600 d-column gap-md">
         <div class="post-main-card bg-block border p-2 radius-24 overflow-hidden ">
+            <div class="d-flex-wrap align-center gap-1-5 mb-2">
+                <?php if (!empty($all_categories)): ?>
+                    <?php foreach ($all_categories as $cat): ?>
+                        <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="category-badge">
+                            <i data-lucide="hash" class="icon-size-2"></i>
+                            <?= htmlspecialchars($cat['name']) ?>
+                        </a>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>" class="category-badge">
+                        <i data-lucide="hash" class="icon-size-2"></i>
+                        <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
+                    </a>
+                <?php endif; ?>
+                <div class="meta-item">
+                    <i data-lucide="calendar" class="icon-size-3"></i>
+                    <span><?= jalali_time_tag($post['created_at'], 'weekday') ?></span>
+                </div>
+                <div class="meta-item">
+                    <i data-lucide="eye" class="icon-size-3"></i>
+                    <span><?= number_format($post['views']) ?> بازدید</span>
+                </div>
+                <div class="meta-item">
+                    <i data-lucide="clock" class="icon-size-3"></i>
+                    <?php
+                    $text_only = strip_tags($post['content']);
+                    // UTF-8 compatible word count for Persian
+                    $word_count = count(preg_split('/\s+/u', $text_only, -1, PREG_SPLIT_NO_EMPTY));
+                    $read_time = ceil($word_count / 200);
+                    ?>
+                    <span><?= $read_time ?> دقیقه مطالعه</span>
+                </div>
+            </div>
+
+            <h1 class="font-black text-title"><?= htmlspecialchars($post['title']) ?></h1>
+
             <?php if ($post['thumbnail']): ?>
-            <div class="post-hero-image radius-16 relative overflow-hidden">
-                <img src="/<?= ltrim($post['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="w-full h-full object-cover">
+                <div class="post-hero-image radius-16 relative overflow-hidden">
+                    <img src="/<?= ltrim($post['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="w-full h-full object-cover">
+                </div>
+            <?php endif; ?>
+
+            <?php if ($post['excerpt']): ?>
+            <div class="post-excerpt bg-slate-50 radius-16 p-2 mb-3">
+                <div class="d-flex gap-1">
+                    <i data-lucide="quote" class="w-10 h-10 text-primary opacity-20 shrink-0"></i>
+                    <p class="font-bold text-subtitle line-height-2"><?= htmlspecialchars($post['excerpt']) ?></p>
+                </div>
             </div>
             <?php endif; ?>
 
-            <div class="p-2">
-                <div class="d-flex-wrap align-center gap-1-5 mb-2">
-                    <?php if (!empty($all_categories)): ?>
-                        <?php foreach ($all_categories as $cat): ?>
-                            <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="category-badge">
-                                <i data-lucide="hash" class="icon-size-2"></i>
-                                <?= htmlspecialchars($cat['name']) ?>
-                            </a>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>" class="category-badge">
-                            <i data-lucide="hash" class="icon-size-2"></i>
-                            <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
+            <div class="content-text font-size-2 line-height-2-5 text-title">
+                <div id="toc-placeholder"></div>
+                <?= $post['content'] ?>
+            </div>
+
+            <div class="post-footer mt-5 pt-3 border-top d-flex-wrap just-between align-center gap-2">
+                <div class="d-flex align-center gap-1">
+                    <span class="font-black text-subtitle text-[12px]">اشتراک‌گذاری:</span>
+                    <div class="d-flex gap-05">
+                        <a href="https://telegram.me/share/url?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn telegram">
+                            <i data-lucide="send" class="icon-size-3"></i>
                         </a>
-                    <?php endif; ?>
-                    <div class="meta-item">
-                        <i data-lucide="calendar" class="icon-size-3"></i>
-                        <span><?= jalali_time_tag($post['created_at'], 'weekday') ?></span>
-                    </div>
-                    <div class="meta-item">
-                        <i data-lucide="eye" class="icon-size-3"></i>
-                        <span><?= number_format($post['views']) ?> بازدید</span>
-                    </div>
-                    <div class="meta-item">
-                        <i data-lucide="clock" class="icon-size-3"></i>
-                        <?php
-                        $text_only = strip_tags($post['content']);
-                        // UTF-8 compatible word count for Persian
-                        $word_count = count(preg_split('/\s+/u', $text_only, -1, PREG_SPLIT_NO_EMPTY));
-                        $read_time = ceil($word_count / 200);
-                        ?>
-                        <span><?= $read_time ?> دقیقه مطالعه</span>
+                        <a href="https://twitter.com/intent/tweet?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn twitter">
+                            <i data-lucide="twitter" class="icon-size-3"></i>
+                        </a>
+                        <a href="https://wa.me/?text=<?= urlencode($post['title'] . ' ' . get_current_url()) ?>" target="_blank" class="share-btn whatsapp">
+                            <i data-lucide="message-circle" class="icon-size-3"></i>
+                        </a>
                     </div>
                 </div>
 
-                <h1 class="font-black text-title"><?= htmlspecialchars($post['title']) ?></h1>
-
-                <?php if ($post['excerpt']): ?>
-                <div class="post-excerpt bg-slate-50 radius-16 p-2 mb-3">
-                    <div class="d-flex gap-1">
-                        <i data-lucide="quote" class="w-10 h-10 text-primary opacity-20 shrink-0"></i>
-                        <p class="font-bold text-subtitle line-height-2"><?= htmlspecialchars($post['excerpt']) ?></p>
-                    </div>
+                <?php if ($post['tags']): ?>
+                <div class="d-flex-wrap gap-05">
+                    <?php
+                    $tags = explode(',', $post['tags']);
+                    foreach ($tags as $tag):
+                        if (!trim($tag)) continue;
+                    ?>
+                    <span class="tag-pill">#<?= htmlspecialchars(trim($tag)) ?></span>
+                    <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
-
-                <div class="content-text font-size-2 line-height-2-5 text-title">
-                    <div id="toc-placeholder"></div>
-                    <?= $post['content'] ?>
-                </div>
-
-                <div class="post-footer mt-5 pt-3 border-top d-flex-wrap just-between align-center gap-2">
-                    <div class="d-flex align-center gap-1">
-                        <span class="font-black text-subtitle text-[12px]">اشتراک‌گذاری:</span>
-                        <div class="d-flex gap-05">
-                            <a href="https://telegram.me/share/url?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn telegram">
-                                <i data-lucide="send" class="icon-size-3"></i>
-                            </a>
-                            <a href="https://twitter.com/intent/tweet?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn twitter">
-                                <i data-lucide="twitter" class="icon-size-3"></i>
-                            </a>
-                            <a href="https://wa.me/?text=<?= urlencode($post['title'] . ' ' . get_current_url()) ?>" target="_blank" class="share-btn whatsapp">
-                                <i data-lucide="message-circle" class="icon-size-3"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <?php if ($post['tags']): ?>
-                    <div class="d-flex-wrap gap-05">
-                        <?php
-                        $tags = explode(',', $post['tags']);
-                        foreach ($tags as $tag):
-                            if (!trim($tag)) continue;
-                        ?>
-                        <span class="tag-pill">#<?= htmlspecialchars(trim($tag)) ?></span>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php endif; ?>
-                </div>
             </div>
         </div>
 
