@@ -186,6 +186,7 @@
 </article>
 
 <style>
+    .post-main-card h1 { line-height: 1.5; }
     .aspect-video { aspect-ratio: 16 / 9; }
     .category-badge {
         display: inline-flex;
