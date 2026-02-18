@@ -39,7 +39,7 @@
             </div>
 
             <?php if ($post['thumbnail']): ?>
-                <div class="post-hero-image radius-16 relative overflow-hidden">
+                <div class="post-hero-image radius-16 relative overflow-hidden mb-2">
                     <img src="/<?= ltrim($post['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($post['title']) ?>" class="w-full h-full object-cover">
                 </div>
             <?php endif; ?>
