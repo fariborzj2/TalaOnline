@@ -58,8 +58,8 @@
 
             <div class="d-column gap-md">
                 <?php foreach ($posts as $post): ?>
-                <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card d-flexx-wrap gap-md bg-block border radius-20 overflow-hidden ">
-                    <div class="aspect-video relative radius-16 overflow-hidden">
+                <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card p-2  d-flex-wrap gap-md bg-block border radius-20 overflow-hidden ">
+                    <div class="aspect-video relative radius-16 overflow-hidden grow-1 basis-200">
                         <?php if ($post['thumbnail']): ?>
                         <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
                             alt="<?= htmlspecialchars($post['title']) ?>"
@@ -70,7 +70,7 @@
                         </div>
                         <?php endif; ?>
                     </div>
-                    <div class="p-2 d-column gap-05">
+                    <div class="d-column gap-05 grow-1 basis-200">
                         <div class="d-flex align-center gap-05 mb-02">
                             <span class="text-primary font-bold"><?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?></span>
                             <span class="text-subtitle opacity-30">•</span>
