@@ -6,6 +6,13 @@ function is_active_group($pages) {
     return in_array($current_page, $pages);
 }
 
+$unread_count = 0;
+if (isset($pdo)) {
+    try {
+        $unread_count = $pdo->query("SELECT COUNT(*) FROM feedbacks WHERE is_read = 0")->fetchColumn();
+    } catch (Exception $e) {}
+}
+
 $groups = [
     [
         'label' => 'اصلی',
@@ -17,21 +24,21 @@ $groups = [
     [
         'label' => 'مدیریت بازار',
         'icon' => 'trending-up',
-        'pages' => ['items.php', 'item_edit.php', 'categories.php', 'category_edit.php', 'platforms.php', 'rss_feeds.php'],
+        'pages' => ['items.php', 'item_edit.php', 'categories.php', 'category_edit.php', 'platforms.php'],
         'items' => [
             ['label' => 'لیست دارایی‌ها', 'url' => 'items.php', 'icon' => 'coins'],
             ['label' => 'دسته‌بندی‌ها', 'url' => 'categories.php', 'icon' => 'layers'],
             ['label' => 'پلتفرم‌ها', 'url' => 'platforms.php', 'icon' => 'briefcase'],
-            ['label' => 'فیدهای RSS', 'url' => 'rss_feeds.php', 'icon' => 'rss'],
         ]
     ],
     [
         'label' => 'محتوا و وبلاگ',
         'icon' => 'file-text',
-        'pages' => ['posts.php', 'post_edit.php', 'blog_categories.php', 'blog_category_edit.php', 'blog_settings.php', 'about.php'],
+        'pages' => ['posts.php', 'post_edit.php', 'blog_categories.php', 'blog_category_edit.php', 'blog_settings.php', 'rss_feeds.php', 'about.php'],
         'items' => [
             ['label' => 'نوشته‌ها', 'url' => 'posts.php', 'icon' => 'pen-tool'],
             ['label' => 'دسته‌بندی وبلاگ', 'url' => 'blog_categories.php', 'icon' => 'folder-open'],
+            ['label' => 'فیدهای RSS', 'url' => 'rss_feeds.php', 'icon' => 'rss'],
             ['label' => 'تنظیمات وبلاگ', 'url' => 'blog_settings.php', 'icon' => 'settings-2'],
             ['label' => 'درباره ما', 'url' => 'about.php', 'icon' => 'info'],
         ]
@@ -41,7 +48,12 @@ $groups = [
         'icon' => 'settings',
         'pages' => ['feedbacks.php', 'settings.php'],
         'items' => [
-            ['label' => 'نظرات و بازخورد', 'url' => 'feedbacks.php', 'icon' => 'message-square'],
+            [
+                'label' => 'نظرات و بازخورد',
+                'url' => 'feedbacks.php',
+                'icon' => 'message-square',
+                'badge' => $unread_count > 0 ? $unread_count : null
+            ],
             ['label' => 'تنظیمات عمومی', 'url' => 'settings.php', 'icon' => 'sliders'],
         ]
     ]
@@ -81,11 +93,14 @@ $groups = [
                         <div class="group-content overflow-hidden transition-all duration-300" style="max-height: <?= $isOpen ? '500px' : '0' ?>;">
                             <div class="pr-6 pt-1 pb-2 space-y-1">
                                 <?php foreach ($group['items'] as $item): ?>
-                                    <a href="<?= $item['url'] ?>" class="sidebar-sub-link <?= $current_page == $item['url'] ? 'active' : '' ?>">
+                                    <a href="<?= $item['url'] ?>" class="sidebar-sub-link <?= $current_page == $item['url'] ? 'active' : '' ?> flex items-center justify-between">
                                         <div class="flex items-center gap-3">
                                             <i data-lucide="<?= $item['icon'] ?>" class="w-4 h-4"></i>
                                             <span><?= $item['label'] ?></span>
                                         </div>
+                                        <?php if (isset($item['badge'])): ?>
+                                            <span class="bg-indigo-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-black min-w-[20px] text-center"><?= $item['badge'] ?></span>
+                                        <?php endif; ?>
                                     </a>
                                 <?php endforeach; ?>
                             </div>
