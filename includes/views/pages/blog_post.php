@@ -4,6 +4,13 @@
 
             <h1 class="font-black text-title mb-2"><?= htmlspecialchars($post['title']) ?></h1>
 
+            <?php if ($post['excerpt']): ?>
+                <div class="d-flex gap-1 mb-2">
+                    <i data-lucide="quote" class="w-10 h-10 text-primary opacity-20 shrink-0"></i>
+                    <p class="font-bold text-subtitle line-height-2"><?= htmlspecialchars($post['excerpt']) ?></p>
+                </div>
+            <?php endif; ?>
+
             <div class="d-flex-wrap align-center gap-1-5 mb-2">
                 <?php if (!empty($all_categories)): ?>
                     <?php foreach ($all_categories as $cat): ?>
@@ -44,15 +51,6 @@
                 </div>
             <?php endif; ?>
 
-            <?php if ($post['excerpt']): ?>
-            <div class="post-excerpt bg-slate-50 radius-16 p-2 mb-3">
-                <div class="d-flex gap-1">
-                    <i data-lucide="quote" class="w-10 h-10 text-primary opacity-20 shrink-0"></i>
-                    <p class="font-bold text-subtitle line-height-2"><?= htmlspecialchars($post['excerpt']) ?></p>
-                </div>
-            </div>
-            <?php endif; ?>
-
             <div class="content-text font-size-2 line-height-2-5 text-title">
                 <div id="toc-placeholder"></div>
                 <?= $post['content'] ?>
@@ -86,6 +84,7 @@
                 </div>
                 <?php endif; ?>
             </div>
+
         </div>
 
         <?php if (!empty($faqs)): ?>
