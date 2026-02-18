@@ -17,7 +17,7 @@ if ($pdo) {
         $blog_categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
 
         // Fetch popular posts (by views)
-        $popular_posts = $pdo->query("SELECT p.*, c.slug as category_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id WHERE p.status = 'published' ORDER BY p.views DESC LIMIT 5")->fetchAll();
+        $popular_posts = $pdo->query("SELECT p.*, c.slug as category_slug, c.name as category_name FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id WHERE p.status = 'published' ORDER BY p.views DESC LIMIT 5")->fetchAll();
     } catch (Exception $e) {}
 } else {
     // Mock news for verification when DB is not available
@@ -69,20 +69,31 @@ if ($pdo) {
      <?= View::renderComponent('news_card', ['news' => $news]) ?>
 
     <?php if (!empty($popular_posts)): ?>
-    <div class="bg-block border radius-20 p-1-5 ">
-        <div class="d-flex align-center gap-05 mb-1-5 border-bottom pb-1">
+    <div class="bg-block radius-16 pd-md border d-column gap-1">
+        <div class="d-flex align-center gap-05 mb-05">
             <i data-lucide="flame" class="icon-size-4 text-error"></i>
-            <h3 class="font-size-2 font-bold">داغ‌ترین مطالب</h3>
+            <h2 class="font-size-2 font-bold">داغ‌ترین مطالب</h2>
         </div>
-        <div class="d-column gap-1">
+        <div class="news-list d-column gap-1">
             <?php foreach ($popular_posts as $idx => $p): ?>
-            <a href="/blog/<?= htmlspecialchars($p['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($p['slug']) ?>" class="popular-item d-flex gap-1 group">
-                <div class="popular-number"><?= $idx + 1 ?></div>
-                <div class="d-column gap-02">
-                    <h4 class="text-[11px] font-black text-title ellipsis-y ellipsis-y line-clamp-2 transition-colors"><?= htmlspecialchars($p['title']) ?></h4>
-                    <span class="text-[9px] opacity-50"><?= number_format($p['views']) ?> بازدید</span>
+            <a href="/blog/<?= htmlspecialchars($p['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($p['slug']) ?>" class="news-item d-flex gap-1 text-decoration-none group align-start">
+                <?php if (!empty($p['thumbnail'])): ?>
+                    <div class="news-image radius-8 overflow-hidden flex-shrink-0">
+                        <img src="/<?= ltrim($p['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($p['title']) ?>" class="w-full h-full object-cover" loading="lazy" decoding="async" width="64" height="64">
+                    </div>
+                <?php endif; ?>
+                <div class="d-column gap-025 flex-1 overflow-hidden">
+                    <span class="d-flex text-gray font-size-0-8 gap-05 font-medium">
+                        <span><?= htmlspecialchars($p['category_name'] ?? 'وبلاگ') ?></span>
+                        <span class="opacity-50">•</span>
+                        <span><?= jalali_time_tag($p['created_at']) ?></span>
+                    </span>
+                    <h3 class="font-size-1 text-title line-height-1-5 ellipsis-x transition-colors"><?= htmlspecialchars($p['title']) ?></h3>
                 </div>
             </a>
+            <?php if ($idx < count($popular_posts) - 1): ?>
+                <div class="border-bottom opacity-05"></div>
+            <?php endif; ?>
             <?php endforeach; ?>
         </div>
     </div>
@@ -95,17 +106,17 @@ if ($pdo) {
     .cat-link:hover { background: #f8fafc; color: var(--color-primary); }
     .cat-link.active { background: var(--bg-warning); color: var(--color-warning); }
 
-    .popular-item { text-decoration: none; }
-    .popular-number {
-        font-size: 20px;
-        font-weight: 900;
-        color: var(--color-primary);
-        opacity: 0.15;
-        line-height: 1;
-        transition: opacity 0.3s;
+    .news-item { transition: all 0.2s; }
+    .news-item:hover h3 { color: var(--color-primary); }
+    .news-image {
+        width: 64px;
+        min-width: 64px;
+        height: 64px;
+        background: var(--color-secondary);
     }
-    .popular-item:hover .popular-number { opacity: 0.8; }
-    .popular-item:hover h4 { color: var(--color-primary); }
+    .opacity-05 { opacity: 0.5; }
+    .gap-025 { gap: 2px; }
+    .object-cover { object-fit: cover; }
 
     .sidebar {
         width: 350px;

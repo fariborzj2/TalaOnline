@@ -40,7 +40,7 @@
     .news-item {
         transition: all 0.2s;
     }
-    .news-item:hover h4 {
+    .news-item:hover h3 {
         color: var(--color-primary);
     }
     .news-image {
