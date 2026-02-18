@@ -9,7 +9,7 @@
             <?php foreach ($featured_posts as $post): ?>
             <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card featured basis-300 grow-1 bg-block border radius-20 overflow-hidden d-column relative">
                 
-                <div class="p-2 d-column gap-1">
+                <div class="p-2 d-column grow-1 gap-1">
                     <div class="aspect-video relative overflow-hidden radius-16">
                         <?php if ($post['thumbnail']): ?>
                         <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
@@ -29,7 +29,7 @@
 
                     <h3 class="font-bold font-size-3 text-title ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
                     <p class="ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
-                    <div class="d-flex just-between align-center mt-05 pt-1 border-top">
+                    <div class="d-flex just-between align-center mt-auto pt-1 border-top">
                         <span class=" text-subtitle d-flex align-center gap-05 font-bold">
                             <i data-lucide="calendar-days" class="icon-size-2 text-primary"></i>
                             <?= jalali_time_tag($post['created_at']) ?>
