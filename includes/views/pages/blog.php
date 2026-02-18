@@ -2,8 +2,7 @@
 
     <?php if (!empty($featured_posts) && !isset($current_category)): ?>
     <section class="featured-posts mb-2">
-        <div class="d-flex align-center gap-1 mb-1-5 pr-1">
-            <div class="w-1 h-10 bg-primary radius-100"></div>
+        <div class="d-flex align-center gap-1 mb-1 pr-1">
             <h2 class="font-size-4 font-black">مقالات برگزیده</h2>
         </div>
         <div class="d-flex-wrap gap-md">
@@ -20,14 +19,14 @@
                     </div>
                     <?php endif; ?>
                     <div class="absolute bottom-0 right-0 left-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
-                        <span class="glass-badge text-white text-[10px] font-black px-3 py-07 radius-10">
+                        <span class="glass-badge radius-20">
                             <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
                         </span>
                     </div>
                 </div>
                 <div class="p-2 d-column gap-1">
-                    <h3 class="font-black font-size-2 text-title line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
-                    <p class="text-subtitle text-[12px] line-clamp-2 leading-relaxed opacity-80"><?= htmlspecialchars($post['excerpt']) ?></p>
+                    <h3 class="font-bold font-size-3 text-title line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
+                    <p class="line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
                     <div class="d-flex just-between align-center mt-05 pt-1 border-top">
                         <span class="text-[10px] text-subtitle d-flex align-center gap-05 font-bold">
                             <i data-lucide="calendar-days" class="icon-size-2 text-primary"></i>
@@ -46,9 +45,8 @@
 
     <div class="grow-8 d-column gap-md">
         <section class="posts-list">
-            <div class="d-flex just-between align-center mb-1-5 pr-1">
+            <div class="d-flex just-between align-center mb-1 pr-1">
                 <div class="d-flex align-center gap-1">
-                    <div class="w-1 h-8 bg-primary radius-100"></div>
                     <h2 class="font-size-3 font-black"><?= isset($current_category) ? 'مقالات ' . htmlspecialchars($current_category['name']) : 'آخرین نوشته‌ها' ?></h2>
                 </div>
                 <?php if (isset($current_category)): ?>
@@ -77,13 +75,13 @@
                             <span class="text-subtitle text-[10px] font-bold"><?= jalali_time_tag($post['created_at']) ?></span>
                         </div>
                         <h3 class="font-bold font-size-1-2 text-title line-clamp-2 h-12"><?= htmlspecialchars($post['title']) ?></h3>
-                        <p class="text-subtitle text-[11px] line-clamp-2 leading-relaxed opacity-80"><?= htmlspecialchars($post['excerpt']) ?></p>
+                        <p class="line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
                     </div>
                 </a>
                 <?php endforeach; ?>
 
                 <?php if (empty($posts)): ?>
-                <div class="basis-100 text-center py-10 bg-block border radius-20 d-column align-center gap-1 opacity-50">
+                <div class="basis-100 text-center p-2 bg-block border radius-20 d-column align-center gap-1 opacity-50">
                     <i data-lucide="newspaper" class="w-16 h-16 text-subtitle"></i>
                     <p class="text-subtitle font-black font-size-2">مقاله‌ای یافت نشد.</p>
                 </div>
@@ -99,13 +97,7 @@
     .radius-12 { border-radius: 12px; }
 
     .blog-card {
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
-    .blog-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        border-color: var(--color-primary);
+         color: var(--color-text)
     }
     .blog-card:hover img { transform: scale(1.05); }
 
@@ -113,6 +105,8 @@
         background: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(8px);
         border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 4px 12px;
     }
 
     .btn-blog-outline {
