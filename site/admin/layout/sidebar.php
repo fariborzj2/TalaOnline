@@ -1,119 +1,174 @@
-<!-- Sidebar Overlay -->
-<div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden hidden"></div>
-
 <?php
-// Fetch unread feedback count
-$unread_feedbacks_count = 0;
-if (isset($pdo)) {
-    try {
-        $stmt = $pdo->query("SELECT COUNT(*) FROM feedbacks WHERE is_read = 0");
-        $unread_feedbacks_count = $stmt->fetchColumn();
-    } catch (Exception $e) {}
+$current_page = basename($_SERVER['PHP_SELF']);
+
+function is_active_group($pages) {
+    global $current_page;
+    return in_array($current_page, $pages);
 }
+
+$groups = [
+    [
+        'label' => 'اصلی',
+        'icon' => 'layout-dashboard',
+        'items' => [
+            ['label' => 'داشبورد', 'url' => 'index.php', 'icon' => 'home'],
+        ]
+    ],
+    [
+        'label' => 'مدیریت بازار',
+        'icon' => 'trending-up',
+        'pages' => ['items.php', 'item_edit.php', 'categories.php', 'category_edit.php', 'platforms.php', 'rss_feeds.php'],
+        'items' => [
+            ['label' => 'لیست دارایی‌ها', 'url' => 'items.php', 'icon' => 'coins'],
+            ['label' => 'دسته‌بندی‌ها', 'url' => 'categories.php', 'icon' => 'layers'],
+            ['label' => 'پلتفرم‌ها', 'url' => 'platforms.php', 'icon' => 'briefcase'],
+            ['label' => 'فیدهای RSS', 'url' => 'rss_feeds.php', 'icon' => 'rss'],
+        ]
+    ],
+    [
+        'label' => 'محتوا و وبلاگ',
+        'icon' => 'file-text',
+        'pages' => ['posts.php', 'post_edit.php', 'blog_categories.php', 'blog_category_edit.php', 'blog_settings.php', 'about.php'],
+        'items' => [
+            ['label' => 'نوشته‌ها', 'url' => 'posts.php', 'icon' => 'pen-tool'],
+            ['label' => 'دسته‌بندی وبلاگ', 'url' => 'blog_categories.php', 'icon' => 'folder-open'],
+            ['label' => 'تنظیمات وبلاگ', 'url' => 'blog_settings.php', 'icon' => 'settings-2'],
+            ['label' => 'درباره ما', 'url' => 'about.php', 'icon' => 'info'],
+        ]
+    ],
+    [
+        'label' => 'سیستم',
+        'icon' => 'settings',
+        'pages' => ['feedbacks.php', 'settings.php'],
+        'items' => [
+            ['label' => 'نظرات و بازخورد', 'url' => 'feedbacks.php', 'icon' => 'message-square'],
+            ['label' => 'تنظیمات عمومی', 'url' => 'settings.php', 'icon' => 'sliders'],
+        ]
+    ]
+];
 ?>
-<!-- Sidebar -->
-<aside id="sidebar" class="fixed inset-y-0 right-0 w-64 bg-white border-l border-slate-100 transform translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:flex flex-col transition-transform duration-300 ease-in-out z-50 lg:shadow-none lg:overflow-y-auto">
-    <div class="p-5 pb-4">
-        <div class="flex items-center gap-3 mb-8">
-            <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center ring-4 ring-indigo-50">
-                <i data-lucide="shield-check" class="text-white w-6 h-6"></i>
+
+<aside id="sidebar" class="fixed lg:sticky top-0 right-0 h-screen w-72 bg-white border-l border-slate-100 flex-shrink-0 z-50 transition-transform duration-300 translate-x-full lg:translate-x-0 overflow-y-auto">
+    <div class="p-8">
+        <div class="flex items-center gap-4 mb-10 pr-2">
+            <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200">
+                <i data-lucide="shield-check" class="text-white w-7 h-7"></i>
             </div>
             <div>
-                <h2 class="font-black text-base text-slate-900 leading-tight">طلا آنلاین</h2>
-                <p class="text-[9px] font-bold text-slate-400 uppercase  mt-0.5">Core Admin v4.0</p>
+                <span class="font-black text-xl text-slate-900 block leading-tight">مدیریت</span>
+                <span class="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Tala Online</span>
             </div>
         </div>
 
-        <nav class="space-y-1">
-            <a href="index.php" class="sidebar-link <?= $current_page == 'index.php' ? 'active' : '' ?>">
-                <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
-                <span>پیشخوان</span>
-            </a>
-            <a href="items.php" class="sidebar-link <?= $current_page == 'items.php' ? 'active' : '' ?>">
-                <i data-lucide="coins" class="w-6 h-6"></i>
-                <span>ارزها</span>
-            </a>
-            <a href="categories.php" class="sidebar-link <?= $current_page == 'categories.php' ? 'active' : '' ?>">
-                <i data-lucide="layers" class="w-6 h-6"></i>
-                <span>دسته‌بندی‌ها</span>
-            </a>
-            <a href="rss_feeds.php" class="sidebar-link <?= $current_page == 'rss_feeds.php' ? 'active' : '' ?>">
-                <i data-lucide="rss" class="w-6 h-6"></i>
-                <span>خبرخوان</span>
-            </a>
-            <a href="platforms.php" class="sidebar-link <?= $current_page == 'platforms.php' ? 'active' : '' ?>">
-                <i data-lucide="building-2" class="w-6 h-6"></i>
-                <span>پتلفرم‌ها</span>
-            </a>
-            <div class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">وبلاگ</div>
-            <a href="posts.php" class="sidebar-link <?= $current_page == 'posts.php' || $current_page == 'post_edit.php' ? 'active' : '' ?>">
-                <i data-lucide="newspaper" class="w-6 h-6"></i>
-                <span>نوشته‌ها</span>
-            </a>
-            <a href="blog_categories.php" class="sidebar-link <?= $current_page == 'blog_categories.php' ? 'active' : '' ?>">
-                <i data-lucide="tags" class="w-6 h-6"></i>
-                <span>دسته‌بندی وبلاگ</span>
-            </a>
-            <a href="blog_settings.php" class="sidebar-link <?= $current_page == 'blog_settings.php' ? 'active' : '' ?>">
-                <i data-lucide="settings-2" class="w-6 h-6"></i>
-                <span>تنظیمات وبلاگ</span>
-            </a>
-            <a href="feedbacks.php" class="sidebar-link <?= $current_page == 'feedbacks.php' ? 'active' : '' ?> flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <i data-lucide="mail" class="w-6 h-6"></i>
-                    <span>پیام‌ها</span>
-                </div>
-                <?php if ($unread_feedbacks_count > 0): ?>
-                    <span class="bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
-                        <?= $unread_feedbacks_count ?>
-                    </span>
+        <nav class="space-y-2">
+            <?php foreach ($groups as $group): ?>
+                <?php if (count($group['items']) === 1 && !isset($group['pages'])): ?>
+                    <?php $item = $group['items'][0]; ?>
+                    <a href="<?= $item['url'] ?>" class="sidebar-link <?= $current_page == $item['url'] ? 'active' : '' ?>">
+                        <i data-lucide="<?= $item['icon'] ?>"></i>
+                        <span><?= $item['label'] ?></span>
+                    </a>
+                <?php else: ?>
+                    <?php $isOpen = is_active_group($group['pages'] ?? []); ?>
+                    <div class="group-container">
+                        <button onclick="toggleGroup(this)" class="sidebar-group-btn <?= $isOpen ? 'active' : '' ?>">
+                            <div class="flex items-center gap-4">
+                                <i data-lucide="<?= $group['icon'] ?>"></i>
+                                <span><?= $group['label'] ?></span>
+                            </div>
+                            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-300 dropdown-arrow <?= $isOpen ? 'rotate-180' : '' ?>"></i>
+                        </button>
+                        <div class="group-content overflow-hidden transition-all duration-300" style="max-height: <?= $isOpen ? '500px' : '0' ?>;">
+                            <div class="pr-6 pt-1 pb-2 space-y-1">
+                                <?php foreach ($group['items'] as $item): ?>
+                                    <a href="<?= $item['url'] ?>" class="sidebar-sub-link <?= $current_page == $item['url'] ? 'active' : '' ?>">
+                                        <div class="flex items-center gap-3">
+                                            <i data-lucide="<?= $item['icon'] ?>" class="w-4 h-4"></i>
+                                            <span><?= $item['label'] ?></span>
+                                        </div>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
                 <?php endif; ?>
-            </a>
-            <a href="about.php" class="sidebar-link <?= $current_page == 'about.php' ? 'active' : '' ?>">
-                <i data-lucide="book-open" class="w-6 h-6"></i>
-                <span>درباره ما</span>
-            </a>
-            <a href="settings.php" class="sidebar-link <?= $current_page == 'settings.php' ? 'active' : '' ?>">
-                <i data-lucide="settings" class="w-6 h-6"></i>
-                <span>تنظیمات</span>
-            </a>
-        </nav>
-    </div>
+            <?php endforeach; ?>
 
-    <div class="mt-auto p-5 border-t border-slate-50">
-        <div class="bg-indigo-600 rounded-xl p-5 text-white relative overflow-hidden">
-            <div class="relative z-10">
-                <p class="text-indigo-100 text-[9px] font-bold uppercase  mb-1">نسخه سیستم</p>
-                <h3 class="font-black text-sm mb-3">4.2.0-STABLE</h3>
-                <a href="../" target="_blank" class="block w-full text-center bg-white/20 hover:bg-white/30 py-2 rounded-lg text-[10px] font-bold transition-all">
-                    مشاهده وب‌سایت
+            <div class="pt-6 mt-6 border-t border-slate-50">
+                <a href="../" target="_blank" class="sidebar-link">
+                    <i data-lucide="external-link"></i>
+                    <span>مشاهده سایت</span>
+                </a>
+                <a href="logout.php" class="sidebar-link text-rose-500 hover:bg-rose-50 hover:text-rose-600">
+                    <i data-lucide="log-out"></i>
+                    <span>خروج</span>
                 </a>
             </div>
-        </div>
-    </div>
-
-    <div class="flex items-center p-5 gap-2 md:gap-4">
-        <div class="hidden sm:flex items-center gap-3 pl-4 border-l border-slate-100">
-            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-black">
-                <?= strtoupper(substr($_SESSION['admin_username'], 0, 1)) ?>
-            </div>
-            <div class="flex flex-col items-start">
-                <span class="text-sm font-black text-slate-900"><?= $_SESSION['admin_username'] ?></span>
-                <span class="text-[10px] font-bold text-slate-400 uppercase ">Administrator</span>
-            </div>
-        </div>
-
-        <a href="logout.php" class="w-10 h-10 mr-auto md:w-10 md:h-10 bg-white text-rose-500 border border-rose-100 rounded-lg flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all group" title="خروج">
-            <i data-lucide="power" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
-        </a>
+        </nav>
     </div>
 </aside>
 
-<script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        sidebar.classList.toggle('translate-x-full');
-        overlay.classList.toggle('hidden');
+<style type="text/tailwindcss">
+    @layer components {
+        .sidebar-group-btn {
+            @apply flex items-center justify-between w-full px-4 py-3 rounded-lg font-bold text-slate-400 transition-all duration-300 hover:bg-slate-50 hover:text-indigo-600;
+        }
+        .sidebar-group-btn.active {
+            @apply text-indigo-700 font-black;
+        }
+        .sidebar-sub-link {
+            @apply flex items-center gap-4 px-4 py-2.5 rounded-lg font-bold text-slate-400 transition-all duration-300 hover:bg-slate-50 hover:text-indigo-600 text-[12px];
+        }
+        .sidebar-sub-link.active {
+            @apply bg-indigo-50/50 text-indigo-600;
+        }
     }
+</style>
+
+<script>
+function toggleGroup(btn) {
+    const container = btn.closest('.group-container');
+    const content = container.querySelector('.group-content');
+    const arrow = btn.querySelector('.dropdown-arrow');
+    const isActive = btn.classList.contains('active');
+
+    // Close all other groups (optional, but cleaner)
+    /*
+    document.querySelectorAll('.sidebar-group-btn').forEach(otherBtn => {
+        if (otherBtn !== btn) {
+            otherBtn.classList.remove('active');
+            const otherContent = otherBtn.closest('.group-container').querySelector('.group-content');
+            const otherArrow = otherBtn.querySelector('.dropdown-arrow');
+            otherContent.style.maxHeight = '0';
+            otherArrow.classList.remove('rotate-180');
+        }
+    });
+    */
+
+    if (content.style.maxHeight === '0px' || content.style.maxHeight === '') {
+        content.style.maxHeight = '500px';
+        btn.classList.add('active');
+        arrow.classList.add('rotate-180');
+    } else {
+        content.style.maxHeight = '0px';
+        btn.classList.remove('active');
+        arrow.classList.remove('rotate-180');
+    }
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('translate-x-full');
+}
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    const sidebar = document.getElementById('sidebar');
+    const menuBtn = document.querySelector('header button');
+    if (window.innerWidth < 1024) {
+        if (!sidebar.contains(e.target) && !menuBtn.contains(e.target) && !sidebar.classList.contains('translate-x-full')) {
+            sidebar.classList.add('translate-x-full');
+        }
+    }
+});
 </script>
