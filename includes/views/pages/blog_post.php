@@ -1,7 +1,7 @@
 <article class="blog-post-page d-flex-wrap gap-md align-stretch">
     <div class="grow-8 basis-600 d-column gap-md">
         <div class="post-main-card bg-block border p-2 radius-24 overflow-hidden ">
-            
+
             <h1 class="font-black text-title mb-2"><?= htmlspecialchars($post['title']) ?></h1>
 
             <div class="d-flex-wrap align-center gap-1-5 mb-2">
@@ -242,5 +242,10 @@
 
     .blog-card { transition: all 0.3s; }
     .blog-card:hover { transform: translateY(-5px); border-color: var(--color-primary); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+    .bg-slate-50 { 
+        background: var(--bg-warning);
+        color: var(--color-warning); 
+    }
 
 </style>
