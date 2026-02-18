@@ -817,3 +817,6 @@ tbody tr:active {
   flex: 1;
   min-width: 150px;
 }
+.list-none {
+    list-style: none;
+}
