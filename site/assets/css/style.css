@@ -426,16 +426,9 @@ input:focus {
     line-height: 1.8;
 }
 .content-text p {
-    font-size: 1.2em;
+    font-size: 1.1em;
     margin-bottom: 20px;
-    line-height: 24px;
-}
-.content-text h1, .content-text h2, .content-text h3,
-.content-text h4, .content-text h5, .content-text h6 {
-    /*! margin-top: 2rem; */
-    /*! margin-bottom: 1rem; */
-    /*! font-weight: 800; */
-    color: var(--color-title);
+    line-height: 28px;
 }
 .content-text h2 { font-size: 1.4rem; display: inline-block; }
 .content-text h3 { font-size: 1.2rem; }
