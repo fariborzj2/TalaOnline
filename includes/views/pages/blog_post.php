@@ -35,7 +35,7 @@
                 </div>
             </div>
 
-            <h1 class="font-black text-title"><?= htmlspecialchars($post['title']) ?></h1>
+            <h1 class="font-black text-title mb-2"><?= htmlspecialchars($post['title']) ?></h1>
 
             <?php if ($post['thumbnail']): ?>
                 <div class="post-hero-image radius-16 relative overflow-hidden">
