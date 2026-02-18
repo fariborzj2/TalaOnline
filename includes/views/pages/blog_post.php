@@ -56,7 +56,7 @@
                 <?= $post['content'] ?>
             </div>
 
-            <div class="post-footer mt-5 pt-3 border-top d-flex-wrap just-between align-center gap-2">
+            <div class="post-footer mt-2 pt-2 border-top d-flex-wrap just-between align-center gap-2">
                 <div class="d-flex align-center gap-1">
                     <span class="font-black text-subtitle text-[12px]">اشتراک‌گذاری:</span>
                     <div class="d-flex gap-05">
