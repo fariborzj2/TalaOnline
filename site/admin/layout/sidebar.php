@@ -54,6 +54,10 @@ if (isset($pdo)) {
                 <i data-lucide="tags" class="w-6 h-6"></i>
                 <span>دسته‌بندی وبلاگ</span>
             </a>
+            <a href="blog_settings.php" class="sidebar-link <?= $current_page == 'blog_settings.php' ? 'active' : '' ?>">
+                <i data-lucide="settings-2" class="w-6 h-6"></i>
+                <span>تنظیمات وبلاگ</span>
+            </a>
             <a href="feedbacks.php" class="sidebar-link <?= $current_page == 'feedbacks.php' ? 'active' : '' ?> flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <i data-lucide="mail" class="w-6 h-6"></i>

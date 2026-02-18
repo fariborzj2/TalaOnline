@@ -201,8 +201,9 @@ $router->add('/blog', function() {
         'posts' => $posts,
         'categories' => $categories,
         'featured_posts' => $featured_posts,
-        'site_title' => 'وبلاگ و اخبار طلا و ارز | ' . get_setting('site_title', 'طلا آنلاین'),
-        'meta_description' => 'آخرین اخبار، مقالات تخصصی و تحلیل‌های بازار طلا، سکه و ارز را در وبلاگ طلا آنلاین بخوانید.',
+        'site_title' => get_setting('blog_main_title', 'وبلاگ و اخبار طلا و ارز') . ' | ' . get_setting('site_title', 'طلا آنلاین'),
+        'meta_description' => get_setting('blog_main_description', 'آخرین اخبار، مقالات تخصصی و تحلیل‌های بازار طلا، سکه و ارز را در وبلاگ طلا آنلاین بخوانید.'),
+        'meta_keywords' => get_setting('blog_main_keywords', 'اخبار طلا, تحلیل بازار, مقالات آموزشی طلا'),
         'breadcrumbs' => [
             ['name' => 'وبلاگ', 'url' => '/blog']
         ]
@@ -290,12 +291,13 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
                 $post['faqs'] = $stmt_faqs->fetchAll();
 
                 // Related posts
-                if ($post['category_id']) {
+                $related_count = (int)get_setting('blog_related_count', '3');
+                if ($post['category_id'] && $related_count > 0) {
                     $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
                                          FROM blog_posts p
                                          LEFT JOIN blog_categories c ON p.category_id = c.id
                                          WHERE p.status = 'published' AND p.category_id = ? AND p.id != ?
-                                         ORDER BY p.created_at DESC LIMIT 3");
+                                         ORDER BY p.created_at DESC LIMIT $related_count");
                     $stmt->execute([$post['category_id'], $post['id']]);
                     $related_posts = $stmt->fetchAll();
                 }

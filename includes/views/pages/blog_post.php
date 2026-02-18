@@ -22,10 +22,13 @@
                     <i data-lucide="calendar" class="icon-size-3"></i>
                     <span><?= jalali_time_tag($post['created_at'], 'weekday') ?></span>
                 </div>
+                <?php if (get_setting('blog_show_views', '1') == '1'): ?>
                 <div class="meta-item">
                     <i data-lucide="eye" class="icon-size-3"></i>
                     <span><?= number_format($post['views']) ?> بازدید</span>
                 </div>
+                <?php endif; ?>
+                <?php if (get_setting('blog_show_reading_time', '1') == '1'): ?>
                 <div class="meta-item">
                     <i data-lucide="clock" class="icon-size-3"></i>
                     <?php
@@ -36,6 +39,7 @@
                     ?>
                     <span><?= $read_time ?> دقیقه مطالعه</span>
                 </div>
+                <?php endif; ?>
             </div>
 
             <?php if ($post['excerpt']): ?>
