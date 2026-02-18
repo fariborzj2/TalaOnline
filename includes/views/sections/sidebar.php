@@ -110,5 +110,6 @@ if ($pdo) {
     .sidebar {
         width: 350px;
         flex-shrink: 0;
+        overflow: hidden;
     }
 </style>
