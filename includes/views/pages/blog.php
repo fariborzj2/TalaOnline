@@ -9,7 +9,7 @@
             <?php foreach ($featured_posts as $post): ?>
             <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card featured basis-300 grow-1 bg-block border radius-20 overflow-hidden d-column relative">
                 
-                <div class="p-2 d-column grow-1 gap-1">
+                <div class="pd-md d-column grow-1 gap-1">
                     <div class="aspect-video relative overflow-hidden radius-16">
                         <?php if ($post['thumbnail']): ?>
                         <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
@@ -20,15 +20,15 @@
                             <i data-lucide="image" class="w-16 h-16 opacity-20"></i>
                         </div>
                         <?php endif; ?>
-                        <div class="absolute bottom-0 right-0 left-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
+                        <div class="absolute bottom-0 right-0 left-0 pd-md bg-gradient-to-t from-black/60 to-transparent">
                             <span class="glass-badge radius-20">
                                 <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
                             </span>
                         </div>
                     </div>
 
-                    <h3 class="font-bold font-size-3 text-title ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
-                    <p class="ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
+                    <h3 class="font-bold font-size-3 text-title ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['title']) ?></h3>
+                    <p class="ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['excerpt']) ?></p>
                     <div class="d-flex just-between align-center mt-auto pt-1 border-top">
                         <span class=" text-subtitle d-flex align-center gap-05 font-bold">
                             <i data-lucide="calendar-days" class="icon-size-2 text-primary"></i>
@@ -58,7 +58,7 @@
 
             <div class="d-column gap-md">
                 <?php foreach ($posts as $post): ?>
-                <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card p-2  d-flex-wrap gap-md bg-block border radius-20 overflow-hidden ">
+                <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card pd-md  d-flex-wrap gap-md bg-block border radius-20 overflow-hidden ">
                     <div class="aspect-video relative radius-16 overflow-hidden grow-1 basis-200">
                         <?php if ($post['thumbnail']): ?>
                         <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
@@ -76,14 +76,14 @@
                             <span class="text-subtitle opacity-30">•</span>
                             <span class="text-subtitle font-bold"><?= jalali_time_tag($post['created_at']) ?></span>
                         </div>
-                        <h3 class="font-bold font-size-4 text-title ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
-                        <p class="ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
+                        <h3 class="font-bold font-size-4 text-title ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['title']) ?></h3>
+                        <p class="ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['excerpt']) ?></p>
                     </div>
                 </a>
                 <?php endforeach; ?>
 
                 <?php if (empty($posts)): ?>
-                <div class="basis-100 text-center p-2 bg-block border radius-20 d-column align-center gap-1 opacity-50">
+                <div class="basis-100 text-center pd-md bg-block border radius-20 d-column align-center gap-1 opacity-50">
                     <i data-lucide="newspaper" class="w-16 h-16 text-subtitle"></i>
                     <p class="text-subtitle font-bold font-size-2">مقاله‌ای یافت نشد.</p>
                 </div>

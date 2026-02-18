@@ -1,6 +1,6 @@
 <article class="blog-post-page d-flex-wrap gap-md align-stretch">
     <div class="grow-8 basis-600 d-column gap-md">
-        <div class="post-main-card bg-block border p-2 radius-24 overflow-hidden ">
+        <div class="post-main-card bg-block border pd-md radius-24 overflow-hidden ">
 
             <h1 class="font-black text-title mb-2"><?= htmlspecialchars($post['title']) ?></h1>
 
@@ -56,7 +56,7 @@
                 <?= $post['content'] ?>
             </div>
 
-            <div class="post-footer mt-2 pt-2 border-top d-flex-wrap just-between align-center gap-2">
+            <div class="post-footer mt-2 pt-2 border-top d-flex-wrap just-between align-center gapd-md">
                 <div class="d-flex align-center gap-1">
                     <span class="font-black text-subtitle text-[12px]">اشتراک‌گذاری:</span>
                     <div class="d-flex gap-05">
@@ -170,7 +170,7 @@
                         <?php endif; ?>
                     </div>
                     <div class="p-1-5 d-column gap-05">
-                        <h3 class="font-black text-[13px] ellipsis-y ellipsis-y line-clamp-2 leading-snug text-title"><?= htmlspecialchars($rp['title']) ?></h3>
+                        <h3 class="font-black text-[13px] ellipsis-y ellipsis-y line-clampd-md leading-snug text-title"><?= htmlspecialchars($rp['title']) ?></h3>
                         <div class="d-flex align-center gap-05 opacity-50">
                             <i data-lucide="calendar" class="icon-size-1"></i>
                             <span class="text-[9px]"><?= jalali_time_tag($rp['created_at']) ?></span>
