@@ -56,21 +56,21 @@
                 <?php endif; ?>
             </div>
 
-            <div class="d-flex-wrap gap-md">
+            <div class="d-column gap-md">
                 <?php foreach ($posts as $post): ?>
-                <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card basis-250 grow-1 bg-block border radius-20 overflow-hidden d-column">
-                    <div class="p-2 d-column gap-05">
-                        <div class="aspect-video relative radius-16 overflow-hidden">
-                            <?php if ($post['thumbnail']): ?>
-                            <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
-                                alt="<?= htmlspecialchars($post['title']) ?>"
-                                class="w-full h-full object-cover transition-all">
-                            <?php else: ?>
-                            <div class="w-full h-full d-flex align-center justify-center ">
-                                <i data-lucide="image" class="w-12 h-12 opacity-20"></i>
-                            </div>
-                            <?php endif; ?>
+                <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card d-flexx-wrap gap-md bg-block border radius-20 overflow-hidden ">
+                    <div class="aspect-video relative radius-16 overflow-hidden">
+                        <?php if ($post['thumbnail']): ?>
+                        <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
+                            alt="<?= htmlspecialchars($post['title']) ?>"
+                            class="w-full h-full object-cover transition-all">
+                        <?php else: ?>
+                        <div class="w-full h-full d-flex align-center justify-center ">
+                            <i data-lucide="image" class="w-12 h-12 opacity-20"></i>
                         </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="p-2 d-column gap-05">
                         <div class="d-flex align-center gap-05 mb-02">
                             <span class="text-primary font-bold"><?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?></span>
                             <span class="text-subtitle opacity-30">•</span>
