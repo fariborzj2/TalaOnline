@@ -14,7 +14,7 @@
                         <?php if ($post['thumbnail']): ?>
                         <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
                                 alt="<?= htmlspecialchars($post['title']) ?>"
-                                class="w-full h-full object-cover ">
+                                class="w-full h-full object-cover transition-all">
                         <?php else: ?>
                         <div class="w-full h-full d-flex align-center justify-center text-slate-300">
                             <i data-lucide="image" class="w-16 h-16 opacity-20"></i>
@@ -64,7 +64,7 @@
                             <?php if ($post['thumbnail']): ?>
                             <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
                                 alt="<?= htmlspecialchars($post['title']) ?>"
-                                class="w-full h-full object-cover">
+                                class="w-full h-full object-cover transition-all">
                             <?php else: ?>
                             <div class="w-full h-full d-flex align-center justify-center text-slate-300">
                                 <i data-lucide="image" class="w-12 h-12 opacity-20"></i>
@@ -94,6 +94,7 @@
 </div>
 
 <style>
+    .transition-all { transition: all 0.3s; }
     .aspect-video { aspect-ratio: 16 / 9; }
     .radius-20 { border-radius: 20px; }
     .radius-12 { border-radius: 12px; }
