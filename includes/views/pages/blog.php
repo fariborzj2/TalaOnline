@@ -8,23 +8,25 @@
         <div class="d-flex-wrap gap-md">
             <?php foreach ($featured_posts as $post): ?>
             <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card featured basis-300 grow-1 bg-block border radius-20 overflow-hidden d-column relative">
-                <div class="aspect-video relative overflow-hidden bg-slate-100">
-                    <?php if ($post['thumbnail']): ?>
-                    <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
-                         alt="<?= htmlspecialchars($post['title']) ?>"
-                         class="w-full h-full object-cover transition-all duration-700 hover:scale-105">
-                    <?php else: ?>
-                    <div class="w-full h-full d-flex align-center justify-center text-slate-300">
-                        <i data-lucide="image" class="w-16 h-16 opacity-20"></i>
-                    </div>
-                    <?php endif; ?>
-                    <div class="absolute bottom-0 right-0 left-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
-                        <span class="glass-badge radius-20">
-                            <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
-                        </span>
-                    </div>
-                </div>
+                
                 <div class="p-2 d-column gap-1">
+                    <div class="aspect-video relative overflow-hidden radius-16">
+                        <?php if ($post['thumbnail']): ?>
+                        <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
+                                alt="<?= htmlspecialchars($post['title']) ?>"
+                                class="w-full h-full object-cover ">
+                        <?php else: ?>
+                        <div class="w-full h-full d-flex align-center justify-center text-slate-300">
+                            <i data-lucide="image" class="w-16 h-16 opacity-20"></i>
+                        </div>
+                        <?php endif; ?>
+                        <div class="absolute bottom-0 right-0 left-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
+                            <span class="glass-badge radius-20">
+                                <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
+                            </span>
+                        </div>
+                    </div>
+
                     <h3 class="font-bold font-size-3 text-title line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
                     <p class="line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
                     <div class="d-flex just-between align-center mt-05 pt-1 border-top">
@@ -57,11 +59,11 @@
             <div class="d-flex-wrap gap-md">
                 <?php foreach ($posts as $post): ?>
                 <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card basis-250 grow-1 bg-block border radius-20 overflow-hidden d-column">
-                    <div class="aspect-video relative overflow-hidden bg-slate-100">
+                    <div class="aspect-video relative overflow-hidden">
                         <?php if ($post['thumbnail']): ?>
                         <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
                              alt="<?= htmlspecialchars($post['title']) ?>"
-                             class="w-full h-full object-cover transition-all duration-700">
+                             class="w-full h-full object-cover">
                         <?php else: ?>
                         <div class="w-full h-full d-flex align-center justify-center text-slate-300">
                             <i data-lucide="image" class="w-12 h-12 opacity-20"></i>
