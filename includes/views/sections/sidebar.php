@@ -44,12 +44,12 @@ if ($pdo) {
      <?= View::renderComponent('news_card', ['news' => $news]) ?>
 
     <?php if (!empty($blog_categories)): ?>
-    <div class="bg-block border radius-20 p-1-5 shadow-sm">
-        <div class="d-flex align-center gap-05 mb-1-5 border-bottom pb-1">
+    <div class="bg-block border radius-20 p-1-5 ">
+        <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
             <i data-lucide="layers-3" class="icon-size-4 text-primary"></i>
             <h3 class="font-black font-size-1-2">دسته‌بندی‌های وبلاگ</h3>
         </div>
-        <ul class="d-column gap-02">
+        <ul class="d-column list-none">
             <?php
             $current_uri = $_SERVER['REQUEST_URI'];
             foreach ($blog_categories as $cat):
@@ -58,7 +58,7 @@ if ($pdo) {
             ?>
             <li>
                 <a href="<?= $cat_url ?>"
-                   class="cat-link d-flex just-between align-center p-07 radius-10 transition-all <?= $is_active ? 'active' : '' ?>">
+                   class="cat-link d-flex just-between align-center p-1 radius-10 transition-all <?= $is_active ? 'active' : '' ?>">
                     <span class="font-bold text-[12px]"><?= htmlspecialchars($cat['name']) ?></span>
                     <i data-lucide="chevron-left" class="icon-size-2 <?= $is_active ? '' : 'opacity-30' ?>"></i>
                 </a>
@@ -69,7 +69,7 @@ if ($pdo) {
     <?php endif; ?>
 
     <?php if (!empty($popular_posts)): ?>
-    <div class="bg-block border radius-20 p-1-5 shadow-sm">
+    <div class="bg-block border radius-20 p-1-5 ">
         <div class="d-flex align-center gap-05 mb-1-5 border-bottom pb-1">
             <i data-lucide="flame" class="icon-size-4 text-error"></i>
             <h3 class="font-black font-size-1-2">داغ‌ترین مطالب</h3>
@@ -88,8 +88,7 @@ if ($pdo) {
     </div>
     <?php endif; ?>
 
-
-    <div class="newsletter-card radius-24 p-2 text-white relative overflow-hidden shadow-lg">
+    <div class="newsletter-card radius-24 p-2 text-white relative overflow-hidden ">
         <div class="newsletter-glow"></div>
         <div class="relative z-10 d-column gap-1">
             <div class="w-10 h-10 bg-white/20 radius-12 d-flex align-center justify-center mb-05">

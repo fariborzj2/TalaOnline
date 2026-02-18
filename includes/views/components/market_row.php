@@ -19,7 +19,7 @@ $supply = fa_num(rand(1000, 9999)) . ',000 ' . $symbol;
         $bg_color = $colors[array_rand($colors)];
         ?>
         <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white <?= $bg_color ?> font-black text-xs shadow-lg shadow-black/5">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white <?= $bg_color ?> font-black text-xs  ">
                 <?= substr($name, 0, 1) ?>
             </div>
             <div>

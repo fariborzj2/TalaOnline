@@ -314,7 +314,7 @@ if (isset($pdo) && $pdo) {
             @apply opacity-100 pointer-events-auto;
         }
         .custom-dialog-box {
-            @apply bg-white w-full max-w-[340px] rounded-2xl p-8 shadow-2xl transform scale-95 opacity-0 transition-all duration-300 text-center;
+            @apply bg-white w-full max-w-[340px] rounded-2xl p-8  transform scale-95 opacity-0 transition-all duration-300 text-center;
         }
         .custom-dialog-overlay.active .custom-dialog-box {
             @apply scale-100 opacity-100;
