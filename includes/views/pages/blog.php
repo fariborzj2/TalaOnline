@@ -27,8 +27,8 @@
                         </div>
                     </div>
 
-                    <h3 class="font-bold font-size-3 text-title ellipsis-y line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
-                    <p class="ellipsis-y line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
+                    <h3 class="font-bold font-size-3 text-title ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
+                    <p class="ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
                     <div class="d-flex just-between align-center mt-05 pt-1 border-top">
                         <span class=" text-subtitle d-flex align-center gap-05 font-bold">
                             <i data-lucide="calendar-days" class="icon-size-2 text-primary"></i>
@@ -76,8 +76,8 @@
                             <span class="text-subtitle opacity-30">•</span>
                             <span class="text-subtitle font-bold"><?= jalali_time_tag($post['created_at']) ?></span>
                         </div>
-                        <h3 class="font-bold font-size-4 text-title ellipsis-y line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
-                        <p class="ellipsis-y line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
+                        <h3 class="font-bold font-size-4 text-title ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
+                        <p class="ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
                     </div>
                 </a>
                 <?php endforeach; ?>
