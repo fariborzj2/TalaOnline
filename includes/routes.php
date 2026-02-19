@@ -554,6 +554,9 @@ $router->add('/:category/:slug', function($params) {
             $item_data = array_merge($item_db, $items_lookup[$item_db['symbol']] ?? []);
             $related_item = $items_lookup[$item_db['related_item_symbol'] ?? ''] ?? null;
 
+            // Update views
+            $pdo->prepare("UPDATE items SET views = views + 1 WHERE id = ?")->execute([$item_db['id']]);
+
             // Fetch FAQs
             $faqs = [];
             try {
@@ -611,6 +614,9 @@ $router->add('/:slug', function($params) {
         $category = $stmt->fetch();
 
         if ($category) {
+            // Update views
+            $pdo->prepare("UPDATE categories SET views = views + 1 WHERE id = ?")->execute([$category['id']]);
+
             // Fetch Items
             $navasan = new NavasanService($pdo);
             $all_items = $navasan->getDashboardData();
@@ -664,6 +670,9 @@ $router->add('/:slug', function($params) {
 
             $item_data = array_merge($item_db, $items_lookup[$item_db['symbol']] ?? []);
             $related_item = $items_lookup[$item_db['related_item_symbol'] ?? ''] ?? null;
+
+            // Update views
+            $pdo->prepare("UPDATE items SET views = views + 1 WHERE id = ?")->execute([$item_db['id']]);
 
             // Fetch FAQs
             $faqs = [];

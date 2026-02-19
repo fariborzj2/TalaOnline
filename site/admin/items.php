@@ -191,6 +191,7 @@ include __DIR__ . '/layout/header.php';
                     <th>دارایی</th>
                     <th>دسته</th>
                     <th>قیمت نمایشی</th>
+                    <th class="text-center">بازدید</th>
                     <th class="text-center">خلاصه</th>
                     <th class="text-center">نمودار</th>
                     <th class="text-center">وضعیت</th>
@@ -233,6 +234,9 @@ include __DIR__ . '/layout/header.php';
                         <?php else: ?>
                             <span class="text-sm font-black text-slate-900"><?= number_format((float)$item['api_price']) ?> <small class="text-[9px] text-slate-400">تومان</small></span>
                         <?php endif; ?>
+                    </td>
+                    <td class="text-center">
+                        <span class="text-xs font-black text-slate-600"><?= number_format($item['views'] ?? 0) ?></span>
                     </td>
                     <td class="text-center">
                         <?php if ($item['show_in_summary']): ?>
