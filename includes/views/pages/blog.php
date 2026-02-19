@@ -52,9 +52,15 @@
         <section class="posts-list">
             <div class="d-flex just-between align-center mb-1 pr-1">
                 <div class="d-flex align-center gap-1">
-                    <h2 class="font-size-3 font-bold"><?= isset($current_category) ? 'مقالات ' . htmlspecialchars($current_category['name']) : 'آخرین نوشته‌ها' ?></h2>
+                    <?php if (isset($current_category)): ?>
+                        <h2 class="font-size-3 font-bold">مقالات <?= htmlspecialchars($current_category['name']) ?></h2>
+                    <?php elseif (isset($current_tag)): ?>
+                        <h2 class="font-size-3 font-bold">برچسب: <?= htmlspecialchars($current_tag['name']) ?></h2>
+                    <?php else: ?>
+                        <h2 class="font-size-3 font-bold">آخرین نوشته‌ها</h2>
+                    <?php endif; ?>
                 </div>
-                <?php if (isset($current_category)): ?>
+                <?php if (isset($current_category) || isset($current_tag)): ?>
                 <a href="/blog" class="btn-blog-outline">مشاهده همه</a>
                 <?php endif; ?>
             </div>
@@ -96,7 +102,13 @@
             <?php if ($total_pages > 1): ?>
             <div class="d-flex align-center justify-center gap-05 mt-2 pagination">
                 <?php
-                $base_url = isset($current_category) ? '/blog/' . $current_category['slug'] : '/blog';
+                if (isset($current_category)) {
+                    $base_url = '/blog/' . $current_category['slug'];
+                } elseif (isset($current_tag)) {
+                    $base_url = '/blog/tags/' . urlencode($current_tag['slug']);
+                } else {
+                    $base_url = '/blog';
+                }
                 ?>
 
                 <?php if ($current_page > 1): ?>
