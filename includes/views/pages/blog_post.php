@@ -20,7 +20,7 @@
                 <?php endif; ?>
                 <div class="meta-item">
                     <i data-lucide="calendar" class="icon-size-3"></i>
-                    <span><?= jalali_time_tag($post['created_at'], 'weekday') ?></span>
+                    <span><?= jalali_time_tag($post['created_at']) ?></span>
                 </div>
                 <?php if (get_setting('blog_show_views', '1') == '1'): ?>
                 <div class="meta-item">
