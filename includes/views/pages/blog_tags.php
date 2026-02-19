@@ -36,11 +36,6 @@
         max-width: 200px;
         text-align: center;
     }
-    .tag-cloud-item:hover {
-        border-color: var(--color-primary);
-        transform: translateY(-5px);
-        background: var(--bg-block);
-    }
     .tag-icon-circle {
         width: 48px;
         height: 48px;
