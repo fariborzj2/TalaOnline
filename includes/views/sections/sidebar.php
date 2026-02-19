@@ -104,7 +104,7 @@ if ($pdo) {
 <style>
     .cat-link { color: var(--color-text); }
     .cat-link:hover { background: #f8fafc; color: var(--color-primary); }
-    .cat-link.active { background: var(--bg-warning); color: var(--color-warning); }
+    .cat-link.active { background: var(--color-primary-light); color: var(--color-primary); }
 
     .news-item { transition: all 0.2s; }
     .news-item:hover h3 { color: var(--color-primary); }

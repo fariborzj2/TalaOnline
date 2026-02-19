@@ -175,7 +175,7 @@
 
     .cat-link { color: var(--color-text); }
     .cat-link:hover { background: #f8fafc; color: var(--color-primary); }
-    .cat-link.active { background: var(--bg-warning); color: var(--color-warning); }
+    .cat-link.active { background: var(--color-primary-light); color: var(--color-primary); }
     .cat-link.active .cat-arrow { transform: translateX(-5px); }
     .cat-arrow { transition: transform 0.3s; }
 
