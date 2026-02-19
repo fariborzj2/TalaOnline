@@ -431,6 +431,9 @@ input:focus {
     margin-bottom: 20px;
     line-height: 28px;
 }
+.content-text a {
+    color: var(--color-primary)
+}
 .content-text h2 { font-size: 1.4rem; display: inline-block; }
 .content-text h3 { font-size: 1.2rem; }
 
