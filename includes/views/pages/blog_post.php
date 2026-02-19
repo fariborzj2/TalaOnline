@@ -18,7 +18,7 @@
                 <?php endif; ?>
             </div>
 
-            <h1 class="font-black text-title"><?= htmlspecialchars($post['title']) ?></h1>
+            <h1 class="font-black text-title mb-1"><?= htmlspecialchars($post['title']) ?></h1>
 
             <div class="d-flex-wrap align-center gap-1-5 mb-2">
                 <div class="meta-item">
