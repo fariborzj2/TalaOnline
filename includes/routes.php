@@ -200,11 +200,12 @@ $router->add('/blog', function() {
 
             $categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
 
+            $featured_limit = (int)get_setting('blog_featured_count', '3');
             $featured_posts = $pdo->query("SELECT p.*, c.name as category_name, c.slug as category_slug
                                           FROM blog_posts p
                                           LEFT JOIN blog_categories c ON p.category_id = c.id
                                           WHERE p.status = 'published' AND p.is_featured = 1
-                                          ORDER BY p.created_at DESC LIMIT 3")->fetchAll();
+                                          ORDER BY p.created_at DESC LIMIT $featured_limit")->fetchAll();
         } catch (Exception $e) {}
     }
 
