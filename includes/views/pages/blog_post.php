@@ -2,11 +2,11 @@
     <div class="grow-8 basis-600 d-column gap-md">
         <div class="post-main-card bg-block border pd-md radius-24 overflow-hidden ">
 
-            <div class="mb-1">
+            <div class="mb-1 d-flex align-center gap-1">
+                <i data-lucide="git-fork" class="icon-size-2"></i>
                 <?php if (!empty($all_categories)): ?>
                     <?php foreach ($all_categories as $cat): ?>
-                        <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>">
-                            <i data-lucide="hash" class="icon-size-2"></i>
+                        <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="text-primary">
                             <?= htmlspecialchars($cat['name']) ?>
                         </a> ,
                     <?php endforeach; ?>
