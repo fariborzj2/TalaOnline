@@ -8,7 +8,7 @@
                     <?php foreach ($all_categories as $cat): ?>
                         <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="text-primary">
                             <?= htmlspecialchars($cat['name']) ?>
-                        </a>,
+                        </a>/
                     <?php endforeach; ?>
                 <?php else: ?>
                     <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>">
