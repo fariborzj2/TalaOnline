@@ -1,9 +1,4 @@
 <div class="blog-container d-column gap-md">
-    <section class="tags-header mb-1 pr-1">
-        <h2 class="font-size-4 font-bold">برچسب‌های وبلاگ</h2>
-        <p class="text-subtitle font-size-1 mt-05 opacity-70">لیست تمامی کلمات کلیدی و موضوعات مطرح شده در مقالات.</p>
-    </section>
-
     <div class="d-flex-wrap gap-md">
         <?php foreach ($tags as $tag): ?>
         <a href="/blog/tags/<?= urlencode($tag['slug']) ?>" class="tag-cloud-item d-column align-center gap-05 pd-md radius-16 border transition-all">
