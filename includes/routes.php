@@ -178,13 +178,25 @@ $router->add('/blog', function() {
     $categories = [];
     $featured_posts = [];
 
+    $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    $per_page = (int)get_setting('blog_posts_per_page', '10');
+    $offset = ($page - 1) * $per_page;
+    $total_pages = 1;
+
     if ($pdo) {
         try {
-            $posts = $pdo->query("SELECT p.*, c.name as category_name, c.slug as category_slug
+            // Get total count for pagination
+            $total_posts = $pdo->query("SELECT COUNT(*) FROM blog_posts WHERE status = 'published'")->fetchColumn();
+            $total_pages = ceil($total_posts / $per_page);
+
+            $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
                                  FROM blog_posts p
                                  LEFT JOIN blog_categories c ON p.category_id = c.id
                                  WHERE p.status = 'published'
-                                 ORDER BY p.created_at DESC")->fetchAll();
+                                 ORDER BY p.created_at DESC
+                                 LIMIT $per_page OFFSET $offset");
+            $stmt->execute();
+            $posts = $stmt->fetchAll();
 
             $categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
 
@@ -201,6 +213,8 @@ $router->add('/blog', function() {
         'posts' => $posts,
         'categories' => $categories,
         'featured_posts' => $featured_posts,
+        'current_page' => $page,
+        'total_pages' => $total_pages,
         'site_title' => get_setting('blog_main_title', 'وبلاگ و اخبار طلا و ارز') . ' | ' . get_setting('site_title', 'طلا آنلاین'),
         'meta_description' => get_setting('blog_main_description', 'آخرین اخبار، مقالات تخصصی و تحلیل‌های بازار طلا، سکه و ارز را در وبلاگ طلا آنلاین بخوانید.'),
         'meta_keywords' => get_setting('blog_main_keywords', 'اخبار طلا, تحلیل بازار, مقالات آموزشی طلا'),
@@ -217,6 +231,11 @@ $router->add('/blog/:category_slug', function($params) {
     $category = null;
     $categories = [];
 
+    $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    $per_page = (int)get_setting('blog_posts_per_page', '10');
+    $offset = ($page - 1) * $per_page;
+    $total_pages = 1;
+
     if ($pdo) {
         try {
             $stmt = $pdo->prepare("SELECT * FROM blog_categories WHERE slug = ?");
@@ -224,12 +243,21 @@ $router->add('/blog/:category_slug', function($params) {
             $category = $stmt->fetch();
 
             if ($category) {
+                // Get total count for category
+                $stmt_count = $pdo->prepare("SELECT COUNT(*) FROM blog_posts p
+                                           INNER JOIN blog_post_categories pc ON p.id = pc.post_id
+                                           WHERE p.status = 'published' AND pc.category_id = ?");
+                $stmt_count->execute([$category['id']]);
+                $total_posts = $stmt_count->fetchColumn();
+                $total_pages = ceil($total_posts / $per_page);
+
                 $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
                                      FROM blog_posts p
                                      INNER JOIN blog_post_categories pc ON p.id = pc.post_id
                                      LEFT JOIN blog_categories c ON p.category_id = c.id
                                      WHERE p.status = 'published' AND pc.category_id = ?
-                                     ORDER BY p.created_at DESC");
+                                     ORDER BY p.created_at DESC
+                                     LIMIT $per_page OFFSET $offset");
                 $stmt->execute([$category['id']]);
                 $posts = $stmt->fetchAll();
             }
@@ -249,6 +277,8 @@ $router->add('/blog/:category_slug', function($params) {
         'posts' => $posts,
         'categories' => $categories,
         'current_category' => $category,
+        'current_page' => $page,
+        'total_pages' => $total_pages,
         'site_title' => $category['name'] . ' | وبلاگ طلا آنلاین',
         'meta_description' => $category['description'],
         'breadcrumbs' => [

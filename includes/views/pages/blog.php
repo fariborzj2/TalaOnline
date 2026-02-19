@@ -89,6 +89,36 @@
                 </div>
                 <?php endif; ?>
             </div>
+
+            <?php if ($total_pages > 1): ?>
+            <div class="d-flex align-center justify-center gap-05 mt-2 pagination">
+                <?php
+                $base_url = isset($current_category) ? '/blog/' . $current_category['slug'] : '/blog';
+                ?>
+
+                <?php if ($current_page > 1): ?>
+                <a href="<?= $base_url ?>?page=<?= $current_page - 1 ?>" class="pagination-link">
+                    <i data-lucide="chevron-right" class="icon-size-2"></i>
+                </a>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <?php if ($i == 1 || $i == $total_pages || ($i >= $current_page - 2 && $i <= $current_page + 2)): ?>
+                        <a href="<?= $base_url ?>?page=<?= $i ?>" class="pagination-link <?= $i == $current_page ? 'active' : '' ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php elseif ($i == $current_page - 3 || $i == $current_page + 3): ?>
+                        <span class="pagination-dots">...</span>
+                    <?php endif; ?>
+                <?php endfor; ?>
+
+                <?php if ($current_page < $total_pages): ?>
+                <a href="<?= $base_url ?>?page=<?= $current_page + 1 ?>" class="pagination-link">
+                    <i data-lucide="chevron-left" class="icon-size-2"></i>
+                </a>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
         </section>
     </div>
 </div>
@@ -133,6 +163,37 @@
     .cat-link.active { background: var(--bg-warning); color: var(--color-warning); }
     .cat-link.active .cat-arrow { transform: translateX(-5px); }
     .cat-arrow { transition: transform 0.3s; }
+
+    /* Pagination Styles */
+    .pagination-link {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-center;
+        justify-content: center;
+        border-radius: 12px;
+        background: var(--bg-block);
+        border: 1px solid var(--color-border);
+        color: var(--color-text);
+        font-weight: 800;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    .pagination-link:hover {
+        border-color: var(--color-primary);
+        color: var(--color-primary);
+        transform: translateY(-2px);
+    }
+    .pagination-link.active {
+        background: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
+    }
+    .pagination-dots {
+        color: var(--color-subtitle);
+        font-weight: 800;
+        padding: 0 5px;
+    }
 
     .popular-item { text-decoration: none; }
     .popular-number {
