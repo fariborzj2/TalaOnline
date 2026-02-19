@@ -2,13 +2,13 @@
     <div class="grow-8 basis-600 d-column gap-md">
         <div class="post-main-card bg-block border pd-md radius-24 overflow-hidden ">
 
-            <div class="mb-1 d-flex align-center gap-1">
+            <div class="mb-1 d-flex align-center gap-0-5">
                 <i data-lucide="git-fork" class="icon-size-2"></i>
                 <?php if (!empty($all_categories)): ?>
                     <?php foreach ($all_categories as $cat): ?>
                         <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="text-primary">
                             <?= htmlspecialchars($cat['name']) ?>
-                        </a>/
+                        </a>,
                     <?php endforeach; ?>
                 <?php else: ?>
                     <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>">
@@ -202,19 +202,6 @@
 <style>
     .post-main-card h1 { line-height: 1.5; }
     .aspect-video { aspect-ratio: 16 / 9; }
-    .category-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        background: var(--color-primary-light);
-        color: var(--color-primary);
-        padding: 6px 16px;
-        border-radius: 100px;
-        font-size: 11px;
-        font-weight: 800;
-        transition: all 0.3s;
-    }
-    .category-badge:hover { filter: brightness(0.95); transform: translateY(-1px); }
 
     .meta-item {
         display: flex;
