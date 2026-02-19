@@ -169,7 +169,7 @@
             </div>
             <div class="d-flex-wrap gap-md">
                 <?php foreach ($related_posts as $rp): ?>
-                <a href="/blog/<?= htmlspecialchars($rp['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($rp['slug']) ?>" class="blog-card featured bg-block border radius-20 overflow-hidden d-column relative">
+                <a href="/blog/<?= htmlspecialchars($rp['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($rp['slug']) ?>" class="blog-card bg-block border radius-20 overflow-hidden d-column relative">
                     <div class="pd-md d-column h-full gap-1">
                         <div class="featured-image-container relative overflow-hidden radius-16">
                             <?php if ($rp['thumbnail']): ?>
@@ -251,7 +251,7 @@
     }
     .tag-pill:hover { background: #edf2f7; color: var(--color-primary); }
 
-    .blog-card { transition: all 0.3s; }
-    .blog-card:hover { transform: translateY(-5px); border-color: var(--color-primary); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .blog-card { color: var(--color-text) }
+    .blog-card:hover img { transform: scale(1.05); }
 
 </style>
