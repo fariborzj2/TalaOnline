@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $blog_show_reading_time = isset($_POST['blog_show_reading_time']) ? '1' : '0';
     $blog_related_count = $_POST['blog_related_count'];
     $blog_posts_per_page = $_POST['blog_posts_per_page'];
+    $blog_featured_count = $_POST['blog_featured_count'];
 
     set_setting('blog_main_title', $blog_main_title);
     set_setting('blog_main_description', $blog_main_description);
@@ -21,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('blog_show_reading_time', $blog_show_reading_time);
     set_setting('blog_related_count', $blog_related_count);
     set_setting('blog_posts_per_page', $blog_posts_per_page);
+    set_setting('blog_featured_count', $blog_featured_count);
 
     $message = 'تنظیمات وبلاگ با موفقیت ذخیره شد.';
 }
@@ -32,6 +34,7 @@ $blog_show_views = get_setting('blog_show_views', '1');
 $blog_show_reading_time = get_setting('blog_show_reading_time', '1');
 $blog_related_count = get_setting('blog_related_count', '3');
 $blog_posts_per_page = get_setting('blog_posts_per_page', '10');
+$blog_featured_count = get_setting('blog_featured_count', '3');
 
 $page_title = 'تنظیمات وبلاگ';
 $page_subtitle = 'مدیریت سئو صفحه اصلی وبلاگ و تنظیمات نمایش مقالات';
@@ -118,7 +121,16 @@ include __DIR__ . '/layout/header.php';
                 </label>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="form-group">
+                    <label>تعداد مقالات برگزیده</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="star" class="w-4 h-4"></i></span>
+                        <input type="number" name="blog_featured_count" value="<?= htmlspecialchars($blog_featured_count) ?>" min="1" max="10" required class="ltr-input">
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">تعداد مقالات در بخش Bento Grid بالای وبلاگ</p>
+                </div>
+
                 <div class="form-group">
                     <label>تعداد مقالات در هر صفحه</label>
                     <div class="input-icon-wrapper">

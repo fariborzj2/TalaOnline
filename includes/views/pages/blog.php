@@ -5,12 +5,12 @@
         <div class="d-flex align-center gap-1 mb-1 pr-1">
             <h2 class="font-size-4 font-bold">مقالات برگزیده</h2>
         </div>
-        <div class="d-flex-wrap gap-md">
+        <div class="featured-posts-grid">
             <?php foreach ($featured_posts as $post): ?>
-            <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card featured basis-300 grow-1 bg-block border radius-20 overflow-hidden d-column relative">
+            <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card featured bg-block border radius-20 overflow-hidden d-column relative">
                 
-                <div class="pd-md d-column grow-1 gap-1">
-                    <div class="aspect-video relative overflow-hidden radius-16">
+                <div class="pd-md d-column h-full gap-1">
+                    <div class="featured-image-container relative overflow-hidden radius-16">
                         <?php if ($post['thumbnail']): ?>
                         <img src="/<?= ltrim($post['thumbnail'], '/') ?>"
                                 alt="<?= htmlspecialchars($post['title']) ?>"
@@ -27,15 +27,18 @@
                         </div>
                     </div>
 
-                    <h3 class="font-bold font-size-3 text-title ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['title']) ?></h3>
-                    <p class="ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['excerpt']) ?></p>
+                    <div class="d-column gap-05">
+                        <h3 class="font-bold font-size-3 text-title ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['title']) ?></h3>
+                        <p class="ellipsis-y ellipsis-y line-clampd-md font-size-1 opacity-70"><?= htmlspecialchars($post['excerpt']) ?></p>
+                    </div>
+
                     <div class="d-flex just-between align-center mt-auto pt-1 border-top">
                         <span class=" text-subtitle d-flex align-center gap-05 font-bold">
                             <i data-lucide="calendar-days" class="icon-size-2 text-primary"></i>
                             <?= jalali_time_tag($post['created_at']) ?>
                         </span>
                         <div class="text-primary text-[11px] font-bold d-flex align-center gap-05">
-                            مطالعه مقاله <i data-lucide="arrow-left" class="icon-size-2"></i>
+                            مطالعه <i data-lucide="arrow-left" class="icon-size-2"></i>
                         </div>
                     </div>
                 </div>
@@ -58,6 +61,14 @@
 
             <div class="d-column gap-md">
                 <?php foreach ($posts as $post): ?>
+                <?php
+                // Skip posts that are already shown in featured section on first page
+                if ($current_page == 1 && !isset($current_category) && !empty($featured_posts)) {
+                    foreach ($featured_posts as $fp) {
+                        if ($fp['id'] == $post['id']) continue 2;
+                    }
+                }
+                ?>
                 <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card pd-md  d-flex-wrap gap-md bg-block border radius-20 overflow-hidden ">
                     <div class="aspect-video relative radius-16 overflow-hidden grow-1 basis-200">
                         <?php if ($post['thumbnail']): ?>
@@ -169,7 +180,7 @@
         width: 40px;
         height: 40px;
         display: flex;
-        align-center;
+        align-items: center;
         justify-content: center;
         border-radius: 12px;
         background: var(--bg-block);
@@ -211,6 +222,42 @@
         background-image: linear-gradient(to top, var(--tw-gradient-stops));
     }
     .from-black\/60 { --tw-gradient-from: rgb(0 0 0 / 0.6); --tw-gradient-stops: var(--tw-gradient-from), transparent; }
+
+    /* Bento Grid for Featured Posts */
+    .featured-posts-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .featured-posts-grid .blog-card .featured-image-container {
+        aspect-ratio: 16 / 9;
+    }
+
+    @media (min-width: 992px) {
+        .featured-posts-grid {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, minmax(200px, auto));
+        }
+
+        .featured-posts-grid .blog-card:first-child {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .featured-posts-grid .blog-card:first-child .featured-image-container {
+            aspect-ratio: auto;
+            flex-grow: 1;
+        }
+
+        .featured-posts-grid .blog-card:not(:first-child) h3 {
+            font-size: 1.1rem;
+        }
+
+        .featured-posts-grid .blog-card:not(:first-child) p {
+            display: none;
+        }
+    }
 
     @media (max-width: 768px) {
         .basis-300 { flex-basis: 100%; }
