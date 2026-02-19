@@ -154,8 +154,8 @@ body {
     background-color: var(--color-secondary);
 }
 .side-menu ul li a.active {
-    background-color: var(--color-primary);
-    color: var(--color-primary-light);
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
 }
 @media (max-width: 600px) {
     .side-menu {
