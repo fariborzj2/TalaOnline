@@ -190,7 +190,6 @@
         background: var(--bg-block);
         border: 1px solid var(--color-border);
         color: var(--color-text);
-        font-weight: 800;
         font-size: 14px;
         transition: all 0.3s;
     }
