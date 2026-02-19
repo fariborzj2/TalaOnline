@@ -46,7 +46,7 @@
             </div>
 
             <?php if ($post['excerpt']): ?>
-                <div class="d-flex gap-1 mb-2">
+                <div class="d-flex gap-1 mb-2 border-t">
                     <i data-lucide="quote" class="w-10 h-10 text-primary opacity-20 shrink-0"></i>
                     <p class="font-bold text-subtitle line-height-2"><?= htmlspecialchars($post['excerpt']) ?></p>
                 </div>
