@@ -166,8 +166,7 @@
 
         <?php if (!empty($related_posts)): ?>
         <section class="related-section">
-            <div class="d-flex align-center gap-1 mb-2 pr-1">
-                <div class="w-1 h-8 bg-primary radius-100"></div>
+            <div class="mb-2 pr-1">
                 <h2 class="font-size-3 font-black">مطالب مرتبط پیشنهادی</h2>
             </div>
             <div class="d-flex-wrap gap-md">
