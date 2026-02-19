@@ -164,6 +164,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'success') {
                     <th class="w-16">ترتیب</th>
                     <th>نام دسته‌بندی</th>
                     <th>آیکون</th>
+                    <th class="text-center">بازدید</th>
                     <th>نامک (Slug)</th>
                     <th class="text-center">عملیات</th>
                 </tr>
@@ -184,6 +185,9 @@ if (isset($_GET['message']) && $_GET['message'] === 'success') {
                             <i data-lucide="<?= htmlspecialchars($cat['icon'] ?? 'coins') ?>" class="w-4 h-4"></i>
                             <span class="text-[10px] font-bold"><?= htmlspecialchars($cat['icon'] ?? 'coins') ?></span>
                         </div>
+                    </td>
+                    <td class="text-center">
+                        <span class="text-xs font-black text-slate-600"><?= number_format($cat['views'] ?? 0) ?></span>
                     </td>
                     <td>
                         <span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[10px] font-black border border-indigo-100 ltr-input">

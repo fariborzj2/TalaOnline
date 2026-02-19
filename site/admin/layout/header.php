@@ -17,6 +17,7 @@ if (isset($pdo) && $pdo) {
                 `name` VARCHAR(100) NOT NULL,
                 `en_name` VARCHAR(100),
                 `icon` VARCHAR(50),
+                `views` INTEGER DEFAULT 0,
                 `sort_order` INTEGER DEFAULT 0,
                 `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
             )");
@@ -26,6 +27,7 @@ if (isset($pdo) && $pdo) {
                 `name` VARCHAR(100) NOT NULL,
                 `category` VARCHAR(100),
                 `slug` VARCHAR(100),
+                `views` INTEGER DEFAULT 0,
                 `is_active` INTEGER DEFAULT 1,
                 `sort_order` INTEGER DEFAULT 0,
                 `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -196,6 +198,10 @@ if (isset($pdo) && $pdo) {
                 if (!in_array('meta_keywords', $cols)) {
                     $pdo->exec("ALTER TABLE blog_categories ADD COLUMN meta_keywords VARCHAR(255)");
                 }
+            }
+
+            if (($table === 'items' || $table === 'categories') && !empty($cols) && !in_array('views', $cols)) {
+                $pdo->exec("ALTER TABLE $table ADD COLUMN views INTEGER DEFAULT 0");
             }
 
             // Data Self-Healing: Fix any existing "zero dates" that cause display issues
