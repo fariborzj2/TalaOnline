@@ -251,6 +251,7 @@
     }
     .tag-pill:hover { background: #edf2f7; color: var(--color-primary); }
 
+    .transition-all { transition: all 0.3s; }
     .blog-card { color: var(--color-text) }
     .blog-card:hover img { transform: scale(1.05); }
 
