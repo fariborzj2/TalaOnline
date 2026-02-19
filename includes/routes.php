@@ -385,8 +385,9 @@ $router->add('/blog/:category_slug', function($params) {
         'current_category' => $category,
         'current_page' => $page,
         'total_pages' => $total_pages,
-        'site_title' => $category['name'] . ' | وبلاگ طلا آنلاین',
-        'meta_description' => $category['description'],
+        'site_title' => ($category['meta_title'] ?: $category['name']) . ' | وبلاگ طلا آنلاین',
+        'meta_description' => $category['meta_description'] ?: $category['description'],
+        'meta_keywords' => $category['meta_keywords'] ?? '',
         'breadcrumbs' => [
             ['name' => 'وبلاگ', 'url' => '/blog'],
             ['name' => $category['name'], 'url' => '/blog/' . $category['slug']]
