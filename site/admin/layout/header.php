@@ -42,6 +42,9 @@ if (isset($pdo) && $pdo) {
                 `name` VARCHAR(100) NOT NULL,
                 `slug` VARCHAR(100) NOT NULL UNIQUE,
                 `description` TEXT,
+                `meta_title` VARCHAR(255),
+                `meta_description` VARCHAR(255),
+                `meta_keywords` VARCHAR(255),
                 `sort_order` INTEGER DEFAULT 0,
                 `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
             )");
@@ -99,6 +102,9 @@ if (isset($pdo) && $pdo) {
                 `name` VARCHAR(100) NOT NULL,
                 `slug` VARCHAR(100) NOT NULL UNIQUE,
                 `description` TEXT,
+                `meta_title` VARCHAR(255),
+                `meta_description` VARCHAR(255),
+                `meta_keywords` VARCHAR(255),
                 `sort_order` INT DEFAULT 0,
                 `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
@@ -178,6 +184,18 @@ if (isset($pdo) && $pdo) {
 
             if ($table === 'blog_posts' && !empty($cols) && !in_array('tags', $cols)) {
                 $pdo->exec("ALTER TABLE blog_posts ADD COLUMN tags TEXT");
+            }
+
+            if ($table === 'blog_categories' && !empty($cols)) {
+                if (!in_array('meta_title', $cols)) {
+                    $pdo->exec("ALTER TABLE blog_categories ADD COLUMN meta_title VARCHAR(255)");
+                }
+                if (!in_array('meta_description', $cols)) {
+                    $pdo->exec("ALTER TABLE blog_categories ADD COLUMN meta_description VARCHAR(255)");
+                }
+                if (!in_array('meta_keywords', $cols)) {
+                    $pdo->exec("ALTER TABLE blog_categories ADD COLUMN meta_keywords VARCHAR(255)");
+                }
             }
 
             // Data Self-Healing: Fix any existing "zero dates" that cause display issues

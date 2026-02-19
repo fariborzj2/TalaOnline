@@ -23,15 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = $_POST['name'] ?? '';
         $slug = $_POST['slug'] ?? '';
         $description = $_POST['description'] ?? '';
+        $meta_title = $_POST['meta_title'] ?? '';
+        $meta_description = $_POST['meta_description'] ?? '';
+        $meta_keywords = $_POST['meta_keywords'] ?? '';
         $sort_order = (int)($_POST['sort_order'] ?? 0);
 
         try {
             if ($id) {
-                $stmt = $pdo->prepare("UPDATE blog_categories SET name = ?, slug = ?, description = ?, sort_order = ? WHERE id = ?");
-                $stmt->execute([$name, $slug, $description, $sort_order, $id]);
+                $stmt = $pdo->prepare("UPDATE blog_categories SET name = ?, slug = ?, description = ?, meta_title = ?, meta_description = ?, meta_keywords = ?, sort_order = ? WHERE id = ?");
+                $stmt->execute([$name, $slug, $description, $meta_title, $meta_description, $meta_keywords, $sort_order, $id]);
             } else {
-                $stmt = $pdo->prepare("INSERT INTO blog_categories (name, slug, description, sort_order) VALUES (?, ?, ?, ?)");
-                $stmt->execute([$name, $slug, $description, $sort_order]);
+                $stmt = $pdo->prepare("INSERT INTO blog_categories (name, slug, description, meta_title, meta_description, meta_keywords, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $slug, $description, $meta_title, $meta_description, $meta_keywords, $sort_order]);
             }
 
             header("Location: blog_categories.php?message=success");
@@ -81,6 +84,32 @@ include __DIR__ . '/layout/header.php';
                     <div class="form-group">
                         <label>ترتیب نمایش</label>
                         <input type="number" name="sort_order" value="<?= htmlspecialchars($category['sort_order'] ?? '0') ?>" class="w-32">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO Section -->
+            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+                <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-lg font-black text-slate-800">تنظیمات SEO</h2>
+                </div>
+                <div class="p-8">
+                    <div class="form-group mb-6">
+                        <label>عنوان سئو (Meta Title)</label>
+                        <input type="text" name="meta_title" value="<?= htmlspecialchars($category['meta_title'] ?? '') ?>" placeholder="عنوان نمایشی در موتورهای جستجو">
+                    </div>
+
+                    <div class="form-group mb-6">
+                        <label>توضیحات سئو (Meta Description)</label>
+                        <textarea name="meta_description" rows="3" placeholder="توضیحات متای این دسته برای گوگل..."><?= htmlspecialchars($category['meta_description'] ?? '') ?></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>کلمات کلیدی (Meta Keywords)</label>
+                        <input type="text" name="meta_keywords" value="<?= htmlspecialchars($category['meta_keywords'] ?? '') ?>" placeholder="کلمات کلیدی با کاما جدا شوند">
                     </div>
                 </div>
             </div>
