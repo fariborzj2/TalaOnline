@@ -5,7 +5,7 @@
         <div class="d-flex align-center gap-1 mb-1 pr-1">
             <h2 class="font-size-4 font-bold">مقالات برگزیده</h2>
         </div>
-        <div class="featured-posts-grid">
+        <div class="featured-posts-grid gap-md">
             <?php foreach ($featured_posts as $post): ?>
             <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card featured bg-block border radius-20 overflow-hidden d-column relative">
                 
@@ -230,7 +230,6 @@
     .featured-posts-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 1.5rem;
     }
 
     .featured-posts-grid .blog-card .featured-image-container {
