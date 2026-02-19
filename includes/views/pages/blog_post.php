@@ -117,7 +117,7 @@
         }
         </script>
 
-        <section class="faq-section mt-4">
+        <section class="faq-section">
             <div class="bg-block pd-md border radius-24">
                 <div class="d-flex align-center gap-1 pb-1 mb-2 border-bottom">
                     <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
@@ -162,7 +162,7 @@
         <?php endif; ?>
 
         <?php if (!empty($related_posts)): ?>
-        <section class="related-section mt-3">
+        <section class="related-section">
             <div class="d-flex align-center gap-1 mb-2 pr-1">
                 <div class="w-1 h-8 bg-primary radius-100"></div>
                 <h2 class="font-size-3 font-black">مطالب مرتبط پیشنهادی</h2>
