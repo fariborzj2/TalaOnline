@@ -2,7 +2,7 @@
     <div class="grow-8 basis-600 d-column gap-md">
         <div class="post-main-card bg-block border pd-md radius-24 overflow-hidden ">
 
-            <div class="">
+            <div class="mb-1">
                 <?php if (!empty($all_categories)): ?>
                     <?php foreach ($all_categories as $cat): ?>
                         <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="category-badge">
