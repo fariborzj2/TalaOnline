@@ -31,11 +31,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$posts = $pdo->query("SELECT p.*, c.name as category_name, c.slug as category_slug,
-    (SELECT GROUP_CONCAT(cat.name) FROM blog_categories cat INNER JOIN blog_post_categories pc ON cat.id = pc.category_id WHERE pc.post_id = p.id) as all_categories
+// Pagination & Sorting
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$per_page = 20;
+$offset = ($page - 1) * $per_page;
+
+$sort = $_GET['sort'] ?? 'created_at';
+$order = strtoupper($_GET['order'] ?? 'DESC') === 'ASC' ? 'ASC' : 'DESC';
+
+// Allowed sort fields
+$allowed_sorts = ['created_at', 'views', 'title'];
+if (!in_array($sort, $allowed_sorts)) $sort = 'created_at';
+
+// Total posts for pagination
+$total_posts = $pdo->query("SELECT COUNT(*) FROM blog_posts")->fetchColumn();
+$total_pages = ceil($total_posts / $per_page);
+
+$stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug,
+    (SELECT GROUP_CONCAT(DISTINCT cat.name) FROM blog_categories cat INNER JOIN blog_post_categories pc ON cat.id = pc.category_id WHERE pc.post_id = p.id) as all_categories
     FROM blog_posts p
     LEFT JOIN blog_categories c ON p.category_id = c.id
-    ORDER BY p.created_at DESC")->fetchAll();
+    ORDER BY p.$sort $order
+    LIMIT :limit OFFSET :offset");
+$stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->execute();
+$posts = $stmt->fetchAll();
+
+function sort_link($field, $label) {
+    global $sort, $order, $page;
+    $new_order = ($sort === $field && $order === 'DESC') ? 'ASC' : 'DESC';
+    $icon = '';
+    if ($sort === $field) {
+        $icon = '<i data-lucide="chevron-' . ($order === 'DESC' ? 'down' : 'up') . '" class="w-3 h-3 inline"></i>';
+    }
+    return '<a href="?sort=' . $field . '&order=' . $new_order . '&page=' . $page . '" class="flex items-center gap-1 hover:text-indigo-600 transition-colors">' . $label . ' ' . $icon . '</a>';
+}
 
 $page_title = 'مدیریت مقالات وبلاگ';
 $page_subtitle = 'نوشتن، ویرایش و مدیریت محتوای وبلاگ';
@@ -66,22 +97,26 @@ include __DIR__ . '/layout/header.php';
         </div>
         <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <div class="relative group w-full md:w-auto">
-                <input type="text" id="tableSearch" placeholder="جستجو در مقالات..." class="text-xs !pr-12 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
+                <input type="text" id="tableSearch" placeholder="جستجو در این صفحه..." class="text-xs !pr-12 !py-2 w-full md:w-64 border-slate-200 focus:border-indigo-500 transition-all">
                 <i data-lucide="search" class="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
             </div>
-            <span class="text-[10px] font-bold text-slate-400 bg-white px-3 py-2 rounded-lg border border-slate-100">تعداد: <span id="itemCount"><?= count($posts) ?></span></span>
+            <div class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-slate-100">
+                <span class="text-[10px] font-bold text-slate-400">کل: <?= number_format($total_posts) ?></span>
+                <span class="w-px h-3 bg-slate-100"></span>
+                <span class="text-[10px] font-bold text-indigo-600">این صفحه: <span id="itemCount"><?= count($posts) ?></span></span>
+            </div>
         </div>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full admin-table">
             <thead>
                 <tr>
-                    <th>عنوان مقاله</th>
+                    <th><?= sort_link('title', 'عنوان مقاله') ?></th>
                     <th>دسته‌بندی</th>
                     <th class="text-center">وضعیت</th>
                     <th class="text-center">ویژه</th>
-                    <th>تاریخ انتشار</th>
-                    <th class="text-center">بازدید</th>
+                    <th><?= sort_link('created_at', 'تاریخ انتشار') ?></th>
+                    <th class="text-center"><?= sort_link('views', 'بازدید') ?></th>
                     <th class="text-center">عملیات</th>
                 </tr>
             </thead>
@@ -175,6 +210,36 @@ include __DIR__ . '/layout/header.php';
             </tbody>
         </table>
     </div>
+
+    <!-- Pagination -->
+    <?php if ($total_pages > 1): ?>
+    <div class="px-8 py-4 bg-slate-50/30 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4">
+        <span class="text-[10px] font-bold text-slate-400">نمایش <?= count($posts) ?> از <?= number_format($total_posts) ?> مقاله (صفحه <?= $page ?> از <?= $total_pages ?>)</span>
+        <div class="flex items-center gap-1.5">
+            <?php if ($page > 1): ?>
+                <a href="?page=<?= $page - 1 ?>&sort=<?= $sort ?>&order=<?= $order ?>" class="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all">
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </a>
+            <?php endif; ?>
+
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <?php if ($i == 1 || $i == $total_pages || ($i >= $page - 2 && $i <= $page + 2)): ?>
+                    <a href="?page=<?= $i ?>&sort=<?= $sort ?>&order=<?= $order ?>" class="w-8 h-8 flex items-center justify-center <?= $i == $page ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white border border-slate-200 text-slate-400 hover:text-indigo-600 shadow-sm' ?> rounded-lg font-black text-[11px] transition-all">
+                        <?= $i ?>
+                    </a>
+                <?php elseif ($i == $page - 3 || $i == $page + 3): ?>
+                    <span class="text-slate-300 px-1">...</span>
+                <?php endif; ?>
+            <?php endfor; ?>
+
+            <?php if ($page < $total_pages): ?>
+                <a href="?page=<?= $page + 1 ?>&sort=<?= $sort ?>&order=<?= $order ?>" class="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <script>
