@@ -1,6 +1,6 @@
 <article class="blog-post-page d-flex-wrap gap-md align-stretch">
     <div class="grow-8 basis-600 d-column gap-md">
-        <div class="post-main-card bg-block border pd-md radius-24 overflow-hidden ">
+        <div class="post-main-card bg-block border pd-md radius-16 overflow-hidden ">
 
             <div class="mb-1 d-flex align-center gap-05">
                 <i data-lucide="git-fork" class="icon-size-2"></i>
@@ -121,7 +121,7 @@
         </script>
 
         <section class="faq-section">
-            <div class="bg-block pd-md border radius-24">
+            <div class="bg-block pd-md border radius-16">
                 <div class="d-flex align-center gap-1 pb-1 mb-2 border-bottom">
                     <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
                         <i data-lucide="help-circle" color="var(--color-primary)" class="w-6 h-6"></i>
