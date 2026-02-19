@@ -194,18 +194,23 @@ $router->add('/blog', function() {
                                  LEFT JOIN blog_categories c ON p.category_id = c.id
                                  WHERE p.status = 'published'
                                  ORDER BY p.created_at DESC
-                                 LIMIT $per_page OFFSET $offset");
+                                 LIMIT :limit OFFSET :offset");
+            $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
             $posts = $stmt->fetchAll();
 
             $categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
 
             $featured_limit = (int)get_setting('blog_featured_count', '3');
-            $featured_posts = $pdo->query("SELECT p.*, c.name as category_name, c.slug as category_slug
+            $stmt_featured = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
                                           FROM blog_posts p
                                           LEFT JOIN blog_categories c ON p.category_id = c.id
                                           WHERE p.status = 'published' AND p.is_featured = 1
-                                          ORDER BY p.created_at DESC LIMIT $featured_limit")->fetchAll();
+                                          ORDER BY p.created_at DESC LIMIT :limit");
+            $stmt_featured->bindValue(':limit', $featured_limit, PDO::PARAM_INT);
+            $stmt_featured->execute();
+            $featured_posts = $stmt_featured->fetchAll();
         } catch (Exception $e) {}
     }
 
@@ -256,10 +261,13 @@ $router->add('/blog/:category_slug', function($params) {
                                      FROM blog_posts p
                                      INNER JOIN blog_post_categories pc ON p.id = pc.post_id
                                      LEFT JOIN blog_categories c ON p.category_id = c.id
-                                     WHERE p.status = 'published' AND pc.category_id = ?
+                                     WHERE p.status = 'published' AND pc.category_id = :cat_id
                                      ORDER BY p.created_at DESC
-                                     LIMIT $per_page OFFSET $offset");
-                $stmt->execute([$category['id']]);
+                                     LIMIT :limit OFFSET :offset");
+                $stmt->bindValue(':cat_id', $category['id'], PDO::PARAM_INT);
+                $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+                $stmt->execute();
                 $posts = $stmt->fetchAll();
             }
 
@@ -327,9 +335,12 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
                     $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
                                          FROM blog_posts p
                                          LEFT JOIN blog_categories c ON p.category_id = c.id
-                                         WHERE p.status = 'published' AND p.category_id = ? AND p.id != ?
-                                         ORDER BY p.created_at DESC LIMIT $related_count");
-                    $stmt->execute([$post['category_id'], $post['id']]);
+                                         WHERE p.status = 'published' AND p.category_id = :cat_id AND p.id != :post_id
+                                         ORDER BY p.created_at DESC LIMIT :limit");
+                    $stmt->bindValue(':cat_id', $post['category_id'], PDO::PARAM_INT);
+                    $stmt->bindValue(':post_id', $post['id'], PDO::PARAM_INT);
+                    $stmt->bindValue(':limit', $related_count, PDO::PARAM_INT);
+                    $stmt->execute();
                     $related_posts = $stmt->fetchAll();
                 }
             }

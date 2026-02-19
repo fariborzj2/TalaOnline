@@ -61,14 +61,6 @@
 
             <div class="d-column gap-md">
                 <?php foreach ($posts as $post): ?>
-                <?php
-                // Skip posts that are already shown in featured section on first page
-                if ($current_page == 1 && !isset($current_category) && !empty($featured_posts)) {
-                    foreach ($featured_posts as $fp) {
-                        if ($fp['id'] == $post['id']) continue 2;
-                    }
-                }
-                ?>
                 <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($post['slug']) ?>" class="blog-card pd-md  d-flex-wrap gap-md bg-block border radius-20 overflow-hidden ">
                     <div class="aspect-video relative radius-16 overflow-hidden grow-1 basis-200">
                         <?php if ($post['thumbnail']): ?>
