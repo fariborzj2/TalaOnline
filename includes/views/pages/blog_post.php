@@ -20,7 +20,7 @@
 
             <h1 class="font-black text-title mb-1"><?= htmlspecialchars($post['title']) ?></h1>
 
-            <div class="d-flex-wrap align-center gap-1-5 mb-2">
+            <div class="d-flex-wrap align-center gap-1-5 mb-1">
                 <div class="meta-item">
                     <i data-lucide="calendar" class="icon-size-3"></i>
                     <span><?= jalali_time_tag($post['created_at']) ?></span>
@@ -46,7 +46,7 @@
             </div>
 
             <?php if ($post['excerpt']): ?>
-                <div class="d-flex gap-1 mb-2 border-t">
+                <div class="d-flex gap-1 mb-2 pt-1 border-top">
                     <i data-lucide="quote" class="w-10 h-10 text-primary opacity-20 shrink-0"></i>
                     <p class="font-bold text-subtitle line-height-2"><?= htmlspecialchars($post['excerpt']) ?></p>
                 </div>
