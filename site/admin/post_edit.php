@@ -159,8 +159,8 @@ include __DIR__ . '/layout/editor.php';
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main Column -->
         <div class="lg:col-span-2 space-y-6">
-            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-                <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+            <div class="glass-card rounded-xl border border-slate-200">
+                <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30 rounded-t-xl">
                     <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
                         <i data-lucide="edit-3" class="w-5 h-5"></i>
                     </div>
@@ -194,8 +194,8 @@ include __DIR__ . '/layout/editor.php';
             </div>
 
             <!-- FAQ Section -->
-            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-                <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+            <div class="glass-card rounded-xl border border-slate-200">
+                <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30 rounded-t-xl">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
                             <i data-lucide="help-circle" class="w-5 h-5"></i>
@@ -256,8 +256,8 @@ include __DIR__ . '/layout/editor.php';
             </div>
 
             <!-- Publish Settings -->
-            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+            <div class="glass-card rounded-xl border border-slate-200">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30 rounded-t-xl">
                     <i data-lucide="send" class="w-4 h-4 text-slate-400"></i>
                     <h2 class="text-sm font-black text-slate-800">تنظیمات انتشار</h2>
                 </div>
@@ -293,8 +293,8 @@ include __DIR__ . '/layout/editor.php';
             </div>
 
             <!-- Slug & URL -->
-            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+            <div class="glass-card rounded-xl border border-slate-200">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30 rounded-t-xl">
                     <i data-lucide="link" class="w-4 h-4 text-slate-400"></i>
                     <h2 class="text-sm font-black text-slate-800">آدرس مقاله (URL)</h2>
                 </div>
@@ -308,8 +308,8 @@ include __DIR__ . '/layout/editor.php';
             </div>
 
             <!-- Thumbnail -->
-            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+            <div class="glass-card rounded-xl border border-slate-200">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30 rounded-t-xl">
                     <i data-lucide="image" class="w-4 h-4 text-slate-400"></i>
                     <h2 class="text-sm font-black text-slate-800">تصویر شاخص</h2>
                 </div>
@@ -337,8 +337,8 @@ include __DIR__ . '/layout/editor.php';
             </div>
 
             <!-- Dates -->
-            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+            <div class="glass-card rounded-xl border border-slate-200">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30 rounded-t-xl">
                     <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
                     <h2 class="text-sm font-black text-slate-800">تاریخ‌ها</h2>
                 </div>
@@ -363,8 +363,8 @@ include __DIR__ . '/layout/editor.php';
             </div>
 
             <!-- SEO -->
-            <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
+            <div class="glass-card rounded-xl border border-slate-200">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30 rounded-t-xl">
                     <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
                     <h2 class="text-sm font-black text-slate-800">تنظیمات SEO</h2>
                 </div>
@@ -510,9 +510,9 @@ include __DIR__ . '/layout/editor.php';
 
         // Create autocomplete dropdown
         const dropdown = document.createElement('div');
-        dropdown.className = 'absolute z-[100] bg-white border border-slate-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto w-full left-0 right-0';
-        container.style.position = 'relative';
-        container.parentElement.appendChild(dropdown);
+        dropdown.className = 'absolute z-[100] bg-white border border-slate-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto w-full right-0 top-full';
+        container.classList.add('relative');
+        container.appendChild(dropdown);
 
         function render() {
             container.querySelectorAll('.tag-item').forEach(el => el.remove());
@@ -556,26 +556,40 @@ include __DIR__ . '/layout/editor.php';
             });
             if (changed) {
                 render();
-                input.value = '';
-                dropdown.classList.add('hidden');
             }
+            input.value = '';
+            dropdown.classList.add('hidden');
         }
 
         let debounceTimer;
         input.addEventListener('input', (e) => {
+            const typedValue = input.value.trim();
             if (input.value.includes(',')) {
                 addTags(input.value);
                 return;
             }
 
-            if (autocompleteUrl && input.value.trim().length >= 3) {
+            if (autocompleteUrl && typedValue.length >= 3) {
                 clearTimeout(debounceTimer);
                 debounceTimer = setTimeout(() => {
-                    fetch(`${autocompleteUrl}?q=${encodeURIComponent(input.value.trim())}`)
+                    fetch(`${autocompleteUrl}?q=${encodeURIComponent(typedValue)}`)
                         .then(res => res.json())
                         .then(data => {
+                            dropdown.innerHTML = '';
+
+                            // Add "Create new" option if not exactly matching any existing tag or suggestion
+                            if (typedValue && !data.includes(typedValue) && !tags.includes(typedValue)) {
+                                const newItem = document.createElement('div');
+                                newItem.className = 'px-4 py-2 hover:bg-indigo-50 cursor-pointer text-[11px] font-bold text-indigo-600 border-b border-slate-100 flex items-center gap-2';
+                                newItem.innerHTML = `<i data-lucide="plus" class="w-3 h-3"></i> ایجاد: ${typedValue}`;
+                                newItem.addEventListener('mousedown', (e) => {
+                                    e.preventDefault();
+                                    addTags(typedValue);
+                                });
+                                dropdown.appendChild(newItem);
+                            }
+
                             if (data.length > 0) {
-                                dropdown.innerHTML = '';
                                 data.forEach(tagName => {
                                     if (tags.includes(tagName)) return;
                                     const item = document.createElement('div');
@@ -587,7 +601,11 @@ include __DIR__ . '/layout/editor.php';
                                     });
                                     dropdown.appendChild(item);
                                 });
+                            }
+
+                            if (dropdown.children.length > 0) {
                                 dropdown.classList.remove('hidden');
+                                if (window.refreshIcons) window.refreshIcons();
                             } else {
                                 dropdown.classList.add('hidden');
                             }
@@ -611,6 +629,9 @@ include __DIR__ . '/layout/editor.php';
         });
 
         input.addEventListener('blur', () => {
+            if (input.value.trim()) {
+                addTags(input.value);
+            }
             setTimeout(() => dropdown.classList.add('hidden'), 200);
         });
 
