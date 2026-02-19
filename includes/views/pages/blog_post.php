@@ -169,17 +169,18 @@
             </div>
             <div class="d-flex-wrap gap-md">
                 <?php foreach ($related_posts as $rp): ?>
-                <a href="/blog/<?= htmlspecialchars($rp['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($rp['slug']) ?>" class="blog-card basis-250 grow-1 bg-block border radius-20 overflow-hidden d-column">
-                    <div class="aspect-video relative overflow-hidden bg-slate-100">
-                        <?php if ($rp['thumbnail']): ?>
-                        <img src="/<?= ltrim($rp['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($rp['title']) ?>" class="w-full h-full object-cover transition-all duration-500 hover:scale-110">
-                        <?php else: ?>
-                        <div class="w-full h-full d-flex align-center justify-center text-slate-200">
-                            <i data-lucide="image" class="w-10 h-10"></i>
+                <a href="/blog/<?= htmlspecialchars($rp['category_slug'] ?? 'uncategorized') ?>/<?= htmlspecialchars($rp['slug']) ?>" class="blog-card featured bg-block border radius-20 overflow-hidden d-column relative">
+                    <div class="pd-md d-column h-full gap-1">
+                        <div class="featured-image-container relative overflow-hidden radius-16">
+                            <?php if ($rp['thumbnail']): ?>
+                            <img src="/<?= ltrim($rp['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($rp['title']) ?>" class="w-full h-full object-cover transition-all duration-500 hover:scale-110">
+                            <?php else: ?>
+                            <div class="w-full h-full d-flex align-center justify-center text-slate-200">
+                                <i data-lucide="image" class="w-10 h-10"></i>
+                            </div>
+                            <?php endif; ?>
                         </div>
-                        <?php endif; ?>
-                    </div>
-                    <div class="p-1-5 d-column gap-05">
+                    
                         <h3 class="font-black text-[13px] ellipsis-y ellipsis-y line-clampd-md leading-snug text-title"><?= htmlspecialchars($rp['title']) ?></h3>
                         <div class="d-flex align-center gap-05 opacity-50">
                             <i data-lucide="calendar" class="icon-size-1"></i>

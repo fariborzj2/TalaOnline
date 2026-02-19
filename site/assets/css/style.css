@@ -7,6 +7,7 @@
 :root {
     --color-body: #f1f5f9;
     --color-primary: #c27803;
+    --color-primary-light: #e0a94d;
     --color-secondary: #f1f5f9;
     --color-text: #475569;
     --color-title: #1C274C;
@@ -153,8 +154,8 @@ body {
     background-color: var(--color-secondary);
 }
 .side-menu ul li a.active {
-    background-color: var(--bg-warning);
-    color: var(--color-warning);
+    background-color: var(--bg-primary);
+    color: var(--color-primary-light);
 }
 @media (max-width: 600px) {
     .side-menu {
