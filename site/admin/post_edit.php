@@ -75,6 +75,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         try {
+            $pdo->beginTransaction();
+            $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+
             if ($id) {
                 $stmt = $pdo->prepare("UPDATE blog_posts SET title = ?, slug = ?, excerpt = ?, content = ?, thumbnail = ?, category_id = ?, status = ?, is_featured = ?, meta_title = ?, meta_description = ?, meta_keywords = ?, tags = ?, created_at = ?, updated_at = ? WHERE id = ?");
                 $stmt->execute([$title, $slug, $excerpt, $content, $thumbnail, $category_id, $status, $is_featured, $meta_title, $meta_description, $meta_keywords, $tags, $created_at, $updated_at, $id]);
@@ -99,17 +102,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($tags)) {
                 $tags_array = array_unique(array_filter(array_map('trim', explode(',', $tags))));
                 foreach ($tags_array as $tag_name) {
-                    // Check if tag exists
+                    // Check if tag exists by name
                     $stmt_tag = $pdo->prepare("SELECT id FROM blog_tags WHERE name = ?");
                     $stmt_tag->execute([$tag_name]);
                     $tag_id = $stmt_tag->fetchColumn();
 
                     if (!$tag_id) {
                         // Create tag
-                        $tag_slug = preg_replace('/[^\x{0600}-\x{06FF}a-z0-9\s-]/u', '', mb_strtolower($tag_name));
-                        $tag_slug = preg_replace('/\s+/u', '-', $tag_slug);
-                        $tag_slug = trim($tag_slug, '-');
-                        if (empty($tag_slug)) $tag_slug = uniqid();
+                        $base_tag_slug = preg_replace('/[^\x{0600}-\x{06FF}a-z0-9\s-]/u', '', mb_strtolower($tag_name));
+                        $base_tag_slug = preg_replace('/\s+/u', '-', $base_tag_slug);
+                        $base_tag_slug = trim($base_tag_slug, '-');
+                        if (empty($base_tag_slug)) $base_tag_slug = uniqid();
+
+                        $tag_slug = $base_tag_slug;
+                        $counter = 1;
+
+                        // Ensure slug is unique
+                        while (true) {
+                            $stmt_slug = $pdo->prepare("SELECT id FROM blog_tags WHERE slug = ?");
+                            $stmt_slug->execute([$tag_slug]);
+                            if (!$stmt_slug->fetchColumn()) break;
+                            $tag_slug = $base_tag_slug . '-' . $counter;
+                            $counter++;
+                        }
 
                         $stmt_create = $pdo->prepare("INSERT INTO blog_tags (name, slug) VALUES (?, ?)");
                         $stmt_create->execute([$tag_name, $tag_slug]);
@@ -117,7 +132,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
 
                     if ($tag_id) {
-                        $stmt_rel = $pdo->prepare("INSERT OR IGNORE INTO blog_post_tags (post_id, tag_id) VALUES (?, ?)");
+                        $insert_rel_sql = ($driver === 'sqlite')
+                            ? "INSERT OR IGNORE INTO blog_post_tags (post_id, tag_id) VALUES (?, ?)"
+                            : "INSERT IGNORE INTO blog_post_tags (post_id, tag_id) VALUES (?, ?)";
+                        $stmt_rel = $pdo->prepare($insert_rel_sql);
                         $stmt_rel->execute([$id, $tag_id]);
                     }
                 }
@@ -135,9 +153,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
+            $pdo->commit();
             header("Location: posts.php?message=success");
             exit;
         } catch (Exception $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             $error = 'خطا در ذخیره اطلاعات: ' . $e->getMessage();
         }
     }
