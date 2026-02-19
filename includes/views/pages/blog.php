@@ -16,7 +16,7 @@
                                 alt="<?= htmlspecialchars($post['title']) ?>"
                                 class="w-full h-full object-cover transition-all">
                         <?php else: ?>
-                        <div class="w-full h-full d-flex align-center justify-center ">
+                        <div class="w-full h-full d-flex align-center just-center ">
                             <i data-lucide="image" class="w-16 h-16 opacity-20"></i>
                         </div>
                         <?php endif; ?>
@@ -74,7 +74,7 @@
                             alt="<?= htmlspecialchars($post['title']) ?>"
                             class="w-full h-full object-cover transition-all">
                         <?php else: ?>
-                        <div class="w-full h-full d-flex align-center justify-center ">
+                        <div class="w-full h-full d-flex align-center just-center ">
                             <i data-lucide="image" class="w-12 h-12 opacity-20"></i>
                         </div>
                         <?php endif; ?>
@@ -100,7 +100,7 @@
             </div>
 
             <?php if ($total_pages > 1): ?>
-            <div class="d-flex align-center justify-center gap-05 mt-2 pagination">
+            <div class="d-flex align-center just-center gap-05 mt-2 pagination">
                 <?php
                 if (isset($current_category)) {
                     $base_url = '/blog/' . $current_category['slug'];

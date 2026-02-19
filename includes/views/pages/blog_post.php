@@ -177,7 +177,7 @@
                             <?php if ($rp['thumbnail']): ?>
                             <img src="/<?= ltrim($rp['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($rp['title']) ?>" class="w-full h-full object-cover transition-all duration-500 hover:scale-110">
                             <?php else: ?>
-                            <div class="w-full h-full d-flex align-center justify-center text-slate-200">
+                            <div class="w-full h-full d-flex align-center just-center text-slate-200">
                                 <i data-lucide="image" class="w-10 h-10"></i>
                             </div>
                             <?php endif; ?>
