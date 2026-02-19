@@ -2,7 +2,7 @@
     <div class="grow-8 basis-600 d-column gap-md">
         <div class="post-main-card bg-block border pd-md radius-24 overflow-hidden ">
 
-            <div class="mb-1 d-flex align-center gap-0-5">
+            <div class="mb-1 d-flex align-center gap-05">
                 <i data-lucide="git-fork" class="icon-size-2"></i>
                 <?php if (!empty($all_categories)): ?>
                     <?php foreach ($all_categories as $cat): ?>
