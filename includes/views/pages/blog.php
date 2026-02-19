@@ -196,7 +196,6 @@
     .pagination-link:hover {
         border-color: var(--color-primary);
         color: var(--color-primary);
-        transform: translateY(-2px);
     }
     .pagination-link.active {
         background: var(--color-primary);
