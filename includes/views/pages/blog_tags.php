@@ -29,7 +29,7 @@
 
 <style>
     .tag-cloud-item {
-        background: var(--bg-block);
+        background: var(--color-block);
         min-width: 140px;
         flex: 1 1 140px;
         max-width: 200px;
