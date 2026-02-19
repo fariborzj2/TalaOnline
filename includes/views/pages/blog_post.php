@@ -5,13 +5,13 @@
             <div class="mb-1">
                 <?php if (!empty($all_categories)): ?>
                     <?php foreach ($all_categories as $cat): ?>
-                        <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="category-badge">
+                        <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>">
                             <i data-lucide="hash" class="icon-size-2"></i>
                             <?= htmlspecialchars($cat['name']) ?>
-                        </a>
+                        </a> ,
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>" class="category-badge">
+                    <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>">
                         <i data-lucide="hash" class="icon-size-2"></i>
                         <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
                     </a>
