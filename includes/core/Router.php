@@ -5,8 +5,9 @@ class Router {
 
     public function add($path, $action) {
         // Convert :param to regex named group
-        $pattern = preg_replace('/\:([a-zA-Z0-9_]+)/', '(?P<$1>[a-zA-Z0-9_-]+)', $path);
-        $pattern = '#^' . $pattern . '$#';
+        // Use [^/]+ to support various characters including Unicode for Persian slugs
+        $pattern = preg_replace('/\:([a-zA-Z0-9_]+)/', '(?P<$1>[^/]+)', $path);
+        $pattern = '#^' . $pattern . '$#u';
 
         $this->routes[$pattern] = $action;
     }

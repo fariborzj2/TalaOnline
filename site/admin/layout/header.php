@@ -79,6 +79,20 @@ if (isset($pdo) && $pdo) {
                 `sort_order` INTEGER DEFAULT 0,
                 FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE
             )");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_tags` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `name` VARCHAR(100) NOT NULL UNIQUE,
+                `slug` VARCHAR(100) NOT NULL UNIQUE,
+                `description` TEXT,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_post_tags` (
+                `post_id` INTEGER,
+                `tag_id` INTEGER,
+                PRIMARY KEY (`post_id`, `tag_id`),
+                FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE,
+                FOREIGN KEY (`tag_id`) REFERENCES `blog_tags`(`id`) ON DELETE CASCADE
+            )");
         } else {
             $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_categories` (
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -125,10 +139,24 @@ if (isset($pdo) && $pdo) {
                 `sort_order` INT DEFAULT 0,
                 FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_tags` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(100) NOT NULL UNIQUE,
+                `slug` VARCHAR(100) NOT NULL UNIQUE,
+                `description` TEXT,
+                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_post_tags` (
+                `post_id` INT,
+                `tag_id` INT,
+                PRIMARY KEY (`post_id`, `tag_id`),
+                FOREIGN KEY (`post_id`) REFERENCES `blog_posts`(`id`) ON DELETE CASCADE,
+                FOREIGN KEY (`tag_id`) REFERENCES `blog_tags`(`id`) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
         }
     } catch (Exception $e) {}
 
-    $tables_to_check = ['items', 'categories', 'settings', 'blog_categories', 'blog_posts'];
+    $tables_to_check = ['items', 'categories', 'settings', 'blog_categories', 'blog_posts', 'blog_tags'];
     foreach ($tables_to_check as $table) {
         try {
             $cols = [];

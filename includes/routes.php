@@ -230,6 +230,103 @@ $router->add('/blog', function() {
     ]);
 });
 
+$router->add('/blog/tags', function() {
+    global $pdo;
+    $tags = [];
+    if ($pdo) {
+        try {
+            // Fetch tags and count posts for each
+            $stmt = $pdo->query("SELECT t.*, COUNT(pt.post_id) as post_count
+                                 FROM blog_tags t
+                                 LEFT JOIN blog_post_tags pt ON t.id = pt.tag_id
+                                 GROUP BY t.id
+                                 HAVING post_count > 0
+                                 ORDER BY post_count DESC, t.name ASC");
+            $tags = $stmt->fetchAll();
+        } catch (Exception $e) {}
+    }
+
+    return View::renderPage('blog_tags', [
+        'page_title' => 'برچسب‌های وبلاگ',
+        'tags' => $tags,
+        'site_title' => 'برچسب‌های مقالات | وبلاگ طلا آنلاین',
+        'meta_description' => 'لیست تمامی برچسب‌ها و کلمات کلیدی استفاده شده در مقالات وبلاگ طلا آنلاین.',
+        'breadcrumbs' => [
+            ['name' => 'وبلاگ', 'url' => '/blog'],
+            ['name' => 'برچسب‌ها', 'url' => '/blog/tags']
+        ]
+    ]);
+});
+
+$router->add('/blog/tags/:tag_slug', function($params) {
+    global $pdo;
+    $slug = urldecode($params['tag_slug']);
+    $posts = [];
+    $tag = null;
+    $categories = [];
+
+    $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    $per_page = (int)get_setting('blog_posts_per_page', '10');
+    $offset = ($page - 1) * $per_page;
+    $total_pages = 1;
+
+    if ($pdo) {
+        try {
+            // Find tag by slug OR name (to handle user request "مظنه طلا")
+            $stmt = $pdo->prepare("SELECT * FROM blog_tags WHERE slug = ? OR name = ?");
+            $stmt->execute([$slug, $slug]);
+            $tag = $stmt->fetch();
+
+            if ($tag) {
+                // Get total count for tag
+                $stmt_count = $pdo->prepare("SELECT COUNT(*) FROM blog_posts p
+                                           INNER JOIN blog_post_tags pt ON p.id = pt.post_id
+                                           WHERE p.status = 'published' AND pt.tag_id = ?");
+                $stmt_count->execute([$tag['id']]);
+                $total_posts = $stmt_count->fetchColumn();
+                $total_pages = ceil($total_posts / $per_page);
+
+                $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
+                                     FROM blog_posts p
+                                     INNER JOIN blog_post_tags pt ON p.id = pt.post_id
+                                     LEFT JOIN blog_categories c ON p.category_id = c.id
+                                     WHERE p.status = 'published' AND pt.tag_id = :tag_id
+                                     ORDER BY p.created_at DESC
+                                     LIMIT :limit OFFSET :offset");
+                $stmt->bindValue(':tag_id', $tag['id'], PDO::PARAM_INT);
+                $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+                $stmt->execute();
+                $posts = $stmt->fetchAll();
+            }
+
+            $categories = $pdo->query("SELECT * FROM blog_categories ORDER BY sort_order ASC")->fetchAll();
+        } catch (Exception $e) {}
+    }
+
+    if (!$tag) {
+        http_response_code(404);
+        echo "404 Tag Not Found";
+        exit;
+    }
+
+    return View::renderPage('blog', [
+        'page_title' => 'برچسب: ' . $tag['name'],
+        'posts' => $posts,
+        'categories' => $categories,
+        'current_tag' => $tag,
+        'current_page' => $page,
+        'total_pages' => $total_pages,
+        'site_title' => $tag['name'] . ' | وبلاگ طلا آنلاین',
+        'meta_description' => $tag['description'] ?: 'مقالات مرتبط با برچسب ' . $tag['name'],
+        'breadcrumbs' => [
+            ['name' => 'وبلاگ', 'url' => '/blog'],
+            ['name' => 'برچسب‌ها', 'url' => '/blog/tags'],
+            ['name' => $tag['name'], 'url' => '/blog/tags/' . urlencode($tag['slug'])]
+        ]
+    ]);
+});
+
 $router->add('/blog/:category_slug', function($params) {
     global $pdo;
     $slug = $params['category_slug'];
@@ -329,6 +426,11 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
                 $stmt_faqs->execute([$post['id']]);
                 $post['faqs'] = $stmt_faqs->fetchAll();
 
+                // Fetch Tags
+                $stmt_tags = $pdo->prepare("SELECT t.* FROM blog_tags t INNER JOIN blog_post_tags pt ON t.id = pt.tag_id WHERE pt.post_id = ? ORDER BY t.name ASC");
+                $stmt_tags->execute([$post['id']]);
+                $post['tags_data'] = $stmt_tags->fetchAll();
+
                 // Related posts
                 $related_count = (int)get_setting('blog_related_count', '3');
                 if ($post['category_id'] && $related_count > 0) {
@@ -374,6 +476,7 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
         ]
     ]);
 });
+
 
 $router->add('/robots.txt', function() {
     header('Content-Type: text/plain');

@@ -94,6 +94,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
+            // Sync Tags
+            $pdo->prepare("DELETE FROM blog_post_tags WHERE post_id = ?")->execute([$id]);
+            if (!empty($tags)) {
+                $tags_array = array_unique(array_filter(array_map('trim', explode(',', $tags))));
+                foreach ($tags_array as $tag_name) {
+                    // Check if tag exists
+                    $stmt_tag = $pdo->prepare("SELECT id FROM blog_tags WHERE name = ?");
+                    $stmt_tag->execute([$tag_name]);
+                    $tag_id = $stmt_tag->fetchColumn();
+
+                    if (!$tag_id) {
+                        // Create tag
+                        $tag_slug = preg_replace('/[^\x{0600}-\x{06FF}a-z0-9\s-]/u', '', mb_strtolower($tag_name));
+                        $tag_slug = preg_replace('/\s+/u', '-', $tag_slug);
+                        $tag_slug = trim($tag_slug, '-');
+                        if (empty($tag_slug)) $tag_slug = uniqid();
+
+                        $stmt_create = $pdo->prepare("INSERT INTO blog_tags (name, slug) VALUES (?, ?)");
+                        $stmt_create->execute([$tag_name, $tag_slug]);
+                        $tag_id = $pdo->lastInsertId();
+                    }
+
+                    if ($tag_id) {
+                        $stmt_rel = $pdo->prepare("INSERT OR IGNORE INTO blog_post_tags (post_id, tag_id) VALUES (?, ?)");
+                        $stmt_rel->execute([$id, $tag_id]);
+                    }
+                }
+            }
+
             // Handle FAQs
             $pdo->prepare("DELETE FROM blog_post_faqs WHERE post_id = ?")->execute([$id]);
             $faq_questions = $_POST['faq_questions'] ?? [];
@@ -473,11 +502,17 @@ include __DIR__ . '/layout/editor.php';
     }
 
     // Generic Tag Input Logic
-    function setupTagInput(inputId, containerId, hiddenId) {
+    function setupTagInput(inputId, containerId, hiddenId, autocompleteUrl = null) {
         const input = document.getElementById(inputId);
         const container = document.getElementById(containerId);
         const hidden = document.getElementById(hiddenId);
         let tags = hidden.value ? hidden.value.split(',').filter(t => t.trim() !== '') : [];
+
+        // Create autocomplete dropdown
+        const dropdown = document.createElement('div');
+        dropdown.className = 'absolute z-[100] bg-white border border-slate-200 rounded-lg shadow-xl mt-1 hidden max-h-48 overflow-y-auto w-full left-0 right-0';
+        container.style.position = 'relative';
+        container.parentElement.appendChild(dropdown);
 
         function render() {
             container.querySelectorAll('.tag-item').forEach(el => el.remove());
@@ -522,8 +557,46 @@ include __DIR__ . '/layout/editor.php';
             if (changed) {
                 render();
                 input.value = '';
+                dropdown.classList.add('hidden');
             }
         }
+
+        let debounceTimer;
+        input.addEventListener('input', (e) => {
+            if (input.value.includes(',')) {
+                addTags(input.value);
+                return;
+            }
+
+            if (autocompleteUrl && input.value.trim().length >= 3) {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    fetch(`${autocompleteUrl}?q=${encodeURIComponent(input.value.trim())}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                dropdown.innerHTML = '';
+                                data.forEach(tagName => {
+                                    if (tags.includes(tagName)) return;
+                                    const item = document.createElement('div');
+                                    item.className = 'px-4 py-2 hover:bg-slate-50 cursor-pointer text-[11px] font-bold text-slate-700 border-b border-slate-50 last:border-0';
+                                    item.textContent = tagName;
+                                    item.addEventListener('mousedown', (e) => {
+                                        e.preventDefault();
+                                        addTags(tagName);
+                                    });
+                                    dropdown.appendChild(item);
+                                });
+                                dropdown.classList.remove('hidden');
+                            } else {
+                                dropdown.classList.add('hidden');
+                            }
+                        });
+                }, 200);
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        });
 
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ',') {
@@ -532,13 +605,13 @@ include __DIR__ . '/layout/editor.php';
             } else if (e.key === 'Backspace' && input.value === '' && tags.length > 0) {
                 tags.pop();
                 render();
+            } else if (e.key === 'Escape') {
+                dropdown.classList.add('hidden');
             }
         });
 
-        input.addEventListener('input', (e) => {
-            if (input.value.includes(',')) {
-                addTags(input.value);
-            }
+        input.addEventListener('blur', () => {
+            setTimeout(() => dropdown.classList.add('hidden'), 200);
         });
 
         container.addEventListener('click', () => {
@@ -550,7 +623,7 @@ include __DIR__ . '/layout/editor.php';
 
     // Initialize Tag Inputs
     setupTagInput('keyword-input', 'keywords-container', 'post-meta_keywords');
-    setupTagInput('tag-input', 'tags-container', 'post-tags');
+    setupTagInput('tag-input', 'tags-container', 'post-tags', '../api/blog_tags_search.php');
 
     $(document).ready(function() {
         initTinyMCE('#post-content');

@@ -34,10 +34,11 @@ $groups = [
     [
         'label' => 'محتوا و وبلاگ',
         'icon' => 'file-text',
-        'pages' => ['posts.php', 'post_edit.php', 'blog_categories.php', 'blog_category_edit.php', 'blog_settings.php', 'rss_feeds.php', 'about.php'],
+        'pages' => ['posts.php', 'post_edit.php', 'blog_categories.php', 'blog_category_edit.php', 'blog_tags.php', 'blog_tag_edit.php', 'blog_settings.php', 'rss_feeds.php', 'about.php'],
         'items' => [
             ['label' => 'نوشته‌ها', 'url' => 'posts.php', 'icon' => 'pen-tool'],
             ['label' => 'دسته‌بندی وبلاگ', 'url' => 'blog_categories.php', 'icon' => 'folder-open'],
+            ['label' => 'برچسب‌ها', 'url' => 'blog_tags.php', 'icon' => 'hash'],
             ['label' => 'فیدهای RSS', 'url' => 'rss_feeds.php', 'icon' => 'rss'],
             ['label' => 'تنظیمات وبلاگ', 'url' => 'blog_settings.php', 'icon' => 'settings-2'],
             ['label' => 'درباره ما', 'url' => 'about.php', 'icon' => 'info'],

@@ -76,7 +76,13 @@
                     </div>
                 </div>
 
-                <?php if ($post['tags']): ?>
+                <?php if (!empty($post['tags_data'])): ?>
+                <div class="d-flex-wrap gap-05">
+                    <?php foreach ($post['tags_data'] as $tag): ?>
+                    <a href="/blog/tags/<?= urlencode($tag['slug']) ?>" class="tag-pill">#<?= htmlspecialchars($tag['name']) ?></a>
+                    <?php endforeach; ?>
+                </div>
+                <?php elseif ($post['tags']): ?>
                 <div class="d-flex-wrap gap-05">
                     <?php
                     $tags = explode(',', $post['tags']);
