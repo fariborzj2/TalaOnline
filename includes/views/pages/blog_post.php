@@ -2,9 +2,7 @@
     <div class="grow-8 basis-600 d-column gap-md">
         <div class="post-main-card bg-block border pd-md radius-24 overflow-hidden ">
 
-            <h1 class="font-black text-title mb-2"><?= htmlspecialchars($post['title']) ?></h1>
-
-            <div class="d-flex-wrap align-center gap-1-5 mb-2">
+            <div class="">
                 <?php if (!empty($all_categories)): ?>
                     <?php foreach ($all_categories as $cat): ?>
                         <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="category-badge">
@@ -18,6 +16,11 @@
                         <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
                     </a>
                 <?php endif; ?>
+            </div>
+
+            <h1 class="font-black text-title mb-2"><?= htmlspecialchars($post['title']) ?></h1>
+
+            <div class="d-flex-wrap align-center gap-1-5 mb-2">
                 <div class="meta-item">
                     <i data-lucide="calendar" class="icon-size-3"></i>
                     <span><?= jalali_time_tag($post['created_at']) ?></span>
