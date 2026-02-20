@@ -170,7 +170,7 @@
 
     <!-- Auth & Profile Modals -->
     <div id="auth-modal" class="modal-overlay d-none">
-        <div class="modal-content bg-block radius-24 shadow-lg overflow-hidden basis-400">
+        <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-400">
             <div class="pd-md border-bottom d-flex just-between align-center">
                 <div class="d-flex gap-1" id="auth-tabs">
                     <button class="font-bold font-size-3 pointer active" data-tab="login">ورود</button>
@@ -244,7 +244,7 @@
     </div>
 
     <div id="profile-modal" class="modal-overlay d-none">
-        <div class="modal-content bg-block radius-24 shadow-lg overflow-hidden basis-350">
+        <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-350">
             <div class="pd-md border-bottom d-flex just-between align-center">
                 <h3 class="font-bold font-size-4">پروفایل کاربری</h3>
                 <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
