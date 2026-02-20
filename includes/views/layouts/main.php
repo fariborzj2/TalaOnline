@@ -126,7 +126,7 @@
                                 <div class="border radius-10 pl-1 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title pointer hover-bg-secondary transition-all" id="user-menu-btn">
                                     <div class="w-8 h-8 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden shrink-0">
                                         <?php if (!empty($_SESSION['user_avatar'])): ?>
-                                            <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" class="w-100 h-100 object-cover user-avatar-nav">
+                                            <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" class="w-full h-full object-cover user-avatar-nav">
                                         <?php else: ?>
                                             <i data-lucide="user" class="icon-size-3"></i>
                                         <?php endif; ?>
@@ -228,9 +228,9 @@
                     <button type="submit" class="btn btn-primary radius-12 just-center w-full mt-1">ایجاد حساب کاربری</button>
                 </form>
 
-                <div class="auth-divider my-2 relative text-center">
-                    <span class="bg-block px-1 text-gray font-size-1 relative z-10">یا ادامه با</span>
-                    <div class="divider-line absolute top-50 w-full bg-border" style="height:1px; top:50%;"></div>
+                <div class="auth-divider">
+                    <span>یا ادامه با</span>
+                    <div class="divider-line"></div>
                 </div>
 
                 <button class="btn btn-secondary radius-12 just-center w-full gap-1 border">
@@ -250,7 +250,7 @@
             <div class="pd-md d-column align-center gap-1-5">
                 <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border profile-modal-avatar overflow-hidden">
                     <?php if (!empty($_SESSION['user_avatar'])): ?>
-                        <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" class="w-100 h-100 object-cover">
+                        <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" class="w-full h-full object-cover">
                     <?php else: ?>
                         <i data-lucide="user" class="icon-size-6 text-primary"></i>
                     <?php endif; ?>
