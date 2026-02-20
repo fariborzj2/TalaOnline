@@ -156,14 +156,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const updateUIForAuth = () => {
         const userText = document.getElementById('user-menu-text');
+        const userIcon = document.querySelector('#user-menu-btn .icon-size-5');
+        const userAvatar = document.querySelector('#user-menu-btn .user-avatar-nav');
+
         if (authState.isLoggedIn && authState.user) {
             if (userText) userText.textContent = authState.user.name;
+
+            // Handle avatar in nav
+            if (authState.user.avatar) {
+                if (userIcon) userIcon.classList.add('d-none');
+                if (userAvatar) {
+                    userAvatar.src = authState.user.avatar;
+                    userAvatar.classList.remove('d-none');
+                } else {
+                    const img = document.createElement('img');
+                    img.src = authState.user.avatar;
+                    img.className = 'w-100 h-100 object-cover radius-50 user-avatar-nav';
+                    const container = document.querySelector('#user-menu-btn .radius-50');
+                    if (container) container.appendChild(img);
+                }
+            }
+
             const profileName = profileModal.querySelector('h4');
             const profileEmail = profileModal.querySelector('p');
+            const profileAvatar = profileModal.querySelector('.profile-modal-avatar');
+
             if (profileName) profileName.textContent = authState.user.name;
             if (profileEmail) profileEmail.textContent = authState.user.email;
+            if (profileAvatar && authState.user.avatar) {
+                profileAvatar.innerHTML = `<img src="${authState.user.avatar}" class="w-100 h-100 object-cover radius-50">`;
+            }
         } else {
             if (userText) userText.textContent = 'ورود / عضویت';
+            if (userIcon) userIcon.classList.remove('d-none');
+            if (userAvatar) userAvatar.classList.add('d-none');
         }
     };
 
@@ -443,6 +469,43 @@ document.addEventListener('DOMContentLoaded', function() {
                  await fetch('/api/auth.php?action=logout');
                  location.href = '/';
              }
+        });
+    }
+
+    const avatarInput = document.getElementById('avatar-input');
+    if (avatarInput) {
+        avatarInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validate client-side
+            if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+                alert('فرمت فایل باید JPG, PNG یا WEBP باشد.');
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                alert('حجم فایل نباید بیشتر از ۲ مگابایت باشد.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            try {
+                const response = await fetch('/api/profile.php?action=update_avatar', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                    location.reload();
+                } else {
+                    alert(result.message);
+                }
+            } catch (err) {
+                alert('خطا در بارگذاری تصویر');
+            }
         });
     }
 

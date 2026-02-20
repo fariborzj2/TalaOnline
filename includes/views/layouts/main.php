@@ -106,7 +106,11 @@
             <script>
                 window.__AUTH_STATE__ = {
                     isLoggedIn: <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>,
-                    user: <?= isset($_SESSION['user_id']) ? json_encode(['name' => $_SESSION['user_name'], 'email' => $_SESSION['user_email']]) : 'null' ?>
+                    user: <?= isset($_SESSION['user_id']) ? json_encode([
+                        'name' => $_SESSION['user_name'],
+                        'email' => $_SESSION['user_email'],
+                        'avatar' => $_SESSION['user_avatar'] ?? ''
+                    ]) : 'null' ?>
                 };
             </script>
             <div class="center d-flex-wrap gap-md align-stretch main-layout">
@@ -120,7 +124,13 @@
                                 </div>
 
                                 <div class="border radius-10 pl-1 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title pointer hover-bg-secondary transition-all" id="user-menu-btn">
-                                    <i data-lucide="user" class="icon-size-3"></i>
+                                    <div class="w-8 h-8 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden shrink-0">
+                                        <?php if (!empty($_SESSION['user_avatar'])): ?>
+                                            <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" class="w-100 h-100 object-cover user-avatar-nav">
+                                        <?php else: ?>
+                                            <i data-lucide="user" class="icon-size-3"></i>
+                                        <?php endif; ?>
+                                    </div>
                                     <span class="font-bold font-size-1" id="user-menu-text">
                                         <?= isset($_SESSION['user_id']) ? htmlspecialchars($_SESSION['user_name']) : 'ورود / عضویت' ?>
                                     </span>
@@ -238,12 +248,16 @@
                 <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
             </div>
             <div class="pd-md d-column align-center gap-1-5">
-                <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border">
-                    <i data-lucide="user" class="icon-size-6 text-primary"></i>
+                <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border profile-modal-avatar overflow-hidden">
+                    <?php if (!empty($_SESSION['user_avatar'])): ?>
+                        <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" class="w-100 h-100 object-cover">
+                    <?php else: ?>
+                        <i data-lucide="user" class="icon-size-6 text-primary"></i>
+                    <?php endif; ?>
                 </div>
                 <div class="text-center">
-                    <h4 class="font-bold font-size-4 text-title">کاربر مهمان</h4>
-                    <p class="text-gray font-size-2">guest@tala.online</p>
+                    <h4 class="font-bold font-size-4 text-title"><?= isset($_SESSION['user_id']) ? htmlspecialchars($_SESSION['user_name']) : 'کاربر مهمان' ?></h4>
+                    <p class="text-gray font-size-2"><?= isset($_SESSION['user_id']) ? htmlspecialchars($_SESSION['user_email']) : 'guest@tala.online' ?></p>
                 </div>
 
                 <div class="w-full d-column gap-1 border-top pt-1-5">

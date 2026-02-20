@@ -44,6 +44,7 @@ if (isset($pdo) && $pdo) {
                 `email` VARCHAR(255) UNIQUE,
                 `phone` VARCHAR(20) UNIQUE,
                 `password` VARCHAR(255),
+                `avatar` VARCHAR(255),
                 `role` VARCHAR(20) DEFAULT 'user',
                 `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                 `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -143,6 +144,7 @@ if (isset($pdo) && $pdo) {
                 `email` VARCHAR(255) UNIQUE,
                 `phone` VARCHAR(20) UNIQUE,
                 `password` VARCHAR(255),
+                `avatar` VARCHAR(255),
                 `role` VARCHAR(20) DEFAULT 'user',
                 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -258,10 +260,13 @@ if (isset($pdo) && $pdo) {
                 $pdo->exec("ALTER TABLE $table ADD COLUMN views INTEGER DEFAULT 0");
             }
 
-            if ($table === 'users' && !empty($cols) && !in_array('phone', $cols)) {
-                $pdo->exec("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
-                // Add unique constraint if possible, but in SQLite/MySQL it depends on version for ADD COLUMN UNIQUE
-                // For simplicity, we just add the column.
+            if ($table === 'users' && !empty($cols)) {
+                if (!in_array('phone', $cols)) {
+                    $pdo->exec("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
+                }
+                if (!in_array('avatar', $cols)) {
+                    $pdo->exec("ALTER TABLE users ADD COLUMN avatar VARCHAR(255)");
+                }
             }
 
             // Data Self-Healing: Fix any existing "zero dates" that cause display issues

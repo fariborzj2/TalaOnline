@@ -12,7 +12,46 @@ $user_id = $_SESSION['user_id'];
 $action = $_GET['action'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $data = json_decode(file_get_contents('php://input'), true);
+    $input_data = file_get_contents('php://input');
+    $data = json_decode($input_data, true);
+
+    if ($action === 'update_avatar') {
+        if (!isset($_FILES['avatar'])) {
+            echo json_encode(['success' => false, 'message' => 'تصویری انتخاب نشده است.']);
+            exit;
+        }
+
+        $file = $_FILES['avatar'];
+        $allowed_types = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!in_array($file['type'], $allowed_types)) {
+            echo json_encode(['success' => false, 'message' => 'فرمت تصویر غیرمجاز است (فقط JPG, PNG, WEBP).']);
+            exit;
+        }
+
+        if ($file['size'] > 2 * 1024 * 1024) {
+            echo json_encode(['success' => false, 'message' => 'حجم تصویر نباید بیشتر از ۲ مگابایت باشد.']);
+            exit;
+        }
+
+        // Use global handle_upload for consistency and WebP conversion
+        $avatar_url = handle_upload($file, 'uploads/avatars/');
+
+        if ($avatar_url) {
+            $avatar_url = '/' . $avatar_url; // Ensure absolute path
+            try {
+                $stmt = $pdo->prepare("UPDATE users SET avatar = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                $stmt->execute([$avatar_url, $user_id]);
+
+                $_SESSION['user_avatar'] = $avatar_url;
+                echo json_encode(['success' => true, 'message' => 'تصویر پروفایل بروزرسانی شد.', 'avatar' => $avatar_url]);
+            } catch (Exception $e) {
+                echo json_encode(['success' => false, 'message' => 'خطایی در ثبت تصویر رخ داد.']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'خطا در آپلود فایل.']);
+        }
+        exit;
+    }
 
     if ($action === 'update_info') {
         $name = $data['name'] ?? '';
