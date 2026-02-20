@@ -171,6 +171,20 @@ $router->add('/about-us', function() {
     ]);
 });
 
+$router->add('/profile', function() {
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: /');
+        exit;
+    }
+
+    return View::renderPage('profile', [
+        'page_title' => 'پروفایل کاربری',
+        'breadcrumbs' => [
+            ['name' => 'پروفایل', 'url' => '/profile']
+        ]
+    ]);
+});
+
 // Blog Routes
 $router->add('/blog', function() {
     global $pdo;

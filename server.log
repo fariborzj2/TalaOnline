@@ -1,0 +1,85 @@
+[Fri Feb 20 10:54:01 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Fri Feb 20 10:54:05 2026] [::1]:39730 Accepted
+[Fri Feb 20 10:54:05 2026] PHP Warning:  Undefined array key "en_name" in /app/includes/navasan_service.php on line 116
+[Fri Feb 20 10:54:05 2026] PHP Warning:  Undefined array key "description" in /app/includes/navasan_service.php on line 118
+[Fri Feb 20 10:54:05 2026] PHP Warning:  Undefined array key "en_name" in /app/includes/navasan_service.php on line 116
+[Fri Feb 20 10:54:05 2026] PHP Warning:  Undefined array key "description" in /app/includes/navasan_service.php on line 118
+[Fri Feb 20 10:54:05 2026] [::1]:39730 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39744 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39754 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39768 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39782 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39788 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39744 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2
+[Fri Feb 20 10:54:05 2026] [::1]:39754 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2
+[Fri Feb 20 10:54:05 2026] [::1]:39768 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2
+[Fri Feb 20 10:54:05 2026] [::1]:39782 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2
+[Fri Feb 20 10:54:05 2026] [::1]:39788 [200]: GET /assets/fonts/estedad/Estedad-FD-ExtraBold.woff2
+[Fri Feb 20 10:54:05 2026] [::1]:39744 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39754 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39768 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39782 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39788 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39792 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39808 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39824 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39828 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39830 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39792 [200]: GET /assets/js/vendor/lucide.js
+[Fri Feb 20 10:54:05 2026] [::1]:39808 [200]: GET /assets/images/logo.svg
+[Fri Feb 20 10:54:05 2026] [::1]:39808 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39792 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39824 [200]: GET /assets/images/gold/gold.webp
+[Fri Feb 20 10:54:05 2026] [::1]:39824 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39828 [200]: GET /assets/js/charts.js
+[Fri Feb 20 10:54:05 2026] [::1]:39828 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39830 [200]: GET /assets/js/app.js
+[Fri Feb 20 10:54:05 2026] [::1]:39830 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39842 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39848 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39842 [200]: GET /assets/images/platforms/gerami.webp
+[Fri Feb 20 10:54:05 2026] [::1]:39842 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39848 [200]: GET /assets/images/platforms/milli.webp
+[Fri Feb 20 10:54:05 2026] [::1]:39848 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39864 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39864 [200]: GET /api/prices.php?symbol=18ayar
+[Fri Feb 20 10:54:05 2026] [::1]:39864 Closing
+[Fri Feb 20 10:54:05 2026] [::1]:39872 Accepted
+[Fri Feb 20 10:54:05 2026] [::1]:39872 [200]: GET /assets/js/vendor/apexcharts.min.js
+[Fri Feb 20 10:54:05 2026] [::1]:39872 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39884 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39884 [200]: POST /api/auth.php?action=register
+[Fri Feb 20 10:54:06 2026] [::1]:39884 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39886 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39886 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39894 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39904 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39918 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39930 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39946 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39894 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2
+[Fri Feb 20 10:54:06 2026] [::1]:39904 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2
+[Fri Feb 20 10:54:06 2026] [::1]:39918 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2
+[Fri Feb 20 10:54:06 2026] [::1]:39894 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39904 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39918 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39930 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2
+[Fri Feb 20 10:54:06 2026] [::1]:39930 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39946 [200]: GET /assets/fonts/estedad/Estedad-FD-ExtraBold.woff2
+[Fri Feb 20 10:54:06 2026] [::1]:39946 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39956 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39956 [200]: GET /assets/js/vendor/lucide.js
+[Fri Feb 20 10:54:06 2026] [::1]:39956 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39968 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39972 Accepted
+[Fri Feb 20 10:54:06 2026] [::1]:39968 [200]: GET /assets/images/logo.svg
+[Fri Feb 20 10:54:06 2026] [::1]:39972 [200]: GET /assets/js/app.js
+[Fri Feb 20 10:54:06 2026] [::1]:39968 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39972 Closing
+[Fri Feb 20 10:54:06 2026] [::1]:39980 Accepted
+[Fri Feb 20 10:54:06 2026] PHP Warning:  Undefined array key "en_name" in /app/includes/navasan_service.php on line 116
+[Fri Feb 20 10:54:06 2026] PHP Warning:  Undefined array key "description" in /app/includes/navasan_service.php on line 118
+[Fri Feb 20 10:54:06 2026] PHP Warning:  Undefined array key "en_name" in /app/includes/navasan_service.php on line 116
+[Fri Feb 20 10:54:06 2026] PHP Warning:  Undefined array key "description" in /app/includes/navasan_service.php on line 118
+[Fri Feb 20 10:54:06 2026] [::1]:39980 [200]: GET /api/dashboard.php
+[Fri Feb 20 10:54:06 2026] [::1]:39980 Closing

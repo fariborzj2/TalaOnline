@@ -1,0 +1,166 @@
+<div class="section">
+    <div class="bg-block pd-md border radius-24 d-flex align-center gap-1-5">
+        <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border shrink-0">
+             <i data-lucide="user" class="icon-size-8 text-primary"></i>
+        </div>
+        <div class="grow-1">
+            <h1 class="font-size-4 font-black text-title"><?= htmlspecialchars($_SESSION['user_name']) ?></h1>
+            <p class="text-gray font-size-1 mt-05"><?= htmlspecialchars($_SESSION['user_email']) ?></p>
+            <div class="d-flex gap-05 mt-1">
+                 <span class="badge badge-secondary"><?= $_SESSION['user_role'] === 'admin' ? 'مدیر سیستم' : 'کاربر عادی' ?></span>
+                 <span class="badge badge-outline"><?= htmlspecialchars($_SESSION['user_phone'] ?? 'بدون شماره') ?></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="d-flex-wrap gap-md align-stretch">
+        <!-- Profile Sidebar -->
+        <div class="basis-250 grow-1">
+            <div class="bg-block pd-md border radius-24 sticky-top" style="top: 1rem;">
+                <div class="d-column gap-05" id="profile-tabs">
+                    <button class="profile-tab-btn active" data-tab="overview">
+                        <i data-lucide="layout-dashboard"></i> مرور کلی
+                    </button>
+                    <button class="profile-tab-btn" data-tab="edit">
+                        <i data-lucide="user-cog"></i> ویرایش پروفایل
+                    </button>
+                    <button class="profile-tab-btn" data-tab="security">
+                        <i data-lucide="shield-check"></i> امنیت و رمز عبور
+                    </button>
+                    <div class="divider my-1 bg-border" style="height: 1px;"></div>
+                    <button class="profile-tab-btn text-error" id="profile-logout-btn">
+                        <i data-lucide="log-out"></i> خروج از حساب
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="basis-500 grow-9">
+            <div class="bg-block pd-lg border radius-24 min-h-400">
+                <!-- Overview Tab -->
+                <div id="tab-overview" class="profile-tab-content">
+                    <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">خوش آمدید، <?= htmlspecialchars($_SESSION['user_name']) ?></h2>
+                    <div class="grid-2 gap-1 mt-2">
+                        <div class="pd-md radius-16 bg-secondary border d-column gap-05">
+                            <span class="text-gray font-size-1">وضعیت حساب</span>
+                            <strong class="text-success font-size-2">فعال</strong>
+                        </div>
+                        <div class="pd-md radius-16 bg-secondary border d-column gap-05">
+                            <span class="text-gray font-size-1">نوع کاربری</span>
+                            <strong class="text-title font-size-1-5"><?= $_SESSION['user_role'] === 'admin' ? 'مدیر سیستم' : 'کاربر عادی' ?></strong>
+                        </div>
+                        <div class="pd-md radius-16 bg-secondary border d-column gap-05">
+                            <span class="text-gray font-size-1">شماره تماس</span>
+                            <strong class="text-title font-size-1-5 ltr text-right"><?= htmlspecialchars($_SESSION['user_phone'] ?? '---') ?></strong>
+                        </div>
+                        <div class="pd-md radius-16 bg-secondary border d-column gap-05">
+                            <span class="text-gray font-size-1">آخرین فعالیت</span>
+                            <strong class="text-title font-size-1-5"><?= jalali_date('now', 'compact') ?></strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Profile Tab -->
+                <div id="tab-edit" class="profile-tab-content d-none">
+                    <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">ویرایش اطلاعات کاربری</h2>
+                    <form id="profile-update-form" class="d-column gap-1-5 mt-2">
+                        <div class="d-column gap-05">
+                            <label class="font-bold pr-1 font-size-1">نام و نام خانوادگی</label>
+                            <div class="input-item">
+                                <i data-lucide="user" class="text-gray icon-size-3"></i>
+                                <input type="text" name="name" value="<?= htmlspecialchars($_SESSION['user_name']) ?>" required>
+                            </div>
+                        </div>
+                        <div class="d-column gap-05">
+                            <label class="font-bold pr-1 font-size-1">آدرس ایمیل</label>
+                            <div class="input-item">
+                                <i data-lucide="mail" class="text-gray icon-size-3"></i>
+                                <input type="email" name="email" value="<?= htmlspecialchars($_SESSION['user_email']) ?>" dir="ltr" class="text-left" required>
+                            </div>
+                        </div>
+                        <div class="d-column gap-05">
+                            <label class="font-bold pr-1 font-size-1">شماره موبایل</label>
+                            <div class="input-item">
+                                <i data-lucide="phone" class="text-gray icon-size-3"></i>
+                                <input type="text" name="phone" value="<?= htmlspecialchars($_SESSION['user_phone'] ?? '') ?>" dir="ltr" class="text-left">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary radius-12 just-center mt-1">ذخیره تغییرات</button>
+                    </form>
+                </div>
+
+                <!-- Security Tab -->
+                <div id="tab-security" class="profile-tab-content d-none">
+                    <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">تغییر رمز عبور</h2>
+                    <form id="password-update-form" class="d-column gap-1-5 mt-2">
+                        <div class="d-column gap-05">
+                            <label class="font-bold pr-1 font-size-1">رمز عبور فعلی</label>
+                            <div class="input-item">
+                                <i data-lucide="lock" class="text-gray icon-size-3"></i>
+                                <input type="password" name="current_password" required>
+                            </div>
+                        </div>
+                        <div class="d-column gap-05">
+                            <label class="font-bold pr-1 font-size-1">رمز عبور جدید</label>
+                            <div class="input-item">
+                                <i data-lucide="key" class="text-gray icon-size-3"></i>
+                                <input type="password" name="new_password" required>
+                            </div>
+                        </div>
+                        <div class="d-column gap-05">
+                            <label class="font-bold pr-1 font-size-1">تکرار رمز عبور جدید</label>
+                            <div class="input-item">
+                                <i data-lucide="check-circle" class="text-gray icon-size-3"></i>
+                                <input type="password" name="confirm_password" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary radius-12 just-center mt-1">بروزرسانی رمز عبور</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-tab-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.875rem 1.25rem;
+        border-radius: 1rem;
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--color-gray);
+        transition: all 0.2s;
+        width: 100%;
+        text-align: right;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+    .profile-tab-btn i {
+        width: 1.25rem;
+        height: 1.25rem;
+        transition: transform 0.2s;
+    }
+    .profile-tab-btn:hover {
+        background: var(--color-secondary);
+        color: var(--color-title);
+    }
+    .profile-tab-btn:hover i {
+        transform: scale(1.1);
+    }
+    .profile-tab-btn.active {
+        background: var(--color-primary-light);
+        color: var(--color-primary);
+    }
+    .profile-tab-btn.text-error:hover {
+        background: #fff5f5;
+        color: var(--color-error);
+    }
+    .min-h-400 { min-height: 400px; }
+</style>
