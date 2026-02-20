@@ -5,6 +5,21 @@ session_start();
 
 $action = $_GET['action'] ?? '';
 
+// Ensure phone column exists (Migration)
+try {
+    $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+    $cols = [];
+    if ($driver === 'sqlite') {
+        $stmt = $pdo->query("PRAGMA table_info(users)");
+        while ($row = $stmt->fetch()) { $cols[] = $row['name']; }
+    } else {
+        $cols = $pdo->query("DESCRIBE users")->fetchAll(PDO::FETCH_COLUMN);
+    }
+    if (!in_array('phone', $cols)) {
+        $pdo->exec("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
+    }
+} catch (Exception $e) {}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
 
@@ -33,10 +48,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $userId;
             $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
+            $_SESSION['user_phone'] = $phone;
+            $_SESSION['user_role'] = 'user';
 
-            echo json_encode(['success' => true, 'user' => ['name' => $name, 'email' => $email, 'phone' => $phone]]);
+            echo json_encode(['success' => true, 'user' => [
+                'name' => $name,
+                'email' => $email,
+                'phone' => $phone,
+                'role' => 'user'
+            ]]);
         } catch (PDOException $e) {
-            if ($e->getCode() == 23000) {
+            $sqlState = $e->errorInfo[0] ?? $e->getCode();
+            if ($sqlState == '23000') {
                 echo json_encode(['success' => false, 'message' => 'این ایمیل یا شماره موبایل قبلاً ثبت شده است.']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'خطایی در ثبت نام رخ داد.']);
