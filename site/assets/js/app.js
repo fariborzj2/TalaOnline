@@ -154,6 +154,88 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     enhanceContent();
+
+    // Modal Logic
+    const userMenuBtn = document.getElementById('user-menu-btn');
+    const authModal = document.getElementById('auth-modal');
+    const profileModal = document.getElementById('profile-modal');
+    const closeButtons = document.querySelectorAll('.close-modal');
+    const authTabs = document.getElementById('auth-tabs');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+
+    // Mock login state
+    let isLoggedIn = false;
+
+    const openModal = (modal) => {
+        modal.classList.remove('d-none');
+        document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+        authModal.classList.add('d-none');
+        profileModal.classList.add('d-none');
+        document.body.style.overflow = '';
+    };
+
+    if (userMenuBtn) {
+        userMenuBtn.addEventListener('click', () => {
+            if (isLoggedIn) {
+                openModal(profileModal);
+            } else {
+                openModal(authModal);
+            }
+        });
+    }
+
+    closeButtons.forEach(btn => btn.addEventListener('click', closeModal));
+
+    // Close on overlay click
+    [authModal, profileModal].forEach(modal => {
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+        }
+    });
+
+    if (authTabs) {
+        authTabs.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                authTabs.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                if (tab === 'login') {
+                    loginForm.classList.remove('d-none');
+                    registerForm.classList.add('d-none');
+                } else {
+                    loginForm.classList.add('d-none');
+                    registerForm.classList.remove('d-none');
+                }
+            });
+        });
+    }
+
+    // Mock login/logout
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            isLoggedIn = true;
+            closeModal();
+            alert('با موفقیت وارد شدید (شبیه‌سازی)');
+        });
+    }
+
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            isLoggedIn = false;
+            closeModal();
+            alert('از حساب خارج شدید');
+        });
+    }
+
     if (window.lucide) window.lucide.createIcons();
     document.dispatchEvent(new CustomEvent('app:content-ready'));
 });
