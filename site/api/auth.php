@@ -18,6 +18,9 @@ try {
     if (!in_array('phone', $cols)) {
         $pdo->exec("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
     }
+    if (!in_array('avatar', $cols)) {
+        $pdo->exec("ALTER TABLE users ADD COLUMN avatar VARCHAR(255)");
+    }
 } catch (Exception $e) {}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -50,12 +53,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_email'] = $email;
             $_SESSION['user_phone'] = $phone;
             $_SESSION['user_role'] = 'user';
+            $_SESSION['user_avatar'] = '';
 
             echo json_encode(['success' => true, 'user' => [
                 'name' => $name,
                 'email' => $email,
                 'phone' => $phone,
-                'role' => 'user'
+                'role' => 'user',
+                'avatar' => ''
             ]]);
         } catch (PDOException $e) {
             $sqlState = $e->errorInfo[0] ?? $e->getCode();
@@ -85,12 +90,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_phone'] = $user['phone'];
             $_SESSION['user_role'] = $user['role'];
+            $_SESSION['user_avatar'] = $user['avatar'] ?? '';
 
             echo json_encode(['success' => true, 'user' => [
                 'name' => $user['name'],
                 'email' => $user['email'],
                 'phone' => $user['phone'],
-                'role' => $user['role']
+                'role' => $user['role'],
+                'avatar' => $user['avatar'] ?? ''
             ]]);
         } else {
             echo json_encode(['success' => false, 'message' => 'ایمیل یا کلمه عبور اشتباه است.']);
@@ -109,7 +116,8 @@ elseif ($action === 'get_user') {
                 'name' => $_SESSION['user_name'],
                 'email' => $_SESSION['user_email'],
                 'phone' => $_SESSION['user_phone'] ?? '',
-                'role' => $_SESSION['user_role'] ?? 'user'
+                'role' => $_SESSION['user_role'] ?? 'user',
+                'avatar' => $_SESSION['user_avatar'] ?? ''
             ]
         ]);
     } else {

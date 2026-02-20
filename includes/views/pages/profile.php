@@ -1,7 +1,17 @@
 <div class="section">
     <div class="bg-block pd-md border radius-24 d-flex align-center gap-1-5">
-        <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border shrink-0">
-             <i data-lucide="user" class="icon-size-8 text-primary"></i>
+        <div class="pos-relative shrink-0">
+            <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden profile-avatar-container">
+                <?php if (!empty($_SESSION['user_avatar'])): ?>
+                    <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" alt="<?= htmlspecialchars($_SESSION['user_name']) ?>" class="w-100 h-100 object-cover" id="profile-avatar-img">
+                <?php else: ?>
+                    <i data-lucide="user" class="icon-size-8 text-primary" id="profile-avatar-icon"></i>
+                <?php endif; ?>
+            </div>
+            <button class="btn-avatar-upload" onclick="document.getElementById('avatar-input').click()" title="تغییر تصویر پروفایل">
+                <i data-lucide="camera" class="icon-size-3"></i>
+            </button>
+            <input type="file" id="avatar-input" class="d-none" accept="image/jpeg,image/png,image/webp">
         </div>
         <div class="grow-1">
             <h1 class="font-size-4 font-black text-title"><?= htmlspecialchars($_SESSION['user_name']) ?></h1>
@@ -163,4 +173,35 @@
         color: var(--color-error);
     }
     .min-h-400 { min-height: 400px; }
+
+    .profile-avatar-container {
+        position: relative;
+    }
+
+    .btn-avatar-upload {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background: var(--color-primary);
+        color: white;
+        border: 4px solid var(--color-bg);
+        display: flex;
+        align-items: center;
+        just-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 0;
+    }
+
+    .btn-avatar-upload:hover {
+        transform: scale(1.1);
+        background: var(--color-primary-dark);
+    }
+
+    .btn-avatar-upload i {
+        margin: auto;
+    }
 </style>
