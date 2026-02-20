@@ -326,6 +326,126 @@ document.addEventListener('DOMContentLoaded', function() {
     updateUIForAuth();
     enhanceContent();
 
+    // Profile Page Logic
+    const profileTabsContainer = document.getElementById('profile-tabs');
+    if (profileTabsContainer) {
+        const tabButtons = profileTabsContainer.querySelectorAll('.profile-tab-btn[data-tab]');
+        const tabContents = document.querySelectorAll('.profile-tab-content');
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetTab = btn.dataset.tab;
+
+                // Update active button
+                tabButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Show target content
+                tabContents.forEach(content => {
+                    if (content.id === `tab-${targetTab}`) {
+                        content.classList.remove('d-none');
+                    } else {
+                        content.classList.add('d-none');
+                    }
+                });
+
+                // Update URL for persistence
+                const url = new URL(window.location);
+                url.searchParams.set('tab', targetTab);
+                window.history.pushState({}, '', url);
+            });
+        });
+
+        // Handle initial tab from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialTab = urlParams.get('tab');
+        if (initialTab) {
+            const initialBtn = Array.from(tabButtons).find(b => b.dataset.tab === initialTab);
+            if (initialBtn) initialBtn.click();
+        }
+    }
+
+    const profileUpdateForm = document.getElementById('profile-update-form');
+    if (profileUpdateForm) {
+        profileUpdateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(profileUpdateForm);
+            const data = Object.fromEntries(formData.entries());
+            const submitBtn = profileUpdateForm.querySelector('button[type="submit"]');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'در حال ذخیره...';
+
+            try {
+                const response = await fetch('/api/profile.php?action=update_info', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                    location.reload(); // Reload to update all UI parts
+                } else {
+                    alert(result.message);
+                }
+            } catch (err) {
+                alert('خطا در ارتباط با سرور');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'ذخیره تغییرات';
+            }
+        });
+    }
+
+    const passwordUpdateForm = document.getElementById('password-update-form');
+    if (passwordUpdateForm) {
+        passwordUpdateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(passwordUpdateForm);
+            const data = Object.fromEntries(formData.entries());
+            const submitBtn = passwordUpdateForm.querySelector('button[type="submit"]');
+
+            if (data.new_password !== data.confirm_password) {
+                alert('رمز عبور جدید و تکرار آن مطابقت ندارند.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'در حال بروزرسانی...';
+
+            try {
+                const response = await fetch('/api/profile.php?action=change_password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert(result.message);
+                    passwordUpdateForm.reset();
+                } else {
+                    alert(result.message);
+                }
+            } catch (err) {
+                alert('خطا در ارتباط با سرور');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'بروزرسانی رمز عبور';
+            }
+        });
+    }
+
+    const profileLogoutBtn = document.getElementById('profile-logout-btn');
+    if (profileLogoutBtn) {
+        profileLogoutBtn.addEventListener('click', async () => {
+             if (confirm('آیا از خروج اطمینان دارید؟')) {
+                 await fetch('/api/auth.php?action=logout');
+                 location.href = '/';
+             }
+        });
+    }
+
     // Async parts
     (async () => {
         if (window.__INITIAL_STATE__ && window.__INITIAL_STATE__.platforms) {
