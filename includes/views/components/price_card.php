@@ -11,13 +11,13 @@
         </div>
     </div>
     <div class="line-height-1-5 text-right" dir="ltr">
-       <strong class="font-size-6 current-price"><?= fa_price($price) ?></strong>
-        <div class="d-flex just-end align-center gap-1 change-container">
+       <strong class="font-size-6"><?= fa_price($price) ?></strong>
+        <div class="d-flex just-end align-center gap-1">
             <?php if (isset($change_amount)): ?>
-                <span class="text-gray change-amount"><?= ($change >= 0 ? '+ ' : '- ') . fa_price(abs($change_amount)) ?></span>
+                <span class="text-gray"><?= ($change >= 0 ? '+ ' : '- ') . fa_price(abs($change_amount)) ?></span>
             <?php endif; ?>
             <span class="d-flex align-center gap-05 <?= $change >= 0 ? 'text-success' : 'text-error' ?>">
-                <span class="font-size-3 change-percent"><?= fa_num(abs($change)) ?>%</span>
+                <span class="font-size-3"><?= fa_num(abs($change)) ?>%</span>
                 <i data-lucide="<?= $change >= 0 ? 'arrow-up' : 'arrow-down' ?>" class="icon-size-1"></i>
             </span>
         </div>
@@ -27,6 +27,7 @@
 <style>
     .price-card {
         flex-basis: 175px;
+        min-width: 175px;
         flex-grow: 1;
         white-space: nowrap;
     }
