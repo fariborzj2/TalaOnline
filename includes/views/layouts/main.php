@@ -121,7 +121,7 @@
                             <!-- <div class="font-size-3 font-bold"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></div> -->
                             
                             <div class="border radius-10 pl-1 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title pointer hover-bg-secondary transition-all" id="user-menu-btn">
-                                <div class="w-8 h-8 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden shrink-0">
+                                <div class="w-6 h-6 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden shrink-0">
                                     <?php if (!empty($_SESSION['user_avatar'])): ?>
                                         <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" class="w-full h-full object-cover user-avatar-nav">
                                     <?php else: ?>
