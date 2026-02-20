@@ -138,7 +138,7 @@
                     </div>
 
                     <?php if (empty($hide_layout_h1)): ?>
-                        <h1 class="sr-only"><?= htmlspecialchars($page_title ?? 'طلا آنلاین') ?></h1>
+                        <h1 class="sr-only"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
                     <?php endif; ?>
 
                     <?= $content ?>
