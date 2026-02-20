@@ -47,7 +47,7 @@ $groups = [
     [
         'label' => 'سیستم',
         'icon' => 'settings',
-        'pages' => ['feedbacks.php', 'settings.php'],
+        'pages' => ['feedbacks.php', 'settings.php', 'users.php', 'user_edit.php'],
         'items' => [
             [
                 'label' => 'نظرات و بازخورد',
@@ -55,6 +55,7 @@ $groups = [
                 'icon' => 'message-square',
                 'badge' => $unread_count > 0 ? $unread_count : null
             ],
+            ['label' => 'مدیریت کاربران', 'url' => 'users.php', 'icon' => 'users'],
             ['label' => 'تنظیمات عمومی', 'url' => 'settings.php', 'icon' => 'sliders'],
         ]
     ]

@@ -103,6 +103,12 @@
         </div>
 
         <div class="container">
+            <script>
+                window.__AUTH_STATE__ = {
+                    isLoggedIn: <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>,
+                    user: <?= isset($_SESSION['user_id']) ? json_encode(['name' => $_SESSION['user_name'], 'email' => $_SESSION['user_email']]) : 'null' ?>
+                };
+            </script>
             <div class="center d-flex-wrap gap-md align-stretch main-layout">
                 <div class="main-content d-column gap-md grow-8 overflow-hidden basis-700" >
                     <div class="hader">
@@ -113,8 +119,11 @@
                                     <i data-lucide="bell" class="icon-size-3"></i>
                                 </div>
 
-                                <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title pointer" id="user-menu-btn">
+                                <div class="border radius-10 pl-1 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title pointer hover-bg-secondary transition-all" id="user-menu-btn">
                                     <i data-lucide="user" class="icon-size-3"></i>
+                                    <span class="font-bold font-size-1" id="user-menu-text">
+                                        <?= isset($_SESSION['user_id']) ? htmlspecialchars($_SESSION['user_name']) : 'ورود / عضویت' ?>
+                                    </span>
                                 </div>
 
                                 <div class="border radius-10 pl-1-5 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">

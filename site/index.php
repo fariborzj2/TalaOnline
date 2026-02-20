@@ -11,6 +11,7 @@ if (php_sapi_name() == 'cli-server') {
     }
 }
 
+session_start();
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/core/App.php';
 require_once __DIR__ . '/../includes/helpers.php';
