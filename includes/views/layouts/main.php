@@ -109,8 +109,12 @@
                         <div class="d-flex-wrap gap-1 just-between align-center">
                             <div class="font-size-3 font-bold"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></div>
                             <div class="d-flex gap-1">
-                                <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
+                                <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title pointer">
                                     <i data-lucide="bell" class="icon-size-3"></i>
+                                </div>
+
+                                <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title pointer" id="user-menu-btn">
+                                    <i data-lucide="user" class="icon-size-3"></i>
                                 </div>
 
                                 <div class="border radius-10 pl-1-5 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
@@ -142,6 +146,107 @@
         .asset-item { transition: transform 0.2s; }
         .asset-item:hover { transform: translateY(-2px); }
     </style>
+
+    <!-- Auth & Profile Modals -->
+    <div id="auth-modal" class="modal-overlay d-none">
+        <div class="modal-content bg-block radius-24 shadow-lg overflow-hidden basis-400">
+            <div class="pd-md border-bottom d-flex just-between align-center">
+                <div class="d-flex gap-1" id="auth-tabs">
+                    <button class="font-bold font-size-3 pointer active" data-tab="login">ورود</button>
+                    <button class="font-bold font-size-3 pointer" data-tab="register">ثبت نام</button>
+                </div>
+                <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
+            </div>
+
+            <div class="pd-md">
+                <form id="login-form" class="auth-form d-column gap-1-5">
+                    <div class="d-column gap-05">
+                        <label class="font-size-1 font-bold pr-1">ایمیل یا شماره موبایل</label>
+                        <div class="input-item">
+                            <i data-lucide="mail" class="text-gray icon-size-3"></i>
+                            <input type="text" placeholder="مثلاً example@mail.com" dir="ltr" class="text-left">
+                        </div>
+                    </div>
+                    <div class="d-column gap-05">
+                        <label class="font-size-1 font-bold pr-1">کلمه عبور</label>
+                        <div class="input-item">
+                            <i data-lucide="lock" class="text-gray icon-size-3"></i>
+                            <input type="password" placeholder="********" dir="ltr" class="text-left">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary radius-12 just-center w-full mt-1">ورود به حساب</button>
+                </form>
+
+                <form id="register-form" class="auth-form d-column gap-1-5 d-none">
+                    <div class="d-column gap-05">
+                        <label class="font-size-1 font-bold pr-1">نام و نام خانوادگی</label>
+                        <div class="input-item">
+                            <i data-lucide="user" class="text-gray icon-size-3"></i>
+                            <input type="text" placeholder="علی علوی">
+                        </div>
+                    </div>
+                    <div class="d-column gap-05">
+                        <label class="font-size-1 font-bold pr-1">ایمیل یا شماره موبایل</label>
+                        <div class="input-item">
+                            <i data-lucide="mail" class="text-gray icon-size-3"></i>
+                            <input type="text" placeholder="example@mail.com" dir="ltr" class="text-left">
+                        </div>
+                    </div>
+                    <div class="d-column gap-05">
+                        <label class="font-size-1 font-bold pr-1">کلمه عبور</label>
+                        <div class="input-item">
+                            <i data-lucide="lock" class="text-gray icon-size-3"></i>
+                            <input type="password" placeholder="********" dir="ltr" class="text-left">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary radius-12 just-center w-full mt-1">ایجاد حساب کاربری</button>
+                </form>
+
+                <div class="auth-divider my-2 relative text-center">
+                    <span class="bg-block px-1 text-gray font-size-1 relative z-10">یا ادامه با</span>
+                    <div class="divider-line absolute top-50 w-full bg-border" style="height:1px; top:50%;"></div>
+                </div>
+
+                <button class="btn btn-secondary radius-12 just-center w-full gap-1 border">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google">
+                    <span class="font-bold">ورود با گوگل</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="profile-modal" class="modal-overlay d-none">
+        <div class="modal-content bg-block radius-24 shadow-lg overflow-hidden basis-350">
+            <div class="pd-md border-bottom d-flex just-between align-center">
+                <h3 class="font-bold font-size-4">پروفایل کاربری</h3>
+                <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
+            </div>
+            <div class="pd-md d-column align-center gap-1-5">
+                <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border">
+                    <i data-lucide="user" class="icon-size-6 text-primary"></i>
+                </div>
+                <div class="text-center">
+                    <h4 class="font-bold font-size-4 text-title">کاربر مهمان</h4>
+                    <p class="text-gray font-size-2">guest@tala.online</p>
+                </div>
+
+                <div class="w-full d-column gap-1 border-top pt-1-5">
+                    <a href="#" class="d-flex align-center gap-1 pd-1 radius-12 hover-bg-secondary text-title transition-all">
+                        <i data-lucide="settings" class="icon-size-4"></i>
+                        <span class="font-bold">تنظیمات حساب</span>
+                    </a>
+                    <a href="#" class="d-flex align-center gap-1 pd-1 radius-12 hover-bg-secondary text-title transition-all">
+                        <i data-lucide="heart" class="icon-size-4"></i>
+                        <span class="font-bold">علاقه‌مندی‌ها</span>
+                    </a>
+                    <button class="d-flex align-center gap-1 pd-1 radius-12 hover-bg-error text-error w-full text-right transition-all pointer" id="logout-btn">
+                        <i data-lucide="log-out" class="icon-size-4"></i>
+                        <span class="font-bold">خروج از حساب</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <?php if (!empty($load_charts)): ?>
     <script src="/assets/js/charts.js" defer></script>
