@@ -1,4 +1,4 @@
-<a href="/<?= ($category ? $category . '/' : '') ?><?= $slug ?? $symbol ?>" class="price-card bg-block border radius-16 pd-md flex-1 min-w-160 asset-item" id="<?= $id ?? '' ?>">
+<a href="/<?= ($category ? $category . '/' : '') ?><?= $slug ?? $symbol ?>" class="price-card bg-block border radius-16 pd-md" id="<?= $id ?? '' ?>">
     <div class="d-flex just-between align-center gap-1">
         <div class="d-flex align-center gap-1 mb-1">
             <div class="w-10 h-10 border radius-12 p-05 bg-secondary d-flex align-center just-center">
@@ -23,3 +23,11 @@
         </div>
     </div>
 </a>
+
+<style>
+    .price-card {
+        flex-basis: 175px;
+        flex-grow: 1;
+        white-space: nowrap;
+    }
+</style>
