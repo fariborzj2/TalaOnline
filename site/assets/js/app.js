@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     const img = document.createElement('img');
                     img.src = authState.user.avatar;
-                    img.className = 'w-100 h-100 object-cover radius-50 user-avatar-nav';
+                    img.className = 'w-full h-full object-cover radius-50 user-avatar-nav';
                     const container = document.querySelector('#user-menu-btn .radius-50');
                     if (container) container.appendChild(img);
                 }
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (profileName) profileName.textContent = authState.user.name;
             if (profileEmail) profileEmail.textContent = authState.user.email;
             if (profileAvatar && authState.user.avatar) {
-                profileAvatar.innerHTML = `<img src="${authState.user.avatar}" class="w-100 h-100 object-cover radius-50">`;
+                profileAvatar.innerHTML = `<img src="${authState.user.avatar}" class="w-full h-full object-cover radius-50">`;
             }
         } else {
             if (userText) userText.textContent = 'ورود / عضویت';

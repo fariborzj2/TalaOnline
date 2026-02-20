@@ -1,9 +1,9 @@
 <div class="section">
     <div class="bg-block pd-md border radius-24 d-flex align-center gap-1-5">
-        <div class="pos-relative shrink-0">
-            <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden profile-avatar-container">
+        <div class="relative shrink-0">
+            <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden">
                 <?php if (!empty($_SESSION['user_avatar'])): ?>
-                    <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" alt="<?= htmlspecialchars($_SESSION['user_name']) ?>" class="w-100 h-100 object-cover" id="profile-avatar-img">
+                    <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" alt="<?= htmlspecialchars($_SESSION['user_name']) ?>" class="w-full h-full object-cover" id="profile-avatar-img">
                 <?php else: ?>
                     <i data-lucide="user" class="icon-size-8 text-primary" id="profile-avatar-icon"></i>
                 <?php endif; ?>
@@ -28,7 +28,7 @@
     <div class="d-flex-wrap gap-md align-stretch">
         <!-- Profile Sidebar -->
         <div class="basis-250 grow-1">
-            <div class="bg-block pd-md border radius-24 sticky-top" style="top: 1rem;">
+            <div class="bg-block pd-md border radius-24 is-sticky">
                 <div class="d-column gap-05" id="profile-tabs">
                     <button class="profile-tab-btn active" data-tab="overview">
                         <i data-lucide="layout-dashboard"></i> مرور کلی
@@ -39,7 +39,7 @@
                     <button class="profile-tab-btn" data-tab="security">
                         <i data-lucide="shield-check"></i> امنیت و رمز عبور
                     </button>
-                    <div class="divider my-1 bg-border" style="height: 1px;"></div>
+                    <div class="divider my-1"></div>
                     <button class="profile-tab-btn text-error" id="profile-logout-btn">
                         <i data-lucide="log-out"></i> خروج از حساب
                     </button>
@@ -139,11 +139,11 @@
     .profile-tab-btn {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        padding: 0.875rem 1.25rem;
-        border-radius: 1rem;
+        gap: 12px;
+        padding: 14px 20px;
+        border-radius: 16px;
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 14px;
         color: var(--color-gray);
         transition: all 0.2s;
         width: 100%;
@@ -153,8 +153,8 @@
         cursor: pointer;
     }
     .profile-tab-btn i {
-        width: 1.25rem;
-        height: 1.25rem;
+        width: 20px;
+        height: 20px;
         transition: transform 0.2s;
     }
     .profile-tab-btn:hover {
@@ -169,39 +169,8 @@
         color: var(--color-primary);
     }
     .profile-tab-btn.text-error:hover {
-        background: #fff5f5;
+        background: var(--bg-error);
         color: var(--color-error);
     }
     .min-h-400 { min-height: 400px; }
-
-    .profile-avatar-container {
-        position: relative;
-    }
-
-    .btn-avatar-upload {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 50%;
-        background: var(--color-primary);
-        color: white;
-        border: 4px solid var(--color-bg);
-        display: flex;
-        align-items: center;
-        just-content: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        padding: 0;
-    }
-
-    .btn-avatar-upload:hover {
-        transform: scale(1.1);
-        background: var(--color-primary-dark);
-    }
-
-    .btn-avatar-upload i {
-        margin: auto;
-    }
 </style>

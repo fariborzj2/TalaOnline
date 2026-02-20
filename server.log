@@ -1,4 +1,0 @@
-[Fri Feb 20 11:17:36 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Fri Feb 20 11:17:38 2026] [::1]:33164 Accepted
-[Fri Feb 20 11:17:38 2026] [::1]:33164 [200]: GET /api/auth.php?action=get_user
-[Fri Feb 20 11:17:38 2026] [::1]:33164 Closing
