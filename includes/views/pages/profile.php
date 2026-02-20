@@ -51,7 +51,7 @@
         <div class="basis-500 grow-9">
             <div class="bg-block pd-lg border radius-24 min-h-400">
                 <!-- Overview Tab -->
-                <div id="tab-overview" class="profile-tab-content">
+                <div id="tab-overview" class="profile-tab-content pd-md">
                     <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">خوش آمدید، <?= htmlspecialchars($_SESSION['user_name']) ?></h2>
                     <div class="grid-2 gap-1 mt-2">
                         <div class="pd-md radius-16 bg-secondary border d-column gap-05">
@@ -74,7 +74,7 @@
                 </div>
 
                 <!-- Edit Profile Tab -->
-                <div id="tab-edit" class="profile-tab-content d-none">
+                <div id="tab-edit" class="profile-tab-content d-none pd-md">
                     <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">ویرایش اطلاعات کاربری</h2>
                     <form id="profile-update-form" class="d-column gap-1-5 mt-2">
                         <div class="d-column gap-05">
@@ -103,7 +103,7 @@
                 </div>
 
                 <!-- Security Tab -->
-                <div id="tab-security" class="profile-tab-content d-none">
+                <div id="tab-security" class="profile-tab-content d-none pd-md">
                     <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">تغییر رمز عبور</h2>
                     <form id="password-update-form" class="d-column gap-1-5 mt-2">
                         <div class="d-column gap-05">

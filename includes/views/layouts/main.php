@@ -105,6 +105,7 @@
         <div class="container">
             <script>
                 window.__AUTH_STATE__ = {
+                    csrfToken: '<?= csrf_token() ?>',
                     isLoggedIn: <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>,
                     user: <?= isset($_SESSION['user_id']) ? json_encode([
                         'name' => $_SESSION['user_name'],
@@ -260,20 +261,20 @@
                     <p class="text-gray font-size-2"><?= isset($_SESSION['user_id']) ? htmlspecialchars($_SESSION['user_email']) : 'guest@tala.online' ?></p>
                 </div>
 
-                <div class="w-full d-column gap-1 border-top pt-1-5">
-                    <a href="/profile" class="d-flex align-center gap-1 pd-1 radius-12 hover-bg-secondary text-title transition-all">
+                <div class="w-full d-column gap-05 border-top pt-1-5">
+                    <a href="/profile" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
                         <i data-lucide="user" class="icon-size-4"></i>
                         <span class="font-bold">مشاهده پروفایل</span>
                     </a>
-                    <a href="/profile?tab=edit" class="d-flex align-center gap-1 pd-1 radius-12 hover-bg-secondary text-title transition-all">
+                    <a href="/profile?tab=edit" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
                         <i data-lucide="settings" class="icon-size-4"></i>
                         <span class="font-bold">تنظیمات حساب</span>
                     </a>
-                    <a href="#" class="d-flex align-center gap-1 pd-1 radius-12 hover-bg-secondary text-title transition-all">
+                    <a href="#" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
                         <i data-lucide="heart" class="icon-size-4"></i>
                         <span class="font-bold">علاقه‌مندی‌ها</span>
                     </a>
-                    <button class="d-flex align-center gap-1 pd-1 radius-12 hover-bg-error text-error w-full text-right transition-all pointer" id="logout-btn">
+                    <button class="d-flex align-center gap-1 p-1 radius-12 hover-bg-error text-error w-full text-right transition-all pointer" id="logout-btn">
                         <i data-lucide="log-out" class="icon-size-4"></i>
                         <span class="font-bold">خروج از حساب</span>
                     </button>

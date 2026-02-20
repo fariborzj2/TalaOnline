@@ -20,7 +20,7 @@
                             <i data-lucide="image" class="w-16 h-16 opacity-20"></i>
                         </div>
                         <?php endif; ?>
-                        <div class="absolute bottom-0 right-0 left-0 pd-md bg-gradient-to-t from-black/60 to-transparent">
+                        <div class="absolute bottom-0 right-0 left-0 pd-md post-overlay-gradient">
                             <span class="glass-badge radius-20">
                                 <?= htmlspecialchars($post['category_name'] ?? 'وبلاگ') ?>
                             </span>
@@ -28,8 +28,8 @@
                     </div>
 
                     <div class="d-column gap-05">
-                        <h3 class="font-bold font-size-3 text-title ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['title']) ?></h3>
-                        <p class="ellipsis-y ellipsis-y line-clampd-md font-size-1 opacity-70"><?= htmlspecialchars($post['excerpt']) ?></p>
+                        <h3 class="font-bold font-size-3 text-title ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
+                        <p class="ellipsis-y ellipsis-y line-clamp-2 font-size-1 opacity-70"><?= htmlspecialchars($post['excerpt']) ?></p>
                     </div>
 
                     <div class="d-flex just-between align-center mt-auto pt-1 border-top">
@@ -37,7 +37,7 @@
                             <i data-lucide="calendar-days" class="icon-size-2 text-primary"></i>
                             <?= jalali_time_tag($post['created_at']) ?>
                         </span>
-                        <div class="text-primary text-[11px] font-bold d-flex align-center gap-05">
+                        <div class="text-primary font-size-1 font-bold d-flex align-center gap-05">
                             مطالعه <i data-lucide="arrow-left" class="icon-size-2"></i>
                         </div>
                     </div>
@@ -85,8 +85,8 @@
                             <span class="text-subtitle opacity-30">•</span>
                             <span class="text-subtitle font-bold"><?= jalali_time_tag($post['created_at']) ?></span>
                         </div>
-                        <h3 class="font-bold font-size-4 text-title ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['title']) ?></h3>
-                        <p class="ellipsis-y ellipsis-y line-clampd-md"><?= htmlspecialchars($post['excerpt']) ?></p>
+                        <h3 class="font-bold font-size-4 text-title ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['title']) ?></h3>
+                        <p class="ellipsis-y ellipsis-y line-clamp-2"><?= htmlspecialchars($post['excerpt']) ?></p>
                     </div>
                 </a>
                 <?php endforeach; ?>
@@ -220,10 +220,9 @@
     .popular-item:hover .popular-number { opacity: 0.8; }
     .popular-item:hover h4 { color: var(--color-primary); }
 
-    .bg-gradient-to-t {
-        background-image: linear-gradient(to top, var(--tw-gradient-stops));
+    .post-overlay-gradient {
+        background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
     }
-    .from-black\/60 { --tw-gradient-from: rgb(0 0 0 / 0.6); --tw-gradient-stops: var(--tw-gradient-from), transparent; }
 
     /* Bento Grid for Featured Posts */
     .featured-posts-grid {

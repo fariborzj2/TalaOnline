@@ -14,15 +14,16 @@
             <?php endif; ?>
 
             <form action="/feedback" method="POST" class="d-flex d-column gap-2">
+                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                 <div class="d-flex-wrap gap-2">
-                    <div class="d-flex d-column gap-1 flex-grow-1 basis-300">
+                    <div class="d-flex d-column gap-1 grow-1 basis-300">
                         <label class="text-title font-bold pr-1">نام و نام خانوادگی <span class="text-error">*</span></label>
                         <div class="input-item">
                             <i data-lucide="user" class="text-gray icon-size-3"></i>
                             <input type="text" name="name" required placeholder="مثلاً علی علوی">
                         </div>
                     </div>
-                    <div class="d-flex d-column gap-1 flex-grow-1 basis-300">
+                    <div class="d-flex d-column gap-1 grow-1 basis-300">
                         <label class="text-title font-bold pr-1">آدرس ایمیل</label>
                         <div class="input-item">
                             <i data-lucide="mail" class="text-gray icon-size-3"></i>

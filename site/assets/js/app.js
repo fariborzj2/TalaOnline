@@ -152,7 +152,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
 
-    let authState = window.__AUTH_STATE__ || { isLoggedIn: false, user: null };
+    let authState = window.__AUTH_STATE__ || { isLoggedIn: false, user: null, csrfToken: '' };
+
+    const fetchWithCSRF = async (url, options = {}) => {
+        const headers = options.headers || {};
+        if (authState.csrfToken) {
+            headers['X-CSRF-Token'] = authState.csrfToken;
+        }
+        return fetch(url, { ...options, headers });
+    };
 
     const updateUIForAuth = () => {
         const userText = document.getElementById('user-menu-text');
@@ -257,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'در حال ورود...';
 
             try {
-                const response = await fetch('/api/auth.php?action=login', {
+                const response = await fetchWithCSRF('/api/auth.php?action=login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -295,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'در حال ثبت نام...';
 
             try {
-                const response = await fetch('/api/auth.php?action=register', {
+                const response = await fetchWithCSRF('/api/auth.php?action=register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, phone, password })
@@ -337,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
             try {
-                await fetch('/api/auth.php?action=logout');
+                await fetchWithCSRF('/api/auth.php?action=logout', { method: 'POST' });
                 authState.isLoggedIn = false;
                 authState.user = null;
                 closeModal();
@@ -403,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'در حال ذخیره...';
 
             try {
-                const response = await fetch('/api/profile.php?action=update_info', {
+                const response = await fetchWithCSRF('/api/profile.php?action=update_info', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -441,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'در حال بروزرسانی...';
 
             try {
-                const response = await fetch('/api/profile.php?action=change_password', {
+                const response = await fetchWithCSRF('/api/profile.php?action=change_password', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -466,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (profileLogoutBtn) {
         profileLogoutBtn.addEventListener('click', async () => {
              if (confirm('آیا از خروج اطمینان دارید؟')) {
-                 await fetch('/api/auth.php?action=logout');
+                 await fetchWithCSRF('/api/auth.php?action=logout', { method: 'POST' });
                  location.href = '/';
              }
         });
@@ -492,7 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('avatar', file);
 
             try {
-                const response = await fetch('/api/profile.php?action=update_avatar', {
+                const response = await fetchWithCSRF('/api/profile.php?action=update_avatar', {
                     method: 'POST',
                     body: formData
                 });
@@ -521,6 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (e) {}
         }
         if (window.lucide) window.lucide.createIcons();
+        window.__APP_READY__ = true;
         document.dispatchEvent(new CustomEvent('app:content-ready'));
     })();
 });

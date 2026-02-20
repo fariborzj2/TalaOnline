@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . '/../../includes/helpers.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -12,6 +13,12 @@ $user_id = $_SESSION['user_id'];
 $action = $_GET['action'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrf_token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verify_csrf_token($csrf_token)) {
+        echo json_encode(['success' => false, 'message' => 'خطای امنیتی: توکن CSRF معتبر نیست.']);
+        exit;
+    }
+
     $input_data = file_get_contents('php://input');
     $data = json_decode($input_data, true);
 

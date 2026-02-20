@@ -1,13 +1,41 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . '/../../includes/helpers.php';
 session_start();
 
 $action = $_GET['action'] ?? '';
 
-// Ensure phone column exists (Migration)
+// Ensure users table and columns exist (Migration)
 try {
     $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+    if ($driver === 'sqlite') {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
+            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+            `name` VARCHAR(255),
+            `email` VARCHAR(255) UNIQUE,
+            `phone` VARCHAR(20) UNIQUE,
+            `password` VARCHAR(255),
+            `avatar` VARCHAR(255),
+            `role` VARCHAR(20) DEFAULT 'user',
+            `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+        )");
+    } else {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
+            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `name` VARCHAR(255),
+            `email` VARCHAR(255) UNIQUE,
+            `phone` VARCHAR(20) UNIQUE,
+            `password` VARCHAR(255),
+            `avatar` VARCHAR(255),
+            `role` VARCHAR(20) DEFAULT 'user',
+            `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+    }
+
+    // Check for missing columns in case of old table
     $cols = [];
     if ($driver === 'sqlite') {
         $stmt = $pdo->query("PRAGMA table_info(users)");
@@ -24,6 +52,12 @@ try {
 } catch (Exception $e) {}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrf_token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!verify_csrf_token($csrf_token)) {
+        echo json_encode(['success' => false, 'message' => 'خطای امنیتی: توکن CSRF معتبر نیست.']);
+        exit;
+    }
+
     $data = json_decode(file_get_contents('php://input'), true);
 
     if ($action === 'register') {
