@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
     const persianNumberFormatter = new Intl.NumberFormat('fa-IR');
     const toPersianDigits = (num) => {
         if (num === null || num === undefined) return '';
@@ -142,18 +142,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
     };
-
-    if (window.__INITIAL_STATE__ && window.__INITIAL_STATE__.platforms) {
-        initSearch(window.__INITIAL_STATE__.platforms);
-    } else {
-        try {
-            const response = await fetch('/api/dashboard.php');
-            const data = await response.json();
-            if (data && data.platforms) initSearch(data.platforms);
-        } catch (e) {}
-    }
-
-    enhanceContent();
 
     // Authentication & Modal Logic
     const userMenuBtn = document.getElementById('user-menu-btn');
@@ -334,7 +322,20 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     updateUIForAuth();
+    enhanceContent();
 
-    if (window.lucide) window.lucide.createIcons();
-    document.dispatchEvent(new CustomEvent('app:content-ready'));
+    // Async parts
+    (async () => {
+        if (window.__INITIAL_STATE__ && window.__INITIAL_STATE__.platforms) {
+            initSearch(window.__INITIAL_STATE__.platforms);
+        } else {
+            try {
+                const response = await fetch('/api/dashboard.php');
+                const data = await response.json();
+                if (data && data.platforms) initSearch(data.platforms);
+            } catch (e) {}
+        }
+        if (window.lucide) window.lucide.createIcons();
+        document.dispatchEvent(new CustomEvent('app:content-ready'));
+    })();
 });
