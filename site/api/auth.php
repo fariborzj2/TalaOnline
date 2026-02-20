@@ -6,8 +6,15 @@ session_start();
 
 $action = $_GET['action'] ?? '';
 
+if ($action === 'logout') {
+    session_destroy();
+    echo json_encode(['success' => true]);
+    exit;
+}
+
 // Ensure users table and columns exist (Migration)
 try {
+    if (!$pdo) throw new Exception("Database connection not available");
     $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
     if ($driver === 'sqlite') {
         $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
@@ -137,10 +144,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['success' => false, 'message' => 'ایمیل یا کلمه عبور اشتباه است.']);
         }
     }
-}
-elseif ($action === 'logout') {
-    session_destroy();
-    echo json_encode(['success' => true]);
 }
 elseif ($action === 'get_user') {
     if (isset($_SESSION['user_id'])) {

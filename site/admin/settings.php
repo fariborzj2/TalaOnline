@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . '/../../includes/helpers.php';
 check_login();
 
 $message = '';
@@ -21,6 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $site_keywords = $_POST['site_keywords'];
     $tinymce_api_key = $_POST['tinymce_api_key'];
 
+    $google_login_enabled = isset($_POST['google_login_enabled']) ? '1' : '0';
+    $google_client_id = $_POST['google_client_id'];
+    $google_client_secret = $_POST['google_client_secret'];
+
     set_setting('api_key', $api_key);
     set_setting('api_sync_interval', $api_sync_interval);
     set_setting('home_category_limit', $home_category_limit);
@@ -28,6 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('site_description', $site_description);
     set_setting('site_keywords', $site_keywords);
     set_setting('tinymce_api_key', $tinymce_api_key);
+
+    set_setting('google_login_enabled', $google_login_enabled);
+    set_setting('google_client_id', $google_client_id);
+    set_setting('google_client_secret', $google_client_secret);
 
     if (!empty($_POST['new_password'])) {
         $hashed_pass = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
@@ -128,6 +137,53 @@ include __DIR__ . '/layout/header.php';
                 <div class="input-icon-wrapper">
                     <span class="icon"><i data-lucide="code" class="w-4 h-4"></i></span>
                     <input type="text" name="tinymce_api_key" value="<?= htmlspecialchars(get_setting('tinymce_api_key')) ?>" placeholder="no-api-key" class="ltr-input font-mono text-xs">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Login Settings -->
+    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 border border-blue-50">
+                <i data-lucide="chrome" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-black text-slate-800">تنظیمات ورود با گوگل</h2>
+                <p class="text-[10px] text-slate-400 font-bold uppercase ">Google OAuth Configuration</p>
+            </div>
+        </div>
+        <div class="p-8 space-y-6">
+            <div class="form-group flex items-center gap-4">
+                <label class="mb-0">فعال‌سازی ورود با گوگل</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="google_login_enabled" value="1" class="sr-only peer" <?= get_setting('google_login_enabled') === '1' ? 'checked' : '' ?>>
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Client ID</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="user-check" class="w-4 h-4"></i></span>
+                        <input type="text" name="google_client_id" value="<?= htmlspecialchars(get_setting('google_client_id')) ?>" class="ltr-input font-mono text-xs" placeholder="123456789-abc.apps.googleusercontent.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Client Secret</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="key-round" class="w-4 h-4"></i></span>
+                        <input type="password" name="google_client_secret" value="<?= htmlspecialchars(get_setting('google_client_secret')) ?>" class="ltr-input font-mono text-xs" placeholder="GOCSPX-...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Redirect URI (برای تنظیم در کنسول گوگل)</label>
+                <div class="input-icon-wrapper bg-slate-50">
+                    <span class="icon"><i data-lucide="link" class="w-4 h-4"></i></span>
+                    <input type="text" value="<?= get_base_url() ?>/api/google_auth.php" readonly class="ltr-input font-mono text-xs bg-transparent border-none">
                 </div>
             </div>
         </div>

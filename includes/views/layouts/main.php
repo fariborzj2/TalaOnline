@@ -111,7 +111,8 @@
                         'name' => $_SESSION['user_name'],
                         'email' => $_SESSION['user_email'],
                         'avatar' => $_SESSION['user_avatar'] ?? ''
-                    ]) : 'null' ?>
+                    ]) : 'null' ?>,
+                    googleLoginEnabled: <?= get_setting('google_login_enabled') === '1' ? 'true' : 'false' ?>
                 };
             </script>
             <div class="center d-flex-wrap gap-md align-stretch main-layout">
