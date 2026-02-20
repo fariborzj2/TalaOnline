@@ -11,9 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'register') {
         $name = $data['name'] ?? '';
         $email = $data['email'] ?? '';
+        $phone = $data['phone'] ?? '';
         $password = $data['password'] ?? '';
 
-        if (empty($name) || empty($email) || empty($password)) {
+        if (empty($name) || empty($email) || empty($phone) || empty($password)) {
             echo json_encode(['success' => false, 'message' => 'تمامی فیلدها الزامی هستند.']);
             exit;
         }
@@ -25,43 +26,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
-            $stmt->execute([$name, $email, $hashedPassword]);
+            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$name, $email, $phone, $hashedPassword]);
 
             $userId = $pdo->lastInsertId();
             $_SESSION['user_id'] = $userId;
             $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
 
-            echo json_encode(['success' => true, 'user' => ['name' => $name, 'email' => $email]]);
+            echo json_encode(['success' => true, 'user' => ['name' => $name, 'email' => $email, 'phone' => $phone]]);
         } catch (PDOException $e) {
             if ($e->getCode() == 23000) {
-                echo json_encode(['success' => false, 'message' => 'این ایمیل قبلاً ثبت شده است.']);
+                echo json_encode(['success' => false, 'message' => 'این ایمیل یا شماره موبایل قبلاً ثبت شده است.']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'خطایی در ثبت نام رخ داد.']);
             }
         }
     }
     elseif ($action === 'login') {
-        $email = $data['email'] ?? '';
+        $identifier = $data['email'] ?? ''; // This can be email or phone
         $password = $data['password'] ?? '';
 
-        if (empty($email) || empty($password)) {
-            echo json_encode(['success' => false, 'message' => 'ایمیل و کلمه عبور الزامی هستند.']);
+        if (empty($identifier) || empty($password)) {
+            echo json_encode(['success' => false, 'message' => 'ایمیل/موبایل و کلمه عبور الزامی هستند.']);
             exit;
         }
 
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->execute([$email]);
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? OR phone = ?");
+        $stmt->execute([$identifier, $identifier]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_phone'] = $user['phone'];
             $_SESSION['user_role'] = $user['role'];
 
-            echo json_encode(['success' => true, 'user' => ['name' => $user['name'], 'email' => $user['email']]]);
+            echo json_encode(['success' => true, 'user' => [
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'phone' => $user['phone'],
+                'role' => $user['role']
+            ]]);
         } else {
             echo json_encode(['success' => false, 'message' => 'ایمیل یا کلمه عبور اشتباه است.']);
         }
@@ -77,7 +84,9 @@ elseif ($action === 'get_user') {
             'isLoggedIn' => true,
             'user' => [
                 'name' => $_SESSION['user_name'],
-                'email' => $_SESSION['user_email']
+                'email' => $_SESSION['user_email'],
+                'phone' => $_SESSION['user_phone'] ?? '',
+                'role' => $_SESSION['user_role'] ?? 'user'
             ]
         ]);
     } else {
