@@ -13,6 +13,10 @@
             </button>
             <input type="file" id="avatar-input" class="d-none" accept="image/jpeg,image/png,image/webp">
         </div>
+        <div class="grow-1">
+            <h1 class="font-size-4 font-black text-title"><?= htmlspecialchars($_SESSION['user_name']) ?></h1>
+            <p class="text-gray font-size-1 mt-05"><?= htmlspecialchars($_SESSION['user_email']) ?></p>
+        </div>
     </div>
 </div>
 
