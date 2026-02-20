@@ -134,6 +134,15 @@ $router->add('/feedback', function() {
     $success = false;
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $csrf_token = $_POST['csrf_token'] ?? '';
+        if (!verify_csrf_token($csrf_token)) {
+            return View::renderPage('feedback', [
+                'page_title' => 'تماس با ما / ارسال بازخورد',
+                'message' => 'خطای امنیتی: توکن CSRF معتبر نیست.',
+                'success' => false
+            ]);
+        }
+
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $subject = $_POST['subject'] ?? '';
@@ -179,6 +188,7 @@ $router->add('/profile', function() {
 
     return View::renderPage('profile', [
         'page_title' => 'پروفایل کاربری',
+        'hide_layout_h1' => true,
         'breadcrumbs' => [
             ['name' => 'پروفایل', 'url' => '/profile']
         ]

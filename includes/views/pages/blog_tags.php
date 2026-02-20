@@ -2,7 +2,7 @@
     <div class="d-flex-wrap gap-md">
         <?php foreach ($tags as $tag): ?>
         <a href="/blog/tags/<?= urlencode($tag['slug']) ?>" class="tag-cloud-item d-column align-center gap-05 pd-md radius-16 border transition-all">
-            <div class="tag-icon-circle d-flex align-center just-center radius-full">
+            <div class="tag-icon-circle d-flex align-center just-center radius-50">
                 <i data-lucide="hash" class="w-5 h-5"></i>
             </div>
             <span class="font-bold text-title"><?= htmlspecialchars($tag['name']) ?></span>
@@ -14,7 +14,7 @@
     <?php if (empty($tags)): ?>
         <div class="bg-block border radius-20 pd-md">
             <div class="basis-100 text-center pd-xl opacity-50">
-                <i data-lucide="hash" class="w-16 h-16 mb-1 opacity-10 mx-auto"></i>
+                <i data-lucide="hash" class="w-16 h-16 mb-1 opacity-10 mg-auto"></i>
                 <p class="font-bold">هنوز برچسبی ایجاد نشده است.</p>
             </div>
         </div>

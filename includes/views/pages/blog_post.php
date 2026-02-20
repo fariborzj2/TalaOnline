@@ -58,14 +58,14 @@
                 </div>
             <?php endif; ?>
 
-            <div class="content-text font-size-2 line-height-2-5 text-title">
+            <div class="content-text line-height-2-5 text-title">
                 <div id="toc-placeholder"></div>
                 <?= $post['content'] ?>
             </div>
 
             <div class="post-footer mt-2 pt-2 border-top d-flex-wrap just-between align-center gap-md">
                 <div class="d-flex align-center gap-1">
-                    <span class="font-black text-subtitle text-[12px]">اشتراک‌گذاری:</span>
+                    <span class="font-black text-subtitle font-size-1">اشتراک‌گذاری:</span>
                     <div class="d-flex gap-05">
                         <a href="https://telegram.me/share/url?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn telegram">
                             <i data-lucide="send" class="icon-size-3"></i>
@@ -177,16 +177,16 @@
                             <?php if ($rp['thumbnail']): ?>
                             <img src="/<?= ltrim($rp['thumbnail'], '/') ?>" alt="<?= htmlspecialchars($rp['title']) ?>" class="w-full h-full object-cover transition-all duration-500 hover:scale-110">
                             <?php else: ?>
-                            <div class="w-full h-full d-flex align-center just-center text-slate-200">
+                            <div class="w-full h-full d-flex align-center just-center text-gray opacity-20">
                                 <i data-lucide="image" class="w-10 h-10"></i>
                             </div>
                             <?php endif; ?>
                         </div>
                     
-                        <h3 class="font-black text-[13px] ellipsis-y ellipsis-y line-clampd-md leading-snug text-title"><?= htmlspecialchars($rp['title']) ?></h3>
+                        <h3 class="font-black font-size-2 ellipsis-y ellipsis-y line-clamp-2 leading-snug text-title"><?= htmlspecialchars($rp['title']) ?></h3>
                         <div class="d-flex align-center gap-05 opacity-50">
                             <i data-lucide="calendar" class="icon-size-1"></i>
-                            <span class="text-[9px]"><?= jalali_time_tag($rp['created_at']) ?></span>
+                            <span class="font-size-0-8"><?= jalali_time_tag($rp['created_at']) ?></span>
                         </div>
                     </div>
                 </a>

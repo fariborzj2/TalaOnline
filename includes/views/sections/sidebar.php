@@ -57,7 +57,7 @@ if ($pdo) {
             <li>
                 <a href="<?= $cat_url ?>"
                    class="cat-link d-flex just-between align-center p-1 radius-10 transition-all <?= $is_active ? 'active' : '' ?>">
-                    <span class="font-bold text-[12px]"><?= htmlspecialchars($cat['name']) ?></span>
+                    <span class="font-bold font-size-1"><?= htmlspecialchars($cat['name']) ?></span>
                     <i data-lucide="chevron-left" class="icon-size-2 <?= $is_active ? '' : 'opacity-30' ?>"></i>
                 </a>
             </li>
