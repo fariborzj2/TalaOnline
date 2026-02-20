@@ -1,5 +1,5 @@
 <div class="section">
-    <div class="bg-block pd-md border radius-24 d-flex align-center gap-1-5">
+    <div class="bg-block pd-md border radius-16 d-flex align-center gap-1-5">
         <div class="relative shrink-0">
             <div class="w-20 h-20 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden">
                 <?php if (!empty($_SESSION['user_avatar'])): ?>
@@ -13,14 +13,6 @@
             </button>
             <input type="file" id="avatar-input" class="d-none" accept="image/jpeg,image/png,image/webp">
         </div>
-        <div class="grow-1">
-            <h1 class="font-size-4 font-black text-title"><?= htmlspecialchars($_SESSION['user_name']) ?></h1>
-            <p class="text-gray font-size-1 mt-05"><?= htmlspecialchars($_SESSION['user_email']) ?></p>
-            <div class="d-flex gap-05 mt-1">
-                 <span class="badge badge-secondary"><?= $_SESSION['user_role'] === 'admin' ? 'مدیر سیستم' : 'کاربر عادی' ?></span>
-                 <span class="badge badge-outline"><?= htmlspecialchars($_SESSION['user_phone'] ?? 'بدون شماره') ?></span>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -28,7 +20,7 @@
     <div class="d-flex-wrap gap-md align-stretch">
         <!-- Profile Sidebar -->
         <div class="basis-250 grow-1">
-            <div class="bg-block pd-md border radius-24 is-sticky">
+            <div class="bg-block pd-md border radius-16 is-sticky">
                 <div class="d-column gap-05" id="profile-tabs">
                     <button class="profile-tab-btn active" data-tab="overview">
                         <i data-lucide="layout-dashboard"></i> مرور کلی
@@ -49,7 +41,7 @@
 
         <!-- Profile Content -->
         <div class="basis-500 grow-9">
-            <div class="bg-block pd-lg border radius-24 min-h-400">
+            <div class="bg-block border radius-16 min-h-400">
                 <!-- Overview Tab -->
                 <div id="tab-overview" class="profile-tab-content pd-md">
                     <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">خوش آمدید، <?= htmlspecialchars($_SESSION['user_name']) ?></h2>
