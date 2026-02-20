@@ -38,6 +38,32 @@ if (isset($pdo) && $pdo) {
                 `setting_value` TEXT,
                 `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
             )");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `name` VARCHAR(255),
+                `email` VARCHAR(255) UNIQUE,
+                `password` VARCHAR(255),
+                `role` VARCHAR(20) DEFAULT 'user',
+                `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `prices_cache` (
+                `symbol` VARCHAR(50) PRIMARY KEY,
+                `price` REAL,
+                `change_val` REAL,
+                `change_percent` REAL,
+                `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `prices_history` (
+                `symbol` VARCHAR(50),
+                `price` REAL,
+                `high` REAL,
+                `low` REAL,
+                `date` DATE,
+                PRIMARY KEY (`symbol`, `date`)
+            )");
 
             $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_categories` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -109,6 +135,32 @@ if (isset($pdo) && $pdo) {
                 `meta_keywords` VARCHAR(255),
                 `sort_order` INT DEFAULT 0,
                 `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(255),
+                `email` VARCHAR(255) UNIQUE,
+                `password` VARCHAR(255),
+                `role` VARCHAR(20) DEFAULT 'user',
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `prices_cache` (
+                `symbol` VARCHAR(50) PRIMARY KEY,
+                `price` DECIMAL(15,2),
+                `change_val` DECIMAL(15,2),
+                `change_percent` DECIMAL(10,2),
+                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `prices_history` (
+                `symbol` VARCHAR(50),
+                `price` DECIMAL(15,2),
+                `high` DECIMAL(15,2),
+                `low` DECIMAL(15,2),
+                `date` DATE,
+                PRIMARY KEY (`symbol`, `date`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
             $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_posts` (

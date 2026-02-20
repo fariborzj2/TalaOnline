@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     enhanceContent();
 
-    // Modal Logic
+    // Authentication & Modal Logic
     const userMenuBtn = document.getElementById('user-menu-btn');
     const authModal = document.getElementById('auth-modal');
     const profileModal = document.getElementById('profile-modal');
@@ -164,23 +164,37 @@ document.addEventListener('DOMContentLoaded', async function() {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
 
-    // Mock login state
-    let isLoggedIn = false;
+    let authState = window.__AUTH_STATE__ || { isLoggedIn: false, user: null };
+
+    const updateUIForAuth = () => {
+        const userText = document.getElementById('user-menu-text');
+        if (authState.isLoggedIn && authState.user) {
+            if (userText) userText.textContent = authState.user.name;
+            const profileName = profileModal.querySelector('h4');
+            const profileEmail = profileModal.querySelector('p');
+            if (profileName) profileName.textContent = authState.user.name;
+            if (profileEmail) profileEmail.textContent = authState.user.email;
+        } else {
+            if (userText) userText.textContent = 'ورود / عضویت';
+        }
+    };
 
     const openModal = (modal) => {
+        if (!modal) return;
         modal.classList.remove('d-none');
         document.body.style.overflow = 'hidden';
     };
 
     const closeModal = () => {
-        authModal.classList.add('d-none');
-        profileModal.classList.add('d-none');
+        if (authModal) authModal.classList.add('d-none');
+        if (profileModal) profileModal.classList.add('d-none');
         document.body.style.overflow = '';
     };
 
     if (userMenuBtn) {
-        userMenuBtn.addEventListener('click', () => {
-            if (isLoggedIn) {
+        userMenuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (authState.isLoggedIn) {
                 openModal(profileModal);
             } else {
                 openModal(authModal);
@@ -190,7 +204,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     closeButtons.forEach(btn => btn.addEventListener('click', closeModal));
 
-    // Close on overlay click
     [authModal, profileModal].forEach(modal => {
         if (modal) {
             modal.addEventListener('click', (e) => {
@@ -217,24 +230,110 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // Mock login/logout
+    // Real Auth Handlers
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            isLoggedIn = true;
-            closeModal();
-            alert('با موفقیت وارد شدید (شبیه‌سازی)');
+            const email = loginForm.querySelector('input[type="text"]').value;
+            const password = loginForm.querySelector('input[type="password"]').value;
+
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'در حال ورود...';
+
+            try {
+                const response = await fetch('/api/auth.php?action=login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    authState.isLoggedIn = true;
+                    authState.user = data.user;
+                    updateUIForAuth();
+                    closeModal();
+                    alert('با موفقیت وارد شدید');
+                } else {
+                    alert(data.message || 'خطا در ورود');
+                }
+            } catch (err) {
+                alert('خطا در ارتباط با سرور');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'ورود به حساب';
+            }
+        });
+    }
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputs = registerForm.querySelectorAll('input');
+            const name = inputs[0].value;
+            const email = inputs[1].value;
+            const password = inputs[2].value;
+
+            const submitBtn = registerForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'در حال ثبت نام...';
+
+            try {
+                const response = await fetch('/api/auth.php?action=register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    authState.isLoggedIn = true;
+                    authState.user = data.user;
+                    updateUIForAuth();
+                    closeModal();
+                    alert('ثبت نام با موفقیت انجام شد');
+                } else {
+                    alert(data.message || 'خطا در ثبت نام');
+                }
+            } catch (err) {
+                alert('خطا در ارتباط با سرور');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'ایجاد حساب کاربری';
+            }
+        });
+    }
+
+    const googleBtn = document.querySelector('#auth-modal .btn-secondary');
+    if (googleBtn) {
+        googleBtn.addEventListener('click', () => {
+            alert('در حال اتصال به گوگل... (شبیه‌سازی)');
+            setTimeout(() => {
+                authState.isLoggedIn = true;
+                authState.user = { name: 'کاربر گوگل', email: 'google-user@gmail.com' };
+                updateUIForAuth();
+                closeModal();
+                alert('با موفقیت از طریق گوگل وارد شدید');
+            }, 1500);
         });
     }
 
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            isLoggedIn = false;
-            closeModal();
-            alert('از حساب خارج شدید');
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await fetch('/api/auth.php?action=logout');
+                authState.isLoggedIn = false;
+                authState.user = null;
+                closeModal();
+                alert('از حساب خارج شدید');
+                location.reload();
+            } catch (err) {
+                alert('خطا در خروج');
+            }
         });
     }
+
+    updateUIForAuth();
 
     if (window.lucide) window.lucide.createIcons();
     document.dispatchEvent(new CustomEvent('app:content-ready'));
