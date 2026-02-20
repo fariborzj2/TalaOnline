@@ -107,11 +107,7 @@
                 <div class="main-content d-column gap-md grow-8 overflow-hidden basis-700" >
                     <div class="hader">
                         <div class="d-flex-wrap gap-1 just-between align-center">
-                            <?php if (empty($hide_layout_h1)): ?>
-                                <h1 class="font-size-3"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
-                            <?php else: ?>
-                                <div class="font-size-3 font-bold"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></div>
-                            <?php endif; ?>
+                            <div class="font-size-3 font-bold"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></div>
                             <div class="d-flex gap-1">
                                 <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
                                     <i data-lucide="bell" class="icon-size-3"></i>
@@ -127,6 +123,10 @@
                             </div>
                         </div>
                     </div>
+
+                    <?php if (empty($hide_layout_h1)): ?>
+                        <h1 class="d-none"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
+                    <?php endif; ?>
 
                     <?= $content ?>
                 </div>
