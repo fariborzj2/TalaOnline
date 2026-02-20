@@ -173,14 +173,14 @@
                         <label class="font-size-1 font-bold pr-1">ایمیل یا شماره موبایل</label>
                         <div class="input-item">
                             <i data-lucide="mail" class="text-gray icon-size-3"></i>
-                            <input type="text" placeholder="مثلاً example@mail.com" dir="ltr" class="text-left">
+                            <input type="text" name="email" placeholder="مثلاً example@mail.com" dir="ltr" class="text-left" required>
                         </div>
                     </div>
                     <div class="d-column gap-05">
                         <label class="font-size-1 font-bold pr-1">کلمه عبور</label>
                         <div class="input-item">
                             <i data-lucide="lock" class="text-gray icon-size-3"></i>
-                            <input type="password" placeholder="********" dir="ltr" class="text-left">
+                            <input type="password" name="password" placeholder="********" dir="ltr" class="text-left" required>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary radius-12 just-center w-full mt-1">ورود به حساب</button>
@@ -191,28 +191,28 @@
                         <label class="font-size-1 font-bold pr-1">نام و نام خانوادگی</label>
                         <div class="input-item">
                             <i data-lucide="user" class="text-gray icon-size-3"></i>
-                            <input type="text" placeholder="علی علوی">
+                            <input type="text" name="name" placeholder="علی علوی" required>
                         </div>
                     </div>
                     <div class="d-column gap-05">
                         <label class="font-size-1 font-bold pr-1">آدرس ایمیل</label>
                         <div class="input-item">
                             <i data-lucide="mail" class="text-gray icon-size-3"></i>
-                            <input type="email" placeholder="example@mail.com" dir="ltr" class="text-left">
+                            <input type="email" name="email" placeholder="example@mail.com" dir="ltr" class="text-left" required>
                         </div>
                     </div>
                     <div class="d-column gap-05">
                         <label class="font-size-1 font-bold pr-1">شماره موبایل</label>
                         <div class="input-item">
                             <i data-lucide="phone" class="text-gray icon-size-3"></i>
-                            <input type="text" placeholder="09123456789" dir="ltr" class="text-left">
+                            <input type="text" name="phone" placeholder="09123456789" dir="ltr" class="text-left" required>
                         </div>
                     </div>
                     <div class="d-column gap-05">
                         <label class="font-size-1 font-bold pr-1">کلمه عبور</label>
                         <div class="input-item">
                             <i data-lucide="lock" class="text-gray icon-size-3"></i>
-                            <input type="password" placeholder="********" dir="ltr" class="text-left">
+                            <input type="password" name="password" placeholder="********" dir="ltr" class="text-left" required>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary radius-12 just-center w-full mt-1">ایجاد حساب کاربری</button>

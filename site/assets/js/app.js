@@ -222,8 +222,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = loginForm.querySelector('input[type="text"]').value;
-            const password = loginForm.querySelector('input[type="password"]').value;
+            const formData = new FormData(loginForm);
+            const email = formData.get('email');
+            const password = formData.get('password');
 
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
@@ -257,11 +258,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const inputs = registerForm.querySelectorAll('input');
-            const name = inputs[0].value;
-            const email = inputs[1].value;
-            const phone = inputs[2].value;
-            const password = inputs[3].value;
+            const formData = new FormData(registerForm);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const phone = formData.get('phone');
+            const password = formData.get('password');
 
             const submitBtn = registerForm.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
