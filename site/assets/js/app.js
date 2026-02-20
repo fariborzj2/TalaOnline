@@ -329,16 +329,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const googleBtn = document.querySelector('#auth-modal .btn-secondary');
     if (googleBtn) {
-        googleBtn.addEventListener('click', () => {
-            alert('در حال اتصال به گوگل... (شبیه‌سازی)');
-            setTimeout(() => {
-                authState.isLoggedIn = true;
-                authState.user = { name: 'کاربر گوگل', email: 'google-user@gmail.com' };
-                updateUIForAuth();
-                closeModal();
-                alert('با موفقیت از طریق گوگل وارد شدید');
-            }, 1500);
-        });
+        if (authState.googleLoginEnabled) {
+            googleBtn.addEventListener('click', () => {
+                window.location.href = '/api/google_auth.php?action=login';
+            });
+        } else {
+            googleBtn.classList.add('d-none');
+            const divider = googleBtn.previousElementSibling;
+            if (divider && divider.classList.contains('auth-divider')) {
+                divider.classList.add('d-none');
+            }
+        }
     }
 
     const logoutBtn = document.getElementById('logout-btn');
