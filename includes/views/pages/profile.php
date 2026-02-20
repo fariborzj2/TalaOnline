@@ -137,8 +137,8 @@
         align-items: center;
         gap: 12px;
         padding: 14px 20px;
-        border-radius: 16px;
-        font-weight: 700;
+        border-radius: 12px;
+        font-weight: 600;
         font-size: 14px;
         color: var(--color-gray);
         transition: all 0.2s;
