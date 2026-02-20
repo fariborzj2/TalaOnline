@@ -260,7 +260,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const inputs = registerForm.querySelectorAll('input');
             const name = inputs[0].value;
             const email = inputs[1].value;
-            const password = inputs[2].value;
+            const phone = inputs[2].value;
+            const password = inputs[3].value;
 
             const submitBtn = registerForm.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
@@ -270,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const response = await fetch('/api/auth.php?action=register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password })
+                    body: JSON.stringify({ name, email, phone, password })
                 });
                 const data = await response.json();
                 if (data.success) {

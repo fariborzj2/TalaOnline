@@ -138,7 +138,7 @@
                     </div>
 
                     <?php if (empty($hide_layout_h1)): ?>
-                        <h1 class="d-none"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
+                        <h1 class="sr-only"><?= htmlspecialchars($page_title ?? 'طلا آنلاین') ?></h1>
                     <?php endif; ?>
 
                     <?= $content ?>
@@ -195,10 +195,17 @@
                         </div>
                     </div>
                     <div class="d-column gap-05">
-                        <label class="font-size-1 font-bold pr-1">ایمیل یا شماره موبایل</label>
+                        <label class="font-size-1 font-bold pr-1">آدرس ایمیل</label>
                         <div class="input-item">
                             <i data-lucide="mail" class="text-gray icon-size-3"></i>
-                            <input type="text" placeholder="example@mail.com" dir="ltr" class="text-left">
+                            <input type="email" placeholder="example@mail.com" dir="ltr" class="text-left">
+                        </div>
+                    </div>
+                    <div class="d-column gap-05">
+                        <label class="font-size-1 font-bold pr-1">شماره موبایل</label>
+                        <div class="input-item">
+                            <i data-lucide="phone" class="text-gray icon-size-3"></i>
+                            <input type="text" placeholder="09123456789" dir="ltr" class="text-left">
                         </div>
                     </div>
                     <div class="d-column gap-05">

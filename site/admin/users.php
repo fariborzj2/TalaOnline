@@ -45,6 +45,7 @@ include __DIR__ . '/layout/header.php';
                     <th>شناسه</th>
                     <th>نام</th>
                     <th>ایمیل</th>
+                    <th>موبایل</th>
                     <th>نقش</th>
                     <th>تاریخ عضویت</th>
                     <th class="text-center">عملیات</th>
@@ -63,6 +64,7 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </td>
                     <td class="ltr text-right"><?= htmlspecialchars($user['email']) ?></td>
+                    <td class="ltr text-right"><?= htmlspecialchars($user['phone'] ?? '-') ?></td>
                     <td>
                         <span class="px-2 py-1 rounded text-[10px] font-black <?= $user['role'] === 'admin' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-slate-50 text-slate-400 border border-slate-100' ?>">
                             <?= $user['role'] === 'admin' ? 'مدیر' : 'کاربر' ?>

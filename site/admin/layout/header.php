@@ -42,6 +42,7 @@ if (isset($pdo) && $pdo) {
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `name` VARCHAR(255),
                 `email` VARCHAR(255) UNIQUE,
+                `phone` VARCHAR(20) UNIQUE,
                 `password` VARCHAR(255),
                 `role` VARCHAR(20) DEFAULT 'user',
                 `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -140,6 +141,7 @@ if (isset($pdo) && $pdo) {
                 `id` INT AUTO_INCREMENT PRIMARY KEY,
                 `name` VARCHAR(255),
                 `email` VARCHAR(255) UNIQUE,
+                `phone` VARCHAR(20) UNIQUE,
                 `password` VARCHAR(255),
                 `role` VARCHAR(20) DEFAULT 'user',
                 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -216,7 +218,7 @@ if (isset($pdo) && $pdo) {
         }
     } catch (Exception $e) {}
 
-    $tables_to_check = ['items', 'categories', 'settings', 'blog_categories', 'blog_posts', 'blog_tags'];
+    $tables_to_check = ['items', 'categories', 'settings', 'blog_categories', 'blog_posts', 'blog_tags', 'users'];
     foreach ($tables_to_check as $table) {
         try {
             $cols = [];
@@ -254,6 +256,12 @@ if (isset($pdo) && $pdo) {
 
             if (($table === 'items' || $table === 'categories') && !empty($cols) && !in_array('views', $cols)) {
                 $pdo->exec("ALTER TABLE $table ADD COLUMN views INTEGER DEFAULT 0");
+            }
+
+            if ($table === 'users' && !empty($cols) && !in_array('phone', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
+                // Add unique constraint if possible, but in SQLite/MySQL it depends on version for ADD COLUMN UNIQUE
+                // For simplicity, we just add the column.
             }
 
             // Data Self-Healing: Fix any existing "zero dates" that cause display issues
