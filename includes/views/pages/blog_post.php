@@ -5,10 +5,10 @@
             <div class="mb-1 d-flex align-center gap-05">
                 <i data-lucide="git-fork" class="icon-size-2"></i>
                 <?php if (!empty($all_categories)): ?>
-                    <?php foreach ($all_categories as $cat): ?>
+                    <?php foreach ($all_categories as $index => $cat): ?>
                         <a href="/blog/<?= htmlspecialchars($cat['slug']) ?>" class="text-primary">
                             <?= htmlspecialchars($cat['name']) ?>
-                        </a>,
+                        </a><?= $index < count($all_categories) - 1 ? ',' : '' ?>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <a href="/blog/<?= htmlspecialchars($post['category_slug'] ?? 'uncategorized') ?>">
