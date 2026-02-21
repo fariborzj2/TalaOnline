@@ -90,6 +90,13 @@ if (isset($_GET['code'])) {
                     $stmt->execute([$avatar, $user['id']]);
                     $user['avatar'] = $avatar;
                 }
+                // Ensure user has a username (backfill for old accounts)
+                if (empty($user['username'])) {
+                    $username = generate_unique_username($user['name'] ?: $name, $user['email'] ?: $email);
+                    $stmt = $pdo->prepare("UPDATE users SET username = ? WHERE id = ?");
+                    $stmt->execute([$username, $user['id']]);
+                    $user['username'] = $username;
+                }
             }
 
             // Log user in
