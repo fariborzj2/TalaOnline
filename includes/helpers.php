@@ -123,27 +123,45 @@ function get_current_url() {
 }
 
 /**
- * Returns optimized asset URL (prefers WebP)
+ * Returns a versioned URL for a static asset to prevent caching issues
+ */
+function versioned_asset($path) {
+    if (empty($path)) return '';
+    if (str_starts_with($path, 'http')) return $path;
+
+    $clean_path = ltrim($path, '/');
+    $full_path = __DIR__ . '/../site/' . $clean_path;
+
+    if (file_exists($full_path)) {
+        $version = filemtime($full_path);
+        return '/' . $clean_path . '?v=' . $version;
+    }
+
+    return '/' . $clean_path;
+}
+
+/**
+ * Returns optimized asset URL (prefers WebP) with cache busting
  */
 function get_asset_url($path) {
-    if (empty($path)) return '/assets/images/gold/gold.webp';
+    if (empty($path)) return versioned_asset('/assets/images/gold/gold.webp');
 
     if (str_starts_with($path, 'http')) return $path;
 
     $clean_path = ltrim($path, '/');
     $ext = pathinfo($clean_path, PATHINFO_EXTENSION);
 
-    if (strtolower($ext) === 'webp') {
-        return '/' . $clean_path;
+    $target_path = '/' . $clean_path;
+
+    if (strtolower($ext) !== 'webp') {
+        // Check if webp exists
+        $webp_path = preg_replace('/\.(png|jpg|jpeg)$/i', '.webp', $clean_path);
+        if (file_exists(__DIR__ . '/../site/' . $webp_path)) {
+            $target_path = '/' . $webp_path;
+        }
     }
 
-    // Check if webp exists
-    $webp_path = preg_replace('/\.(png|jpg|jpeg)$/i', '.webp', $clean_path);
-    if (file_exists(__DIR__ . '/../site/' . $webp_path)) {
-        return '/' . $webp_path;
-    }
-
-    return '/' . $clean_path;
+    return versioned_asset($target_path);
 }
 
 /**

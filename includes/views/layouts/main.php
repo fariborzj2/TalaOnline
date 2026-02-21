@@ -8,11 +8,11 @@
     <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? $site_keywords ?? '') ?>">
     <link rel="canonical" href="<?= $canonical_url ?? get_current_url() ?>">
 
-    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Regular.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
-    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Medium.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
-    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-SemiBold.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
-    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-Bold.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
-    <link rel="preload" href="/assets/fonts/estedad/Estedad-FD-ExtraBold.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
+    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Regular.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
+    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Medium.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
+    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-SemiBold.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
+    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Bold.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
+    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-ExtraBold.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
 
     <?php if (isset($og_image)): ?>
     <link rel="preload" href="<?= $og_image ?>" as="image" fetchpriority="high">
@@ -20,12 +20,22 @@
 
     <style>
         /* CSS Inlining for Performance */
-        <?php echo file_get_contents(__DIR__ . '/../../../site/assets/css/font.css'); ?>
-        <?php echo file_get_contents(__DIR__ . '/../../../site/assets/css/grid.css'); ?>
-        <?php echo file_get_contents(__DIR__ . '/../../../site/assets/css/style.css'); ?>
+        <?php
+        $css_files = ['font.css', 'grid.css', 'style.css'];
+        foreach ($css_files as $file) {
+            $content = file_get_contents(__DIR__ . '/../../../site/assets/css/' . $file);
+            echo preg_replace_callback('/url\((.*?)\)/', function($matches) {
+                $url = trim($matches[1], "'\"");
+                if (str_starts_with($url, '/') && !str_contains($url, '?')) {
+                    return "url('" . versioned_asset($url) . "')";
+                }
+                return $matches[0];
+            }, $content);
+        }
+        ?>
     </style>
 
-    <script src="/assets/js/vendor/lucide.js" defer></script>
+    <script src="<?= versioned_asset('/assets/js/vendor/lucide.js') ?>" defer></script>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -33,14 +43,14 @@
     <meta property="og:url" content="<?= get_current_url() ?>">
     <meta property="og:title" content="<?= htmlspecialchars($site_title ?? '') ?>">
     <meta property="og:description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
-    <meta property="og:image" content="<?= $og_image ?? (get_base_url() . "/assets/images/logo.svg") ?>">
+    <meta property="og:image" content="<?= $og_image ?? (get_base_url() . versioned_asset("/assets/images/logo.svg")) ?>">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="<?= get_current_url() ?>">
     <meta name="twitter:title" content="<?= htmlspecialchars($site_title ?? '') ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
-    <meta name="twitter:image" content="<?= $og_image ?? (get_base_url() . "/assets/images/logo.svg") ?>">
+    <meta name="twitter:image" content="<?= $og_image ?? (get_base_url() . versioned_asset("/assets/images/logo.svg")) ?>">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -92,7 +102,7 @@
     ?>
     <main class="app">
         <div class="side-menu">
-            <div class="logo"><img src="/assets/images/logo.svg" alt="طلا آنلاین" width="30" height="35"></div>
+            <div class="logo"><img src="<?= versioned_asset('/assets/images/logo.svg') ?>" alt="طلا آنلاین" width="30" height="35"></div>
             <ul>
                 <li><a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>" aria-label="خانه"><i data-lucide="house" class="w-6 h-6"></i></a></li>
                 <li><a href="/blog" class="<?= strpos($current_path, '/blog') === 0 ? 'active' : '' ?>" aria-label="وبلاگ"><i data-lucide="newspaper" class="w-6 h-6"></i></a></li>
@@ -114,6 +124,9 @@
                         'avatar' => $_SESSION['user_avatar'] ?? ''
                     ]) : 'null' ?>,
                     googleLoginEnabled: <?= get_setting('google_login_enabled') === '1' ? 'true' : 'false' ?>
+                };
+                window.__ASSET_CONFIG__ = {
+                    apexChartsUrl: '<?= versioned_asset("/assets/js/vendor/apexcharts.min.js") ?>'
                 };
             </script>
             <div class="center d-flex-wrap gap-md align-stretch main-layout">
@@ -368,8 +381,8 @@
     </div>
 
     <?php if (!empty($load_charts)): ?>
-    <script src="/assets/js/charts.js" defer></script>
+    <script src="<?= versioned_asset('/assets/js/charts.js') ?>" defer></script>
     <?php endif; ?>
-    <script src="/assets/js/app.js" defer></script>
+    <script src="<?= versioned_asset('/assets/js/app.js') ?>" defer></script>
 </body>
 </html>

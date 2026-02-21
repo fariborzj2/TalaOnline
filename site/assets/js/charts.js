@@ -5,7 +5,7 @@ const loadApexCharts = () => {
 
     apexPromise = new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = '/assets/js/vendor/apexcharts.min.js';
+        script.src = window.__ASSET_CONFIG__?.apexChartsUrl || '/assets/js/vendor/apexcharts.min.js';
         script.onload = () => resolve(window.ApexCharts);
         script.onerror = (err) => {
             apexPromise = null;
