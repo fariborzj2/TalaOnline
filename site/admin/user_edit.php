@@ -8,6 +8,7 @@ $id = $_GET['id'] ?? null;
 $user = null;
 
 if ($id) {
+    check_permission('users.edit');
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
     $stmt->execute([$id]);
     $user = $stmt->fetch();
@@ -16,7 +17,13 @@ if ($id) {
         header("Location: users.php");
         exit;
     }
+} else {
+    check_permission('users.create');
 }
+
+// Fetch all roles for the dropdown
+$stmt = $pdo->query("SELECT id, name FROM roles ORDER BY id ASC");
+$available_roles = $stmt->fetchAll();
 
 $error = '';
 
@@ -24,23 +31,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
     $phone = $_POST['phone'] ?? '';
-    $role = $_POST['role'] ?? 'user';
+    $role_id = $_POST['role_id'] ?? 0;
     $password = $_POST['password'] ?? '';
+
+    // Fetch role name for backward compatibility in the 'role' column
+    $role_name = 'user';
+    if ($role_id > 0) {
+        $stmt = $pdo->prepare("SELECT name FROM roles WHERE id = ?");
+        $stmt->execute([$role_id]);
+        $role_name = $stmt->fetchColumn() ?: 'user';
+    }
 
     try {
         if ($id) {
             if ($password) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, role = ?, password = ? WHERE id = ?");
-                $stmt->execute([$name, $email, $phone, $role, $hashed_password, $id]);
+                $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, role = ?, role_id = ?, password = ? WHERE id = ?");
+                $stmt->execute([$name, $email, $phone, $role_name, $role_id, $hashed_password, $id]);
             } else {
-                $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, role = ? WHERE id = ?");
-                $stmt->execute([$name, $email, $phone, $role, $id]);
+                $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, role = ?, role_id = ? WHERE id = ?");
+                $stmt->execute([$name, $email, $phone, $role_name, $role_id, $id]);
             }
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, role, password) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$name, $email, $phone, $role, $hashed_password]);
+            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, role, role_id, password) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$name, $email, $phone, $role_name, $role_id, $hashed_password]);
         }
 
         header("Location: users.php?message=success");
@@ -82,10 +97,14 @@ include __DIR__ . '/layout/header.php';
                     <input type="text" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required placeholder="مثلاً علی علوی">
                 </div>
                 <div class="form-group">
-                    <label>نقش کاربری</label>
-                    <select name="role">
-                        <option value="user" <?= ($user['role'] ?? '') === 'user' ? 'selected' : '' ?>>کاربر معمولی</option>
-                        <option value="admin" <?= ($user['role'] ?? '') === 'admin' ? 'selected' : '' ?>>مدیر سیستم</option>
+                    <label>نقش کاربری (سطح دسترسی)</label>
+                    <select name="role_id">
+                        <option value="0" <?= ($user['role_id'] ?? 0) == 0 ? 'selected' : '' ?>>کاربر معمولی (بدون دسترسی به پنل)</option>
+                        <?php foreach ($available_roles as $role): ?>
+                        <option value="<?= $role['id'] ?>" <?= ($user['role_id'] ?? 0) == $role['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($role['name']) ?>
+                        </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>

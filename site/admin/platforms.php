@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
-check_login();
+check_permission("platforms.view");
 
 // Schema Self-Healing
 try {

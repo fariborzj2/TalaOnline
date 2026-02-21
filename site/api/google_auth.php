@@ -95,6 +95,7 @@ if (isset($_GET['code'])) {
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_role'] = $user['role'] ?? 'user';
+            $_SESSION['user_role_id'] = $user['role_id'] ?? 0;
             $_SESSION['user_avatar'] = $user['avatar'];
 
             header("Location: /");

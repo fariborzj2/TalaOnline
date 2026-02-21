@@ -94,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_email'] = $email;
             $_SESSION['user_phone'] = $phone;
             $_SESSION['user_role'] = 'user';
+            $_SESSION['user_role_id'] = 0;
             $_SESSION['user_avatar'] = '';
 
             echo json_encode(['success' => true, 'user' => [
@@ -101,6 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'email' => $email,
                 'phone' => $phone,
                 'role' => 'user',
+                'role_id' => 0,
                 'avatar' => ''
             ]]);
         } catch (PDOException $e) {
@@ -131,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_phone'] = $user['phone'];
             $_SESSION['user_role'] = $user['role'];
+            $_SESSION['user_role_id'] = $user['role_id'] ?? 0;
             $_SESSION['user_avatar'] = $user['avatar'] ?? '';
 
             echo json_encode(['success' => true, 'user' => [
@@ -138,6 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'email' => $user['email'],
                 'phone' => $user['phone'],
                 'role' => $user['role'],
+                'role_id' => $user['role_id'] ?? 0,
                 'avatar' => $user['avatar'] ?? ''
             ]]);
         } else {

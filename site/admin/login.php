@@ -5,16 +5,21 @@ session_start();
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
+    $identifier = $_POST['username'] ?? ''; // Email or Phone
     $password = $_POST['password'] ?? '';
 
-    $stmt = $pdo->prepare("SELECT id, username, password FROM admins WHERE username = ?");
-    $stmt->execute([$username]);
-    $admin = $stmt->fetch();
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role_id > 0");
+    $stmt->execute([$identifier, $identifier]);
+    $user = $stmt->fetch();
 
-    if ($admin && password_verify($password, $admin['password'])) {
-        $_SESSION['admin_id'] = $admin['id'];
-        $_SESSION['admin_username'] = $admin['username'];
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_name'] = $user['name'];
+        $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_role'] = $user['role'];
+        $_SESSION['user_role_id'] = $user['role_id'];
+        $_SESSION['user_avatar'] = $user['avatar'] ?? '';
+
         header('Location: index.php');
         exit;
     } else {
@@ -78,12 +83,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <form method="POST" class="space-y-4 md:space-y-5">
                 <div class="space-y-1.5">
-                    <label class="block pr-1 font-black text-slate-700 text-xs">نام کاربری</label>
+                    <label class="block pr-1 font-black text-slate-700 text-xs">ایمیل یا شماره موبایل</label>
                     <div class="relative group">
                         <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
                             <i data-lucide="user" class="w-4 h-4"></i>
                         </span>
-                        <input type="text" name="username" required autocomplete="username" placeholder="Username" class="login-input ltr-input">
+                        <input type="text" name="username" required autocomplete="username" placeholder="Email or Phone" class="login-input ltr-input">
                     </div>
                 </div>
 
