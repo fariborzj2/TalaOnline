@@ -164,6 +164,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `low` VARCHAR(50),
                         `date` DATE NOT NULL,
                         UNIQUE KEY `symbol_date` (`symbol`, `date`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+                    "CREATE TABLE IF NOT EXISTS `login_attempts` (
+                        `ip` VARCHAR(45) NOT NULL,
+                        `attempt_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        INDEX `idx_login_attempts_ip_time` (`ip`, `attempt_time`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
                 ];
 
