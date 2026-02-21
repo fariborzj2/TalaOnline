@@ -38,14 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('google_client_id', $google_client_id);
     set_setting('google_client_secret', $google_client_secret);
 
-    if (!empty($_POST['new_password'])) {
-        $hashed_pass = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
-        $stmt->execute([$hashed_pass, $_SESSION['user_id']]);
-        $message .= 'تنظیمات و رمز عبور با موفقیت بروزرسانی شدند. ';
-    } else {
-        $message = 'تنظیمات با موفقیت ذخیره شد.';
-    }
+    $message = 'تنظیمات با موفقیت ذخیره شد.';
 }
 
 $api_key = get_setting('api_key');
@@ -261,28 +254,6 @@ include __DIR__ . '/layout/header.php';
                         <div id="progressBar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
                     </div>
                     <p id="progressStatus" class="text-[9px] text-slate-400 font-bold">آماده‌سازی برای پردازش...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Security Settings -->
-    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50">
-                <i data-lucide="lock" class="w-5 h-5"></i>
-            </div>
-            <div>
-                <h2 class="text-lg font-black text-slate-800">امنیت و دسترسی</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase ">Security & Access</p>
-            </div>
-        </div>
-        <div class="p-8">
-            <div class="form-group mb-0">
-                <label>تغییر رمز عبور مدیریت</label>
-                <div class="input-icon-wrapper">
-                    <span class="icon"><i data-lucide="lock" class="w-4 h-4"></i></span>
-                    <input type="password" name="new_password" placeholder="در صورت عدم نیاز به تغییر، خالی بگذارید" class="ltr-input">
                 </div>
             </div>
         </div>
