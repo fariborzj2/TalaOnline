@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $api_key = $_POST['api_key'] ?? '';
 
         if (empty($admin_user) || empty($admin_pass)) {
-            $error = 'نام کاربری و رمز عبور ادمین را وارد کنید.';
+            $error = 'ایمیل و رمز عبور ادمین را وارد کنید.';
         } else {
             $db = $_SESSION['db_config'];
             try {
@@ -68,11 +68,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Create Tables
                 $queries = [
-                    "CREATE TABLE IF NOT EXISTS `admins` (
+                    "CREATE TABLE IF NOT EXISTS `users` (
                         `id` INT AUTO_INCREMENT PRIMARY KEY,
-                        `username` VARCHAR(50) NOT NULL UNIQUE,
-                        `password` VARCHAR(255) NOT NULL,
-                        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        `name` VARCHAR(255),
+                        `email` VARCHAR(255) UNIQUE,
+                        `phone` VARCHAR(20) UNIQUE,
+                        `password` VARCHAR(255),
+                        `avatar` VARCHAR(255),
+                        `role` VARCHAR(20) DEFAULT 'user',
+                        `role_id` INT DEFAULT 0,
+                        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+                    "CREATE TABLE IF NOT EXISTS `roles` (
+                        `id` INT AUTO_INCREMENT PRIMARY KEY,
+                        `name` VARCHAR(100) NOT NULL,
+                        `slug` VARCHAR(100) NOT NULL UNIQUE,
+                        `description` TEXT,
+                        `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+                    "CREATE TABLE IF NOT EXISTS `permissions` (
+                        `id` INT AUTO_INCREMENT PRIMARY KEY,
+                        `name` VARCHAR(100) NOT NULL,
+                        `slug` VARCHAR(100) NOT NULL UNIQUE,
+                        `module` VARCHAR(100) NOT NULL,
+                        `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+                    "CREATE TABLE IF NOT EXISTS `role_permissions` (
+                        `role_id` INT,
+                        `permission_id` INT,
+                        PRIMARY KEY (`role_id`, `permission_id`),
+                        FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE,
+                        FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
                     "CREATE TABLE IF NOT EXISTS `settings` (
@@ -140,10 +170,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $pdo->exec($q);
                 }
 
-                // Insert Admin
+                // Seed Roles & Permissions
+                $pdo->exec("INSERT IGNORE INTO roles (id, name, slug, description) VALUES (1, 'مدیر کل', 'super_admin', 'دسترسی کامل به تمامی بخش‌های سیستم')");
+                $pdo->exec("INSERT IGNORE INTO roles (id, name, slug, description) VALUES (2, 'نویسنده', 'editor', 'مدیریت مطالب وبلاگ و محتوا')");
+
+                $modules = [
+                    'dashboard' => ['view' => 'مشاهده داشبورد'],
+                    'assets' => ['view' => 'مشاهده دارایی‌ها', 'create' => 'افزودن دارایی', 'edit' => 'ویرایش دارایی', 'delete' => 'حذف دارایی'],
+                    'categories' => ['view' => 'مشاهده دسته‌بندی‌ها', 'create' => 'افزودن دسته‌بندی', 'edit' => 'ویرایش دسته‌بندی', 'delete' => 'حذف دسته‌بندی'],
+                    'platforms' => ['view' => 'مشاهده پلتفرم‌ها', 'create' => 'افزودن پلتفرم', 'edit' => 'ویرایش پلتفرم', 'delete' => 'حذف پلتفرم'],
+                    'posts' => ['view' => 'مشاهده نوشته‌ها', 'create' => 'افزودن نوشته', 'edit' => 'ویرایش نوشته', 'delete' => 'حذف نوشته'],
+                    'blog_categories' => ['view' => 'مشاهده دسته‌بندی‌های وبلاگ', 'create' => 'افزودن دسته‌بندی وبلاگ', 'edit' => 'ویرایش دسته‌بندی وبلاگ', 'delete' => 'حذف دسته‌بندی وبلاگ'],
+                    'blog_tags' => ['view' => 'مشاهده برچسب‌ها', 'create' => 'افزودن برچسب', 'edit' => 'ویرایش برچسب', 'delete' => 'حذف برچسب'],
+                    'rss' => ['view' => 'مشاهده فیدهای RSS', 'create' => 'افزودن فید RSS', 'edit' => 'ویرایش فید RSS', 'delete' => 'حذف فید RSS'],
+                    'feedbacks' => ['view' => 'مشاهده بازخوردها', 'delete' => 'حذف بازخورد'],
+                    'settings' => ['view' => 'مشاهده تنظیمات', 'edit' => 'ویرایش تنظیمات'],
+                    'users' => ['view' => 'مشاهده کاربران', 'create' => 'افزودن کاربر', 'edit' => 'ویرایش کاربر', 'delete' => 'حذف کاربر'],
+                    'roles' => ['view' => 'مشاهده نقش‌ها', 'create' => 'افزودن نقش', 'edit' => 'ویرایش نقش', 'delete' => 'حذف نقش'],
+                ];
+
+                $stmt_p = $pdo->prepare("INSERT IGNORE INTO permissions (slug, name, module) VALUES (?, ?, ?)");
+                $stmt_rp = $pdo->prepare("INSERT IGNORE INTO role_permissions (role_id, permission_id) VALUES (?, ?)");
+
+                foreach ($modules as $module => $actions) {
+                    foreach ($actions as $action => $name) {
+                        $slug = "$module.$action";
+                        $stmt_p->execute([$slug, $name, $module]);
+                        $perm_id = $pdo->lastInsertId();
+                        if ($perm_id) {
+                            $stmt_rp->execute([1, $perm_id]); // Super Admin gets all
+                            if (in_array($module, ['dashboard', 'posts', 'blog_categories', 'blog_tags', 'rss'])) {
+                                $stmt_rp->execute([2, $perm_id]); // Editor
+                            }
+                        }
+                    }
+                }
+
+                // Insert Admin User
                 $hashed_pass = password_hash($admin_pass, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO admins (username, password) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password)");
-                $stmt->execute([$admin_user, $hashed_pass]);
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, role_id) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password), role_id = VALUES(role_id)");
+                $stmt->execute(['مدیر کل', $admin_user, $hashed_pass, 'admin', 1]);
 
                 // Insert Initial Settings
                 $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
@@ -454,8 +520,8 @@ $checks['Config Root Writable'] = is_writable(__DIR__ . '/../');
         <form method="POST">
             <p style="margin-bottom: 20px;">تنظیمات ادمین و API:</p>
             <div class="form-group">
-                <label>نام کاربری مدیر</label>
-                <input type="text" name="admin_user" required value="admin">
+                <label>ایمیل مدیر (برای ورود)</label>
+                <input type="email" name="admin_user" required value="admin@tala.online" dir="ltr">
             </div>
             <div class="form-group">
                 <label>رمز عبور مدیر</label>

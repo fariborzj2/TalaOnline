@@ -65,7 +65,7 @@ include __DIR__ . '/layout/header.php';
                             </span>
                         <?php endif; ?>
                     </td>
-                    <td class="text-[11px] text-slate-400"><?= jalali_date('Y/m/d', strtotime($user['created_at'])) ?></td>
+                    <td class="text-[11px] text-slate-400"><?= jalali_date($user['created_at'], 'compact') ?></td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
                             <?php if (has_permission('users.edit')): ?>
