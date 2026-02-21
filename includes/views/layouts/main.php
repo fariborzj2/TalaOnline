@@ -23,14 +23,14 @@
         <?php
         $css_files = ['font.css', 'grid.css', 'style.css'];
         foreach ($css_files as $file) {
-            $content = file_get_contents(__DIR__ . '/../../../site/assets/css/' . $file);
+            $css_file_content = file_get_contents(__DIR__ . '/../../../site/assets/css/' . $file);
             echo preg_replace_callback('/url\((.*?)\)/', function($matches) {
                 $url = trim($matches[1], "'\"");
                 if (str_starts_with($url, '/') && !str_contains($url, '?')) {
                     return "url('" . versioned_asset($url) . "')";
                 }
                 return $matches[0];
-            }, $content);
+            }, $css_file_content);
         }
         ?>
     </style>
