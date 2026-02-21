@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($_POST['new_password'])) {
         $hashed_pass = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE admins SET password = ? WHERE id = ?");
-        $stmt->execute([$hashed_pass, $_SESSION['admin_id']]);
+        $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+        $stmt->execute([$hashed_pass, $_SESSION['user_id']]);
         $message .= 'تنظیمات و رمز عبور با موفقیت بروزرسانی شدند. ';
     } else {
         $message = 'تنظیمات با موفقیت ذخیره شد.';
