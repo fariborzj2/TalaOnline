@@ -9,6 +9,21 @@
         lucide.createIcons();
     }
 
+    window.togglePassword = function(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i') || btn.querySelector('svg');
+        if (!input || !icon) return;
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            input.type = 'password';
+            icon.setAttribute('data-lucide', 'eye');
+        }
+        window.refreshIcons();
+    };
+
     // Custom File Input Label Handler
     document.addEventListener('change', function(e) {
         if (e.target.classList.contains('file-input-real')) {

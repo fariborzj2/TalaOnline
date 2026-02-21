@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         @layer components {
             .login-input {
-                @apply w-full border border-slate-200 bg-white rounded-lg px-4 py-2.5 pr-12 outline-none transition-all duration-200 font-bold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10;
+                @apply w-full border border-slate-200 bg-white rounded-lg pl-12 pr-12 py-2.5 outline-none transition-all duration-200 font-bold focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10;
             }
             .login-button {
                 @apply w-full bg-indigo-600 text-white py-2.5 rounded-lg font-black text-xs hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3;
@@ -137,7 +137,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 group-focus-within:text-indigo-600 transition-colors">
                             <i data-lucide="key-round" class="w-4 h-4"></i>
                         </span>
-                        <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" class="login-input ltr-input">
+                        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••" class="login-input ltr-input">
+                        <button type="button" onclick="togglePassword('password', this)" class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 hover:text-indigo-600 transition-colors">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -160,6 +163,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script>
     lucide.createIcons();
+
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            input.type = 'password';
+            icon.setAttribute('data-lucide', 'eye');
+        }
+        lucide.createIcons();
+    }
 </script>
 
 <style>

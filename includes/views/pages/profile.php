@@ -118,21 +118,30 @@
                             <label class="font-bold pr-1 font-size-1">رمز عبور فعلی</label>
                             <div class="input-item">
                                 <i data-lucide="lock" class="text-gray icon-size-3"></i>
-                                <input type="password" name="current_password" required>
+                                <input type="password" id="current_password" name="current_password" required>
+                                <button type="button" class="pointer text-gray hover-text-primary" onclick="togglePassword('current_password', this)">
+                                    <i data-lucide="eye" class="icon-size-3"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="d-column gap-05">
                             <label class="font-bold pr-1 font-size-1">رمز عبور جدید</label>
                             <div class="input-item">
                                 <i data-lucide="key" class="text-gray icon-size-3"></i>
-                                <input type="password" name="new_password" required>
+                                <input type="password" id="new_password" name="new_password" required>
+                                <button type="button" class="pointer text-gray hover-text-primary" onclick="togglePassword('new_password', this)">
+                                    <i data-lucide="eye" class="icon-size-3"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="d-column gap-05">
                             <label class="font-bold pr-1 font-size-1">تکرار رمز عبور جدید</label>
                             <div class="input-item">
                                 <i data-lucide="check-circle" class="text-gray icon-size-3"></i>
-                                <input type="password" name="confirm_password" required>
+                                <input type="password" id="confirm_password" name="confirm_password" required>
+                                <button type="button" class="pointer text-gray hover-text-primary" onclick="togglePassword('confirm_password', this)">
+                                    <i data-lucide="eye" class="icon-size-3"></i>
+                                </button>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary radius-12 just-center mt-1">بروزرسانی رمز عبور</button>

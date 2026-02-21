@@ -165,9 +165,14 @@ include __DIR__ . '/layout/header.php';
                 </div>
                 <div class="form-group">
                     <label>Client Secret</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="key-round" class="w-4 h-4"></i></span>
-                        <input type="password" name="google_client_secret" value="<?= htmlspecialchars(get_setting('google_client_secret')) ?>" class="ltr-input font-mono text-xs" placeholder="GOCSPX-...">
+                    <div class="relative">
+                        <div class="input-icon-wrapper">
+                            <span class="icon"><i data-lucide="key-round" class="w-4 h-4"></i></span>
+                            <input type="password" id="google_client_secret" name="google_client_secret" value="<?= htmlspecialchars(get_setting('google_client_secret')) ?>" class="ltr-input font-mono text-xs !pl-12" placeholder="GOCSPX-...">
+                        </div>
+                        <button type="button" onclick="togglePassword('google_client_secret', this)" class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 hover:text-indigo-600 transition-colors">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 </div>
             </div>
