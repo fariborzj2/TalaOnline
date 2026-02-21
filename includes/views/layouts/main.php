@@ -254,7 +254,10 @@
                         <label class="font-size-1 font-bold pr-1">کلمه عبور</label>
                         <div class="input-item">
                             <i data-lucide="lock" class="text-gray icon-size-3"></i>
-                            <input type="password" name="password" placeholder="********" dir="ltr" class="text-left" required>
+                            <input type="password" id="login-password" name="password" placeholder="********" dir="ltr" class="text-left" required>
+                            <button type="button" class="pointer text-gray hover-text-primary" onclick="togglePassword('login-password', this)">
+                                <i data-lucide="eye" class="icon-size-3"></i>
+                            </button>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary radius-12 just-center w-full mt-1">ورود به حساب</button>
@@ -286,7 +289,10 @@
                         <label class="font-size-1 font-bold pr-1">کلمه عبور</label>
                         <div class="input-item">
                             <i data-lucide="lock" class="text-gray icon-size-3"></i>
-                            <input type="password" name="password" placeholder="********" dir="ltr" class="text-left" required>
+                            <input type="password" id="register-password" name="password" placeholder="********" dir="ltr" class="text-left" required>
+                            <button type="button" class="pointer text-gray hover-text-primary" onclick="togglePassword('register-password', this)">
+                                <i data-lucide="eye" class="icon-size-3"></i>
+                            </button>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary radius-12 just-center w-full mt-1">ایجاد حساب کاربری</button>

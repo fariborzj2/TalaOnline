@@ -7,6 +7,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const formatPrice = (price) => toPersianDigits(price);
 
+    window.togglePassword = function(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i') || btn.querySelector('svg');
+        if (!input || !icon) return;
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.setAttribute('data-lucide', 'eye-off');
+        } else {
+            input.type = 'password';
+            icon.setAttribute('data-lucide', 'eye');
+        }
+        if (window.lucide) window.lucide.createIcons({ root: btn });
+    };
+
     // Custom Dialog Logic
     const dialogOverlay = document.getElementById('customDialogOverlay');
     const dialogIconContainer = document.getElementById('dialogIconContainer');

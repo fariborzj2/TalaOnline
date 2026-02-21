@@ -138,7 +138,12 @@ include __DIR__ . '/layout/header.php';
 
             <div class="form-group">
                 <label>کلمه عبور <?= $id ? '(خالی بگذارید تا تغییر نکند)' : '' ?></label>
-                <input type="password" name="password" <?= $id ? '' : 'required' ?> class="ltr text-left" placeholder="********">
+                <div class="relative">
+                    <input type="password" id="password" name="password" <?= $id ? '' : 'required' ?> class="ltr-input !pl-12" placeholder="********">
+                    <button type="button" onclick="togglePassword('password', this)" class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 hover:text-indigo-600 transition-colors">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
