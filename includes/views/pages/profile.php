@@ -15,7 +15,7 @@
         </div>
         <div class="grow-1">
             <h1 class="font-size-4 font-black text-title"><?= htmlspecialchars($_SESSION['user_name']) ?></h1>
-            <p class="text-gray font-size-1 ltr text-tight mt-05">
+            <p class="text-gray font-size-1 ltr text-right mt-05">
                 <?= htmlspecialchars($_SESSION['user_email']) ?>
                 <span class="mx-1">|</span>
                 <span class="bg-secondary px-1 radius-8 border">@<?= htmlspecialchars($_SESSION['user_username'] ?? '---') ?></span>
