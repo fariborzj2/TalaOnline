@@ -20,19 +20,104 @@
         <?php
         $css_files = ['font.css', 'grid.css', 'style.css'];
         foreach ($css_files as $file) {
-            $css_file_content = file_get_contents(__DIR__ . '/../../../site/assets/css/' . $file);
-            echo preg_replace_callback('/url\((.*?)\)/', function($matches) {
-                $url = trim($matches[1], "'\"");
-                if (str_starts_with($url, '/') && !str_contains($url, '?')) {
-                    return "url('" . versioned_asset($url) . "')";
-                }
-                return $matches[0];
-            }, $css_file_content);
+            $full_css_path = __DIR__ . '/../../../site/assets/css/' . $file;
+            if (file_exists($full_css_path)) {
+                $css_file_content = file_get_contents($full_css_path);
+                echo preg_replace_callback('/url\([\'"]?(.*?)[\'"]?\)/', function($matches) {
+                    $url = $matches[1];
+                    if (empty($url) || str_starts_with($url, 'data:') || str_starts_with($url, 'http') || str_contains($url, '?v=')) {
+                        return $matches[0];
+                    }
+
+                    $path = $url;
+                    if (!str_starts_with($url, '/')) {
+                        $path = '/assets/css/' . $url;
+                    }
+
+                    // Normalize path (resolve .. and .)
+                    $parts = explode('/', $path);
+                    $safe = [];
+                    foreach ($parts as $part) {
+                        if ($part === '.' || $part === '') continue;
+                        if ($part === '..') {
+                            array_pop($safe);
+                        } else {
+                            $safe[] = $part;
+                        }
+                    }
+                    $normalized_path = '/' . implode('/', $safe);
+
+                    return "url('" . versioned_asset($normalized_path) . "')";
+                }, $css_file_content);
+            }
         }
         ?>
-    </style>
 
-    <script src="<?= versioned_asset('/assets/js/vendor/lucide.js') ?>" defer></script>
+        /* Utility Styles */
+        .d-none { display: none !important; }
+        .asset-item { transition: transform 0.2s; }
+        .asset-item:hover { transform: translateY(-2px); }
+
+        /* Custom Dialogs */
+        .custom-dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .custom-dialog-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .custom-dialog-box {
+            background-color: var(--color-white);
+            width: 100%;
+            max-width: 340px;
+            border-radius: 24px;
+            padding: 30px;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .custom-dialog-overlay.active .custom-dialog-box {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .dialog-icon-container {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dialog-icon-container.info { background: var(--color-primary-light); color: var(--color-primary); }
+        .dialog-icon-container.success { background: var(--bg-success); color: var(--color-success); }
+        .dialog-icon-container.error { background: var(--bg-error); color: var(--color-error); }
+        .dialog-icon-container.warning { background: var(--bg-warning); color: var(--color-warning); }
+
+        .dialog-title { font-size: 1.2rem; font-weight: 800; color: var(--color-title); margin-bottom: 8px; }
+        .dialog-message { font-size: 0.9rem; color: var(--color-text); line-height: 1.6; margin-bottom: 25px; font-weight: 600; }
+        .dialog-actions { display: flex; flex-direction: column; gap: 10px; }
+        .btn-dialog { padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; transition: all 0.2s; width: 100%; border: none; cursor: pointer; }
+        .btn-dialog-primary { background: var(--color-primary); color: white; }
+        .btn-dialog-outline { background: var(--color-secondary); color: var(--color-text); border: 1px solid var(--color-border); }
+        .btn-dialog-primary:hover { opacity: 0.9; }
+    </style>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -174,72 +259,6 @@
         </div>
     </main>
 
-    <style>
-        .d-none { display: none !important; }
-        .asset-item { transition: transform 0.2s; }
-        .asset-item:hover { transform: translateY(-2px); }
-
-        /* Custom Dialogs */
-        .custom-dialog-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        .custom-dialog-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .custom-dialog-box {
-            background-color: var(--color-white);
-            width: 100%;
-            max-width: 340px;
-            border-radius: 24px;
-            padding: 30px;
-            transform: scale(0.95);
-            opacity: 0;
-            transition: all 0.3s;
-            text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.1);
-        }
-        .custom-dialog-overlay.active .custom-dialog-box {
-            transform: scale(1);
-            opacity: 1;
-        }
-        .dialog-icon-container {
-            width: 64px;
-            height: 64px;
-            border-radius: 20px;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .dialog-icon-container.info { background: var(--color-primary-light); color: var(--color-primary); }
-        .dialog-icon-container.success { background: var(--bg-success); color: var(--color-success); }
-        .dialog-icon-container.error { background: var(--bg-error); color: var(--color-error); }
-        .dialog-icon-container.warning { background: var(--bg-warning); color: var(--color-warning); }
-
-        .dialog-title { font-size: 1.2rem; font-weight: 800; color: var(--color-title); margin-bottom: 8px; }
-        .dialog-message { font-size: 0.9rem; color: var(--color-text); line-height: 1.6; margin-bottom: 25px; font-weight: 600; }
-        .dialog-actions { display: flex; flex-direction: column; gap: 10px; }
-        .btn-dialog { padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; transition: all 0.2s; width: 100%; border: none; cursor: pointer; }
-        .btn-dialog-primary { background: var(--color-primary); color: white; }
-        .btn-dialog-outline { background: var(--color-secondary); color: var(--color-text); border: 1px solid var(--color-border); }
-        .btn-dialog-primary:hover { opacity: 0.9; }
-    </style>
-
     <!-- Auth & Profile Modals -->
     <div id="auth-modal" class="modal-overlay d-none">
         <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-400">
@@ -377,9 +396,11 @@
         </div>
     </div>
 
+    <!-- Scripts -->
+    <script src="<?= versioned_asset('/assets/js/vendor/lucide.js') ?>"></script>
     <?php if (!empty($load_charts)): ?>
-    <script src="<?= versioned_asset('/assets/js/charts.js') ?>" defer></script>
+    <script src="<?= versioned_asset('/assets/js/charts.js') ?>"></script>
     <?php endif; ?>
-    <script src="<?= versioned_asset('/assets/js/app.js') ?>" defer></script>
+    <script src="<?= versioned_asset('/assets/js/app.js') ?>"></script>
 </body>
 </html>
