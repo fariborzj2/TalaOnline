@@ -25,41 +25,47 @@ $groups = [
         'label' => 'مدیریت بازار',
         'icon' => 'trending-up',
         'pages' => ['items.php', 'item_edit.php', 'categories.php', 'category_edit.php', 'platforms.php'],
-        'items' => [
-            ['label' => 'لیست دارایی‌ها', 'url' => 'items.php', 'icon' => 'coins'],
-            ['label' => 'دسته‌بندی‌ها', 'url' => 'categories.php', 'icon' => 'layers'],
-            ['label' => 'پلتفرم‌ها', 'url' => 'platforms.php', 'icon' => 'briefcase'],
-        ]
+        'items' => array_filter([
+            has_permission('assets.view') ? ['label' => 'لیست دارایی‌ها', 'url' => 'items.php', 'icon' => 'coins'] : null,
+            has_permission('categories.view') ? ['label' => 'دسته‌بندی‌ها', 'url' => 'categories.php', 'icon' => 'layers'] : null,
+            has_permission('platforms.view') ? ['label' => 'پلتفرم‌ها', 'url' => 'platforms.php', 'icon' => 'briefcase'] : null,
+        ])
     ],
     [
         'label' => 'محتوا و وبلاگ',
         'icon' => 'file-text',
         'pages' => ['posts.php', 'post_edit.php', 'blog_categories.php', 'blog_category_edit.php', 'blog_tags.php', 'blog_tag_edit.php', 'blog_settings.php', 'rss_feeds.php', 'about.php'],
-        'items' => [
-            ['label' => 'نوشته‌ها', 'url' => 'posts.php', 'icon' => 'pen-tool'],
-            ['label' => 'دسته‌بندی وبلاگ', 'url' => 'blog_categories.php', 'icon' => 'folder-open'],
-            ['label' => 'برچسب‌ها', 'url' => 'blog_tags.php', 'icon' => 'hash'],
-            ['label' => 'فیدهای RSS', 'url' => 'rss_feeds.php', 'icon' => 'rss'],
-            ['label' => 'تنظیمات وبلاگ', 'url' => 'blog_settings.php', 'icon' => 'settings-2'],
+        'items' => array_filter([
+            has_permission('posts.view') ? ['label' => 'نوشته‌ها', 'url' => 'posts.php', 'icon' => 'pen-tool'] : null,
+            has_permission('blog_categories.view') ? ['label' => 'دسته‌بندی وبلاگ', 'url' => 'blog_categories.php', 'icon' => 'folder-open'] : null,
+            has_permission('blog_tags.view') ? ['label' => 'برچسب‌ها', 'url' => 'blog_tags.php', 'icon' => 'hash'] : null,
+            has_permission('rss.view') ? ['label' => 'فیدهای RSS', 'url' => 'rss_feeds.php', 'icon' => 'rss'] : null,
+            has_permission('settings.view') ? ['label' => 'تنظیمات وبلاگ', 'url' => 'blog_settings.php', 'icon' => 'settings-2'] : null,
             ['label' => 'درباره ما', 'url' => 'about.php', 'icon' => 'info'],
-        ]
+        ])
     ],
     [
         'label' => 'سیستم',
         'icon' => 'settings',
-        'pages' => ['feedbacks.php', 'settings.php', 'users.php', 'user_edit.php'],
-        'items' => [
-            [
+        'pages' => ['feedbacks.php', 'settings.php', 'users.php', 'user_edit.php', 'roles.php', 'role_edit.php'],
+        'items' => array_filter([
+            has_permission('feedbacks.view') ? [
                 'label' => 'نظرات و بازخورد',
                 'url' => 'feedbacks.php',
                 'icon' => 'message-square',
                 'badge' => $unread_count > 0 ? $unread_count : null
-            ],
-            ['label' => 'مدیریت کاربران', 'url' => 'users.php', 'icon' => 'users'],
-            ['label' => 'تنظیمات عمومی', 'url' => 'settings.php', 'icon' => 'sliders'],
-        ]
+            ] : null,
+            has_permission('users.view') ? ['label' => 'مدیریت کاربران', 'url' => 'users.php', 'icon' => 'users'] : null,
+            has_permission('roles.view') ? ['label' => 'مدیریت نقش‌ها', 'url' => 'roles.php', 'icon' => 'shield'] : null,
+            has_permission('settings.view') ? ['label' => 'تنظیمات عمومی', 'url' => 'settings.php', 'icon' => 'sliders'] : null,
+        ])
     ]
 ];
+
+// Filter out empty groups
+$groups = array_filter($groups, function($group) {
+    return !empty($group['items']);
+});
 ?>
 
 <aside id="sidebar" class="fixed lg:sticky top-0 right-0 h-screen w-72 bg-white border-l border-slate-100 flex-shrink-0 z-50 transition-transform duration-300 translate-x-full lg:translate-x-0 overflow-y-auto">

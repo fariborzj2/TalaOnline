@@ -3,7 +3,7 @@ require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/rss_service.php';
-check_login();
+check_permission("rss.view");
 
 // Schema Self-Healing for RSS Feeds
 try {

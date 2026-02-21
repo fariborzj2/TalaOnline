@@ -2,7 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
-check_login();
+if (isset($_GET["id"])) { check_permission("posts.edit"); } else { check_permission("posts.create"); }
 
 $id = $_GET['id'] ?? null;
 $post = null;

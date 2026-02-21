@@ -2,37 +2,25 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
-check_login();
+check_permission("users.view");
 
 $page_title = 'مدیریت کاربران';
 $page_subtitle = 'مشاهده و مدیریت کاربران سیستم';
-$header_action = '<a href="user_edit.php" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن کاربر جدید</a>';
+$header_action = has_permission('users.create') ? '<a href="user_edit.php" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن کاربر جدید</a>' : '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     $id = $_POST['id'] ?? 0;
 
-    if ($action === 'delete') {
+    if ($action === 'delete' && has_permission('users.delete')) {
         $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
         $stmt->execute([$id]);
         header("Location: users.php?deleted=1");
         exit;
     }
-    elseif ($action === 'toggle_role') {
-        // Fetch current role to flip it safely
-        $stmt = $pdo->prepare("SELECT role FROM users WHERE id = ?");
-        $stmt->execute([$id]);
-        $current_role = $stmt->fetchColumn();
-
-        $new_role = $current_role === 'admin' ? 'user' : 'admin';
-        $stmt = $pdo->prepare("UPDATE users SET role = ? WHERE id = ?");
-        $stmt->execute([$new_role, $id]);
-        header("Location: users.php?updated=1");
-        exit;
-    }
 }
 
-$stmt = $pdo->query("SELECT * FROM users ORDER BY created_at DESC");
+$stmt = $pdo->query("SELECT u.*, r.name as role_name FROM users u LEFT JOIN roles r ON u.role_id = r.id ORDER BY u.created_at DESC");
 $users = $stmt->fetchAll();
 
 include __DIR__ . '/layout/header.php';
@@ -67,24 +55,26 @@ include __DIR__ . '/layout/header.php';
                     <td class="ltr text-right"><?= htmlspecialchars($user['email']) ?></td>
                     <td class="ltr text-right"><?= htmlspecialchars($user['phone'] ?? '-') ?></td>
                     <td>
-                        <span class="px-2 py-1 rounded text-[10px] font-black <?= $user['role'] === 'admin' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-slate-50 text-slate-400 border border-slate-100' ?>">
-                            <?= $user['role'] === 'admin' ? 'مدیر' : 'کاربر' ?>
-                        </span>
+                        <?php if ($user['role_id'] > 0): ?>
+                            <span class="px-2 py-1 rounded text-[10px] font-black bg-indigo-50 text-indigo-600 border border-indigo-100">
+                                <?= htmlspecialchars($user['role_name'] ?: 'مدیر') ?>
+                            </span>
+                        <?php else: ?>
+                            <span class="px-2 py-1 rounded text-[10px] font-black bg-slate-50 text-slate-400 border border-slate-100">
+                                کاربر معمولی
+                            </span>
+                        <?php endif; ?>
                     </td>
                     <td class="text-[11px] text-slate-400"><?= jalali_date('Y/m/d', strtotime($user['created_at'])) ?></td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
+                            <?php if (has_permission('users.edit')): ?>
                             <a href="user_edit.php?id=<?= $user['id'] ?>" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-amber-600 hover:border-amber-100 hover:bg-amber-50 rounded-lg transition-all flex items-center justify-center group/btn" title="ویرایش">
                                 <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                             </a>
-                            <form method="POST" class="inline">
-                                <input type="hidden" name="action" value="toggle_role">
-                                <input type="hidden" name="id" value="<?= $user['id'] ?>">
-                                <input type="hidden" name="role" value="<?= $user['role'] ?>">
-                                <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn" title="تغییر نقش">
-                                    <i data-lucide="shield" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
-                                </button>
-                            </form>
+                            <?php endif; ?>
+
+                            <?php if (has_permission('users.delete') && $user['id'] != $_SESSION['user_id']): ?>
                             <form method="POST" class="inline">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $user['id'] ?>">
@@ -92,6 +82,7 @@ include __DIR__ . '/layout/header.php';
                                     <i data-lucide="trash-2" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                                 </button>
                             </form>
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>

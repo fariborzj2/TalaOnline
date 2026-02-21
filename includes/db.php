@@ -70,6 +70,109 @@ if (file_exists($config_file)) {
             if (!in_array('avatar', $cols)) {
                 $pdo->exec("ALTER TABLE users ADD COLUMN avatar VARCHAR(255)");
             }
+
+            // Role & Permission Management Tables
+            if ($driver === 'sqlite') {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `roles` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `name` VARCHAR(100) NOT NULL,
+                    `slug` VARCHAR(100) NOT NULL UNIQUE,
+                    `description` TEXT,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `permissions` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `name` VARCHAR(100) NOT NULL,
+                    `slug` VARCHAR(100) NOT NULL UNIQUE,
+                    `module` VARCHAR(100) NOT NULL,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `role_permissions` (
+                    `role_id` INTEGER,
+                    `permission_id` INTEGER,
+                    PRIMARY KEY (`role_id`, `permission_id`),
+                    FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE,
+                    FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
+                )");
+            } else {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `roles` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `name` VARCHAR(100) NOT NULL,
+                    `slug` VARCHAR(100) NOT NULL UNIQUE,
+                    `description` TEXT,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `permissions` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `name` VARCHAR(100) NOT NULL,
+                    `slug` VARCHAR(100) NOT NULL UNIQUE,
+                    `module` VARCHAR(100) NOT NULL,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `role_permissions` (
+                    `role_id` INT,
+                    `permission_id` INT,
+                    PRIMARY KEY (`role_id`, `permission_id`),
+                    FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE,
+                    FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            }
+
+            if (!in_array('role_id', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN role_id INTEGER DEFAULT 0");
+                // Note: role_id 0 will be 'user' (no admin access)
+            }
+
+            // Seeding Default Roles & Permissions
+            $role_count = $pdo->query("SELECT COUNT(*) FROM roles")->fetchColumn();
+            if ($role_count == 0) {
+                // Create Super Admin Role
+                $pdo->exec("INSERT INTO roles (name, slug, description) VALUES ('مدیر کل', 'super_admin', 'دسترسی کامل به تمامی بخش‌های سیستم')");
+                $super_admin_id = $pdo->lastInsertId();
+
+                // Create Editor Role
+                $pdo->exec("INSERT INTO roles (name, slug, description) VALUES ('نویسنده', 'editor', 'مدیریت مطالب وبلاگ و محتوا')");
+                $editor_id = $pdo->lastInsertId();
+
+                // Define Permissions
+                $modules = [
+                    'dashboard' => ['view' => 'مشاهده داشبورد'],
+                    'assets' => ['view' => 'مشاهده دارایی‌ها', 'create' => 'افزودن دارایی', 'edit' => 'ویرایش دارایی', 'delete' => 'حذف دارایی'],
+                    'categories' => ['view' => 'مشاهده دسته‌بندی‌ها', 'create' => 'افزودن دسته‌بندی', 'edit' => 'ویرایش دسته‌بندی', 'delete' => 'حذف دسته‌بندی'],
+                    'platforms' => ['view' => 'مشاهده پلتفرم‌ها', 'create' => 'افزودن پلتفرم', 'edit' => 'ویرایش پلتفرم', 'delete' => 'حذف پلتفرم'],
+                    'posts' => ['view' => 'مشاهده نوشته‌ها', 'create' => 'افزودن نوشته', 'edit' => 'ویرایش نوشته', 'delete' => 'حذف نوشته'],
+                    'blog_categories' => ['view' => 'مشاهده دسته‌بندی‌های وبلاگ', 'create' => 'افزودن دسته‌بندی وبلاگ', 'edit' => 'ویرایش دسته‌بندی وبلاگ', 'delete' => 'حذف دسته‌بندی وبلاگ'],
+                    'blog_tags' => ['view' => 'مشاهده برچسب‌ها', 'create' => 'افزودن برچسب', 'edit' => 'ویرایش برچسب', 'delete' => 'حذف برچسب'],
+                    'rss' => ['view' => 'مشاهده فیدهای RSS', 'create' => 'افزودن فید RSS', 'edit' => 'ویرایش فید RSS', 'delete' => 'حذف فید RSS'],
+                    'feedbacks' => ['view' => 'مشاهده بازخوردها', 'delete' => 'حذف بازخورد'],
+                    'settings' => ['view' => 'مشاهده تنظیمات', 'edit' => 'ویرایش تنظیمات'],
+                    'users' => ['view' => 'مشاهده کاربران', 'create' => 'افزودن کاربر', 'edit' => 'ویرایش کاربر', 'delete' => 'حذف کاربر'],
+                    'roles' => ['view' => 'مشاهده نقش‌ها', 'create' => 'افزودن نقش', 'edit' => 'ویرایش نقش', 'delete' => 'حذف نقش'],
+                ];
+
+                $stmt = $pdo->prepare("INSERT INTO permissions (slug, name, module) VALUES (?, ?, ?)");
+                $perm_stmt = $pdo->prepare("INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)");
+
+                foreach ($modules as $module => $actions) {
+                    foreach ($actions as $action => $name) {
+                        $slug = "$module.$action";
+                        $stmt->execute([$slug, $name, $module]);
+                        $perm_id = $pdo->lastInsertId();
+
+                        // Super Admin gets everything
+                        $perm_stmt->execute([$super_admin_id, $perm_id]);
+
+                        // Editor gets content modules
+                        if (in_array($module, ['dashboard', 'posts', 'blog_categories', 'blog_tags', 'rss'])) {
+                            $perm_stmt->execute([$editor_id, $perm_id]);
+                        }
+                    }
+                }
+
+                // Migrate existing 'admin' users to super_admin role
+                $pdo->exec("UPDATE users SET role_id = $super_admin_id WHERE role = 'admin'");
+            }
+
         } catch (Exception $e) {}
     }
 } else {
