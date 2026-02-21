@@ -70,8 +70,9 @@ if (isset($_GET['code'])) {
 
             if (!$user) {
                 // Create new user
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, avatar, role) VALUES (?, ?, ?, 'user')");
-                $stmt->execute([$name, $email, $avatar]);
+                $username = generate_unique_username($name, $email);
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, avatar, username, role) VALUES (?, ?, ?, ?, 'user')");
+                $stmt->execute([$name, $email, $avatar, $username]);
                 $user_id = $pdo->lastInsertId();
 
                 $user = [
@@ -79,6 +80,7 @@ if (isset($_GET['code'])) {
                     'name' => $name,
                     'email' => $email,
                     'avatar' => $avatar,
+                    'username' => $username,
                     'role' => 'user'
                 ];
             } else {
@@ -94,6 +96,7 @@ if (isset($_GET['code'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_username'] = $user['username'] ?? '';
             $_SESSION['user_role'] = $user['role'] ?? 'user';
             $_SESSION['user_role_id'] = $user['role_id'] ?? 0;
             $_SESSION['user_avatar'] = $user['avatar'];

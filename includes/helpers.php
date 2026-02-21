@@ -162,3 +162,66 @@ function csrf_token() {
 function verify_csrf_token($token) {
     return !empty($token) && hash_equals($_SESSION['csrf_token'] ?? '', $token);
 }
+
+/**
+ * Generates a unique username for a user
+ */
+function generate_unique_username($name, $email = '') {
+    global $pdo;
+    if (!$pdo) return uniqid('user_');
+
+    // Clean name: remove non-alphanumeric, lowercase
+    $base = preg_replace('/[^a-zA-Z0-9]/', '', $name);
+    if (empty($base) && !empty($email)) {
+        $base = explode('@', $email)[0];
+        $base = preg_replace('/[^a-zA-Z0-9]/', '', $base);
+    }
+
+    if (empty($base)) {
+        $base = 'user';
+    }
+
+    $base = strtolower($base);
+    $username = $base;
+    $counter = 1;
+
+    // Check if initial base is available
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    if ($stmt->fetchColumn() == 0) {
+        return $username;
+    }
+
+    // Try adding numbers until unique
+    while (true) {
+        $username = $base . rand(100, 999);
+        $stmt->execute([$username]);
+        if ($stmt->fetchColumn() == 0) {
+            return $username;
+        }
+        if ($counter > 20) { // Safety break
+            return $base . uniqid();
+        }
+        $counter++;
+    }
+}
+
+/**
+ * Checks if a username is available (not taken by another user)
+ */
+function is_username_available($username, $exclude_user_id = null) {
+    global $pdo;
+    if (!$pdo) return false;
+
+    $sql = "SELECT COUNT(*) FROM users WHERE username = ?";
+    $params = [$username];
+
+    if ($exclude_user_id) {
+        $sql .= " AND id != ?";
+        $params[] = $exclude_user_id;
+    }
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    return $stmt->fetchColumn() == 0;
+}

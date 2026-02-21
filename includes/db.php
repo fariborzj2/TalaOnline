@@ -36,6 +36,7 @@ if (file_exists($config_file)) {
                     `name` VARCHAR(255),
                     `email` VARCHAR(255) UNIQUE,
                     `phone` VARCHAR(20) UNIQUE,
+                    `username` VARCHAR(50) UNIQUE,
                     `password` VARCHAR(255),
                     `avatar` VARCHAR(255),
                     `role` VARCHAR(20) DEFAULT 'user',
@@ -48,6 +49,7 @@ if (file_exists($config_file)) {
                     `name` VARCHAR(255),
                     `email` VARCHAR(255) UNIQUE,
                     `phone` VARCHAR(20) UNIQUE,
+                    `username` VARCHAR(50) UNIQUE,
                     `password` VARCHAR(255),
                     `avatar` VARCHAR(255),
                     `role` VARCHAR(20) DEFAULT 'user',
@@ -69,6 +71,23 @@ if (file_exists($config_file)) {
             }
             if (!in_array('avatar', $cols)) {
                 $pdo->exec("ALTER TABLE users ADD COLUMN avatar VARCHAR(255)");
+            }
+            if (!in_array('username', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN username VARCHAR(50)");
+                try {
+                    $pdo->exec("CREATE UNIQUE INDEX idx_users_username ON users(username)");
+                } catch (Exception $e) {}
+
+                // Backfill usernames for existing users
+                $stmt = $pdo->query("SELECT id, name, email FROM users WHERE username IS NULL");
+                $users_to_update = $stmt->fetchAll();
+                foreach ($users_to_update as $u) {
+                     // Simple generation if helper not loaded yet
+                     $base = preg_replace('/[^a-zA-Z0-9]/', '', $u['name'] ?? 'user');
+                     if (empty($base)) $base = 'user';
+                     $uname = strtolower($base) . $u['id'];
+                     $pdo->prepare("UPDATE users SET username = ? WHERE id = ?")->execute([$uname, $u['id']]);
+                }
             }
 
             // Role & Permission Management Tables
