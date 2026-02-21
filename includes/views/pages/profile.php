@@ -90,7 +90,7 @@
                                 <i data-lucide="at-sign" class="text-gray icon-size-3"></i>
                                 <input type="text" name="username" value="<?= htmlspecialchars($_SESSION['user_username'] ?? '') ?>" dir="ltr" class="text-left" placeholder="username" required>
                             </div>
-                            <small class="text-gray pr-1 font-size-0-8">فقط حروف، اعداد و (_) مجاز است (۳ تا ۳۰ کاراکتر).</small>
+                            <small class="text-gray pr-1 font-size-0-8">فقط حروف انگلیسی و اعداد و (_) مجاز است (۳ تا ۳۰ کاراکتر).</small>
                         </div>
                         <div class="d-column gap-05">
                             <label class="font-bold pr-1 font-size-1">آدرس ایمیل</label>
