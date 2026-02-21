@@ -6,6 +6,7 @@ check_login();
 
 $page_title = 'مدیریت کاربران';
 $page_subtitle = 'مشاهده و مدیریت کاربران سیستم';
+$header_action = '<a href="user_edit.php" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن کاربر جدید</a>';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -73,6 +74,9 @@ include __DIR__ . '/layout/header.php';
                     <td class="text-[11px] text-slate-400"><?= jalali_date('Y/m/d', strtotime($user['created_at'])) ?></td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
+                            <a href="user_edit.php?id=<?= $user['id'] ?>" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-amber-600 hover:border-amber-100 hover:bg-amber-50 rounded-lg transition-all flex items-center justify-center group/btn" title="ویرایش">
+                                <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
+                            </a>
                             <form method="POST" class="inline">
                                 <input type="hidden" name="action" value="toggle_role">
                                 <input type="hidden" name="id" value="<?= $user['id'] ?>">
@@ -81,10 +85,10 @@ include __DIR__ . '/layout/header.php';
                                     <i data-lucide="shield" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                                 </button>
                             </form>
-                            <form method="POST" class="inline" onsubmit="return confirm('آیا از حذف این کاربر اطمینان دارید؟')">
+                            <form method="POST" class="inline">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $user['id'] ?>">
-                                <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
+                                <button type="button" onclick="confirmDelete(this.form)" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
                                     <i data-lucide="trash-2" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                                 </button>
                             </form>
@@ -101,5 +105,13 @@ include __DIR__ . '/layout/header.php';
         </table>
     </div>
 </div>
+
+<script>
+async function confirmDelete(form) {
+    if (await showConfirm('آیا از حذف این کاربر اطمینان دارید؟')) {
+        form.submit();
+    }
+}
+</script>
 
 <?php include __DIR__ . '/layout/footer.php'; ?>

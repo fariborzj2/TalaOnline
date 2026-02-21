@@ -167,6 +167,66 @@
         .d-none { display: none !important; }
         .asset-item { transition: transform 0.2s; }
         .asset-item:hover { transform: translateY(-2px); }
+
+        /* Custom Dialogs */
+        .custom-dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .custom-dialog-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .custom-dialog-box {
+            background-color: var(--color-white);
+            width: 100%;
+            max-width: 340px;
+            border-radius: 24px;
+            padding: 30px;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .custom-dialog-overlay.active .custom-dialog-box {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .dialog-icon-container {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dialog-icon-container.info { background: var(--color-primary-light); color: var(--color-primary); }
+        .dialog-icon-container.success { background: var(--bg-success); color: var(--color-success); }
+        .dialog-icon-container.error { background: var(--bg-error); color: var(--color-error); }
+        .dialog-icon-container.warning { background: var(--bg-warning); color: var(--color-warning); }
+
+        .dialog-title { font-size: 1.2rem; font-weight: 800; color: var(--color-title); margin-bottom: 8px; }
+        .dialog-message { font-size: 0.9rem; color: var(--color-text); line-height: 1.6; margin-bottom: 25px; font-weight: 600; }
+        .dialog-actions { display: flex; flex-direction: column; gap: 10px; }
+        .btn-dialog { padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; transition: all 0.2s; width: 100%; border: none; cursor: pointer; }
+        .btn-dialog-primary { background: var(--color-primary); color: white; }
+        .btn-dialog-outline { background: var(--color-secondary); color: var(--color-text); border: 1px solid var(--color-border); }
+        .btn-dialog-primary:hover { opacity: 0.9; }
     </style>
 
     <!-- Auth & Profile Modals -->
@@ -281,6 +341,21 @@
                         <span class="font-bold">خروج از حساب</span>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Dialog Modal -->
+    <div id="customDialogOverlay" class="custom-dialog-overlay">
+        <div class="custom-dialog-box">
+            <div id="dialogIconContainer" class="dialog-icon-container">
+                <i id="dialogIcon" data-lucide="info" class="icon-size-6"></i>
+            </div>
+            <h3 id="dialogTitle" class="dialog-title"></h3>
+            <p id="dialogMessage" class="dialog-message"></p>
+            <div id="dialogActions" class="dialog-actions">
+                <button id="dialogConfirmBtn" class="btn-dialog btn-dialog-primary">تایید</button>
+                <button id="dialogCancelBtn" class="btn-dialog btn-dialog-outline d-none">انصراف</button>
             </div>
         </div>
     </div>
