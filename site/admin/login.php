@@ -1,29 +1,67 @@
 <?php
 require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . '/../../includes/helpers.php';
 session_start();
 
 $error = '';
 
+// Rate Limiting Configuration
+$max_attempts = 5;
+$lockout_minutes = 15;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $ip = $_SERVER['REMOTE_ADDR'];
     $identifier = $_POST['username'] ?? ''; // Email or Phone
     $password = $_POST['password'] ?? '';
+    $csrf_token = $_POST['csrf_token'] ?? '';
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role_id > 0");
-    $stmt->execute([$identifier, $identifier]);
-    $user = $stmt->fetch();
+    // 1. Verify CSRF Token
+    if (!verify_csrf_token($csrf_token)) {
+        die('Security violation: Invalid CSRF token.');
+    }
 
-    if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_role'] = $user['role'];
-        $_SESSION['user_role_id'] = $user['role_id'];
-        $_SESSION['user_avatar'] = $user['avatar'] ?? '';
-
-        header('Location: index.php');
-        exit;
+    // 2. Check Rate Limit
+    $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+    if ($driver === 'sqlite') {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM login_attempts WHERE ip = ? AND attempt_time > datetime('now', '-' || ? || ' minutes')");
+        $stmt->execute([$ip, $lockout_minutes]);
     } else {
-        $error = 'نام کاربری یا رمز عبور اشتباه است.';
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM login_attempts WHERE ip = ? AND attempt_time > DATE_SUB(NOW(), INTERVAL ? MINUTE)");
+        $stmt->execute([$ip, $lockout_minutes]);
+    }
+    $failed_attempts = $stmt->fetchColumn();
+
+    if ($failed_attempts >= $max_attempts) {
+        $error = 'تعداد تلاش‌های ناموفق بیش از حد مجاز است. لطفا ۱۵ دقیقه صبر کنید.';
+    } else {
+        // 3. Authenticate
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role_id > 0");
+        $stmt->execute([$identifier, $identifier]);
+        $user = $stmt->fetch();
+
+        if ($user && password_verify($password, $user['password'])) {
+            // Success: Clear failed attempts
+            $stmt = $pdo->prepare("DELETE FROM login_attempts WHERE ip = ?");
+            $stmt->execute([$ip]);
+
+            // Regenerate session ID to prevent fixation
+            session_regenerate_id(true);
+
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_role'] = $user['role'];
+            $_SESSION['user_role_id'] = $user['role_id'];
+            $_SESSION['user_avatar'] = $user['avatar'] ?? '';
+
+            header('Location: index.php');
+            exit;
+        } else {
+            // Failure: Log attempt
+            $stmt = $pdo->prepare("INSERT INTO login_attempts (ip) VALUES (?)");
+            $stmt->execute([$ip]);
+            $error = 'نام کاربری یا رمز عبور اشتباه است.';
+        }
     }
 }
 ?>
@@ -82,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST" class="space-y-4 md:space-y-5">
+                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                 <div class="space-y-1.5">
                     <label class="block pr-1 font-black text-slate-700 text-xs">ایمیل یا شماره موبایل</label>
                     <div class="relative group">

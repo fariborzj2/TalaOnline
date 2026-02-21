@@ -113,6 +113,13 @@ if (file_exists($config_file)) {
                     FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE,
                     FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
                 )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `login_attempts` (
+                    `ip` VARCHAR(45) NOT NULL,
+                    `attempt_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )");
+                try {
+                    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_login_attempts_ip_time ON login_attempts(ip, attempt_time)");
+                } catch (Exception $e) {}
             } else {
                 $pdo->exec("CREATE TABLE IF NOT EXISTS `roles` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -135,6 +142,13 @@ if (file_exists($config_file)) {
                     FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE,
                     FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `login_attempts` (
+                    `ip` VARCHAR(45) NOT NULL,
+                    `attempt_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                try {
+                    $pdo->exec("CREATE INDEX idx_login_attempts_ip_time ON login_attempts(ip, attempt_time)");
+                } catch (Exception $e) {}
             }
 
             if (!in_array('role_id', $cols)) {
