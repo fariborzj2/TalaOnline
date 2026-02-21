@@ -8,11 +8,8 @@
     <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? $site_keywords ?? '') ?>">
     <link rel="canonical" href="<?= $canonical_url ?? get_current_url() ?>">
 
-    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Regular.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
-    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Medium.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
-    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-SemiBold.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
-    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Bold.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
-    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-ExtraBold.woff2') ?>" as="font" type="font/woff2" crossorigin fetchpriority="high">
+    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Regular.woff2') ?>" as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Bold.woff2') ?>" as="font" type="font/woff2" crossorigin="anonymous">
 
     <?php if (isset($og_image)): ?>
     <link rel="preload" href="<?= $og_image ?>" as="image" fetchpriority="high">
