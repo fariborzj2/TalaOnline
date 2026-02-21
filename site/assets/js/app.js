@@ -7,6 +7,78 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const formatPrice = (price) => toPersianDigits(price);
 
+    // Custom Dialog Logic
+    const dialogOverlay = document.getElementById('customDialogOverlay');
+    const dialogIconContainer = document.getElementById('dialogIconContainer');
+    const dialogIcon = document.getElementById('dialogIcon');
+    const dialogTitle = document.getElementById('dialogTitle');
+    const dialogMessage = document.getElementById('dialogMessage');
+    const dialogConfirmBtn = document.getElementById('dialogConfirmBtn');
+    const dialogCancelBtn = document.getElementById('dialogCancelBtn');
+
+    window.showAlert = function(message, type = 'info', title = '') {
+        return new Promise((resolve) => {
+            if (!dialogOverlay) {
+                alert(message);
+                resolve();
+                return;
+            }
+            const types = {
+                'success': { icon: 'check-circle', class: 'success', title: title || 'موفقیت‌آمیز' },
+                'error': { icon: 'x-circle', class: 'error', title: title || 'خطا' },
+                'warning': { icon: 'alert-triangle', class: 'warning', title: title || 'هشدار' },
+                'info': { icon: 'info', class: 'info', title: title || 'پیام سیستم' }
+            };
+
+            const config = types[type] || types.info;
+
+            dialogIcon.setAttribute('data-lucide', config.icon);
+            dialogIconContainer.className = `dialog-icon-container ${config.class}`;
+            dialogTitle.innerText = config.title;
+            dialogMessage.innerText = message;
+            dialogConfirmBtn.innerText = 'متوجه شدم';
+            dialogCancelBtn.classList.add('d-none');
+
+            if (window.lucide) window.lucide.createIcons({ root: dialogIconContainer });
+            dialogOverlay.classList.add('active');
+
+            const close = () => {
+                dialogOverlay.classList.remove('active');
+                resolve();
+            };
+
+            dialogConfirmBtn.onclick = close;
+        });
+    };
+
+    window.showConfirm = function(message, title = 'آیا اطمینان دارید؟') {
+        return new Promise((resolve) => {
+            if (!dialogOverlay) {
+                resolve(confirm(message));
+                return;
+            }
+            dialogIcon.setAttribute('data-lucide', 'help-circle');
+            dialogIconContainer.className = `dialog-icon-container info`;
+            dialogTitle.innerText = title;
+            dialogMessage.innerText = message;
+            dialogConfirmBtn.innerText = 'بله، انجام شود';
+            dialogCancelBtn.classList.remove('d-none');
+
+            if (window.lucide) window.lucide.createIcons({ root: dialogIconContainer });
+            dialogOverlay.classList.add('active');
+
+            dialogConfirmBtn.onclick = () => {
+                dialogOverlay.classList.remove('active');
+                resolve(true);
+            };
+
+            dialogCancelBtn.onclick = () => {
+                dialogOverlay.classList.remove('active');
+                resolve(false);
+            };
+        });
+    };
+
     const getAssetUrl = (path) => {
         if (!path) return '/assets/images/gold/gold.webp';
         if (path.startsWith('http')) return path;
@@ -276,12 +348,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     authState.user = data.user;
                     updateUIForAuth();
                     closeModal();
-                    alert('با موفقیت وارد شدید');
+                    showAlert('با موفقیت وارد شدید', 'success');
                 } else {
-                    alert(data.message || 'خطا در ورود');
+                    showAlert(data.message || 'خطا در ورود', 'error');
                 }
             } catch (err) {
-                alert('خطا در ارتباط با سرور');
+                showAlert('خطا در ارتباط با سرور', 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'ورود به حساب';
@@ -314,12 +386,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     authState.user = data.user;
                     updateUIForAuth();
                     closeModal();
-                    alert('ثبت نام با موفقیت انجام شد');
+                    showAlert('ثبت نام با موفقیت انجام شد', 'success');
                 } else {
-                    alert(data.message || 'خطا در ثبت نام');
+                    showAlert(data.message || 'خطا در ثبت نام', 'error');
                 }
             } catch (err) {
-                alert('خطا در ارتباط با سرور');
+                showAlert('خطا در ارتباط با سرور', 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'ایجاد حساب کاربری';
@@ -350,10 +422,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 authState.isLoggedIn = false;
                 authState.user = null;
                 closeModal();
-                alert('از حساب خارج شدید');
+                await showAlert('از حساب خارج شدید', 'info');
                 location.reload();
             } catch (err) {
-                alert('خطا در خروج');
+                showAlert('خطا در خروج', 'error');
             }
         });
     }
@@ -419,13 +491,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert(result.message);
+                    await showAlert(result.message, 'success');
                     location.reload(); // Reload to update all UI parts
                 } else {
-                    alert(result.message);
+                    showAlert(result.message, 'error');
                 }
             } catch (err) {
-                alert('خطا در ارتباط با سرور');
+                showAlert('خطا در ارتباط با سرور', 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'ذخیره تغییرات';
@@ -442,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const submitBtn = passwordUpdateForm.querySelector('button[type="submit"]');
 
             if (data.new_password !== data.confirm_password) {
-                alert('رمز عبور جدید و تکرار آن مطابقت ندارند.');
+                showAlert('رمز عبور جدید و تکرار آن مطابقت ندارند.', 'warning');
                 return;
             }
 
@@ -457,13 +529,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert(result.message);
+                    showAlert(result.message, 'success');
                     passwordUpdateForm.reset();
                 } else {
-                    alert(result.message);
+                    showAlert(result.message, 'error');
                 }
             } catch (err) {
-                alert('خطا در ارتباط با سرور');
+                showAlert('خطا در ارتباط با سرور', 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'بروزرسانی رمز عبور';
@@ -474,7 +546,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileLogoutBtn = document.getElementById('profile-logout-btn');
     if (profileLogoutBtn) {
         profileLogoutBtn.addEventListener('click', async () => {
-             if (confirm('آیا از خروج اطمینان دارید؟')) {
+             if (await showConfirm('آیا از خروج اطمینان دارید؟')) {
                  await fetchWithCSRF('/api/auth.php?action=logout', { method: 'POST' });
                  location.href = '/';
              }
@@ -489,11 +561,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Validate client-side
             if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-                alert('فرمت فایل باید JPG, PNG یا WEBP باشد.');
+                showAlert('فرمت فایل باید JPG, PNG یا WEBP باشد.', 'warning');
                 return;
             }
             if (file.size > 2 * 1024 * 1024) {
-                alert('حجم فایل نباید بیشتر از ۲ مگابایت باشد.');
+                showAlert('حجم فایل نباید بیشتر از ۲ مگابایت باشد.', 'warning');
                 return;
             }
 
@@ -507,13 +579,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert(result.message);
+                    await showAlert(result.message, 'success');
                     location.reload();
                 } else {
-                    alert(result.message);
+                    showAlert(result.message, 'error');
                 }
             } catch (err) {
-                alert('خطا در بارگذاری تصویر');
+                showAlert('خطا در بارگذاری تصویر', 'error');
             }
         });
     }

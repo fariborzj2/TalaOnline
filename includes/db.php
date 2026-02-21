@@ -25,6 +25,53 @@ if (file_exists($config_file)) {
     } catch (PDOException $e) {
         // Just continue, we'll handle null $pdo in other places
     }
+
+    // Global Migration / Self-Healing
+    if ($pdo) {
+        try {
+            $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+            if ($driver === 'sqlite') {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `name` VARCHAR(255),
+                    `email` VARCHAR(255) UNIQUE,
+                    `phone` VARCHAR(20) UNIQUE,
+                    `password` VARCHAR(255),
+                    `avatar` VARCHAR(255),
+                    `role` VARCHAR(20) DEFAULT 'user',
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+            } else {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `name` VARCHAR(255),
+                    `email` VARCHAR(255) UNIQUE,
+                    `phone` VARCHAR(20) UNIQUE,
+                    `password` VARCHAR(255),
+                    `avatar` VARCHAR(255),
+                    `role` VARCHAR(20) DEFAULT 'user',
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            }
+
+            // Ensure missing columns exist
+            $cols = [];
+            if ($driver === 'sqlite') {
+                $stmt = $pdo->query("PRAGMA table_info(users)");
+                while ($row = $stmt->fetch()) { $cols[] = $row['name']; }
+            } else {
+                $cols = $pdo->query("DESCRIBE users")->fetchAll(PDO::FETCH_COLUMN);
+            }
+            if (!in_array('phone', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
+            }
+            if (!in_array('avatar', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN avatar VARCHAR(255)");
+            }
+        } catch (Exception $e) {}
+    }
 } else {
     // Redirect to installer if not in installer already
     if (strpos($_SERVER['PHP_SELF'], 'installer.php') === false) {
