@@ -31,8 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
     $phone = $_POST['phone'] ?? '';
+    $username = $_POST['username'] ?? '';
     $role_id = $_POST['role_id'] ?? 0;
     $password = $_POST['password'] ?? '';
+
+    if (!empty($username)) {
+        if (!preg_match('/^[a-zA-Z0-9_]{3,30}$/', $username)) {
+            $error = 'نام کاربری نامعتبر است.';
+        } elseif (!is_username_available($username, $id)) {
+            $error = 'این نام کاربری قبلاً انتخاب شده است.';
+        }
+    }
 
     // Fetch role name for backward compatibility in the 'role' column
     $role_name = 'user';
@@ -43,23 +52,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        if ($id) {
-            if ($password) {
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, role = ?, role_id = ?, password = ? WHERE id = ?");
-                $stmt->execute([$name, $email, $phone, $role_name, $role_id, $hashed_password, $id]);
+        if (!$error) {
+            if ($id) {
+                if ($password) {
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                    $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, username = ?, role = ?, role_id = ?, password = ? WHERE id = ?");
+                    $stmt->execute([$name, $email, $phone, $username, $role_name, $role_id, $hashed_password, $id]);
+                } else {
+                    $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, username = ?, role = ?, role_id = ? WHERE id = ?");
+                    $stmt->execute([$name, $email, $phone, $username, $role_name, $role_id, $id]);
+                }
             } else {
-                $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, role = ?, role_id = ? WHERE id = ?");
-                $stmt->execute([$name, $email, $phone, $role_name, $role_id, $id]);
+                if (empty($username)) $username = generate_unique_username($name, $email);
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, username, role, role_id, password) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$name, $email, $phone, $username, $role_name, $role_id, $hashed_password]);
             }
-        } else {
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, role, role_id, password) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$name, $email, $phone, $role_name, $role_id, $hashed_password]);
-        }
 
-        header("Location: users.php?message=success");
-        exit;
+            header("Location: users.php?message=success");
+            exit;
+        }
     } catch (Exception $e) {
         if (strpos($e->getMessage(), 'UNIQUE') !== false || strpos($e->getMessage(), '23000') !== false) {
             $error = 'ایمیل یا شماره موبایل قبلاً ثبت شده است.';
@@ -91,10 +103,14 @@ include __DIR__ . '/layout/header.php';
         <?php endif; ?>
 
         <form method="POST" class="p-8 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="form-group">
                     <label>نام و نام خانوادگی</label>
                     <input type="text" name="name" value="<?= htmlspecialchars($user['name'] ?? '') ?>" required placeholder="مثلاً علی علوی">
+                </div>
+                <div class="form-group">
+                    <label>نام کاربری (Username)</label>
+                    <input type="text" name="username" value="<?= htmlspecialchars($user['username'] ?? '') ?>" class="ltr text-left" placeholder="username">
                 </div>
                 <div class="form-group">
                     <label>نقش کاربری (سطح دسترسی)</label>

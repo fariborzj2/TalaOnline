@@ -110,6 +110,7 @@
                     user: <?= isset($_SESSION['user_id']) ? json_encode([
                         'name' => $_SESSION['user_name'],
                         'email' => $_SESSION['user_email'],
+                        'username' => $_SESSION['user_username'] ?? '',
                         'avatar' => $_SESSION['user_avatar'] ?? ''
                     ]) : 'null' ?>,
                     googleLoginEnabled: <?= get_setting('google_login_enabled') === '1' ? 'true' : 'false' ?>

@@ -15,7 +15,11 @@
         </div>
         <div class="grow-1">
             <h1 class="font-size-4 font-black text-title"><?= htmlspecialchars($_SESSION['user_name']) ?></h1>
-            <p class="text-gray font-size-1 mt-05"><?= htmlspecialchars($_SESSION['user_email']) ?></p>
+            <p class="text-gray font-size-1 mt-05">
+                <span class="bg-secondary pd-02-05 radius-8 border">@<?= htmlspecialchars($_SESSION['user_username'] ?? '---') ?></span>
+                <span class="mx-1">|</span>
+                <?= htmlspecialchars($_SESSION['user_email']) ?>
+            </p>
         </div>
     </div>
 </div>
@@ -55,8 +59,8 @@
                             <strong class="text-success font-size-2">فعال</strong>
                         </div>
                         <div class="pd-md radius-16 bg-secondary border d-column gap-05">
-                            <span class="text-gray font-size-1">نوع کاربری</span>
-                            <strong class="text-title font-size-1-5"><?= $_SESSION['user_role'] === 'admin' ? 'مدیر سیستم' : 'کاربر عادی' ?></strong>
+                            <span class="text-gray font-size-1">نام کاربری</span>
+                            <strong class="text-title font-size-1-5">@<?= htmlspecialchars($_SESSION['user_username'] ?? '---') ?></strong>
                         </div>
                         <div class="pd-md radius-16 bg-secondary border d-column gap-05">
                             <span class="text-gray font-size-1">شماره تماس</span>
@@ -79,6 +83,14 @@
                                 <i data-lucide="user" class="text-gray icon-size-3"></i>
                                 <input type="text" name="name" value="<?= htmlspecialchars($_SESSION['user_name']) ?>" required>
                             </div>
+                        </div>
+                        <div class="d-column gap-05">
+                            <label class="font-bold pr-1 font-size-1">نام کاربری (Username)</label>
+                            <div class="input-item">
+                                <i data-lucide="at-sign" class="text-gray icon-size-3"></i>
+                                <input type="text" name="username" value="<?= htmlspecialchars($_SESSION['user_username'] ?? '') ?>" dir="ltr" class="text-left" placeholder="username" required>
+                            </div>
+                            <small class="text-gray pr-1 font-size-0-8">فقط حروف، اعداد و (_) مجاز است (۳ تا ۳۰ کاراکتر).</small>
                         </div>
                         <div class="d-column gap-05">
                             <label class="font-bold pr-1 font-size-1">آدرس ایمیل</label>

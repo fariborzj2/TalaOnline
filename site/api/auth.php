@@ -22,6 +22,7 @@ try {
             `name` VARCHAR(255),
             `email` VARCHAR(255) UNIQUE,
             `phone` VARCHAR(20) UNIQUE,
+            `username` VARCHAR(50) UNIQUE,
             `password` VARCHAR(255),
             `avatar` VARCHAR(255),
             `role` VARCHAR(20) DEFAULT 'user',
@@ -34,6 +35,7 @@ try {
             `name` VARCHAR(255),
             `email` VARCHAR(255) UNIQUE,
             `phone` VARCHAR(20) UNIQUE,
+            `username` VARCHAR(50) UNIQUE,
             `password` VARCHAR(255),
             `avatar` VARCHAR(255),
             `role` VARCHAR(20) DEFAULT 'user',
@@ -55,6 +57,12 @@ try {
     }
     if (!in_array('avatar', $cols)) {
         $pdo->exec("ALTER TABLE users ADD COLUMN avatar VARCHAR(255)");
+    }
+    if (!in_array('username', $cols)) {
+        $pdo->exec("ALTER TABLE users ADD COLUMN username VARCHAR(50)");
+        try {
+            $pdo->exec("CREATE UNIQUE INDEX idx_users_username ON users(username)");
+        } catch (Exception $e) {}
     }
 } catch (Exception $e) {}
 
@@ -84,14 +92,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         try {
+            $username = generate_unique_username($name, $email);
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, password) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$name, $email, $phone, $hashedPassword]);
+            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, username, password) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$name, $email, $phone, $username, $hashedPassword]);
 
             $userId = $pdo->lastInsertId();
             $_SESSION['user_id'] = $userId;
             $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
+            $_SESSION['user_username'] = $username;
             $_SESSION['user_phone'] = $phone;
             $_SESSION['user_role'] = 'user';
             $_SESSION['user_role_id'] = 0;
@@ -101,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'name' => $name,
                 'email' => $email,
                 'phone' => $phone,
+                'username' => $username,
                 'role' => 'user',
                 'role_id' => 0,
                 'avatar' => ''
@@ -132,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_phone'] = $user['phone'];
+            $_SESSION['user_username'] = $user['username'] ?? '';
             $_SESSION['user_role'] = $user['role'];
             $_SESSION['user_role_id'] = $user['role_id'] ?? 0;
             $_SESSION['user_avatar'] = $user['avatar'] ?? '';
@@ -140,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'name' => $user['name'],
                 'email' => $user['email'],
                 'phone' => $user['phone'],
+                'username' => $user['username'] ?? '',
                 'role' => $user['role'],
                 'role_id' => $user['role_id'] ?? 0,
                 'avatar' => $user['avatar'] ?? ''
@@ -157,6 +170,7 @@ elseif ($action === 'get_user') {
                 'name' => $_SESSION['user_name'],
                 'email' => $_SESSION['user_email'],
                 'phone' => $_SESSION['user_phone'] ?? '',
+                'username' => $_SESSION['user_username'] ?? '',
                 'role' => $_SESSION['user_role'] ?? 'user',
                 'avatar' => $_SESSION['user_avatar'] ?? ''
             ]

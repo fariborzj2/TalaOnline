@@ -64,25 +64,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = $data['name'] ?? '';
         $email = $data['email'] ?? '';
         $phone = $data['phone'] ?? '';
+        $username = $data['username'] ?? '';
 
         if (empty($name) || empty($email)) {
             echo json_encode(['success' => false, 'message' => 'نام و ایمیل الزامی هستند.']);
             exit;
         }
 
+        if (!empty($username)) {
+            // Validate username format
+            if (!preg_match('/^[a-zA-Z0-9_]{3,30}$/', $username)) {
+                echo json_encode(['success' => false, 'message' => 'نام کاربری باید بین ۳ تا ۳۰ کاراکتر و فقط شامل حروف، اعداد و خط زیر (_) باشد.']);
+                exit;
+            }
+
+            // Check uniqueness
+            if (!is_username_available($username, $user_id)) {
+                echo json_encode(['success' => false, 'message' => 'این نام کاربری قبلاً توسط شخص دیگری انتخاب شده است.']);
+                exit;
+            }
+        }
+
         try {
-            $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-            $stmt->execute([$name, $email, $phone, $user_id]);
+            $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, username = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+            $stmt->execute([$name, $email, $phone, $username, $user_id]);
 
             $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
             $_SESSION['user_phone'] = $phone;
+            $_SESSION['user_username'] = $username;
 
             echo json_encode(['success' => true, 'message' => 'اطلاعات با موفقیت بروزرسانی شد.']);
         } catch (PDOException $e) {
             $sqlState = $e->errorInfo[0] ?? $e->getCode();
             if ($sqlState == '23000') {
-                echo json_encode(['success' => false, 'message' => 'این ایمیل یا شماره موبایل قبلاً توسط کاربر دیگری ثبت شده است.']);
+                echo json_encode(['success' => false, 'message' => 'این ایمیل، شماره موبایل یا نام کاربری قبلاً توسط کاربر دیگری ثبت شده است.']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'خطایی در بروزرسانی اطلاعات رخ داد.']);
             }

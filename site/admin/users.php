@@ -32,7 +32,7 @@ include __DIR__ . '/layout/header.php';
             <thead>
                 <tr>
                     <th>شناسه</th>
-                    <th>نام</th>
+                    <th>نام / یوزرنیم</th>
                     <th>ایمیل</th>
                     <th>موبایل</th>
                     <th>نقش</th>
@@ -49,7 +49,10 @@ include __DIR__ . '/layout/header.php';
                             <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 font-black text-[10px]">
                                 <?= mb_substr($user['name'], 0, 1) ?>
                             </div>
-                            <span class="font-black text-slate-900"><?= htmlspecialchars($user['name']) ?></span>
+                            <div class="flex flex-col">
+                                <span class="font-black text-slate-900"><?= htmlspecialchars($user['name']) ?></span>
+                                <span class="text-[10px] text-indigo-600 font-bold">@<?= htmlspecialchars($user['username'] ?? '---') ?></span>
+                            </div>
                         </div>
                     </td>
                     <td class="ltr text-right"><?= htmlspecialchars($user['email']) ?></td>

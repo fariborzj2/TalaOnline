@@ -73,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `name` VARCHAR(255),
                         `email` VARCHAR(255) UNIQUE,
                         `phone` VARCHAR(20) UNIQUE,
+                        `username` VARCHAR(50) UNIQUE,
                         `password` VARCHAR(255),
                         `avatar` VARCHAR(255),
                         `role` VARCHAR(20) DEFAULT 'user',
@@ -208,8 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Insert Admin User
                 $hashed_pass = password_hash($admin_pass, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, password, role, role_id) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password), role_id = VALUES(role_id)");
-                $stmt->execute(['مدیر کل', $admin_user, $hashed_pass, 'admin', 1]);
+                $admin_username = 'admin';
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, username, password, role, role_id) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password), role_id = VALUES(role_id)");
+                $stmt->execute(['مدیر کل', $admin_user, $admin_username, $hashed_pass, 'admin', 1]);
 
                 // Insert Initial Settings
                 $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
