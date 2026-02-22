@@ -43,22 +43,32 @@ try {
     $config = [
         'mail_enabled' => '1',
         'mail_driver' => 'smtp',
-        'smtp_host' => $data['smtp_host'],
-        'smtp_port' => $data['smtp_port'],
-        'smtp_user' => $data['smtp_user'],
-        'smtp_pass' => $data['smtp_pass'],
-        'smtp_enc' => $data['smtp_enc'],
-        'smtp_skip_ssl_verify' => $data['smtp_skip_ssl_verify'] ?? '0',
-        'mail_sender_name' => $data['mail_sender_name'],
-        'mail_sender_email' => $data['mail_sender_email']
+        'smtp_host' => $data['smtp_host'] ?? get_setting('smtp_host'),
+        'smtp_port' => $data['smtp_port'] ?? get_setting('smtp_port'),
+        'smtp_user' => $data['smtp_user'] ?? get_setting('smtp_user'),
+        'smtp_pass' => $data['smtp_pass'] ?? get_setting('smtp_pass'),
+        'smtp_enc' => $data['smtp_enc'] ?? get_setting('smtp_enc'),
+        'smtp_skip_ssl_verify' => $data['smtp_skip_ssl_verify'] ?? get_setting('smtp_skip_ssl_verify', '0'),
+        'mail_sender_name' => $data['mail_sender_name'] ?? get_setting('mail_sender_name'),
+        'mail_sender_email' => $data['mail_sender_email'] ?? get_setting('mail_sender_email')
     ];
 
-    $test_body = Mail::getProfessionalLayout('<h1>این یک ایمیل تست است.</h1><p>اگر این ایمیل را دریافت کردید، تنظیمات SMTP شما صحیح است.</p>');
+    $template_slug = $data['template_slug'] ?? '';
 
-    $success = Mail::sendRaw($test_email, 'SMTP Test Email', $test_body, [
-        'debug' => true,
-        'config' => $config
-    ]);
+    if ($template_slug) {
+        // Test a specific template
+        $success = Mail::send($test_email, $template_slug, [
+            'name' => 'کاربر تست',
+            'verification_link' => get_site_url() . '/api/verify.php?token=test_token'
+        ]);
+    } else {
+        // Generic SMTP test
+        $test_body = Mail::getProfessionalLayout('<h1>این یک ایمیل تست است.</h1><p>اگر این ایمیل را دریافت کردید، تنظیمات SMTP شما صحیح است.</p>');
+        $success = Mail::sendRaw($test_email, 'SMTP Test Email', $test_body, [
+            'debug' => true,
+            'config' => $config
+        ]);
+    }
 
     $debug_output = ob_get_clean();
 
