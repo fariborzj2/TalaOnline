@@ -213,44 +213,42 @@ class Mail {
         $sender_name = $options['sender_name'] ?? $config['mail_sender_name'] ?? get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
         $debug = $options['debug'] ?? false;
 
-        $mail_driver = $config['mail_driver'] ?? get_setting('mail_driver', 'mail');
+        // Force SMTP driver as per user request
+        $mail_driver = 'smtp';
 
         if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-            return self::sendNative($to, $subject, $body_html, $sender_email, $sender_name);
+            self::$last_error = 'PHPMailer library not found. SMTP sending is impossible.';
+            return false;
         }
 
         $mail = new PHPMailer(true);
 
         try {
-            if ($mail_driver === 'smtp') {
-                $mail->isSMTP();
-                $mail->Host       = $config['smtp_host'] ?? get_setting('smtp_host');
-                $mail->SMTPAuth   = true;
-                $mail->Username   = $config['smtp_user'] ?? get_setting('smtp_user');
-                $mail->Password   = $config['smtp_pass'] ?? get_setting('smtp_pass');
-                $mail->SMTPSecure = ($config['smtp_enc'] ?? get_setting('smtp_enc', 'tls')) === 'none' ? false : ($config['smtp_enc'] ?? get_setting('smtp_enc', 'tls'));
-                $mail->Port       = (int)($config['smtp_port'] ?? get_setting('smtp_port', 587));
-                $mail->Timeout    = 15;
-                $mail->SMTPConnectTimeout = 10;
+            $mail->isSMTP();
+            $mail->Host       = $config['smtp_host'] ?? get_setting('smtp_host');
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $config['smtp_user'] ?? get_setting('smtp_user');
+            $mail->Password   = $config['smtp_pass'] ?? get_setting('smtp_pass');
+            $mail->SMTPSecure = ($config['smtp_enc'] ?? get_setting('smtp_enc', 'tls')) === 'none' ? false : ($config['smtp_enc'] ?? get_setting('smtp_enc', 'tls'));
+            $mail->Port       = (int)($config['smtp_port'] ?? get_setting('smtp_port', 587));
+            $mail->Timeout    = 15;
+            $mail->SMTPConnectTimeout = 10;
 
-                // Disable SSL verification if requested
-                $skip_verify = $config['smtp_skip_ssl_verify'] ?? get_setting('smtp_skip_ssl_verify', '0');
-                if ($skip_verify === '1') {
-                    $mail->SMTPOptions = [
-                        'ssl' => [
-                            'verify_peer' => false,
-                            'verify_peer_name' => false,
-                            'allow_self_signed' => true
-                        ]
-                    ];
-                }
+            // Disable SSL verification if requested
+            $skip_verify = $config['smtp_skip_ssl_verify'] ?? get_setting('smtp_skip_ssl_verify', '0');
+            if ($skip_verify === '1') {
+                $mail->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                    ]
+                ];
+            }
 
-                if ($debug) {
-                    $mail->SMTPDebug = 2;
-                    $mail->Debugoutput = function($str, $level) { echo $str . "\n"; };
-                }
-            } else {
-                $mail->isMail();
+            if ($debug) {
+                $mail->SMTPDebug = 2;
+                $mail->Debugoutput = function($str, $level) { echo $str . "\n"; };
             }
 
             // Final fallback for sender email if it's still invalid
@@ -287,64 +285,7 @@ class Mail {
             self::$last_error = $mail->ErrorInfo;
             if ($debug) echo "PHPMailer Error: " . $mail->ErrorInfo;
             error_log("PHPMailer Error: " . $mail->ErrorInfo);
-
-            // Fallback to native mail() if PHPMailer fails for ANY reason
-            if (!$debug) {
-                return self::sendNative($to, $subject, $body_html, $sender_email, $sender_name);
-            }
             return false;
         }
-    }
-
-    /**
-     * Fallback to PHP native mail()
-     */
-    private static function sendNative($to, $subject, $body_html, $sender_email, $sender_name) {
-        $encoded_subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
-        $encoded_name = '=?UTF-8?B?' . base64_encode($sender_name) . '?=';
-
-        $boundary = md5(time());
-        $message_id = sprintf("<%s.%s@%s>",
-            base_convert(microtime(), 10, 36),
-            base_convert(bin2hex(random_bytes(8)), 16, 36),
-            $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost'
-        );
-
-        $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_html));
-        $body_text = html_entity_decode($body_text);
-
-        // Normalize line endings for headers (some systems prefer \n over \r\n)
-        $eol = "\n";
-
-        $headers = [
-            'MIME-Version: 1.0',
-            "Content-Type: multipart/alternative; boundary=\"$boundary\"",
-            "From: $encoded_name <$sender_email>",
-            "Reply-To: $encoded_name <$sender_email>",
-            "Return-Path: $sender_email",
-            "Message-ID: $message_id",
-            "Date: " . date('r'),
-            "X-Mailer: PHP/" . phpversion(),
-        ];
-
-        $message = "--$boundary$eol";
-        $message .= "Content-Type: text/plain; charset=UTF-8$eol";
-        $message .= "Content-Transfer-Encoding: base64$eol$eol";
-        $message .= chunk_split(base64_encode($body_text), 76, $eol) . $eol;
-
-        $message .= "--$boundary$eol";
-        $message .= "Content-Type: text/html; charset=UTF-8$eol";
-        $message .= "Content-Transfer-Encoding: base64$eol$eol";
-        $message .= chunk_split(base64_encode($body_html), 76, $eol) . $eol;
-        $message .= "--$boundary--";
-
-        $success = @mail($to, $encoded_subject, $message, implode($eol, $headers), "-f $sender_email");
-
-        if (!$success) {
-            $error = error_get_last();
-            self::$last_error = "Native mail() failed: " . ($error['message'] ?? 'Unknown error');
-        }
-
-        return $success;
     }
 }

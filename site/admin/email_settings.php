@@ -148,15 +148,16 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
                     <label>متد ارسال ایمیل</label>
                     <div class="input-icon-wrapper">
                         <span class="icon"><i data-lucide="cpu" class="w-4 h-4"></i></span>
-                        <select name="mail_driver" id="mail_driver" onchange="toggleSMTPFields()">
-                            <option value="mail" <?= $mail_driver === 'mail' ? 'selected' : '' ?>>PHP mail() - پیش‌فرض</option>
-                            <option value="smtp" <?= $mail_driver === 'smtp' ? 'selected' : '' ?>>SMTP - توصیه شده برای عدم اسپم</option>
+                        <select name="mail_driver" id="mail_driver" disabled>
+                            <option value="smtp" selected>SMTP - پروتکل ارسال استاندارد</option>
                         </select>
+                        <input type="hidden" name="mail_driver" value="smtp">
                     </div>
+                    <p class="text-[10px] text-indigo-600 font-bold mt-2">توجه: ارسال ایمیل در این سیستم منحصراً از طریق SMTP انجام می‌شود.</p>
                 </div>
             </div>
 
-            <div id="smtp_fields" class="<?= $mail_driver !== 'smtp' ? 'hidden' : '' ?> space-y-6 p-6 bg-slate-50 rounded-xl border border-slate-100 animate-fade-in">
+            <div id="smtp_fields" class="space-y-6 p-6 bg-slate-50 rounded-xl border border-slate-100 animate-fade-in">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="form-group">
                         <label>Host</label>
@@ -392,15 +393,6 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
 </div>
 
 <script>
-function toggleSMTPFields() {
-    const driver = document.getElementById('mail_driver').value;
-    const smtpFields = document.getElementById('smtp_fields');
-    if (driver === 'smtp') {
-        smtpFields.classList.remove('hidden');
-    } else {
-        smtpFields.classList.add('hidden');
-    }
-}
 
 async function testSMTP() {
     const testEmail = await request_user_input('لطفاً آدرس ایمیل مقصد برای تست را وارد کنید:');
