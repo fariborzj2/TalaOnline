@@ -1,4 +1,0 @@
-[Sun Feb 22 10:49:19 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Sun Feb 22 10:49:20 2026] [::1]:34588 Accepted
-[Sun Feb 22 10:49:20 2026] [::1]:34588 [200]: POST /api/mail_test.php
-[Sun Feb 22 10:49:20 2026] [::1]:34588 Closing

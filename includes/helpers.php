@@ -114,8 +114,19 @@ function get_trend_arrow($change) {
 
 function get_base_url() {
     $protocol = (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? 'http' : 'https';
-    $host = $_SERVER['HTTP_HOST'];
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+
+    // If we're in CLI and have no host, 'localhost' is a safe-ish fallback,
+    // but users should really set site_url in settings.
     return "$protocol://$host";
+}
+
+/**
+ * Returns the configured site URL or falls back to the current base URL
+ */
+function get_site_url() {
+    $url = get_setting('site_url');
+    return !empty($url) ? rtrim($url, '/') : get_base_url();
 }
 
 function get_current_url() {

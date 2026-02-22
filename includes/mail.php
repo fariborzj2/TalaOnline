@@ -37,7 +37,7 @@ class Mail {
      */
     public static function queueRaw($to, $subject, $body_html, $options = []) {
         global $pdo;
-        $sender_email = $options['sender_email'] ?? get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
+        $sender_email = $options['sender_email'] ?? get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost'));
         $sender_name = $options['sender_name'] ?? get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
 
         try {
@@ -65,10 +65,11 @@ class Mail {
             $body = $template['body'];
 
             $site_title = get_setting('site_title', 'Tala Online');
-            $base_url = get_setting('site_url', get_base_url());
+            $base_url = get_site_url();
+
             $logo_url = get_setting('mail_logo_url');
             if (empty($logo_url)) {
-                $logo_url = rtrim($base_url, '/') . '/assets/images/logo.png';
+                $logo_url = $base_url . '/assets/images/logo.png';
             }
 
             $data['site_title'] = $site_title;
@@ -97,10 +98,11 @@ class Mail {
     public static function getProfessionalLayout($content, $params = []) {
         if (empty($params)) {
             $site_title = get_setting('site_title', 'Tala Online');
-            $base_url = get_setting('site_url', get_base_url());
+            $base_url = get_site_url();
+
             $logo_url = get_setting('mail_logo_url');
             if (empty($logo_url)) {
-                $logo_url = rtrim($base_url, '/') . '/assets/images/logo.png';
+                $logo_url = $base_url . '/assets/images/logo.png';
             }
 
             $params = [
@@ -241,6 +243,23 @@ class Mail {
                 $mail->isMail();
             }
 
+            // Final fallback for sender email if it's still invalid
+            if (empty($sender_email) || !filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
+                $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+                if (empty($host)) {
+                    $site_url = get_site_url();
+                    $host = parse_url($site_url, PHP_URL_HOST);
+                }
+                if (empty($host)) $host = 'localhost';
+
+                $sender_email = 'noreply@' . $host;
+
+                // Ensure it's a valid email format even if host is weird
+                if (!filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
+                    $sender_email = 'noreply@tala.online'; // Final Hard fallback
+                }
+            }
+
             $mail->setFrom($sender_email, $sender_name);
             $mail->addAddress($to);
             $mail->addReplyTo($sender_email, $sender_name);
@@ -258,8 +277,9 @@ class Mail {
             if ($debug) echo "PHPMailer Error: " . $mail->ErrorInfo;
             error_log("PHPMailer Error: " . $mail->ErrorInfo);
 
-            if ($mail_driver === 'smtp' && !$debug) {
-                 return self::sendNative($to, $subject, $body_html, $sender_email, $sender_name);
+            // Fallback to native mail() if PHPMailer fails for ANY reason
+            if (!$debug) {
+                return self::sendNative($to, $subject, $body_html, $sender_email, $sender_name);
             }
             return false;
         }

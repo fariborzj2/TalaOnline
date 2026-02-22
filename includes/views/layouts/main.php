@@ -215,6 +215,7 @@
         <div class="container">
             <script>
                 window.__AUTH_STATE__ = {
+                    apiBase: '<?= get_site_url() ?>/api',
                     csrfToken: '<?= csrf_token() ?>',
                     isLoggedIn: <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>,
                     user: <?= isset($_SESSION['user_id']) ? json_encode([

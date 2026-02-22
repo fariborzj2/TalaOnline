@@ -105,7 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $userId = $pdo->lastInsertId();
 
             // Send Verification Email (Queued to avoid timeout)
-            $verification_link = get_base_url() . "/api/verify.php?token=" . $verification_token;
+            $base_url = get_site_url();
+            $verification_link = $base_url . "/api/verify.php?token=" . $verification_token;
+
             Mail::queue($email, 'verification', [
                 'name' => $name,
                 'verification_link' => $verification_link
