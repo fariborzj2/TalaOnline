@@ -68,7 +68,7 @@ class Mail {
             $base_url = get_setting('site_url', get_base_url());
             $logo_url = get_setting('mail_logo_url');
             if (empty($logo_url)) {
-                $logo_url = rtrim($base_url, '/') . '/assets/images/logo.svg';
+                $logo_url = rtrim($base_url, '/') . '/assets/images/logo-larg.svg';
             }
 
             $data['site_title'] = $site_title;
@@ -100,7 +100,7 @@ class Mail {
             $base_url = get_setting('site_url', get_base_url());
             $logo_url = get_setting('mail_logo_url');
             if (empty($logo_url)) {
-                $logo_url = rtrim($base_url, '/') . '/assets/images/logo.svg';
+                $logo_url = rtrim($base_url, '/') . '/assets/images/logo-larg.svg';
             }
 
             $params = [
