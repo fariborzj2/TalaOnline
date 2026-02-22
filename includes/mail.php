@@ -187,7 +187,10 @@ class Mail {
 
                                     <p style="margin: 30px 0 0 0; font-size: 11px; color: #94a3b8;">شما این ایمیل را به دلیل عضویت در ' . $site_title . ' دریافت کرده‌اید.</p>
                                     <p style="margin: 10px 0 0 0; font-size: 11px; color: #94a3b8;">این یک ایمیل خودکار است. لطفاً به آن پاسخ ندهید.</p>
-                                    <p style="margin: 20px 0 0 0; font-size: 10px; color: #cbd5e1;"><a href="' . $base_url . '" style="color: #cbd5e1; text-decoration: underline;">لغو اشتراک</a></p>
+
+                                    ' . (get_setting('site_address') ? '<p style="margin: 15px 0 0 0; font-size: 10px; color: #94a3b8; opacity: 0.8;">' . nl2br(htmlspecialchars(get_setting('site_address'))) . '</p>' : '') . '
+
+                                    <p style="margin: 20px 0 0 0; font-size: 10px; color: #cbd5e1;"><a href="' . $base_url . '/profile" style="color: #cbd5e1; text-decoration: underline;">مدیریت تنظیمات کاربری و لغو اشتراک</a></p>
                                 </td>
                             </tr>
                         </table>
@@ -284,23 +287,41 @@ class Mail {
             $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_html));
             $mail->AltBody = html_entity_decode($body_text);
             $mail->CharSet = 'UTF-8';
+            $mail->Encoding = 'base64'; // Use base64 for better compatibility with non-ASCII characters
+
+            // DKIM Configuration
+            $dkim_domain = get_setting('dkim_domain');
+            $dkim_selector = get_setting('dkim_selector');
+            $dkim_private = get_setting('dkim_private'); // Path to file or the key itself
+
+            if ($dkim_domain && $dkim_selector && $dkim_private) {
+                $mail->DKIM_domain = $dkim_domain;
+                $mail->DKIM_selector = $dkim_selector;
+                $mail->DKIM_private_string = $dkim_private; // PHPMailer supports string since v6.0
+                $mail->DKIM_passphrase = '';
+                $mail->DKIM_identity = $mail->From;
+            }
 
             // Add custom headers for deliverability
             $mail->addCustomHeader('X-Auto-Response-Suppress', 'OOF, AutoReply');
-            $mail->addCustomHeader('List-Unsubscribe', '<' . get_site_url() . '>');
-            $mail->addCustomHeader('Precedence', 'bulk');
 
-            // Set X-Mailer to a standard value
-            $mail->XMailer = 'Microsoft Outlook 16.0'; // Sometimes spoofing a common mailer helps
+            $unsubscribe_url = get_setting('mail_unsubscribe_url');
+            if (empty($unsubscribe_url)) {
+                $unsubscribe_url = get_site_url() . '/profile'; // Point to profile as default
+            }
+            $mail->addCustomHeader('List-Unsubscribe', '<' . $unsubscribe_url . '>, <mailto:' . $sender_email . '?subject=unsubscribe>');
+
+            $mail->addCustomHeader('Precedence', 'bulk');
 
             // Explicit Date header
             $mail->Date = date('r');
 
-            // Ensure unique Message-ID
+            // Ensure unique Message-ID aligned with the domain
+            $domain = parse_url(get_site_url(), PHP_URL_HOST) ?: 'localhost';
             $mail->MessageID = sprintf('<%s.%s@%s>',
                 base_convert(microtime(), 10, 36),
                 base_convert(bin2hex(random_bytes(8)), 16, 36),
-                parse_url(get_site_url(), PHP_URL_HOST) ?: 'localhost'
+                $domain
             );
 
             return $mail->send();
