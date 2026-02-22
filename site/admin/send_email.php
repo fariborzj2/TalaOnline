@@ -47,7 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $personalized_body = str_replace('{name}', $recipient['name'], $body);
                 $personalized_subject = str_replace('{name}', $recipient['name'], $subject);
 
-                if (Mail::queueRaw($recipient['email'], $personalized_subject, $personalized_body)) {
+                $wrapped_body = Mail::getProfessionalLayout($personalized_body);
+
+                if (Mail::queueRaw($recipient['email'], $personalized_subject, $wrapped_body)) {
                     $count++;
                 }
             }

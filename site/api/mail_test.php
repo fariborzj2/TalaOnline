@@ -53,7 +53,9 @@ try {
         'mail_sender_email' => $data['mail_sender_email']
     ];
 
-    $success = Mail::sendRaw($test_email, 'SMTP Test Email', '<h1>این یک ایمیل تست است.</h1><p>اگر این ایمیل را دریافت کردید، تنظیمات SMTP شما صحیح است.</p>', [
+    $test_body = Mail::getProfessionalLayout('<h1>این یک ایمیل تست است.</h1><p>اگر این ایمیل را دریافت کردید، تنظیمات SMTP شما صحیح است.</p>');
+
+    $success = Mail::sendRaw($test_email, 'SMTP Test Email', $test_body, [
         'debug' => true,
         'config' => $config
     ]);

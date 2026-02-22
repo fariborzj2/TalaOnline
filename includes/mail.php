@@ -91,7 +91,14 @@ class Mail {
     /**
      * Wrap content in a professional RTL layout
      */
-    private static function getProfessionalLayout($content, $params) {
+    public static function getProfessionalLayout($content, $params = []) {
+        if (empty($params)) {
+            $params = [
+                'site_title' => get_setting('site_title', 'Tala Online'),
+                'base_url' => get_base_url(),
+                'logo_url' => get_base_url() . '/assets/images/logo.svg'
+            ];
+        }
         $site_title = $params['site_title'];
         $base_url = $params['base_url'];
         $logo_url = $params['logo_url'];
