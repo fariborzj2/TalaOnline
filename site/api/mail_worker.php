@@ -8,6 +8,11 @@ require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/mail.php';
 
+// Ensure no session is holding up the request if helpers start it
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_write_close();
+}
+
 // Prevent concurrent execution (simple lock)
 $lock_file = __DIR__ . '/mail_worker.lock';
 if (file_exists($lock_file) && (time() - filemtime($lock_file) < 300)) {
