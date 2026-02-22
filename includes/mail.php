@@ -66,7 +66,7 @@ class Mail {
 
             $site_title = get_setting('site_title', 'Tala Online');
             $base_url = get_base_url();
-            $logo_url = $base_url . '/assets/images/logo.svg'; // Default logo
+            $logo_url = $base_url . '/assets/images/logo-larg.svg'; // Default logo
 
             $data['site_title'] = $site_title;
             $data['base_url'] = $base_url;
