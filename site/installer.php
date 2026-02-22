@@ -78,6 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `avatar` VARCHAR(255),
                         `role` VARCHAR(20) DEFAULT 'user',
                         `role_id` INT DEFAULT 0,
+                        `is_verified` TINYINT DEFAULT 0,
+                        `verification_token` VARCHAR(100),
+                        `verification_token_expires_at` TIMESTAMP NULL,
                         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
@@ -170,6 +173,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `ip` VARCHAR(45) NOT NULL,
                         `attempt_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         INDEX `idx_login_attempts_ip_time` (`ip`, `attempt_time`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+                    "CREATE TABLE IF NOT EXISTS `email_templates` (
+                        `id` INT AUTO_INCREMENT PRIMARY KEY,
+                        `slug` VARCHAR(100) NOT NULL UNIQUE,
+                        `subject` VARCHAR(255) NOT NULL,
+                        `body` TEXT NOT NULL,
+                        `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
                 ];
 
@@ -216,8 +227,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Insert Admin User
                 $hashed_pass = password_hash($admin_pass, PASSWORD_DEFAULT);
                 $admin_username = 'admin';
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, username, password, role, role_id) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE password = VALUES(password), role_id = VALUES(role_id)");
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, username, password, role, role_id, is_verified) VALUES (?, ?, ?, ?, ?, ?, 1) ON DUPLICATE KEY UPDATE password = VALUES(password), role_id = VALUES(role_id), is_verified = 1");
                 $stmt->execute(['مدیر کل', $admin_user, $admin_username, $hashed_pass, 'admin', 1]);
+
+                // Insert Default Email Templates
+                $stmt = $pdo->prepare("INSERT IGNORE INTO email_templates (slug, subject, body) VALUES (?, ?, ?)");
+                $stmt->execute([
+                    'verification',
+                    'تأیید حساب کاربری - {site_title}',
+                    'سلام {name} عزیز،<br><br>به {site_title} خوش آمدید. برای فعال‌سازی حساب کاربری خود، لطفاً بر روی لینک زیر کلیک کنید:<br><br><a href="{verification_link}" style="background:#e29b21;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">تأیید حساب کاربری</a><br><br>اگر شما این درخواست را نداده‌اید، این ایمیل را نادیده بگیرید.'
+                ]);
+                $stmt->execute([
+                    'welcome',
+                    'خوش آمدید به {site_title}',
+                    'سلام {name} عزیز،<br><br>حساب کاربری شما با موفقیت فعال شد. اکنون می‌توانید از تمامی امکانات سایت استفاده کنید.<br><br>با احترام،<br>تیم {site_title}'
+                ]);
 
                 // Insert Initial Settings
                 $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");

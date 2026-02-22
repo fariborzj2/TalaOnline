@@ -156,6 +156,56 @@ if (file_exists($config_file)) {
                 // Note: role_id 0 will be 'user' (no admin access)
             }
 
+            if (!in_array('is_verified', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN is_verified TINYINT DEFAULT 0");
+                $pdo->exec("UPDATE users SET is_verified = 1");
+            }
+            if (!in_array('verification_token', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN verification_token VARCHAR(100)");
+            }
+            if (!in_array('verification_token_expires_at', $cols)) {
+                if ($driver === 'sqlite') {
+                    $pdo->exec("ALTER TABLE users ADD COLUMN verification_token_expires_at DATETIME");
+                } else {
+                    $pdo->exec("ALTER TABLE users ADD COLUMN verification_token_expires_at TIMESTAMP NULL");
+                }
+            }
+
+            // Email Templates Table
+            if ($driver === 'sqlite') {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `email_templates` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `slug` VARCHAR(100) NOT NULL UNIQUE,
+                    `subject` VARCHAR(255) NOT NULL,
+                    `body` TEXT NOT NULL,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+            } else {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `email_templates` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `slug` VARCHAR(100) NOT NULL UNIQUE,
+                    `subject` VARCHAR(255) NOT NULL,
+                    `body` TEXT NOT NULL,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            }
+
+            // Seeding Default Email Templates
+            $template_count = $pdo->query("SELECT COUNT(*) FROM email_templates")->fetchColumn();
+            if ($template_count == 0) {
+                $stmt = $pdo->prepare("INSERT INTO email_templates (slug, subject, body) VALUES (?, ?, ?)");
+                $stmt->execute([
+                    'verification',
+                    'تأیید حساب کاربری - {site_title}',
+                    'سلام {name} عزیز،<br><br>به {site_title} خوش آمدید. برای فعال‌سازی حساب کاربری خود، لطفاً بر روی لینک زیر کلیک کنید:<br><br><a href="{verification_link}" style="background:#e29b21;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">تأیید حساب کاربری</a><br><br>اگر شما این درخواست را نداده‌اید، این ایمیل را نادیده بگیرید.'
+                ]);
+                $stmt->execute([
+                    'welcome',
+                    'خوش آمدید به {site_title}',
+                    'سلام {name} عزیز،<br><br>حساب کاربری شما با موفقیت فعال شد. اکنون می‌توانید از تمامی امکانات سایت استفاده کنید.<br><br>با احترام،<br>تیم {site_title}'
+                ]);
+            }
+
             // Seeding Default Roles & Permissions
             $role_count = $pdo->query("SELECT COUNT(*) FROM roles")->fetchColumn();
             if ($role_count == 0) {
