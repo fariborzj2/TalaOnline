@@ -107,8 +107,19 @@ class Mail {
                 $mail->Password   = get_setting('smtp_pass');
                 $mail->SMTPSecure = get_setting('smtp_enc', 'tls') === 'none' ? false : get_setting('smtp_enc', 'tls');
                 $mail->Port       = (int)get_setting('smtp_port', 587);
-                $mail->Timeout    = 10; // Set a reasonable timeout to prevent site-wide freeze
+                $mail->Timeout    = 15;
                 $mail->SMTPConnectTimeout = 10;
+
+                // Disable SSL verification if requested (fixes TLS/SSL handshake hangs on many hosts)
+                if (get_setting('smtp_skip_ssl_verify', '0') === '1') {
+                    $mail->SMTPOptions = [
+                        'ssl' => [
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'allow_self_signed' => true
+                        ]
+                    ];
+                }
 
                 if ($debug) {
                     $mail->SMTPDebug = 2;

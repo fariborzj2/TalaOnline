@@ -1,31 +1,43 @@
-[Sun Feb 22 10:15:22 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Sun Feb 22 10:15:24 2026] [::1]:39538 Accepted
-[Sun Feb 22 10:15:24 2026] [::1]:39538 [200]: HEAD /
-[Sun Feb 22 10:15:24 2026] [::1]:39538 Closing
-[Sun Feb 22 10:16:34 2026] [::1]:37024 Accepted
-[Sun Feb 22 10:16:34 2026] [::1]:37024 [200]: GET /admin/login.php
-[Sun Feb 22 10:16:34 2026] [::1]:37024 Closing
-[Sun Feb 22 10:17:57 2026] [::1]:43496 Accepted
-[Sun Feb 22 10:17:57 2026] [::1]:43496 [200]: GET /admin/login.php
-[Sun Feb 22 10:17:57 2026] [::1]:43496 Closing
-[Sun Feb 22 10:17:58 2026] [::1]:43512 Accepted
-[Sun Feb 22 10:17:58 2026] [::1]:43512 [302]: POST /admin/login.php
-[Sun Feb 22 10:17:58 2026] [::1]:43512 Closing
-[Sun Feb 22 10:17:58 2026] [::1]:43526 Accepted
-[Sun Feb 22 10:17:58 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/site/admin/index.php:12
+[Sun Feb 22 10:44:00 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Sun Feb 22 10:44:39 2026] [::1]:41470 Accepted
+[Sun Feb 22 10:44:39 2026] [::1]:41470 [200]: GET /admin/login.php
+[Sun Feb 22 10:44:39 2026] [::1]:41470 Closing
+[Sun Feb 22 10:44:40 2026] [::1]:41480 Accepted
+[Sun Feb 22 10:44:40 2026] [::1]:41480 [302]: POST /admin/login.php
+[Sun Feb 22 10:44:40 2026] [::1]:41480 Closing
+[Sun Feb 22 10:44:40 2026] [::1]:41492 Accepted
+[Sun Feb 22 10:44:40 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/site/admin/index.php:12
 Stack trace:
 #0 /app/site/admin/index.php(12): PDO->query()
 #1 {main}
   thrown in /app/site/admin/index.php on line 12
-[Sun Feb 22 10:17:58 2026] [::1]:43526 [500]: GET /admin/index.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/site/admin/index.php:12
+[Sun Feb 22 10:44:40 2026] [::1]:41492 [500]: GET /admin/index.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/site/admin/index.php:12
 Stack trace:
 #0 /app/site/admin/index.php(12): PDO->query()
 #1 {main}
   thrown in /app/site/admin/index.php on line 12
-[Sun Feb 22 10:17:58 2026] [::1]:43526 Closing
-[Sun Feb 22 10:17:58 2026] [::1]:43530 Accepted
-[Sun Feb 22 10:17:58 2026] [::1]:43530 [200]: GET /admin/email_settings.php
-[Sun Feb 22 10:17:58 2026] [::1]:43530 Closing
-[Sun Feb 22 10:18:00 2026] [::1]:43534 Accepted
-[Sun Feb 22 10:18:00 2026] [::1]:43534 [200]: GET /admin/send_email.php
-[Sun Feb 22 10:18:00 2026] [::1]:43534 Closing
+[Sun Feb 22 10:44:40 2026] [::1]:41492 Closing
+[Sun Feb 22 10:44:40 2026] [::1]:41508 Accepted
+[Sun Feb 22 10:44:40 2026] [::1]:41508 [200]: GET /admin/email_settings.php
+[Sun Feb 22 10:44:40 2026] [::1]:41508 Closing
+[Sun Feb 22 10:45:18 2026] [::1]:60980 Accepted
+[Sun Feb 22 10:45:18 2026] [::1]:60980 [200]: GET /admin/login.php
+[Sun Feb 22 10:45:18 2026] [::1]:60980 Closing
+[Sun Feb 22 10:45:19 2026] [::1]:60984 Accepted
+[Sun Feb 22 10:45:19 2026] [::1]:60984 [302]: POST /admin/login.php
+[Sun Feb 22 10:45:19 2026] [::1]:60984 Closing
+[Sun Feb 22 10:45:19 2026] [::1]:60992 Accepted
+[Sun Feb 22 10:45:19 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/admin/index.php:15
+Stack trace:
+#0 /app/site/admin/index.php(15): PDO->query()
+#1 {main}
+  thrown in /app/site/admin/index.php on line 15
+[Sun Feb 22 10:45:19 2026] [::1]:60992 [500]: GET /admin/index.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/admin/index.php:15
+Stack trace:
+#0 /app/site/admin/index.php(15): PDO->query()
+#1 {main}
+  thrown in /app/site/admin/index.php on line 15
+[Sun Feb 22 10:45:19 2026] [::1]:60992 Closing
+[Sun Feb 22 10:45:19 2026] [::1]:60996 Accepted
+[Sun Feb 22 10:45:19 2026] [::1]:60996 [200]: GET /admin/email_settings.php
+[Sun Feb 22 10:45:19 2026] [::1]:60996 Closing

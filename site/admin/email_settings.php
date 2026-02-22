@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             set_setting('smtp_user', $_POST['smtp_user'] ?? '');
             set_setting('smtp_pass', $_POST['smtp_pass'] ?? '');
             set_setting('smtp_enc', $_POST['smtp_enc'] ?? 'tls');
+            set_setting('smtp_skip_ssl_verify', isset($_POST['smtp_skip_ssl_verify']) ? '1' : '0');
         }
 
         $message = 'تنظیمات عمومی ایمیل با موفقیت ذخیره شد.';
@@ -57,6 +58,7 @@ $smtp_port = get_setting('smtp_port', '587');
 $smtp_user = get_setting('smtp_user');
 $smtp_pass = get_setting('smtp_pass');
 $smtp_enc = get_setting('smtp_enc', 'tls');
+$smtp_skip_ssl_verify = get_setting('smtp_skip_ssl_verify', '0');
 
 $templates = $pdo->query("SELECT * FROM email_templates ORDER BY id ASC")->fetchAll();
 
@@ -160,6 +162,16 @@ include __DIR__ . '/layout/header.php';
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
                         </div>
+                    </div>
+                </div>
+                <div class="form-group flex items-center gap-3 mt-4">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="smtp_skip_ssl_verify" value="1" class="sr-only peer" <?= $smtp_skip_ssl_verify === '1' ? 'checked' : '' ?>>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                    <div>
+                        <span class="text-sm font-bold text-slate-700">نادیده گرفتن خطای گواهی SSL (توصیه شده در صورت Timeout)</span>
+                        <p class="text-[10px] text-slate-400">اگر در زمان اتصال TLS خطای تایم‌اوت دریافت می‌کنید، این گزینه را فعال کنید.</p>
                     </div>
                 </div>
             </div>
@@ -375,6 +387,7 @@ async function testSMTP() {
         smtp_user: document.querySelector('input[name="smtp_user"]').value,
         smtp_pass: document.querySelector('input[name="smtp_pass"]').value,
         smtp_enc: document.querySelector('select[name="smtp_enc"]').value,
+        smtp_skip_ssl_verify: document.querySelector('input[name="smtp_skip_ssl_verify"]').checked ? '1' : '0',
         mail_sender_name: document.querySelector('input[name="mail_sender_name"]').value,
         mail_sender_email: document.querySelector('input[name="mail_sender_email"]').value
     };

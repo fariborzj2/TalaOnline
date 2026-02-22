@@ -19,6 +19,9 @@ if (!$data) die(json_encode(['success' => false, 'message' => 'دیتا نامع
 $test_email = $data['test_email'] ?? '';
 if (empty($test_email)) die(json_encode(['success' => false, 'message' => 'ایمیل تست الزامی است']));
 
+// Release session lock to prevent blocking other requests
+session_write_close();
+
 // Temporarily override settings for this test
 $original_settings = [
     'mail_driver' => get_setting('mail_driver'),
@@ -27,6 +30,7 @@ $original_settings = [
     'smtp_user' => get_setting('smtp_user'),
     'smtp_pass' => get_setting('smtp_pass'),
     'smtp_enc' => get_setting('smtp_enc'),
+    'smtp_skip_ssl_verify' => get_setting('smtp_skip_ssl_verify'),
     'mail_sender_name' => get_setting('mail_sender_name'),
     'mail_sender_email' => get_setting('mail_sender_email')
 ];
@@ -38,6 +42,7 @@ set_setting('smtp_port', $data['smtp_port']);
 set_setting('smtp_user', $data['smtp_user']);
 set_setting('smtp_pass', $data['smtp_pass']);
 set_setting('smtp_enc', $data['smtp_enc']);
+set_setting('smtp_skip_ssl_verify', $data['smtp_skip_ssl_verify'] ?? '0');
 set_setting('mail_sender_name', $data['mail_sender_name']);
 set_setting('mail_sender_email', $data['mail_sender_email']);
 
