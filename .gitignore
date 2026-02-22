@@ -5,3 +5,4 @@ pnpm-lock.yaml
 config.php
 site/uploads/
 *.sqlite
+vendor/
