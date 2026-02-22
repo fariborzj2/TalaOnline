@@ -47,7 +47,7 @@ $groups = [
     [
         'label' => 'سیستم',
         'icon' => 'settings',
-        'pages' => ['feedbacks.php', 'settings.php', 'users.php', 'user_edit.php', 'roles.php', 'role_edit.php'],
+        'pages' => ['feedbacks.php', 'settings.php', 'users.php', 'user_edit.php', 'roles.php', 'role_edit.php', 'email_settings.php', 'send_email.php'],
         'items' => array_filter([
             has_permission('feedbacks.view') ? [
                 'label' => 'نظرات و بازخورد',
@@ -56,8 +56,10 @@ $groups = [
                 'badge' => $unread_count > 0 ? $unread_count : null
             ] : null,
             has_permission('users.view') ? ['label' => 'مدیریت کاربران', 'url' => 'users.php', 'icon' => 'users'] : null,
+            has_permission('users.view') ? ['label' => 'ارسال ایمیل', 'url' => 'send_email.php', 'icon' => 'send'] : null,
             has_permission('roles.view') ? ['label' => 'مدیریت نقش‌ها', 'url' => 'roles.php', 'icon' => 'shield'] : null,
             has_permission('settings.view') ? ['label' => 'تنظیمات عمومی', 'url' => 'settings.php', 'icon' => 'sliders'] : null,
+            has_permission('settings.view') ? ['label' => 'تنظیمات ایمیل', 'url' => 'email_settings.php', 'icon' => 'mail'] : null,
         ])
     ]
 ];

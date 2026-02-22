@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../../includes/mail.php';
 session_start();
 
 $action = $_GET['action'] ?? '';
@@ -94,10 +95,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $username = generate_unique_username($name, $email);
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, username, password) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$name, $email, $phone, $username, $hashedPassword]);
+
+            $verification_token = bin2hex(random_bytes(32));
+            $expires_at = date('Y-m-d H:i:s', strtotime('+24 hours'));
+
+            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, username, password, is_verified, verification_token, verification_token_expires_at) VALUES (?, ?, ?, ?, ?, 0, ?, ?)");
+            $stmt->execute([$name, $email, $phone, $username, $hashedPassword, $verification_token, $expires_at]);
 
             $userId = $pdo->lastInsertId();
+
+            // Send Verification Email
+            $verification_link = get_base_url() . "/api/verify.php?token=" . $verification_token;
+            Mail::send($email, 'verification', [
+                'name' => $name,
+                'verification_link' => $verification_link
+            ]);
+
             $_SESSION['user_id'] = $userId;
             $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
@@ -106,15 +119,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role'] = 'user';
             $_SESSION['user_role_id'] = 0;
             $_SESSION['user_avatar'] = '';
+            $_SESSION['is_verified'] = 0;
 
-            echo json_encode(['success' => true, 'user' => [
+            echo json_encode(['success' => true, 'message' => 'ثبت‌نام با موفقیت انجام شد. لطفاً ایمیل خود را جهت تایید حساب بررسی کنید.', 'user' => [
                 'name' => $name,
                 'email' => $email,
                 'phone' => $phone,
                 'username' => $username,
                 'role' => 'user',
                 'role_id' => 0,
-                'avatar' => ''
+                'avatar' => '',
+                'is_verified' => 0
             ]]);
         } catch (PDOException $e) {
             $sqlState = $e->errorInfo[0] ?? $e->getCode();
@@ -147,6 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role'] = $user['role'];
             $_SESSION['user_role_id'] = $user['role_id'] ?? 0;
             $_SESSION['user_avatar'] = $user['avatar'] ?? '';
+            $_SESSION['is_verified'] = $user['is_verified'] ?? 0;
 
             echo json_encode(['success' => true, 'user' => [
                 'name' => $user['name'],
@@ -155,7 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'username' => $user['username'] ?? '',
                 'role' => $user['role'],
                 'role_id' => $user['role_id'] ?? 0,
-                'avatar' => $user['avatar'] ?? ''
+                'avatar' => $user['avatar'] ?? '',
+                'is_verified' => $user['is_verified'] ?? 0
             ]]);
         } else {
             echo json_encode(['success' => false, 'message' => 'ایمیل یا کلمه عبور اشتباه است.']);
@@ -172,7 +189,8 @@ elseif ($action === 'get_user') {
                 'phone' => $_SESSION['user_phone'] ?? '',
                 'username' => $_SESSION['user_username'] ?? '',
                 'role' => $_SESSION['user_role'] ?? 'user',
-                'avatar' => $_SESSION['user_avatar'] ?? ''
+                'avatar' => $_SESSION['user_avatar'] ?? '',
+                'is_verified' => $_SESSION['is_verified'] ?? 0
             ]
         ]);
     } else {
