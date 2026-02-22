@@ -71,7 +71,33 @@ $page_title = 'تنظیمات ایمیل';
 $page_subtitle = 'مدیریت پیکربندی ارسال ایمیل و ویرایش قالب‌های اطلاع‌رسانی سیستم';
 
 include __DIR__ . '/layout/header.php';
+
+$phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
 ?>
+
+<?php if (!$phpmailer_exists): ?>
+    <div class="mb-8 animate-bounce-in">
+        <div class="bg-amber-50 border border-amber-100 rounded-xl p-6 flex flex-col gap-4 text-amber-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-amber-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-amber-200">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-lg">کتابخانه PHPMailer یافت نشد!</h3>
+                    <p class="text-xs opacity-80 font-bold">PHPMailer Library Not Found</p>
+                </div>
+            </div>
+            <p class="text-sm leading-relaxed">
+                سیستم قادر به پیدا کردن PHPMailer نیست. این یعنی قابلیت ارسال از طریق <strong>SMTP</strong> در دسترس نخواهد بود و سیستم به صورت خودکار از تابع پیش‌فرض <code>mail()</code> استفاده می‌کند که ممکن است باعث اسپم شدن ایمیل‌ها شود.
+            </p>
+            <div class="p-4 bg-white/50 rounded-lg border border-amber-200">
+                <p class="text-xs font-bold mb-2">راه‌حل:</p>
+                <code class="text-xs font-mono block p-2 bg-slate-900 text-slate-300 rounded overflow-x-auto">composer install</code>
+                <p class="text-[10px] mt-2 opacity-70">دستور بالا را در پوشه اصلی پروژه اجرا کنید یا محتویات پوشه vendor را آپلود کنید.</p>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
 
 <?php if ($message): ?>
     <div class="mb-8 animate-bounce-in">

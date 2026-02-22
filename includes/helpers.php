@@ -116,9 +116,17 @@ function get_base_url() {
     $protocol = (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? 'http' : 'https';
     $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
 
-    // If we're in CLI and have no host, 'localhost' is a safe-ish fallback,
-    // but users should really set site_url in settings.
-    return "$protocol://$host";
+    $base_path = '';
+    if (isset($_SERVER['SCRIPT_NAME'])) {
+        $base_path = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+        // Strip common subdirectories to get the site root
+        $base_path = preg_replace('/(\/api|\/admin|\/includes)$/', '', $base_path);
+        if ($base_path === '/' || $base_path === '\\') {
+            $base_path = '';
+        }
+    }
+
+    return rtrim("$protocol://$host$base_path", '/');
 }
 
 /**

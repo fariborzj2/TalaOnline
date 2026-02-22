@@ -257,8 +257,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'سلام {name} عزیز،<br><br>حساب کاربری شما با موفقیت فعال شد. اکنون می‌توانید از تمامی امکانات {site_title} از جمله مشاهده قیمت‌های لحظه‌ای و مقایسه پلتفرم‌های معاملاتی استفاده کنید.<br><br>با احترام،<br>تیم پشتیبانی {site_title}'
                 ]);
 
-                // Insert Initial Settings
+                // Detect and Insert Initial Settings
+                $protocol = (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? 'http' : 'https';
+                $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+                $base_path = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+                $site_url = rtrim("$protocol://$host$base_path", '/');
+
                 $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
+                $stmt->execute(['site_url', $site_url]);
                 $stmt->execute(['api_key', $api_key]);
                 $stmt->execute(['site_title', 'طلا آنلاین']);
                 $stmt->execute(['api_sync_interval', '10']);
