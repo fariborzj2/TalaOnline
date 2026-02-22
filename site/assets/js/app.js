@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'در حال ورود...';
 
             try {
-                const response = await fetchWithCSRF('/api/auth.php?action=login', {
+                const response = await fetchWithCSRF(`${authState.apiBase}/auth.php?action=login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'در حال ثبت نام...';
 
             try {
-                const response = await fetchWithCSRF('/api/auth.php?action=register', {
+                const response = await fetchWithCSRF(`${authState.apiBase}/auth.php?action=register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, phone, password })
@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateUIForAuth();
                     closeModal();
                     showAlert('ثبت نام با موفقیت انجام شد. لطفاً ایمیل خود را چک کنید.', 'success');
-                    fetch('/api/mail_worker.php').catch(() => {});
+                    fetch(`${authState.apiBase}/mail_worker.php`).catch(() => {});
                 } else {
                     showAlert(data.message || 'خطا در ثبت نام', 'error');
                 }
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (googleBtn) {
         if (authState.googleLoginEnabled) {
             googleBtn.addEventListener('click', () => {
-                window.location.href = '/api/google_auth.php?action=login';
+                window.location.href = `${authState.apiBase}/google_auth.php?action=login`;
             });
         } else {
             googleBtn.classList.add('d-none');
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
             try {
-                await fetchWithCSRF('/api/auth.php?action=logout', { method: 'POST' });
+                await fetchWithCSRF(`${authState.apiBase}/auth.php?action=logout`, { method: 'POST' });
                 authState.isLoggedIn = false;
                 authState.user = null;
                 closeModal();
@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'در حال ذخیره...';
 
             try {
-                const response = await fetchWithCSRF('/api/profile.php?action=update_info', {
+                const response = await fetchWithCSRF(`${authState.apiBase}/profile.php?action=update_info`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -538,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.textContent = 'در حال بروزرسانی...';
 
             try {
-                const response = await fetchWithCSRF('/api/profile.php?action=change_password', {
+                const response = await fetchWithCSRF(`${authState.apiBase}/profile.php?action=change_password`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -563,7 +563,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (profileLogoutBtn) {
         profileLogoutBtn.addEventListener('click', async () => {
              if (await showConfirm('آیا از خروج اطمینان دارید؟')) {
-                 await fetchWithCSRF('/api/auth.php?action=logout', { method: 'POST' });
+                 await fetchWithCSRF(`${authState.apiBase}/auth.php?action=logout`, { method: 'POST' });
                  location.href = '/';
              }
         });
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('avatar', file);
 
             try {
-                const response = await fetchWithCSRF('/api/profile.php?action=update_avatar', {
+                const response = await fetchWithCSRF(`${authState.apiBase}/profile.php?action=update_avatar`, {
                     method: 'POST',
                     body: formData
                 });
@@ -612,7 +612,7 @@ document.addEventListener('DOMContentLoaded', function() {
             initSearch(window.__INITIAL_STATE__.platforms);
         } else {
             try {
-                const response = await fetch('/api/dashboard.php');
+                const response = await fetch(`${authState.apiBase}/dashboard.php`);
                 const data = await response.json();
                 if (data && data.platforms) initSearch(data.platforms);
             } catch (e) {}
@@ -623,7 +623,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Trigger Mail Worker if on Admin or if requested (Basic async queue processing)
         if (window.location.pathname.includes('/admin/')) {
-            fetch('/api/mail_worker.php').catch(() => {});
+            fetch(`${authState.apiBase}/mail_worker.php`).catch(() => {});
         }
     })();
 });

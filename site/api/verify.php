@@ -59,7 +59,7 @@ if (empty($token)) {
     </style>
     <script>
         // Trigger mail worker to send welcome email immediately
-        fetch('/api/mail_worker.php').catch(() => {});
+        fetch('<?= get_site_url() ?>/api/mail_worker.php').catch(() => {});
     </script>
 </head>
 <body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
