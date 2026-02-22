@@ -202,7 +202,7 @@
     ?>
     <main class="app">
         <div class="side-menu">
-            <div class="logo"><img src="<?= versioned_asset('/assets/images/logo.svg') ?>" alt="طلا آنلاین" width="30" height="35"></div>
+            <div class="logo"><img src="<?= versioned_asset('/assets/images/logo.svg') ?>" alt="طلا آنلاین" width="100" height="100"></div>
             <ul>
                 <li><a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>" aria-label="خانه"><i data-lucide="house" class="w-6 h-6"></i></a></li>
                 <li><a href="/blog" class="<?= strpos($current_path, '/blog') === 0 ? 'active' : '' ?>" aria-label="وبلاگ"><i data-lucide="newspaper" class="w-6 h-6"></i></a></li>
