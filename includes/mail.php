@@ -286,10 +286,15 @@ class Mail {
             $mail->Subject = $subject;
             $mail->Body    = $body_html;
 
-            $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_html));
-            $mail->AltBody = html_entity_decode($body_text);
+            // Better AltBody generation: Strip style and script blocks first
+            $body_text = preg_replace('/<(style|script)\b[^>]*>.*?<\/\1>/is', '', $body_html);
+            $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_text));
+            $body_text = preg_replace("/\n{3,}/", "\n\n", $body_text); // Remove excessive newlines
+            $mail->AltBody = trim(html_entity_decode($body_text));
+
             $mail->CharSet = 'UTF-8';
             $mail->Encoding = 'quoted-printable';
+            $mail->XMailer = ' '; // Hide X-Mailer
 
             // DKIM Configuration
             $dkim_domain = get_setting('dkim_domain');
