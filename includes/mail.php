@@ -185,7 +185,9 @@ class Mail {
 
                                     <a href="' . $base_url . '" style="display: inline-block; background-color: #e29b21; color: #ffffff; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 14px; box-shadow: 0 4px 10px rgba(226, 155, 33, 0.2);">مشاهده وب‌سایت</a>
 
-                                    <p style="margin: 30px 0 0 0; font-size: 11px; color: #94a3b8;">این یک ایمیل خودکار است. لطفاً به آن پاسخ ندهید.</p>
+                                    <p style="margin: 30px 0 0 0; font-size: 11px; color: #94a3b8;">شما این ایمیل را به دلیل عضویت در ' . $site_title . ' دریافت کرده‌اید.</p>
+                                    <p style="margin: 10px 0 0 0; font-size: 11px; color: #94a3b8;">این یک ایمیل خودکار است. لطفاً به آن پاسخ ندهید.</p>
+                                    <p style="margin: 20px 0 0 0; font-size: 10px; color: #cbd5e1;"><a href="' . $base_url . '" style="color: #cbd5e1; text-decoration: underline;">لغو اشتراک</a></p>
                                 </td>
                             </tr>
                         </table>
@@ -272,6 +274,9 @@ class Mail {
             $mail->addAddress($to);
             $mail->addReplyTo($sender_email, $sender_name);
 
+            // Set Sender property for Return-Path (Crucial for SPF)
+            $mail->Sender = $sender_email;
+
             $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body    = $body_html;
@@ -279,6 +284,24 @@ class Mail {
             $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_html));
             $mail->AltBody = html_entity_decode($body_text);
             $mail->CharSet = 'UTF-8';
+
+            // Add custom headers for deliverability
+            $mail->addCustomHeader('X-Auto-Response-Suppress', 'OOF, AutoReply');
+            $mail->addCustomHeader('List-Unsubscribe', '<' . get_site_url() . '>');
+            $mail->addCustomHeader('Precedence', 'bulk');
+
+            // Set X-Mailer to a standard value
+            $mail->XMailer = 'Microsoft Outlook 16.0'; // Sometimes spoofing a common mailer helps
+
+            // Explicit Date header
+            $mail->Date = date('r');
+
+            // Ensure unique Message-ID
+            $mail->MessageID = sprintf('<%s.%s@%s>',
+                base_convert(microtime(), 10, 36),
+                base_convert(bin2hex(random_bytes(8)), 16, 36),
+                parse_url(get_site_url(), PHP_URL_HOST) ?: 'localhost'
+            );
 
             return $mail->send();
         } catch (Exception $e) {
