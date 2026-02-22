@@ -24,21 +24,21 @@ class Mail {
     /**
      * Send an email using a template (Synchronous)
      */
-    public static function send($to, $template_slug, $data = []) {
+    public static function send($to, $template_slug, $data = [], $options = []) {
         $mail_data = self::prepareTemplateData($template_slug, $data);
         if (!$mail_data) return false;
 
-        return self::sendRaw($to, $mail_data['subject'], $mail_data['body']);
+        return self::sendRaw($to, $mail_data['subject'], $mail_data['body'], $options);
     }
 
     /**
      * Queue an email for background sending
      */
-    public static function queue($to, $template_slug, $data = []) {
+    public static function queue($to, $template_slug, $data = [], $options = []) {
         $mail_data = self::prepareTemplateData($template_slug, $data);
         if (!$mail_data) return false;
 
-        return self::queueRaw($to, $mail_data['subject'], $mail_data['body']);
+        return self::queueRaw($to, $mail_data['subject'], $mail_data['body'], $options);
     }
 
     /**
@@ -48,10 +48,12 @@ class Mail {
         global $pdo;
         $sender_email = $options['sender_email'] ?? get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost'));
         $sender_name = $options['sender_name'] ?? get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
+        $type = $options['type'] ?? 'transactional';
 
         try {
-            $stmt = $pdo->prepare("INSERT INTO email_queue (to_email, subject, body_html, sender_name, sender_email) VALUES (?, ?, ?, ?, ?)");
-            return $stmt->execute([$to, $subject, $body_html, $sender_name, $sender_email]);
+            $stmt = $pdo->prepare("INSERT INTO email_queue (to_email, subject, body_html, sender_name, sender_email, metadata) VALUES (?, ?, ?, ?, ?, ?)");
+            $metadata = json_encode(['type' => $type]);
+            return $stmt->execute([$to, $subject, $body_html, $sender_name, $sender_email, $metadata]);
         } catch (Exception $e) {
             error_log("Queue Error: " . $e->getMessage());
             return false;
@@ -287,7 +289,7 @@ class Mail {
             $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_html));
             $mail->AltBody = html_entity_decode($body_text);
             $mail->CharSet = 'UTF-8';
-            $mail->Encoding = 'base64'; // Use base64 for better compatibility with non-ASCII characters
+            $mail->Encoding = 'quoted-printable';
 
             // DKIM Configuration
             $dkim_domain = get_setting('dkim_domain');
@@ -303,25 +305,31 @@ class Mail {
             }
 
             // Add custom headers for deliverability
-            $mail->addCustomHeader('X-Auto-Response-Suppress', 'OOF, AutoReply');
+            // Transactional emails (default) should not have bulk headers to avoid spam filters
+            if (($options['type'] ?? 'transactional') === 'bulk') {
+                $mail->addCustomHeader('X-Auto-Response-Suppress', 'OOF, AutoReply');
+                $mail->addCustomHeader('Precedence', 'bulk');
 
-            $unsubscribe_url = get_setting('mail_unsubscribe_url');
-            if (empty($unsubscribe_url)) {
-                $unsubscribe_url = get_site_url() . '/profile'; // Point to profile as default
+                $unsubscribe_url = get_setting('mail_unsubscribe_url');
+                if (empty($unsubscribe_url)) {
+                    $unsubscribe_url = get_site_url() . '/profile';
+                }
+                $mail->addCustomHeader('List-Unsubscribe', '<' . $unsubscribe_url . '>, <mailto:' . $sender_email . '?subject=unsubscribe>');
             }
-            $mail->addCustomHeader('List-Unsubscribe', '<' . $unsubscribe_url . '>, <mailto:' . $sender_email . '?subject=unsubscribe>');
-
-            $mail->addCustomHeader('Precedence', 'bulk');
 
             // Explicit Date header
             $mail->Date = date('r');
 
-            // Ensure unique Message-ID aligned with the domain
-            $domain = parse_url(get_site_url(), PHP_URL_HOST) ?: 'localhost';
+            // Ensure unique Message-ID aligned with the SENDER domain
+            $sender_domain = 'localhost';
+            if (filter_var($sender_email, FILTER_VALIDATE_EMAIL)) {
+                $parts = explode('@', $sender_email);
+                $sender_domain = array_pop($parts);
+            }
             $mail->MessageID = sprintf('<%s.%s@%s>',
                 base_convert(microtime(), 10, 36),
                 base_convert(bin2hex(random_bytes(8)), 16, 36),
-                $domain
+                $sender_domain
             );
 
             return $mail->send();

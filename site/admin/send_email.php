@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $wrapped_body = Mail::getProfessionalLayout($personalized_body);
 
-                if (Mail::queueRaw($recipient['email'], $personalized_subject, $wrapped_body)) {
+                if (Mail::queueRaw($recipient['email'], $personalized_subject, $wrapped_body, ['type' => 'bulk'])) {
                     $count++;
                 }
             }

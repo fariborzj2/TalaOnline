@@ -57,19 +57,21 @@ try {
     ];
 
     $template_slug = $data['template_slug'] ?? '';
+    $type = $data['type'] ?? 'transactional';
 
     if ($template_slug) {
         // Test a specific template
         $success = Mail::send($test_email, $template_slug, [
             'name' => 'کاربر تست',
             'verification_link' => get_site_url() . '/api/verify.php?token=test_token'
-        ]);
+        ], ['type' => $type, 'config' => $config]);
     } else {
         // Generic SMTP test
         $test_body = Mail::getProfessionalLayout('<h1>این یک ایمیل تست است.</h1><p>اگر این ایمیل را دریافت کردید، تنظیمات SMTP شما صحیح است.</p>');
         $success = Mail::sendRaw($test_email, 'SMTP Test Email', $test_body, [
             'debug' => true,
-            'config' => $config
+            'config' => $config,
+            'type' => $type
         ]);
     }
 
