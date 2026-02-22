@@ -96,7 +96,7 @@ class Mail {
             $params = [
                 'site_title' => get_setting('site_title', 'Tala Online'),
                 'base_url' => get_base_url(),
-                'logo_url' => get_base_url() . '/assets/images/logo.svg'
+                'logo_url' => get_base_url() . '/assets/images/logo-larg.svg'
             ];
         }
         $site_title = $params['site_title'];
