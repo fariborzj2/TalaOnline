@@ -64,18 +64,101 @@ class Mail {
             $subject = $template['subject'];
             $body = $template['body'];
 
-            $data['site_title'] = get_setting('site_title', 'Tala Online');
-            $data['base_url'] = get_base_url();
+            $site_title = get_setting('site_title', 'Tala Online');
+            $base_url = get_base_url();
+            $logo_url = $base_url . '/assets/images/logo.svg'; // Default logo
+
+            $data['site_title'] = $site_title;
+            $data['base_url'] = $base_url;
 
             foreach ($data as $key => $value) {
                 $subject = str_replace('{' . $key . '}', $value, $subject);
                 $body = str_replace('{' . $key . '}', $value, $body);
             }
 
-            return ['subject' => $subject, 'body' => $body];
+            $wrapped_body = self::getProfessionalLayout($body, [
+                'site_title' => $site_title,
+                'base_url' => $base_url,
+                'logo_url' => $logo_url
+            ]);
+
+            return ['subject' => $subject, 'body' => $wrapped_body];
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Wrap content in a professional RTL layout
+     */
+    private static function getProfessionalLayout($content, $params) {
+        $site_title = $params['site_title'];
+        $base_url = $params['base_url'];
+        $logo_url = $params['logo_url'];
+
+        // Build social links
+        $socials = [
+            'telegram' => ['label' => 'تلگرام', 'icon' => 'TG'],
+            'instagram' => ['label' => 'اینستاگرام', 'icon' => 'IG'],
+            'twitter' => ['label' => 'توییتر', 'icon' => 'TW'],
+            'linkedin' => ['label' => 'لینکدین', 'icon' => 'IN'],
+        ];
+
+        $social_html = '';
+        foreach ($socials as $key => $info) {
+            $url = get_setting('social_' . $key);
+            if ($url) {
+                $social_html .= '<a href="' . htmlspecialchars($url) . '" style="display: inline-block; margin: 0 8px; text-decoration: none; color: #e29b21; font-weight: bold; font-size: 13px;">' . $info['label'] . '</a>';
+            }
+        }
+
+        return '
+        <!DOCTYPE html>
+        <html lang="fa" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #f4f7f9; font-family: Tahoma, Arial, sans-serif; direction: rtl;" dir="rtl">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f7f9; padding: 20px 0; direction: rtl;" dir="rtl">
+                <tr>
+                    <td align="center">
+                        <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 95%;">
+                            <!-- Header -->
+                            <tr>
+                                <td align="center" style="padding: 40px 30px; border-bottom: 1px solid #f0f0f0;">
+                                    <img src="' . $logo_url . '" alt="' . $site_title . '" width="80" style="display: block; outline: none; border: none; text-decoration: none;">
+                                    <h1 style="margin: 15px 0 0 0; font-size: 20px; color: #1e293b; font-weight: 800;">' . $site_title . '</h1>
+                                </td>
+                            </tr>
+                            <!-- Content -->
+                            <tr>
+                                <td style="padding: 50px 40px; color: #334155; line-height: 1.8; text-align: right; font-size: 15px;">
+                                    ' . $content . '
+                                </td>
+                            </tr>
+                            <!-- Footer -->
+                            <tr>
+                                <td align="center" style="padding: 40px; background-color: #f8fafc; border-top: 1px solid #f0f0f0; color: #64748b; font-size: 13px;">
+                                    <p style="margin: 0 0 20px 0; font-weight: bold; color: #1e293b;">' . $site_title . '</p>
+                                    <p style="margin: 0 0 20px 0; line-height: 1.5;">مرجع تخصصی و لحظه‌ای قیمت طلا، سکه و ارز<br>مقایسه هوشمند پلتفرم‌های معاملاتی</p>
+
+                                    <div style="margin-bottom: 25px;">
+                                        ' . $social_html . '
+                                    </div>
+
+                                    <a href="' . $base_url . '" style="display: inline-block; background-color: #e29b21; color: #ffffff; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 14px; box-shadow: 0 4px 10px rgba(226, 155, 33, 0.2);">مشاهده وب‌سایت</a>
+
+                                    <p style="margin: 30px 0 0 0; font-size: 11px; color: #94a3b8;">این یک ایمیل خودکار است. لطفاً به آن پاسخ ندهید.</p>
+                                </td>
+                            </tr>
+                        </table>
+                        <p style="margin-top: 20px; color: #94a3b8; font-size: 12px;">&copy; ' . date('Y') . ' ' . $site_title . '. تمامی حقوق محفوظ است.</p>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>';
     }
 
     /**

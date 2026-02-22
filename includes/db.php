@@ -223,12 +223,12 @@ if (file_exists($config_file)) {
                 $stmt->execute([
                     'verification',
                     'تأیید حساب کاربری - {site_title}',
-                    'سلام {name} عزیز،<br><br>به {site_title} خوش آمدید. برای فعال‌سازی حساب کاربری خود، لطفاً بر روی لینک زیر کلیک کنید:<br><br><a href="{verification_link}" style="background:#e29b21;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">تأیید حساب کاربری</a><br><br>اگر شما این درخواست را نداده‌اید، این ایمیل را نادیده بگیرید.'
+                    'سلام {name} عزیز،<br><br>به {site_title} خوش آمدید. برای فعال‌سازی حساب کاربری خود و بهره‌مندی از امکانات کامل سایت، لطفاً بر روی دکمه زیر کلیک کنید:<br><br><div style="text-align:center;margin:30px 0;"><a href="{verification_link}" style="display:inline-block;background-color:#e29b21;color:white;padding:12px 30px;text-decoration:none;border-radius:10px;font-weight:bold;box-shadow:0 4px 10px rgba(226, 155, 33, 0.2);">تأیید حساب کاربری</a></div><br>اگر شما این درخواست را نداده‌اید، می‌توانید این ایمیل را نادیده بگیرید.'
                 ]);
                 $stmt->execute([
                     'welcome',
                     'خوش آمدید به {site_title}',
-                    'سلام {name} عزیز،<br><br>حساب کاربری شما با موفقیت فعال شد. اکنون می‌توانید از تمامی امکانات سایت استفاده کنید.<br><br>با احترام،<br>تیم {site_title}'
+                    'سلام {name} عزیز،<br><br>حساب کاربری شما با موفقیت فعال شد. اکنون می‌توانید از تمامی امکانات {site_title} از جمله مشاهده قیمت‌های لحظه‌ای و مقایسه پلتفرم‌های معاملاتی استفاده کنید.<br><br>با احترام،<br>تیم پشتیبانی {site_title}'
                 ]);
             }
 

@@ -22,6 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $site_keywords = $_POST['site_keywords'];
     $tinymce_api_key = $_POST['tinymce_api_key'];
 
+    $social_telegram = $_POST['social_telegram'];
+    $social_instagram = $_POST['social_instagram'];
+    $social_twitter = $_POST['social_twitter'];
+    $social_linkedin = $_POST['social_linkedin'];
+
+    set_setting('social_telegram', $social_telegram);
+    set_setting('social_instagram', $social_instagram);
+    set_setting('social_twitter', $social_twitter);
+    set_setting('social_linkedin', $social_linkedin);
+
     $google_login_enabled = isset($_POST['google_login_enabled']) ? '1' : '0';
     $google_client_id = $_POST['google_client_id'];
     $google_client_secret = $_POST['google_client_secret'];
@@ -182,6 +192,53 @@ include __DIR__ . '/layout/header.php';
                 <div class="input-icon-wrapper bg-slate-50">
                     <span class="icon"><i data-lucide="link" class="w-4 h-4"></i></span>
                     <input type="text" value="<?= get_base_url() ?>/api/google_auth.php" readonly class="ltr-input font-mono text-xs bg-transparent border-none">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Media Settings -->
+    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50">
+                <i data-lucide="share-2" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-black text-slate-800">شبکه‌های اجتماعی</h2>
+                <p class="text-[10px] text-slate-400 font-bold uppercase ">Social Media Links</p>
+            </div>
+        </div>
+        <div class="p-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>تلگرام (Telegram)</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="send" class="w-4 h-4"></i></span>
+                        <input type="text" name="social_telegram" value="<?= htmlspecialchars(get_setting('social_telegram')) ?>" placeholder="https://t.me/yourchannel" class="ltr-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>اینستاگرام (Instagram)</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="instagram" class="w-4 h-4"></i></span>
+                        <input type="text" name="social_instagram" value="<?= htmlspecialchars(get_setting('social_instagram')) ?>" placeholder="https://instagram.com/yourpage" class="ltr-input">
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>توییتر / X (Twitter)</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="twitter" class="w-4 h-4"></i></span>
+                        <input type="text" name="social_twitter" value="<?= htmlspecialchars(get_setting('social_twitter')) ?>" placeholder="https://x.com/yourprofile" class="ltr-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>لینکدین (LinkedIn)</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="linkedin" class="w-4 h-4"></i></span>
+                        <input type="text" name="social_linkedin" value="<?= htmlspecialchars(get_setting('social_linkedin')) ?>" placeholder="https://linkedin.com/in/yourprofile" class="ltr-input">
+                    </div>
                 </div>
             </div>
         </div>
