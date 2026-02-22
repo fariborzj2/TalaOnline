@@ -65,8 +65,11 @@ class Mail {
             $body = $template['body'];
 
             $site_title = get_setting('site_title', 'Tala Online');
-            $base_url = get_base_url();
-            $logo_url = $base_url . '/assets/images/logo-larg.svg'; // Default logo
+            $base_url = get_setting('site_url', get_base_url());
+            $logo_url = get_setting('mail_logo_url');
+            if (empty($logo_url)) {
+                $logo_url = rtrim($base_url, '/') . '/assets/images/logo-larg.svg';
+            }
 
             $data['site_title'] = $site_title;
             $data['base_url'] = $base_url;
@@ -93,10 +96,17 @@ class Mail {
      */
     public static function getProfessionalLayout($content, $params = []) {
         if (empty($params)) {
+            $site_title = get_setting('site_title', 'Tala Online');
+            $base_url = get_setting('site_url', get_base_url());
+            $logo_url = get_setting('mail_logo_url');
+            if (empty($logo_url)) {
+                $logo_url = rtrim($base_url, '/') . '/assets/images/logo-larg.svg';
+            }
+
             $params = [
-                'site_title' => get_setting('site_title', 'Tala Online'),
-                'base_url' => get_base_url(),
-                'logo_url' => get_base_url() . '/assets/images/logo-larg.svg'
+                'site_title' => $site_title,
+                'base_url' => $base_url,
+                'logo_url' => $logo_url
             ];
         }
         $site_title = $params['site_title'];

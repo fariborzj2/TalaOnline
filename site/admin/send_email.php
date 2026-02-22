@@ -47,6 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $personalized_body = str_replace('{name}', $recipient['name'], $body);
                 $personalized_subject = str_replace('{name}', $recipient['name'], $subject);
 
+                // Convert newlines to <br> if the body doesn't look like full HTML
+                if (strip_tags($personalized_body) === $personalized_body) {
+                    $personalized_body = nl2br($personalized_body);
+                }
+
                 $wrapped_body = Mail::getProfessionalLayout($personalized_body);
 
                 if (Mail::queueRaw($recipient['email'], $personalized_subject, $wrapped_body)) {

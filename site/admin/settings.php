@@ -18,9 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $api_sync_interval = $_POST['api_sync_interval'];
     $home_category_limit = $_POST['home_category_limit'];
     $site_title = $_POST['site_title'];
+    $site_url = $_POST['site_url'];
+    $mail_logo_url = $_POST['mail_logo_url'];
     $site_description = $_POST['site_description'];
     $site_keywords = $_POST['site_keywords'];
     $tinymce_api_key = $_POST['tinymce_api_key'];
+
+    set_setting('site_url', $site_url);
+    set_setting('mail_logo_url', $mail_logo_url);
 
     $social_telegram = $_POST['social_telegram'];
     $social_instagram = $_POST['social_instagram'];
@@ -99,12 +104,30 @@ include __DIR__ . '/layout/header.php';
             </div>
         </div>
         <div class="p-8 space-y-6">
-            <div class="form-group">
-                <label>عنوان اصلی وب‌سایت</label>
-                <div class="input-icon-wrapper">
-                    <span class="icon"><i data-lucide="layout" class="w-4 h-4"></i></span>
-                    <input type="text" name="site_title" value="<?= htmlspecialchars($site_title) ?>" required>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>عنوان اصلی وب‌سایت</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="layout" class="w-4 h-4"></i></span>
+                        <input type="text" name="site_title" value="<?= htmlspecialchars($site_title) ?>" required>
+                    </div>
                 </div>
+                <div class="form-group">
+                    <label>آدرس وب‌سایت (Site URL)</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="link" class="w-4 h-4"></i></span>
+                        <input type="text" name="site_url" value="<?= htmlspecialchars(get_setting('site_url', get_base_url())) ?>" placeholder="https://example.com" class="ltr-input" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>آدرس لوگو مخصوص ایمیل (توصیه شده PNG با عرض ۱۰۰ پیکسل)</label>
+                <div class="input-icon-wrapper">
+                    <span class="icon"><i data-lucide="image" class="w-4 h-4"></i></span>
+                    <input type="text" name="mail_logo_url" value="<?= htmlspecialchars(get_setting('mail_logo_url')) ?>" placeholder="https://example.com/logo.png" class="ltr-input">
+                </div>
+                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">اگر خالی باشد، از لوگوی اصلی سایت استفاده می‌شود. برای سازگاری حداکثری در ایمیل‌ها، از فرمت PNG استفاده کنید.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
