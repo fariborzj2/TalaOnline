@@ -102,7 +102,7 @@
             background-color: var(--color-white);
             width: 100%;
             max-width: 340px;
-            border-radius: 24px;
+            border-radius: 16px;
             padding: 30px;
             transform: scale(0.95);
             opacity: 0;
@@ -128,10 +128,10 @@
         .dialog-icon-container.error { background: var(--bg-error); color: var(--color-error); }
         .dialog-icon-container.warning { background: var(--bg-warning); color: var(--color-warning); }
 
-        .dialog-title { font-size: 1.2rem; font-weight: 800; color: var(--color-title); margin-bottom: 8px; }
+        .dialog-title { font-size: 1.2rem; color: var(--color-title); margin-bottom: 8px; }
         .dialog-message { font-size: 0.9rem; color: var(--color-text); line-height: 1.6; margin-bottom: 25px; font-weight: 600; }
         .dialog-actions { display: flex; flex-direction: column; gap: 10px; }
-        .btn-dialog { padding: 12px; border-radius: 12px; font-weight: 700; font-size: 0.9rem; transition: all 0.2s; width: 100%; border: none; cursor: pointer; }
+        .btn-dialog { padding: 12px; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s; width: 100%; border: none; cursor: pointer; }
         .btn-dialog-primary { background: var(--color-primary); color: white; }
         .btn-dialog-outline { background: var(--color-secondary); color: var(--color-text); border: 1px solid var(--color-border); }
         .btn-dialog-primary:hover { opacity: 0.9; }
