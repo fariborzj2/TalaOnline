@@ -60,6 +60,11 @@ $smtp_enc = get_setting('smtp_enc', 'tls');
 
 $templates = $pdo->query("SELECT * FROM email_templates ORDER BY id ASC")->fetchAll();
 
+// Get queue status
+$queue_pending = $pdo->query("SELECT COUNT(*) FROM email_queue WHERE status = 'pending'")->fetchColumn();
+$queue_sent = $pdo->query("SELECT COUNT(*) FROM email_queue WHERE status = 'sent'")->fetchColumn();
+$queue_failed = $pdo->query("SELECT COUNT(*) FROM email_queue WHERE status = 'failed' OR attempts >= 3")->fetchColumn();
+
 $page_title = 'تنظیمات ایمیل';
 $page_subtitle = 'مدیریت پیکربندی ارسال ایمیل و ویرایش قالب‌های اطلاع‌رسانی سیستم';
 
@@ -176,11 +181,28 @@ include __DIR__ . '/layout/header.php';
                 </div>
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex flex-col md:flex-row justify-end gap-3 pt-6 border-t border-slate-100">
+                <button type="button" onclick="testSMTP()" class="btn-v3 btn-v3-outline text-indigo-600 border-indigo-200 hover:bg-indigo-50">
+                    <i data-lucide="flask-conical" class="w-4 h-4"></i>
+                    تست اتصال SMTP
+                </button>
                 <button type="submit" name="save_general" class="btn-v3 btn-v3-primary">
                     <i data-lucide="save" class="w-4 h-4"></i>
                     ذخیره تنظیمات عمومی
                 </button>
+            </div>
+
+            <div id="test_results" class="hidden mt-6 animate-fade-in">
+                <div class="p-4 rounded-xl border flex flex-col gap-3" id="test_status_box">
+                    <div class="flex items-center gap-3">
+                        <div id="test_status_icon" class="w-8 h-8 rounded-full flex items-center justify-center"></div>
+                        <span id="test_status_msg" class="font-bold text-sm"></span>
+                    </div>
+                    <div id="test_debug_container" class="hidden mt-2">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-2">خروجی دیباگ:</p>
+                        <pre id="test_debug_log" class="text-[10px] bg-slate-900 text-slate-300 p-4 rounded-lg overflow-x-auto font-mono ltr text-left leading-relaxed max-h-60"></pre>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
@@ -226,6 +248,52 @@ include __DIR__ . '/layout/header.php';
                 <div class="text-xs text-amber-800 leading-relaxed">
                     <strong class="block mb-1">نکته مهم:</strong>
                     اگر از متد <strong>PHP mail()</strong> استفاده می‌کنید، احتمال اسپم شدن همچنان وجود دارد. توصیه می‌شود یک اکانت ایمیل رسمی (مانند info@yourdomain.com) بسازید و از متد <strong>SMTP</strong> استفاده کنید.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Queue Management -->
+    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50">
+                <i data-lucide="layers" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-black text-slate-800">مدیریت صف ارسال</h2>
+                <p class="text-[10px] text-slate-400 font-bold uppercase ">Email Queue Status</p>
+            </div>
+        </div>
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="p-4 bg-amber-50 border border-amber-100 rounded-xl text-center">
+                    <p class="text-[10px] text-amber-600 font-black uppercase mb-1">در انتظار ارسال</p>
+                    <span class="text-2xl font-black text-amber-700"><?= $queue_pending ?></span>
+                </div>
+                <div class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-center">
+                    <p class="text-[10px] text-emerald-600 font-black uppercase mb-1">ارسال شده</p>
+                    <span class="text-2xl font-black text-emerald-700"><?= $queue_sent ?></span>
+                </div>
+                <div class="p-4 bg-rose-50 border border-rose-100 rounded-xl text-center">
+                    <p class="text-[10px] text-rose-600 font-black uppercase mb-1">ناموفق</p>
+                    <span class="text-2xl font-black text-rose-700"><?= $queue_failed ?></span>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 space-y-4">
+                <h3 class="font-bold text-slate-800 text-sm">نحوه پردازش صف:</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    برای ارسال ایمیل‌های موجود در صف، باید فایل <code>site/api/mail_worker.php</code> به صورت دوره‌ای اجرا شود.
+                </p>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <a href="../api/mail_worker.php" target="_blank" class="btn-v3 btn-v3-outline text-indigo-600 border-indigo-200 hover:bg-indigo-50 text-xs">
+                        <i data-lucide="play" class="w-4 h-4"></i>
+                        اجرای دستی پردازشگر صف
+                    </a>
+                </div>
+                <div class="mt-4 p-4 bg-white border border-slate-200 rounded-lg">
+                    <p class="text-[10px] text-slate-400 font-black uppercase mb-2">دستور پیشنهادی Cron Job (هر ۵ دقیقه):</p>
+                    <code class="text-[10px] font-mono text-indigo-600">*/5 * * * * php <?= realpath(__DIR__ . '/../api/mail_worker.php') ?> > /dev/null 2>&1</code>
                 </div>
             </div>
         </div>
@@ -294,6 +362,73 @@ function toggleSMTPFields() {
     } else {
         smtpFields.classList.add('hidden');
     }
+}
+
+async function testSMTP() {
+    const testEmail = await request_user_input('لطفاً آدرس ایمیل مقصد برای تست را وارد کنید:');
+    if (!testEmail) return;
+
+    const data = {
+        test_email: testEmail,
+        smtp_host: document.querySelector('input[name="smtp_host"]').value,
+        smtp_port: document.querySelector('input[name="smtp_port"]').value,
+        smtp_user: document.querySelector('input[name="smtp_user"]').value,
+        smtp_pass: document.querySelector('input[name="smtp_pass"]').value,
+        smtp_enc: document.querySelector('select[name="smtp_enc"]').value,
+        mail_sender_name: document.querySelector('input[name="mail_sender_name"]').value,
+        mail_sender_email: document.querySelector('input[name="mail_sender_email"]').value
+    };
+
+    const resultsDiv = document.getElementById('test_results');
+    const statusBox = document.getElementById('test_status_box');
+    const statusIcon = document.getElementById('test_status_icon');
+    const statusMsg = document.getElementById('test_status_msg');
+    const debugContainer = document.getElementById('test_debug_container');
+    const debugLog = document.getElementById('test_debug_log');
+
+    resultsDiv.classList.remove('hidden');
+    statusBox.className = 'p-4 rounded-xl border flex flex-col gap-3 bg-slate-50 border-slate-200';
+    statusIcon.innerHTML = '<div class="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>';
+    statusMsg.innerText = 'در حال برقراری ارتباط با سرور SMTP... (لطفاً منتظر بمانید)';
+    debugContainer.classList.add('hidden');
+
+    try {
+        const res = await fetch('../api/mail_test.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        const result = await res.json();
+
+        if (result.success) {
+            statusBox.className = 'p-4 rounded-xl border flex flex-col gap-3 bg-emerald-50 border-emerald-100 text-emerald-700';
+            statusIcon.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>';
+            statusMsg.innerText = result.message;
+        } else {
+            statusBox.className = 'p-4 rounded-xl border flex flex-col gap-3 bg-rose-50 border-rose-100 text-rose-700';
+            statusIcon.innerHTML = '<i data-lucide="x" class="w-4 h-4 text-rose-600"></i>';
+            statusMsg.innerText = result.message;
+        }
+
+        if (result.debug) {
+            debugContainer.classList.remove('hidden');
+            debugLog.innerText = result.debug;
+        }
+
+        lucide.createIcons();
+    } catch (e) {
+        statusBox.className = 'p-4 rounded-xl border flex flex-col gap-3 bg-rose-50 border-rose-100 text-rose-700';
+        statusIcon.innerHTML = '<i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>';
+        statusMsg.innerText = 'خطا در اجرای تست: ' + e.message;
+        lucide.createIcons();
+    }
+}
+
+async function request_user_input(message) {
+    return new Promise((resolve) => {
+        const email = prompt(message);
+        resolve(email);
+    });
 }
 </script>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Core Email Library - Enhanced for Deliverability
+ * Core Email Library - Enhanced for Deliverability & Async Queuing
  */
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -13,77 +13,92 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 
 class Mail {
     /**
-     * Send an email using a template
-     *
-     * @param string $to Recipient email
-     * @param string $template_slug Template slug from email_templates table
-     * @param array $data Associative array of placeholders to replace
-     * @return bool
+     * Send an email using a template (Synchronous)
      */
     public static function send($to, $template_slug, $data = []) {
+        $mail_data = self::prepareTemplateData($template_slug, $data);
+        if (!$mail_data) return false;
+
+        return self::sendRaw($to, $mail_data['subject'], $mail_data['body']);
+    }
+
+    /**
+     * Queue an email for background sending
+     */
+    public static function queue($to, $template_slug, $data = []) {
+        $mail_data = self::prepareTemplateData($template_slug, $data);
+        if (!$mail_data) return false;
+
+        return self::queueRaw($to, $mail_data['subject'], $mail_data['body']);
+    }
+
+    /**
+     * Queue a raw email
+     */
+    public static function queueRaw($to, $subject, $body_html, $options = []) {
         global $pdo;
+        $sender_email = $options['sender_email'] ?? get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
+        $sender_name = $options['sender_name'] ?? get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
 
         try {
-            // Fetch template
-            $stmt = $pdo->prepare("SELECT * FROM email_templates WHERE slug = ?");
-            $stmt->execute([$template_slug]);
-            $template = $stmt->fetch();
-
-            if (!$template) {
-                error_log("Email template not found: $template_slug");
-                return false;
-            }
-
-            $subject = $template['subject'];
-            $body = $template['body'];
-
-            // Common placeholders
-            $data['site_title'] = get_setting('site_title', 'Tala Online');
-            $data['base_url'] = get_base_url();
-
-            // Replace placeholders
-            foreach ($data as $key => $value) {
-                $subject = str_replace('{' . $key . '}', $value, $subject);
-                $body = str_replace('{' . $key . '}', $value, $body);
-            }
-
-            return self::sendRaw($to, $subject, $body);
-
+            $stmt = $pdo->prepare("INSERT INTO email_queue (to_email, subject, body_html, sender_name, sender_email) VALUES (?, ?, ?, ?, ?)");
+            return $stmt->execute([$to, $subject, $body_html, $sender_name, $sender_email]);
         } catch (Exception $e) {
-            error_log("Error sending email: " . $e->getMessage());
+            error_log("Queue Error: " . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Send a raw email with advanced headers for better deliverability
-     *
-     * @param string $to
-     * @param string $subject
-     * @param string $body_html
-     * @return bool
+     * Prepare subject and body from template
      */
-    public static function sendRaw($to, $subject, $body_html) {
-        // Check if mailing is enabled
-        $enabled = get_setting('mail_enabled', '1');
-        if ($enabled !== '1') {
+    private static function prepareTemplateData($template_slug, $data) {
+        global $pdo;
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM email_templates WHERE slug = ?");
+            $stmt->execute([$template_slug]);
+            $template = $stmt->fetch();
+
+            if (!$template) return false;
+
+            $subject = $template['subject'];
+            $body = $template['body'];
+
+            $data['site_title'] = get_setting('site_title', 'Tala Online');
+            $data['base_url'] = get_base_url();
+
+            foreach ($data as $key => $value) {
+                $subject = str_replace('{' . $key . '}', $value, $subject);
+                $body = str_replace('{' . $key . '}', $value, $body);
+            }
+
+            return ['subject' => $subject, 'body' => $body];
+        } catch (Exception $e) {
             return false;
         }
+    }
 
-        $sender_email = get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
-        $sender_name = get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
+    /**
+     * Send a raw email with advanced headers (Synchronous)
+     */
+    public static function sendRaw($to, $subject, $body_html, $options = []) {
+        // Check if mailing is enabled
+        $enabled = get_setting('mail_enabled', '1');
+        if ($enabled !== '1') return false;
+
+        $sender_email = $options['sender_email'] ?? get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
+        $sender_name = $options['sender_name'] ?? get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
+        $debug = $options['debug'] ?? false;
 
         $mail_driver = get_setting('mail_driver', 'mail');
 
         if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-            // Fallback to native mail if PHPMailer is not available
             return self::sendNative($to, $subject, $body_html, $sender_email, $sender_name);
         }
 
         $mail = new PHPMailer(true);
 
         try {
-            // Server settings
             if ($mail_driver === 'smtp') {
                 $mail->isSMTP();
                 $mail->Host       = get_setting('smtp_host');
@@ -92,32 +107,35 @@ class Mail {
                 $mail->Password   = get_setting('smtp_pass');
                 $mail->SMTPSecure = get_setting('smtp_enc', 'tls') === 'none' ? false : get_setting('smtp_enc', 'tls');
                 $mail->Port       = (int)get_setting('smtp_port', 587);
+                $mail->Timeout    = 10; // Set a reasonable timeout to prevent site-wide freeze
+                $mail->SMTPConnectTimeout = 10;
+
+                if ($debug) {
+                    $mail->SMTPDebug = 2;
+                    $mail->Debugoutput = function($str, $level) { echo $str . "\n"; };
+                }
             } else {
                 $mail->isMail();
             }
 
-            // Recipients
             $mail->setFrom($sender_email, $sender_name);
             $mail->addAddress($to);
             $mail->addReplyTo($sender_email, $sender_name);
 
-            // Content
             $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body    = $body_html;
 
-            // Plain text version
             $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_html));
             $mail->AltBody = html_entity_decode($body_text);
-
             $mail->CharSet = 'UTF-8';
 
             return $mail->send();
         } catch (Exception $e) {
+            if ($debug) echo "PHPMailer Error: " . $mail->ErrorInfo;
             error_log("PHPMailer Error: " . $mail->ErrorInfo);
 
-            // Critical fallback to native mail if SMTP fails
-            if ($mail_driver === 'smtp') {
+            if ($mail_driver === 'smtp' && !$debug) {
                  return self::sendNative($to, $subject, $body_html, $sender_email, $sender_name);
             }
             return false;
@@ -125,7 +143,7 @@ class Mail {
     }
 
     /**
-     * Fallback to PHP native mail() with improved headers
+     * Fallback to PHP native mail()
      */
     private static function sendNative($to, $subject, $body_html, $sender_email, $sender_name) {
         $encoded_subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';

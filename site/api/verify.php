@@ -35,8 +35,8 @@ if (empty($token)) {
                     $_SESSION['is_verified'] = 1;
                 }
 
-                // Send Welcome Email
-                Mail::send($user['email'], 'welcome', [
+                // Send Welcome Email (Queued)
+                Mail::queue($user['email'], 'welcome', [
                     'name' => $user['name']
                 ]);
             }
@@ -57,6 +57,10 @@ if (empty($token)) {
     <style>
         body { font-family: 'Vazirmatn', sans-serif; }
     </style>
+    <script>
+        // Trigger mail worker to send welcome email immediately
+        fetch('/api/mail_worker.php').catch(() => {});
+    </script>
 </head>
 <body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
     <div class="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200 border border-slate-100 max-w-md w-full text-center">
