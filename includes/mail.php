@@ -82,15 +82,18 @@ class Mail {
      * Send a raw email with advanced headers (Synchronous)
      */
     public static function sendRaw($to, $subject, $body_html, $options = []) {
+        // Allow overriding global settings (useful for testing)
+        $config = $options['config'] ?? [];
+
         // Check if mailing is enabled
-        $enabled = get_setting('mail_enabled', '1');
+        $enabled = $config['mail_enabled'] ?? get_setting('mail_enabled', '1');
         if ($enabled !== '1') return false;
 
-        $sender_email = $options['sender_email'] ?? get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
-        $sender_name = $options['sender_name'] ?? get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
+        $sender_email = $options['sender_email'] ?? $config['mail_sender_email'] ?? get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
+        $sender_name = $options['sender_name'] ?? $config['mail_sender_name'] ?? get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
         $debug = $options['debug'] ?? false;
 
-        $mail_driver = get_setting('mail_driver', 'mail');
+        $mail_driver = $config['mail_driver'] ?? get_setting('mail_driver', 'mail');
 
         if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
             return self::sendNative($to, $subject, $body_html, $sender_email, $sender_name);
@@ -101,17 +104,18 @@ class Mail {
         try {
             if ($mail_driver === 'smtp') {
                 $mail->isSMTP();
-                $mail->Host       = get_setting('smtp_host');
+                $mail->Host       = $config['smtp_host'] ?? get_setting('smtp_host');
                 $mail->SMTPAuth   = true;
-                $mail->Username   = get_setting('smtp_user');
-                $mail->Password   = get_setting('smtp_pass');
-                $mail->SMTPSecure = get_setting('smtp_enc', 'tls') === 'none' ? false : get_setting('smtp_enc', 'tls');
-                $mail->Port       = (int)get_setting('smtp_port', 587);
+                $mail->Username   = $config['smtp_user'] ?? get_setting('smtp_user');
+                $mail->Password   = $config['smtp_pass'] ?? get_setting('smtp_pass');
+                $mail->SMTPSecure = ($config['smtp_enc'] ?? get_setting('smtp_enc', 'tls')) === 'none' ? false : ($config['smtp_enc'] ?? get_setting('smtp_enc', 'tls'));
+                $mail->Port       = (int)($config['smtp_port'] ?? get_setting('smtp_port', 587));
                 $mail->Timeout    = 15;
                 $mail->SMTPConnectTimeout = 10;
 
-                // Disable SSL verification if requested (fixes TLS/SSL handshake hangs on many hosts)
-                if (get_setting('smtp_skip_ssl_verify', '0') === '1') {
+                // Disable SSL verification if requested
+                $skip_verify = $config['smtp_skip_ssl_verify'] ?? get_setting('smtp_skip_ssl_verify', '0');
+                if ($skip_verify === '1') {
                     $mail->SMTPOptions = [
                         'ssl' => [
                             'verify_peer' => false,

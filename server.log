@@ -1,43 +1,4 @@
-[Sun Feb 22 10:44:00 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Sun Feb 22 10:44:39 2026] [::1]:41470 Accepted
-[Sun Feb 22 10:44:39 2026] [::1]:41470 [200]: GET /admin/login.php
-[Sun Feb 22 10:44:39 2026] [::1]:41470 Closing
-[Sun Feb 22 10:44:40 2026] [::1]:41480 Accepted
-[Sun Feb 22 10:44:40 2026] [::1]:41480 [302]: POST /admin/login.php
-[Sun Feb 22 10:44:40 2026] [::1]:41480 Closing
-[Sun Feb 22 10:44:40 2026] [::1]:41492 Accepted
-[Sun Feb 22 10:44:40 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/site/admin/index.php:12
-Stack trace:
-#0 /app/site/admin/index.php(12): PDO->query()
-#1 {main}
-  thrown in /app/site/admin/index.php on line 12
-[Sun Feb 22 10:44:40 2026] [::1]:41492 [500]: GET /admin/index.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/site/admin/index.php:12
-Stack trace:
-#0 /app/site/admin/index.php(12): PDO->query()
-#1 {main}
-  thrown in /app/site/admin/index.php on line 12
-[Sun Feb 22 10:44:40 2026] [::1]:41492 Closing
-[Sun Feb 22 10:44:40 2026] [::1]:41508 Accepted
-[Sun Feb 22 10:44:40 2026] [::1]:41508 [200]: GET /admin/email_settings.php
-[Sun Feb 22 10:44:40 2026] [::1]:41508 Closing
-[Sun Feb 22 10:45:18 2026] [::1]:60980 Accepted
-[Sun Feb 22 10:45:18 2026] [::1]:60980 [200]: GET /admin/login.php
-[Sun Feb 22 10:45:18 2026] [::1]:60980 Closing
-[Sun Feb 22 10:45:19 2026] [::1]:60984 Accepted
-[Sun Feb 22 10:45:19 2026] [::1]:60984 [302]: POST /admin/login.php
-[Sun Feb 22 10:45:19 2026] [::1]:60984 Closing
-[Sun Feb 22 10:45:19 2026] [::1]:60992 Accepted
-[Sun Feb 22 10:45:19 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/admin/index.php:15
-Stack trace:
-#0 /app/site/admin/index.php(15): PDO->query()
-#1 {main}
-  thrown in /app/site/admin/index.php on line 15
-[Sun Feb 22 10:45:19 2026] [::1]:60992 [500]: GET /admin/index.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/admin/index.php:15
-Stack trace:
-#0 /app/site/admin/index.php(15): PDO->query()
-#1 {main}
-  thrown in /app/site/admin/index.php on line 15
-[Sun Feb 22 10:45:19 2026] [::1]:60992 Closing
-[Sun Feb 22 10:45:19 2026] [::1]:60996 Accepted
-[Sun Feb 22 10:45:19 2026] [::1]:60996 [200]: GET /admin/email_settings.php
-[Sun Feb 22 10:45:19 2026] [::1]:60996 Closing
+[Sun Feb 22 10:49:19 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Sun Feb 22 10:49:20 2026] [::1]:34588 Accepted
+[Sun Feb 22 10:49:20 2026] [::1]:34588 [200]: POST /api/mail_test.php
+[Sun Feb 22 10:49:20 2026] [::1]:34588 Closing
