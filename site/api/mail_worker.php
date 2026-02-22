@@ -44,7 +44,7 @@ try {
             $pdo->prepare("UPDATE email_queue SET status = 'sent', updated_at = CURRENT_TIMESTAMP WHERE id = ?")->execute([$email['id']]);
         } else {
             // Log attempt failure
-            $error_msg = 'Sending failed';
+            $error_msg = Mail::getLastError() ?: 'Sending failed';
             $pdo->prepare("UPDATE email_queue SET attempts = attempts + 1, last_error = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
                 ->execute([$error_msg, $email['id']]);
         }

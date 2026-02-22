@@ -12,6 +12,15 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 }
 
 class Mail {
+    private static $last_error = '';
+
+    /**
+     * Get the last error message
+     */
+    public static function getLastError() {
+        return self::$last_error;
+    }
+
     /**
      * Send an email using a template (Synchronous)
      */
@@ -192,6 +201,7 @@ class Mail {
      * Send a raw email with advanced headers (Synchronous)
      */
     public static function sendRaw($to, $subject, $body_html, $options = []) {
+        self::$last_error = '';
         // Allow overriding global settings (useful for testing)
         $config = $options['config'] ?? [];
 
@@ -274,6 +284,7 @@ class Mail {
 
             return $mail->send();
         } catch (Exception $e) {
+            self::$last_error = $mail->ErrorInfo;
             if ($debug) echo "PHPMailer Error: " . $mail->ErrorInfo;
             error_log("PHPMailer Error: " . $mail->ErrorInfo);
 
@@ -296,11 +307,14 @@ class Mail {
         $message_id = sprintf("<%s.%s@%s>",
             base_convert(microtime(), 10, 36),
             base_convert(bin2hex(random_bytes(8)), 16, 36),
-            $_SERVER['HTTP_HOST'] ?? 'localhost'
+            $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost'
         );
 
         $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_html));
         $body_text = html_entity_decode($body_text);
+
+        // Normalize line endings for headers (some systems prefer \n over \r\n)
+        $eol = "\n";
 
         $headers = [
             'MIME-Version: 1.0',
@@ -313,17 +327,24 @@ class Mail {
             "X-Mailer: PHP/" . phpversion(),
         ];
 
-        $message = "--$boundary\r\n";
-        $message .= "Content-Type: text/plain; charset=UTF-8\r\n";
-        $message .= "Content-Transfer-Encoding: base64\r\n\r\n";
-        $message .= chunk_split(base64_encode($body_text)) . "\r\n";
+        $message = "--$boundary$eol";
+        $message .= "Content-Type: text/plain; charset=UTF-8$eol";
+        $message .= "Content-Transfer-Encoding: base64$eol$eol";
+        $message .= chunk_split(base64_encode($body_text), 76, $eol) . $eol;
 
-        $message .= "--$boundary\r\n";
-        $message .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $message .= "Content-Transfer-Encoding: base64\r\n\r\n";
-        $message .= chunk_split(base64_encode($body_html)) . "\r\n";
+        $message .= "--$boundary$eol";
+        $message .= "Content-Type: text/html; charset=UTF-8$eol";
+        $message .= "Content-Transfer-Encoding: base64$eol$eol";
+        $message .= chunk_split(base64_encode($body_html), 76, $eol) . $eol;
         $message .= "--$boundary--";
 
-        return mail($to, $encoded_subject, $message, implode("\r\n", $headers), "-f $sender_email");
+        $success = @mail($to, $encoded_subject, $message, implode($eol, $headers), "-f $sender_email");
+
+        if (!$success) {
+            $error = error_get_last();
+            self::$last_error = "Native mail() failed: " . ($error['message'] ?? 'Unknown error');
+        }
+
+        return $success;
     }
 }
