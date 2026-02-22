@@ -389,7 +389,11 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
                         </div>
                     </div>
 
-                    <div class="flex justify-end">
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="testTemplate('<?= $template['slug'] ?>')" class="btn-v3 btn-v3-outline text-indigo-600 border-indigo-200 hover:bg-indigo-50">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            ارسال ایمیل تست
+                        </button>
                         <button type="submit" name="save_template" class="btn-v3 btn-v3-outline text-amber-600 border-amber-200 hover:bg-amber-50">
                             <i data-lucide="edit-3" class="w-4 h-4"></i>
                             بروزرسانی قالب
@@ -402,6 +406,25 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
 </div>
 
 <script>
+
+async function testTemplate(slug) {
+    const testEmail = await request_user_input('لطفاً آدرس ایمیل مقصد برای تست این قالب را وارد کنید:');
+    if (!testEmail) return;
+
+    // Show loading state (could use a global loader or alert)
+    const res = await fetch('../api/mail_test.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ test_email: testEmail, template_slug: slug })
+    });
+    const result = await res.json();
+
+    if (result.success) {
+        alert('ایمیل تست با موفقیت ارسال شد.');
+    } else {
+        alert('خطا در ارسال ایمیل تست: ' + (result.message || 'Unknown error'));
+    }
+}
 
 async function testSMTP() {
     const testEmail = await request_user_input('لطفاً آدرس ایمیل مقصد برای تست را وارد کنید:');
