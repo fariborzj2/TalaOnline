@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../../includes/mail.php';
 check_permission("settings.view");
 
 $message = '';
@@ -88,7 +89,7 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
                 </div>
             </div>
             <p class="text-sm leading-relaxed">
-                سیستم قادر به پیدا کردن PHPMailer نیست. این یعنی قابلیت ارسال از طریق <strong>SMTP</strong> در دسترس نخواهد بود و سیستم به صورت خودکار از تابع پیش‌فرض <code>mail()</code> استفاده می‌کند که ممکن است باعث اسپم شدن ایمیل‌ها شود.
+                سیستم قادر به پیدا کردن PHPMailer نیست. این یعنی قابلیت ارسال از طریق <strong>SMTP</strong> در دسترس نخواهد بود. لطفاً برای فعال‌سازی ارسال ایمیل، کتابخانه مورد نیاز را نصب کنید.
             </p>
             <div class="p-4 bg-white/50 rounded-lg border border-amber-200">
                 <p class="text-xs font-bold mb-2">راه‌حل:</p>
@@ -282,11 +283,11 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
                 </div>
             </div>
 
-            <div class="p-4 bg-amber-50 rounded-lg border border-amber-100 flex items-start gap-3">
-                <i data-lucide="info" class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5"></i>
-                <div class="text-xs text-amber-800 leading-relaxed">
+            <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-100 flex items-start gap-3">
+                <i data-lucide="info" class="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5"></i>
+                <div class="text-xs text-indigo-800 leading-relaxed">
                     <strong class="block mb-1">نکته مهم:</strong>
-                    اگر از متد <strong>PHP mail()</strong> استفاده می‌کنید، احتمال اسپم شدن همچنان وجود دارد. توصیه می‌شود یک اکانت ایمیل رسمی (مانند info@yourdomain.com) بسازید و از متد <strong>SMTP</strong> استفاده کنید.
+                    سیستم برای افزایش امنیت و جلوگیری از اسپم، منحصراً از پروتکل <strong>SMTP</strong> استفاده می‌کند. حتماً اطلاعات یک اکانت ایمیل معتبر را در بخش تنظیمات وارد کنید.
                 </div>
             </div>
         </div>
