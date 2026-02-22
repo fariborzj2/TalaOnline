@@ -35,7 +35,6 @@
                 <h1 class="font-size-2 font-black text-title"><?= htmlspecialchars($h1_title) ?></h1>
                 <div class="d-flex align-center gap-05 mt-05">
                     <span class="text-gray font-size-0-9"><?= htmlspecialchars($item['en_name']) ?></span>
-                    <span class="badge badge-secondary uppercase font-size-0-7"><?= htmlspecialchars($item['symbol']) ?></span>
                 </div>
             </div>
         </div>
@@ -49,14 +48,14 @@
                 <?php
                 $change_val = $item['change_percent'] ?? 0;
                 $change_class = $change_val >= 0 ? 'text-success' : 'text-error';
-                $change_icon = $change_val >= 0 ? 'trending-up' : 'trending-down';
+                $change_icon = $change_val >= 0 ? 'arrow-up' : 'arrow-down';
                 ?>
                 <span class="font-size-1 font-bold <?= $change_class ?> d-flex align-center gap-025">
                     <i data-lucide="<?= $change_icon ?>" class="w-4 h-4"></i>
-                    <?= $change_val >= 0 ? '+' : '' ?><?= fa_num(abs($change_val)) ?>%
+                    <?= fa_num(abs($change_val)) ?>%
                 </span>
                 <span class="font-size-0-9 text-gray">
-                    <?= $change_val >= 0 ? '+' : '-' ?><?= fa_num(number_format(abs($item['change_amount'] ?? 0))) ?>
+                    <?= $change_val >= 0 ? '+' : '-' ?> <?= fa_num(number_format(abs($item['change_amount'] ?? 0))) ?>
                 </span>
             </div>
         </div>
