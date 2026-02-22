@@ -51,7 +51,7 @@
                 $change_icon = $change_val >= 0 ? 'arrow-up' : 'arrow-down';
                 ?>
                 <span class="font-size-1 font-bold <?= $change_class ?> d-flex align-center gap-025">
-                    <i data-lucide="<?= $change_icon ?>" class="w-4 h-4"></i>
+                    <i data-lucide="<?= $change_icon ?>" class="w-2 h-2"></i>
                     <?= fa_num(abs($change_val)) ?>%
                 </span>
                 <span class="font-size-0-9 text-gray">
