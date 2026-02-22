@@ -66,6 +66,21 @@ if (file_exists($config_file)) {
             } else {
                 $cols = $pdo->query("DESCRIBE users")->fetchAll(PDO::FETCH_COLUMN);
             }
+
+            $queue_cols = [];
+            if ($driver === 'sqlite') {
+                $stmt = $pdo->query("PRAGMA table_info(email_queue)");
+                while ($row = $stmt->fetch()) { $queue_cols[] = $row['name']; }
+            } else {
+                try {
+                    $queue_cols = $pdo->query("DESCRIBE email_queue")->fetchAll(PDO::FETCH_COLUMN);
+                } catch (Exception $e) {}
+            }
+
+            if (!empty($queue_cols) && !in_array('metadata', $queue_cols)) {
+                $pdo->exec("ALTER TABLE email_queue ADD COLUMN metadata TEXT");
+            }
+
             if (!in_array('phone', $cols)) {
                 $pdo->exec("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
             }
@@ -190,6 +205,7 @@ if (file_exists($config_file)) {
                     `status` VARCHAR(20) DEFAULT 'pending',
                     `attempts` INTEGER DEFAULT 0,
                     `last_error` TEXT,
+                    `metadata` TEXT,
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )");
@@ -211,6 +227,7 @@ if (file_exists($config_file)) {
                     `status` VARCHAR(20) DEFAULT 'pending',
                     `attempts` INT DEFAULT 0,
                     `last_error` TEXT,
+                    `metadata` TEXT,
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");

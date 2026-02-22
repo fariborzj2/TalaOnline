@@ -465,7 +465,7 @@ async function testTemplate(slug) {
     const res = await fetch('../api/mail_test.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ test_email: testEmail, template_slug: slug })
+        body: JSON.stringify({ test_email: testEmail, template_slug: slug, type: 'transactional' })
     });
     const result = await res.json();
 
@@ -492,7 +492,8 @@ async function testSMTP() {
         mail_sender_email: document.querySelector('input[name="mail_sender_email"]').value,
         dkim_domain: document.querySelector('input[name="dkim_domain"]').value,
         dkim_selector: document.querySelector('input[name="dkim_selector"]').value,
-        dkim_private: document.querySelector('textarea[name="dkim_private"]').value
+        dkim_private: document.querySelector('textarea[name="dkim_private"]').value,
+        type: 'transactional'
     };
 
     const resultsDiv = document.getElementById('test_results');

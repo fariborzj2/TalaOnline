@@ -37,6 +37,13 @@ try {
             'debug' => false
         ];
 
+        if (!empty($email['metadata'])) {
+            $metadata = json_decode($email['metadata'], true);
+            if (is_array($metadata)) {
+                $options = array_merge($options, $metadata);
+            }
+        }
+
         // Process sending
         $success = Mail::sendRaw($email['to_email'], $email['subject'], $email['body_html'], $options);
 
