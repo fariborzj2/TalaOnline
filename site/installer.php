@@ -265,6 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
                 $stmt->execute(['site_url', $site_url]);
+                $stmt->execute(['mail_driver', 'smtp']);
                 $stmt->execute(['api_key', $api_key]);
                 $stmt->execute(['site_title', 'طلا آنلاین']);
                 $stmt->execute(['api_sync_interval', '10']);
