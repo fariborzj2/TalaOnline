@@ -260,34 +260,42 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
         </div>
         <div class="p-8 space-y-6">
             <p class="text-sm text-slate-600 leading-relaxed">
-                برای جلوگیری از اسپم شدن ایمیل‌ها، حتماً رکوردهای زیر را در تنظیمات DNS دامنه خود (مانند کلودفلر یا پنل هاست) اضافه کنید:
+                برای جلوگیری از اسپم شدن ایمیل‌ها، تنظیم صحیح رکوردهای DNS برای احراز هویت فرستنده الزامی است:
             </p>
 
             <div class="space-y-4">
                 <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] font-black rounded">SPF Record</span>
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded">SPF Record</span>
                         <span class="text-[10px] text-slate-400 font-bold">(TXT Record)</span>
                     </div>
-                    <code class="text-xs font-mono break-all text-indigo-600">v=spf1 a mx ip4:<?= $_SERVER['SERVER_ADDR'] ?? 'SERVER_IP' ?> ~all</code>
-                    <p class="text-[10px] text-slate-400 mt-2">این رکورد به سرورهای دریافت‌کننده (مانند Gmail) می‌گوید که سرور شما مجاز به ارسال ایمیل از طرف این دامنه است.</p>
+                    <code class="text-xs font-mono break-all text-indigo-600">v=spf1 a mx include:<?= parse_url(get_site_url(), PHP_URL_HOST) ?> ~all</code>
+                    <p class="text-[10px] text-slate-400 mt-2">این رکورد مشخص می‌کند کدام سرورها مجاز به ارسال ایمیل از طرف دامنه شما هستند. اگر از SMTP خارجی (مثل Gmail) استفاده می‌کنید، باید رکورد مربوطه را اضافه کنید.</p>
                 </div>
 
                 <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
                     <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] font-black rounded">DMARC Record</span>
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded">DKIM Record</span>
+                        <span class="text-[10px] text-slate-400 font-bold">(بسیار مهم)</span>
+                    </div>
+                    <p class="text-[10px] text-slate-600 leading-relaxed">این رکورد حاوی یک امضای دیجیتال است. تنظیمات DKIM معمولاً در کنترل پنل هاست یا سرویس SMTP شما در دسترس است. بدون DKIM، احتمال اسپم شدن در یاهو و جیمیل بسیار بالا خواهد بود.</p>
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded">DMARC Record</span>
                         <span class="text-[10px] text-slate-400 font-bold">(TXT Record Name: _dmarc)</span>
                     </div>
-                    <code class="text-xs font-mono break-all text-indigo-600">v=DMARC1; p=none;</code>
-                    <p class="text-[10px] text-slate-400 mt-2">این رکورد به امنیت بیشتر و تایید هویت فرستنده کمک می‌کند.</p>
+                    <code class="text-xs font-mono break-all text-indigo-600">v=DMARC1; p=quarantine; adkim=r; aspf=r;</code>
+                    <p class="text-[10px] text-slate-400 mt-2">این سیاست نهایی برای نحوه برخورد با ایمیل‌هایی است که SPF یا DKIM آن‌ها تایید نشده است.</p>
                 </div>
             </div>
 
             <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-100 flex items-start gap-3">
-                <i data-lucide="info" class="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5"></i>
+                <i data-lucide="shield-check" class="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5"></i>
                 <div class="text-xs text-indigo-800 leading-relaxed">
-                    <strong class="block mb-1">نکته مهم:</strong>
-                    سیستم برای افزایش امنیت و جلوگیری از اسپم، منحصراً از پروتکل <strong>SMTP</strong> استفاده می‌کند. حتماً اطلاعات یک اکانت ایمیل معتبر را در بخش تنظیمات وارد کنید.
+                    <strong class="block mb-1">نکته طلایی برای عدم اسپم:</strong>
+                    همیشه از یک آدرس ایمیل رسمی (مانند <code class="bg-indigo-100 px-1 rounded">info@yourdomain.com</code>) به عنوان فرستنده استفاده کنید. استفاده از آدرس‌های عمومی مثل جیمیل به عنوان فرستنده باعث بلاک شدن ایمیل‌های شما می‌شود.
                 </div>
             </div>
         </div>
