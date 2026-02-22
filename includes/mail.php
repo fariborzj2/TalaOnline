@@ -1,7 +1,15 @@
 <?php
 /**
- * Core Email Library
+ * Core Email Library - Enhanced for Deliverability
  */
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// Load Composer's autoloader if it exists
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
 
 class Mail {
     /**
@@ -48,14 +56,14 @@ class Mail {
     }
 
     /**
-     * Send a raw email
+     * Send a raw email with advanced headers for better deliverability
      *
      * @param string $to
      * @param string $subject
-     * @param string $body
+     * @param string $body_html
      * @return bool
      */
-    public static function sendRaw($to, $subject, $body) {
+    public static function sendRaw($to, $subject, $body_html) {
         // Check if mailing is enabled
         $enabled = get_setting('mail_enabled', '1');
         if ($enabled !== '1') {
@@ -65,14 +73,96 @@ class Mail {
         $sender_email = get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
         $sender_name = get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
 
+        $mail_driver = get_setting('mail_driver', 'mail');
+
+        if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+            // Fallback to native mail if PHPMailer is not available
+            return self::sendNative($to, $subject, $body_html, $sender_email, $sender_name);
+        }
+
+        $mail = new PHPMailer(true);
+
+        try {
+            // Server settings
+            if ($mail_driver === 'smtp') {
+                $mail->isSMTP();
+                $mail->Host       = get_setting('smtp_host');
+                $mail->SMTPAuth   = true;
+                $mail->Username   = get_setting('smtp_user');
+                $mail->Password   = get_setting('smtp_pass');
+                $mail->SMTPSecure = get_setting('smtp_enc', 'tls') === 'none' ? false : get_setting('smtp_enc', 'tls');
+                $mail->Port       = (int)get_setting('smtp_port', 587);
+            } else {
+                $mail->isMail();
+            }
+
+            // Recipients
+            $mail->setFrom($sender_email, $sender_name);
+            $mail->addAddress($to);
+            $mail->addReplyTo($sender_email, $sender_name);
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body    = $body_html;
+
+            // Plain text version
+            $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_html));
+            $mail->AltBody = html_entity_decode($body_text);
+
+            $mail->CharSet = 'UTF-8';
+
+            return $mail->send();
+        } catch (Exception $e) {
+            error_log("PHPMailer Error: " . $mail->ErrorInfo);
+
+            // Critical fallback to native mail if SMTP fails
+            if ($mail_driver === 'smtp') {
+                 return self::sendNative($to, $subject, $body_html, $sender_email, $sender_name);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Fallback to PHP native mail() with improved headers
+     */
+    private static function sendNative($to, $subject, $body_html, $sender_email, $sender_name) {
+        $encoded_subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
         $encoded_name = '=?UTF-8?B?' . base64_encode($sender_name) . '?=';
+
+        $boundary = md5(time());
+        $message_id = sprintf("<%s.%s@%s>",
+            base_convert(microtime(), 10, 36),
+            base_convert(bin2hex(random_bytes(8)), 16, 36),
+            $_SERVER['HTTP_HOST'] ?? 'localhost'
+        );
+
+        $body_text = strip_tags(str_replace(['<br>', '<br/>', '<p>', '</p>'], ["\n", "\n", "\n", "\n\n"], $body_html));
+        $body_text = html_entity_decode($body_text);
+
         $headers = [
             'MIME-Version: 1.0',
-            'Content-type: text/html; charset=utf-8',
-            'From: ' . $encoded_name . ' <' . $sender_email . '>',
-            'X-Mailer: PHP/' . phpversion()
+            "Content-Type: multipart/alternative; boundary=\"$boundary\"",
+            "From: $encoded_name <$sender_email>",
+            "Reply-To: $encoded_name <$sender_email>",
+            "Return-Path: $sender_email",
+            "Message-ID: $message_id",
+            "Date: " . date('r'),
+            "X-Mailer: PHP/" . phpversion(),
         ];
 
-        return mail($to, $subject, $body, implode("\r\n", $headers));
+        $message = "--$boundary\r\n";
+        $message .= "Content-Type: text/plain; charset=UTF-8\r\n";
+        $message .= "Content-Transfer-Encoding: base64\r\n\r\n";
+        $message .= chunk_split(base64_encode($body_text)) . "\r\n";
+
+        $message .= "--$boundary\r\n";
+        $message .= "Content-Type: text/html; charset=UTF-8\r\n";
+        $message .= "Content-Transfer-Encoding: base64\r\n\r\n";
+        $message .= chunk_split(base64_encode($body_html)) . "\r\n";
+        $message .= "--$boundary--";
+
+        return mail($to, $encoded_subject, $message, implode("\r\n", $headers), "-f $sender_email");
     }
 }
