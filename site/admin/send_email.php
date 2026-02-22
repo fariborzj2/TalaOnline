@@ -47,11 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $personalized_body = str_replace('{name}', $recipient['name'], $body);
                 $personalized_subject = str_replace('{name}', $recipient['name'], $subject);
 
-                if (Mail::sendRaw($recipient['email'], $personalized_subject, $personalized_body)) {
+                if (Mail::queueRaw($recipient['email'], $personalized_subject, $personalized_body)) {
                     $count++;
                 }
             }
-            $message = "ایمیل با موفقیت به $count کاربر ارسال شد.";
+            $message = "تعداد $count ایمیل در صف ارسال قرار گرفت. این ایمیل‌ها به زودی توسط سیستم در پس‌زمینه ارسال خواهند شد.";
         }
     } catch (Exception $e) {
         $error = 'خطا در ارسال ایمیل: ' . $e->getMessage();

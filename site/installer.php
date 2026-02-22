@@ -181,6 +181,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `subject` VARCHAR(255) NOT NULL,
                         `body` TEXT NOT NULL,
                         `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+                    "CREATE TABLE IF NOT EXISTS `email_queue` (
+                        `id` INT AUTO_INCREMENT PRIMARY KEY,
+                        `to_email` VARCHAR(255) NOT NULL,
+                        `subject` VARCHAR(255) NOT NULL,
+                        `body_html` TEXT NOT NULL,
+                        `sender_name` VARCHAR(255),
+                        `sender_email` VARCHAR(255),
+                        `status` VARCHAR(20) DEFAULT 'pending',
+                        `attempts` INT DEFAULT 0,
+                        `last_error` TEXT,
+                        `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
                 ];
 

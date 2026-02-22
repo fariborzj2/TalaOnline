@@ -401,7 +401,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     authState.user = data.user;
                     updateUIForAuth();
                     closeModal();
-                    showAlert('ثبت نام با موفقیت انجام شد', 'success');
+                    showAlert('ثبت نام با موفقیت انجام شد. لطفاً ایمیل خود را چک کنید.', 'success');
+                    fetch('/api/mail_worker.php').catch(() => {});
                 } else {
                     showAlert(data.message || 'خطا در ثبت نام', 'error');
                 }
@@ -619,5 +620,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.lucide) window.lucide.createIcons();
         window.__APP_READY__ = true;
         document.dispatchEvent(new CustomEvent('app:content-ready'));
+
+        // Trigger Mail Worker if on Admin or if requested (Basic async queue processing)
+        if (window.location.pathname.includes('/admin/')) {
+            fetch('/api/mail_worker.php').catch(() => {});
+        }
     })();
 });
