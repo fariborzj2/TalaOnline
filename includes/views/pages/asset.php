@@ -29,7 +29,7 @@
                 }
                 $image = get_asset_url($logo_path);
                 ?>
-                <img src="<?= htmlspecialchars($image) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="object-contain" width="32" height="32" loading="eager" decoding="async">
+                <img src="<?= htmlspecialchars($image) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="object-contain" width="42" height="42" loading="eager" decoding="async">
             </div>
             <div>
                 <h1 class="font-size-2 font-black text-title"><?= htmlspecialchars($h1_title) ?></h1>
