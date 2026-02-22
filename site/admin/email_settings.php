@@ -31,7 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             set_setting('smtp_pass', $_POST['smtp_pass'] ?? '');
             set_setting('smtp_enc', $_POST['smtp_enc'] ?? 'tls');
             set_setting('smtp_skip_ssl_verify', isset($_POST['smtp_skip_ssl_verify']) ? '1' : '0');
+
+            // DKIM Settings
+            set_setting('dkim_domain', $_POST['dkim_domain'] ?? '');
+            set_setting('dkim_selector', $_POST['dkim_selector'] ?? '');
+            set_setting('dkim_private', $_POST['dkim_private'] ?? '');
         }
+
+        set_setting('site_address', $_POST['site_address'] ?? '');
 
         $message = 'تنظیمات عمومی ایمیل با موفقیت ذخیره شد.';
     } elseif (isset($_POST['save_template'])) {
@@ -60,6 +67,11 @@ $smtp_user = get_setting('smtp_user');
 $smtp_pass = get_setting('smtp_pass');
 $smtp_enc = get_setting('smtp_enc', 'tls');
 $smtp_skip_ssl_verify = get_setting('smtp_skip_ssl_verify', '0');
+
+$dkim_domain = get_setting('dkim_domain');
+$dkim_selector = get_setting('dkim_selector');
+$dkim_private = get_setting('dkim_private');
+$site_address = get_setting('site_address');
 
 $templates = $pdo->query("SELECT * FROM email_templates ORDER BY id ASC")->fetchAll();
 
@@ -202,6 +214,37 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
                         <p class="text-[10px] text-slate-400">اگر در زمان اتصال TLS خطای تایم‌اوت دریافت می‌کنید، این گزینه را فعال کنید.</p>
                     </div>
                 </div>
+
+                <div class="pt-6 border-t border-slate-200 mt-6">
+                    <h3 class="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="key" class="w-4 h-4 text-amber-500"></i>
+                        تنظیمات امضای دیجیتال (DKIM)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="form-group">
+                            <label>DKIM Domain</label>
+                            <input type="text" name="dkim_domain" value="<?= htmlspecialchars($dkim_domain) ?>" placeholder="example.com" class="ltr-input">
+                        </div>
+                        <div class="form-group">
+                            <label>DKIM Selector</label>
+                            <input type="text" name="dkim_selector" value="<?= htmlspecialchars($dkim_selector) ?>" placeholder="default" class="ltr-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>DKIM Private Key</label>
+                        <textarea name="dkim_private" rows="5" class="ltr-input font-mono text-[10px]" placeholder="-----BEGIN RSA PRIVATE KEY----- ..."><?= htmlspecialchars($dkim_private) ?></textarea>
+                        <p class="text-[10px] text-amber-600 font-bold mt-2">توجه: امضای DKIM باعث می‌شود ایمیل‌های شما توسط جیمیل و یاهو با اطمینان بیشتری پذیرفته شوند.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>آدرس فیزیکی مجموعه (نمایش در پاورقی ایمیل)</label>
+                <div class="input-icon-wrapper">
+                    <span class="icon"><i data-lucide="map-pin" class="w-4 h-4"></i></span>
+                    <input type="text" name="site_address" value="<?= htmlspecialchars($site_address) ?>" placeholder="مثال: تهران، خیابان ولیعصر، پلاک ۱۲۳">
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">درج آدرس فیزیکی در ایمیل‌ها یکی از الزامات قوانین ضد اسپم (CAN-SPAM) است و به افزایش اعتبار ایمیل‌های شما کمک می‌کند.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -278,7 +321,14 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
                         <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded">DKIM Record</span>
                         <span class="text-[10px] text-slate-400 font-bold">(بسیار مهم)</span>
                     </div>
-                    <p class="text-[10px] text-slate-600 leading-relaxed">این رکورد حاوی یک امضای دیجیتال است. تنظیمات DKIM معمولاً در کنترل پنل هاست یا سرویس SMTP شما در دسترس است. بدون DKIM، احتمال اسپم شدن در یاهو و جیمیل بسیار بالا خواهد بود.</p>
+                    <p class="text-[10px] text-slate-600 leading-relaxed mb-3">این رکورد حاوی یک امضای دیجیتال است. برای فعال‌سازی:</p>
+                    <ol class="text-[10px] text-slate-500 list-decimal list-inside space-y-1">
+                        <li>در کنترل پنل هاست خود (DirectAdmin/cPanel) بخش <span class="font-bold">DKIM Manager</span> را پیدا کنید.</li>
+                        <li>یک کلید جدید بسازید (یا کلید موجود را کپی کنید).</li>
+                        <li><span class="text-indigo-600">Private Key</span> را در فیلد بالا کپی کنید.</li>
+                        <li>مقدار <span class="text-indigo-600">Selector</span> (معمولاً default یا x) را در فیلد بالا وارد کنید.</li>
+                    </ol>
+                    <p class="text-[10px] text-slate-400 mt-2 font-bold italic">بدون تنظیم DKIM، احتمال اسپم شدن در یاهو و جیمیل بسیار بالا خواهد بود.</p>
                 </div>
 
                 <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
@@ -439,7 +489,10 @@ async function testSMTP() {
         smtp_enc: document.querySelector('select[name="smtp_enc"]').value,
         smtp_skip_ssl_verify: document.querySelector('input[name="smtp_skip_ssl_verify"]').checked ? '1' : '0',
         mail_sender_name: document.querySelector('input[name="mail_sender_name"]').value,
-        mail_sender_email: document.querySelector('input[name="mail_sender_email"]').value
+        mail_sender_email: document.querySelector('input[name="mail_sender_email"]').value,
+        dkim_domain: document.querySelector('input[name="dkim_domain"]').value,
+        dkim_selector: document.querySelector('input[name="dkim_selector"]').value,
+        dkim_private: document.querySelector('textarea[name="dkim_private"]').value
     };
 
     const resultsDiv = document.getElementById('test_results');

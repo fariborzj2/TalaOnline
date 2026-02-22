@@ -50,7 +50,10 @@ try {
         'smtp_enc' => $data['smtp_enc'] ?? get_setting('smtp_enc'),
         'smtp_skip_ssl_verify' => $data['smtp_skip_ssl_verify'] ?? get_setting('smtp_skip_ssl_verify', '0'),
         'mail_sender_name' => $data['mail_sender_name'] ?? get_setting('mail_sender_name'),
-        'mail_sender_email' => $data['mail_sender_email'] ?? get_setting('mail_sender_email')
+        'mail_sender_email' => $data['mail_sender_email'] ?? get_setting('mail_sender_email'),
+        'dkim_domain' => $data['dkim_domain'] ?? get_setting('dkim_domain'),
+        'dkim_selector' => $data['dkim_selector'] ?? get_setting('dkim_selector'),
+        'dkim_private' => $data['dkim_private'] ?? get_setting('dkim_private')
     ];
 
     $template_slug = $data['template_slug'] ?? '';
