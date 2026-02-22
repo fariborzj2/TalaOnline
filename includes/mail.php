@@ -125,28 +125,36 @@ class Mail {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                @media only screen and (max-width: 600px) {
+                    .container { width: 100% !important; border-radius: 0 !important; }
+                    .content { padding: 30px 20px !important; }
+                    .footer { padding: 30px 20px !important; }
+                    .header { padding: 30px 20px !important; }
+                }
+            </style>
         </head>
         <body style="margin: 0; padding: 0; background-color: #f4f7f9; font-family: Tahoma, Arial, sans-serif; direction: rtl;" dir="rtl">
             <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f4f7f9; padding: 20px 0; direction: rtl;" dir="rtl">
                 <tr>
                     <td align="center">
-                        <table width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); max-width: 95%;">
+                        <table class="container" width="600" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 600px;">
                             <!-- Header -->
                             <tr>
-                                <td align="center" style="padding: 40px 30px; border-bottom: 1px solid #f0f0f0;">
+                                <td class="header" align="center" style="padding: 40px 30px; border-bottom: 1px solid #f0f0f0;">
                                     <img src="' . $logo_url . '" alt="' . $site_title . '" width="80" style="display: block; outline: none; border: none; text-decoration: none;">
                                     <h1 style="margin: 15px 0 0 0; font-size: 20px; color: #1e293b; font-weight: 800;">' . $site_title . '</h1>
                                 </td>
                             </tr>
                             <!-- Content -->
                             <tr>
-                                <td style="padding: 50px 40px; color: #334155; line-height: 1.8; text-align: right; font-size: 15px;">
+                                <td class="content" style="padding: 50px 40px; color: #334155; line-height: 1.8; text-align: right; font-size: 15px;">
                                     ' . $content . '
                                 </td>
                             </tr>
                             <!-- Footer -->
                             <tr>
-                                <td align="center" style="padding: 40px; background-color: #f8fafc; border-top: 1px solid #f0f0f0; color: #64748b; font-size: 13px;">
+                                <td class="footer" align="center" style="padding: 40px; background-color: #f8fafc; border-top: 1px solid #f0f0f0; color: #64748b; font-size: 13px;">
                                     <p style="margin: 0 0 20px 0; font-weight: bold; color: #1e293b;">' . $site_title . '</p>
                                     <p style="margin: 0 0 20px 0; line-height: 1.5;">مرجع تخصصی و لحظه‌ای قیمت طلا، سکه و ارز<br>مقایسه هوشمند پلتفرم‌های معاملاتی</p>
 
