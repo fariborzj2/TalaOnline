@@ -158,12 +158,10 @@
     }
 
     .btn-blog-outline {
-        padding: 8px 20px;
-        border-radius: 100px;
+        padding: 5px 20px;
+        border-radius: 10px;
         border: 1.5px solid var(--color-primary);
         color: var(--color-primary);
-        font-size: 11px;
-        font-weight: 800;
         transition: all 0.3s;
     }
     .btn-blog-outline:hover {
