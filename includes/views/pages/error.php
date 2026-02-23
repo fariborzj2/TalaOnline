@@ -2,25 +2,18 @@
 $code = $code ?? 404;
 $title = $title ?? 'صفحه پیدا نشد';
 $message = $message ?? 'متاسفانه صفحه‌ای که به دنبال آن بودید یافت نشد یا تغییر مکان داده است.';
-$icon = $icon ?? 'search';
 
 if ($code == 500) {
     $title = $title ?? 'خطای داخلی سرور';
     $message = $message ?? 'متاسفانه مشکلی در سمت سرور رخ داده است. در حال بررسی و رفع آن هستیم.';
-    $icon = 'alert-triangle';
 } elseif ($code == 403) {
     $title = $title ?? 'دسترسی غیرمجاز';
     $message = $message ?? 'شما اجازه دسترسی به این بخش را ندارید.';
-    $icon = 'shield-off';
 }
 ?>
-
 <div class="error-container d-column align-center just-center p-3 text-center gap-2">
     <div class="error-visual relative">
         <div class="error-code font-bold ltr"><?= $code ?></div>
-        <div class="error-icon-wrapper absolute bg-block radius-24 shadow-lg d-flex align-center just-center">
-            <i data-lucide="<?= $icon ?>"></i>
-        </div>
     </div>
 
     <div class="error-content d-column gap-1">
@@ -37,12 +30,12 @@ if ($code == 500) {
     </div>
     <?php endif; ?>
 
-    <div class="error-actions d-flex-wrap just-center gap-1 mt-1">
-        <a href="/" class="btn btn-primary radius-12 px-2 gap-05">
+    <div class="w-full d-flex-wrap just-center gap-1 mt-1">
+        <a href="/" class="btn btn-primary radius-12 basis-150">
             <i data-lucide="house" class="icon-size-4"></i>
-            <span>بازگشت به صفحه اصلی</span>
+            <span>بازگشت به خانه</span>
         </a>
-        <button onclick="window.history.length > 1 ? window.history.back() : window.location.href='/'" class="btn btn-secondary radius-12 px-2 gap-05">
+        <button onclick="window.history.length > 1 ? window.history.back() : window.location.href='/'" class="btn btn-secondary basis-150 radius-12">
             <i data-lucide="arrow-right" class="icon-size-4"></i>
             <span>صفحه قبلی</span>
         </button>

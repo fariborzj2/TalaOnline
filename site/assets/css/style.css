@@ -829,24 +829,10 @@ input:focus {
     min-height: 60vh;
 }
 .error-visual {
-    height: 180px;
+    height: 70px;
 }
 .error-code {
     font-size: 10rem;
-    opacity: 0.05;
-    line-height: 1;
-}
-.error-icon-wrapper {
-    width: 120px;
-    height: 120px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-.error-icon-wrapper i, .error-icon-wrapper svg {
-    width: 60px !important;
-    height: 60px !important;
-    color: var(--color-primary);
 }
 .error-content {
     max-width: 500px;
@@ -860,7 +846,6 @@ input:focus {
     overflow-x: auto;
     max-height: 300px;
 }
-
 .error-actions {
     display: flex;
     flex-wrap: wrap;

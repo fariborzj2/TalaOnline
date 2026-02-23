@@ -674,6 +674,7 @@
 .btn {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 5px;
     padding: 10px 20px;
     text-decoration: none;
