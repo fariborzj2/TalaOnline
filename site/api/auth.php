@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $verification_token = bin2hex(random_bytes(32));
             $expires_at = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
-            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, username, password, is_verified, verification_token, verification_token_expires_at) VALUES (?, ?, ?, ?, ?, 0, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO users (name, email, phone, username, password, is_verified, is_phone_verified, verification_token, verification_token_expires_at) VALUES (?, ?, ?, ?, ?, 0, 0, ?, ?)");
             $stmt->execute([$name, $email, $phone, $username, $hashedPassword, $verification_token, $expires_at]);
 
             $userId = $pdo->lastInsertId();
