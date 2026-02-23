@@ -152,7 +152,7 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
                 <label class="mb-0">فعال‌سازی ارسال ایمیل</label>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="mail_enabled" value="1" class="sr-only peer" <?= $mail_enabled === '1' ? 'checked' : '' ?>>
-                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                 </label>
             </div>
 
@@ -207,7 +207,7 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
                 <div class="form-group flex items-center gap-3 mt-4">
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" name="smtp_skip_ssl_verify" value="1" class="sr-only peer" <?= $smtp_skip_ssl_verify === '1' ? 'checked' : '' ?>>
-                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
                     </label>
                     <div>
                         <span class="text-sm font-bold text-slate-700">نادیده گرفتن خطای گواهی SSL (توصیه شده در صورت Timeout)</span>
