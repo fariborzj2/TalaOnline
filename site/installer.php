@@ -273,6 +273,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute(['site_title', 'طلا آنلاین']);
                 $stmt->execute(['api_sync_interval', '10']);
 
+                // Rate Limiting Defaults
+                $stmt->execute(['rate_limit_sms_max', '5']);
+                $stmt->execute(['rate_limit_sms_window', '15']);
+                $stmt->execute(['rate_limit_sms_lock', '60']);
+                $stmt->execute(['rate_limit_email_max', '5']);
+                $stmt->execute(['rate_limit_email_window', '15']);
+                $stmt->execute(['rate_limit_email_lock', '60']);
+                $stmt->execute(['rate_limit_ip_max', '10']);
+                $stmt->execute(['rate_limit_ip_window', '15']);
+                $stmt->execute(['rate_limit_ip_lock', '120']);
+                $stmt->execute(['rate_limit_progressive', '1']);
+
                 // Seed Categories
                 $stmt = $pdo->prepare("INSERT IGNORE INTO categories (slug, name, sort_order) VALUES (?, ?, ?)");
                 $seed_cats = [
