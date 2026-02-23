@@ -213,7 +213,6 @@ if (file_exists($config_file)) {
 
             if (!in_array('is_verified', $cols)) {
                 $pdo->exec("ALTER TABLE users ADD COLUMN is_verified TINYINT DEFAULT 0");
-                $pdo->exec("UPDATE users SET is_verified = 1");
             }
             if (!in_array('verification_token', $cols)) {
                 $pdo->exec("ALTER TABLE users ADD COLUMN verification_token VARCHAR(100)");
@@ -228,7 +227,6 @@ if (file_exists($config_file)) {
 
             if (!in_array('is_phone_verified', $cols)) {
                 $pdo->exec("ALTER TABLE users ADD COLUMN is_phone_verified TINYINT DEFAULT 0");
-                $pdo->exec("UPDATE users SET is_phone_verified = 1"); // Set existing users as verified
             }
             if (!in_array('phone_verification_code', $cols)) {
                 $pdo->exec("ALTER TABLE users ADD COLUMN phone_verification_code VARCHAR(10)");

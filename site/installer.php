@@ -244,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Insert Admin User
                 $hashed_pass = password_hash($admin_pass, PASSWORD_DEFAULT);
                 $admin_username = 'admin';
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, username, password, role, role_id, is_verified) VALUES (?, ?, ?, ?, ?, ?, 1) ON DUPLICATE KEY UPDATE password = VALUES(password), role_id = VALUES(role_id), is_verified = 1");
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, username, password, role, role_id, is_verified, is_phone_verified) VALUES (?, ?, ?, ?, ?, ?, 1, 1) ON DUPLICATE KEY UPDATE password = VALUES(password), role_id = VALUES(role_id), is_verified = 1, is_phone_verified = 1");
                 $stmt->execute(['مدیر کل', $admin_user, $admin_username, $hashed_pass, 'admin', 1]);
 
                 // Insert Default Email Templates

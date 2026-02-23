@@ -71,7 +71,7 @@ if (isset($_GET['code'])) {
             if (!$user) {
                 // Create new user
                 $username = generate_unique_username($name, $email);
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, avatar, username, role) VALUES (?, ?, ?, ?, 'user')");
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, avatar, username, role, is_verified) VALUES (?, ?, ?, ?, 'user', 1)");
                 $stmt->execute([$name, $email, $avatar, $username]);
                 $user_id = $pdo->lastInsertId();
 
@@ -81,7 +81,8 @@ if (isset($_GET['code'])) {
                     'email' => $email,
                     'avatar' => $avatar,
                     'username' => $username,
-                    'role' => 'user'
+                    'role' => 'user',
+                    'is_verified' => 1
                 ];
             } else {
                 // Update avatar if changed and not already set manually to something else
@@ -107,7 +108,7 @@ if (isset($_GET['code'])) {
             $_SESSION['user_role'] = $user['role'] ?? 'user';
             $_SESSION['user_role_id'] = $user['role_id'] ?? 0;
             $_SESSION['user_avatar'] = $user['avatar'];
-            $_SESSION['is_verified'] = $user['is_verified'] ?? 1; // Google users are usually email-verified
+            $_SESSION['is_verified'] = $user['is_verified'] ?? 0;
             $_SESSION['is_phone_verified'] = $user['is_phone_verified'] ?? 0;
 
             header("Location: /");
