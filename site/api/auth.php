@@ -93,6 +93,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+        // Rate Limiting Check
+        $limit_res = check_verification_limit('email', $email);
+        if ($limit_res === true && get_setting('mobile_verification_enabled') === '1') {
+            $limit_res = check_verification_limit('sms', null, $phone);
+        }
+
+        if ($limit_res !== true) {
+            $wait_mins = ceil($limit_res / 60);
+            echo json_encode(['success' => false, 'message' => "تعداد درخواست‌های شما بیش از حد مجاز است. لطفاً $wait_mins دقیقه دیگر دوباره تلاش کنید."]);
+            exit;
+        }
+
         try {
             $username = generate_unique_username($name, $email);
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -114,6 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'verification_link' => $verification_link
             ]);
 
+            // Record Rate Limit Attempt for Email
+            record_verification_attempt('email', $email);
+
             // Send Phone Verification if enabled
             if (get_setting('mobile_verification_enabled') === '1') {
                 $code = rand(10000, 99999);
@@ -121,6 +136,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare("UPDATE users SET phone_verification_code = ?, phone_verification_expires_at = ? WHERE id = ?");
                 $stmt->execute([$code, $expires_at, $userId]);
                 SMS::sendLookup($phone, $code);
+
+                // Record Rate Limit Attempt for SMS
+                record_verification_attempt('sms', null, $phone);
             }
 
             $_SESSION['user_id'] = $userId;

@@ -61,6 +61,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('kavenegar_api_key', $kavenegar_api_key);
     set_setting('kavenegar_template', $kavenegar_template);
 
+    // Rate Limiting Settings
+    set_setting('rate_limit_sms_max', $_POST['rate_limit_sms_max']);
+    set_setting('rate_limit_sms_window', $_POST['rate_limit_sms_window']);
+    set_setting('rate_limit_sms_lock', $_POST['rate_limit_sms_lock']);
+    set_setting('rate_limit_email_max', $_POST['rate_limit_email_max']);
+    set_setting('rate_limit_email_window', $_POST['rate_limit_email_window']);
+    set_setting('rate_limit_email_lock', $_POST['rate_limit_email_lock']);
+    set_setting('rate_limit_ip_max', $_POST['rate_limit_ip_max']);
+    set_setting('rate_limit_ip_window', $_POST['rate_limit_ip_window']);
+    set_setting('rate_limit_ip_lock', $_POST['rate_limit_ip_lock']);
+    set_setting('rate_limit_progressive', isset($_POST['rate_limit_progressive']) ? '1' : '0');
+
     $message = 'تنظیمات با موفقیت ذخیره شد.';
 }
 
@@ -213,6 +225,96 @@ include __DIR__ . '/layout/header.php';
                 </div>
             </div>
             <p class="text-[10px] text-slate-400 font-bold uppercase ">توجه: برای ارسال کد تایید از متد Lookup کاوه نگار استفاده می‌شود. مطمئن شوید الگوی تعریف شده در پنل کاوه نگار دارای متغیر {token} باشد.</p>
+        </div>
+    </div>
+
+    <!-- Rate Limiting Settings -->
+    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50">
+                <i data-lucide="shield-alert" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-black text-slate-800">تنظیمات محدودیت ارسال (Rate Limiting)</h2>
+                <p class="text-[10px] text-slate-400 font-bold uppercase ">Security & Anti-Spam Measures</p>
+            </div>
+        </div>
+        <div class="p-8 space-y-8">
+            <div class="form-group flex items-center gap-4">
+                <label class="mb-0">فعال‌سازی قفل تصاعدی (Progressive Locking)</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="rate_limit_progressive" value="1" class="sr-only peer" <?= get_setting('rate_limit_progressive') === '1' ? 'checked' : '' ?>>
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600"></div>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-50">
+                <div class="col-span-full mb-2">
+                    <h4 class="font-black text-slate-700 text-sm flex items-center gap-2">
+                        <i data-lucide="smartphone" class="w-4 h-4 text-orange-500"></i>
+                        محدودیت پیامک (SMS)
+                    </h4>
+                </div>
+                <div class="form-group">
+                    <label>تعداد مجاز درخواست</label>
+                    <input type="number" name="rate_limit_sms_max" value="<?= htmlspecialchars(get_setting('rate_limit_sms_max', '5')) ?>" min="1" class="ltr-input">
+                </div>
+                <div class="form-group">
+                    <label>بازه زمانی (دقیقه)</label>
+                    <input type="number" name="rate_limit_sms_window" value="<?= htmlspecialchars(get_setting('rate_limit_sms_window', '15')) ?>" min="1" class="ltr-input">
+                </div>
+                <div class="form-group">
+                    <label>مدت زمان قفل (دقیقه)</label>
+                    <input type="number" name="rate_limit_sms_lock" value="<?= htmlspecialchars(get_setting('rate_limit_sms_lock', '60')) ?>" min="1" class="ltr-input">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-50">
+                <div class="col-span-full mb-2">
+                    <h4 class="font-black text-slate-700 text-sm flex items-center gap-2">
+                        <i data-lucide="mail" class="w-4 h-4 text-blue-500"></i>
+                        محدودیت ایمیل (Email)
+                    </h4>
+                </div>
+                <div class="form-group">
+                    <label>تعداد مجاز درخواست</label>
+                    <input type="number" name="rate_limit_email_max" value="<?= htmlspecialchars(get_setting('rate_limit_email_max', '5')) ?>" min="1" class="ltr-input">
+                </div>
+                <div class="form-group">
+                    <label>بازه زمانی (دقیقه)</label>
+                    <input type="number" name="rate_limit_email_window" value="<?= htmlspecialchars(get_setting('rate_limit_email_window', '15')) ?>" min="1" class="ltr-input">
+                </div>
+                <div class="form-group">
+                    <label>مدت زمان قفل (دقیقه)</label>
+                    <input type="number" name="rate_limit_email_lock" value="<?= htmlspecialchars(get_setting('rate_limit_email_lock', '60')) ?>" min="1" class="ltr-input">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-50">
+                <div class="col-span-full mb-2">
+                    <h4 class="font-black text-slate-700 text-sm flex items-center gap-2">
+                        <i data-lucide="network" class="w-4 h-4 text-slate-500"></i>
+                        محدودیت بر اساس IP
+                    </h4>
+                </div>
+                <div class="form-group">
+                    <label>تعداد مجاز درخواست</label>
+                    <input type="number" name="rate_limit_ip_max" value="<?= htmlspecialchars(get_setting('rate_limit_ip_max', '10')) ?>" min="1" class="ltr-input">
+                </div>
+                <div class="form-group">
+                    <label>بازه زمانی (دقیقه)</label>
+                    <input type="number" name="rate_limit_ip_window" value="<?= htmlspecialchars(get_setting('rate_limit_ip_window', '15')) ?>" min="1" class="ltr-input">
+                </div>
+                <div class="form-group">
+                    <label>مدت زمان قفل (دقیقه)</label>
+                    <input type="number" name="rate_limit_ip_lock" value="<?= htmlspecialchars(get_setting('rate_limit_ip_lock', '120')) ?>" min="1" class="ltr-input">
+                </div>
+            </div>
+
+            <p class="text-[10px] text-slate-400 font-bold uppercase mt-4">
+                <i data-lucide="info" class="w-3 h-3 inline-block align-middle me-1"></i>
+                این محدودیت‌ها برای جلوگیری از حملات SMS Bombing و Email Bombing اعمال می‌شوند. سیستم به صورت همزمان IP، ایمیل و شماره موبایل را کنترل می‌کند.
+            </p>
         </div>
     </div>
 

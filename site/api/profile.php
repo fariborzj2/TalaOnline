@@ -162,6 +162,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+        // Rate Limiting Check
+        $limit_res = check_verification_limit('email', $user['email']);
+        if ($limit_res !== true) {
+            $wait_mins = ceil($limit_res / 60);
+            echo json_encode(['success' => false, 'message' => "تعداد درخواست‌های شما بیش از حد مجاز است. لطفاً $wait_mins دقیقه دیگر دوباره تلاش کنید."]);
+            exit;
+        }
+
         try {
             $verification_token = bin2hex(random_bytes(32));
             $expires_at = date('Y-m-d H:i:s', strtotime('+24 hours'));
@@ -177,6 +185,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'name' => $user['name'],
                 'verification_link' => $verification_link
             ]);
+
+            // Record Attempt
+            record_verification_attempt('email', $user['email']);
 
             echo json_encode(['success' => true, 'message' => 'ایمیل تایید مجدداً برای شما ارسال شد. لطفاً صندوق ورودی و پوشه هرزنامه خود را بررسی کنید.']);
         } catch (Exception $e) {
@@ -203,6 +214,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
+        // Rate Limiting Check
+        $limit_res = check_verification_limit('sms', null, $user['phone']);
+        if ($limit_res !== true) {
+            $wait_mins = ceil($limit_res / 60);
+            echo json_encode(['success' => false, 'message' => "تعداد درخواست‌های شما بیش از حد مجاز است. لطفاً $wait_mins دقیقه دیگر دوباره تلاش کنید."]);
+            exit;
+        }
+
         $code = rand(10000, 99999);
         $expires_at = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
@@ -211,6 +230,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$code, $expires_at, $user_id]);
 
             $result = SMS::sendLookup($user['phone'], $code);
+
+            if ($result['success']) {
+                // Record Attempt
+                record_verification_attempt('sms', null, $user['phone']);
+            }
+
             echo json_encode($result);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => 'خطا در عملیات ارسال پیامک.']);
