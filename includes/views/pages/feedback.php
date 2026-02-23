@@ -60,8 +60,6 @@
 </div>
 
 <style>
-    .border-success { border: 1px solid rgba(16, 185, 129, 0.3); }
-    .border-error { border: 1px solid rgba(239, 68, 68, 0.3); }
     .basis-300 { flex-basis: 300px; }
     textarea::placeholder { color: #ccc; }
 </style>
