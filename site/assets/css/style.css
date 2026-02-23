@@ -182,7 +182,7 @@ body {
 .auth-divider {
     position: relative;
     text-align: center;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 .auth-divider .divider-line {
     position: absolute;
@@ -620,16 +620,7 @@ input:focus {
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 #auth-tabs button {
-    border: none;
-    background: none;
-    padding-bottom: 8px;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    color: var(--color-gray);
-}
-#auth-tabs button.active {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
+    font-size: 13px;
 }
 .hover-bg-secondary:hover { background-color: var(--color-secondary); }
 .hover-bg-error:hover { background-color: var(--bg-error); }
