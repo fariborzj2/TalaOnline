@@ -569,6 +569,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const resendVerificationBtn = document.getElementById('resend-verification-btn');
+    if (resendVerificationBtn) {
+        resendVerificationBtn.addEventListener('click', async () => {
+            resendVerificationBtn.disabled = true;
+            const originalText = resendVerificationBtn.innerHTML;
+            resendVerificationBtn.innerHTML = '<i data-lucide="loader-2" class="icon-size-3 spin"></i> در حال ارسال...';
+            if (window.lucide) window.lucide.createIcons({ root: resendVerificationBtn });
+
+            try {
+                const response = await fetchWithCSRF(`${authState.apiBase}/profile.php?action=resend_verification`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    await showAlert(result.message, 'success');
+                    // Trigger mail worker
+                    fetch(`${authState.apiBase}/mail_worker.php`).catch(() => {});
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (err) {
+                showAlert('خطا در ارتباط با سرور', 'error');
+            } finally {
+                resendVerificationBtn.disabled = false;
+                resendVerificationBtn.innerHTML = originalText;
+                if (window.lucide) window.lucide.createIcons({ root: resendVerificationBtn });
+            }
+        });
+    }
+
     const avatarInput = document.getElementById('avatar-input');
     if (avatarInput) {
         avatarInput.addEventListener('change', async (e) => {

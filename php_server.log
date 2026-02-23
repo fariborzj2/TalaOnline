@@ -1,4 +1,0 @@
-[Mon Feb 23 06:05:13 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Mon Feb 23 06:05:56 2026] [::1]:47514 Accepted
-[Mon Feb 23 06:05:56 2026] [::1]:47514 [200]: GET /site/admin/email_settings.php
-[Mon Feb 23 06:05:56 2026] [::1]:47514 Closing

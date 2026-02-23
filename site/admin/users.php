@@ -36,6 +36,7 @@ include __DIR__ . '/layout/header.php';
                     <th>ایمیل</th>
                     <th>موبایل</th>
                     <th>نقش</th>
+                    <th>وضعیت</th>
                     <th>تاریخ عضویت</th>
                     <th class="text-center">عملیات</th>
                 </tr>
@@ -68,6 +69,17 @@ include __DIR__ . '/layout/header.php';
                             </span>
                         <?php endif; ?>
                     </td>
+                    <td>
+                        <?php if (($user['is_verified'] ?? 0) == 1): ?>
+                            <span class="px-2 py-1 rounded text-[10px] font-black bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                فعال
+                            </span>
+                        <?php else: ?>
+                            <span class="px-2 py-1 rounded text-[10px] font-black bg-rose-50 text-rose-600 border border-rose-100">
+                                غیر فعال
+                            </span>
+                        <?php endif; ?>
+                    </td>
                     <td class="text-[11px] text-slate-400"><?= jalali_date($user['created_at'], 'compact') ?></td>
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
@@ -92,7 +104,7 @@ include __DIR__ . '/layout/header.php';
                 <?php endforeach; ?>
                 <?php if (empty($users)): ?>
                 <tr>
-                    <td colspan="6" class="text-center py-10 text-slate-400 font-bold">هیچ کاربری یافت نشد.</td>
+                    <td colspan="7" class="text-center py-10 text-slate-400 font-bold">هیچ کاربری یافت نشد.</td>
                 </tr>
                 <?php endif; ?>
             </tbody>
