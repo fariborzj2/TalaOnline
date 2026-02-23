@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Send Phone Verification if enabled
             if (get_setting('mobile_verification_enabled') === '1') {
-                $code = rand(10000, 99999);
+                $code = random_int(10000, 99999);
                 $expires_at = date('Y-m-d H:i:s', strtotime('+10 minutes'));
                 $stmt = $pdo->prepare("UPDATE users SET phone_verification_code = ?, phone_verification_expires_at = ? WHERE id = ?");
                 $stmt->execute([$code, $expires_at, $userId]);
