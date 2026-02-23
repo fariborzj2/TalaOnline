@@ -290,66 +290,6 @@ $phpmailer_exists = class_exists('PHPMailer\PHPMailer\PHPMailer');
         </div>
     </form>
 
-    <!-- Deliverability & DNS Guidance -->
-    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 border border-emerald-50">
-                <i data-lucide="shield-check" class="w-5 h-5"></i>
-            </div>
-            <div>
-                <h2 class="text-lg font-black text-slate-800">راهنمای تحویل‌پذیری و DNS</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase ">Deliverability & DNS Records</p>
-            </div>
-        </div>
-        <div class="p-8 space-y-6">
-            <p class="text-sm text-slate-600 leading-relaxed">
-                برای جلوگیری از اسپم شدن ایمیل‌ها، تنظیم صحیح رکوردهای DNS برای احراز هویت فرستنده الزامی است:
-            </p>
-
-            <div class="space-y-4">
-                <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded">SPF Record</span>
-                        <span class="text-[10px] text-slate-400 font-bold">(TXT Record)</span>
-                    </div>
-                    <code class="text-xs font-mono break-all text-indigo-600">v=spf1 a mx include:<?= parse_url(get_site_url(), PHP_URL_HOST) ?> ~all</code>
-                    <p class="text-[10px] text-slate-400 mt-2">این رکورد مشخص می‌کند کدام سرورها مجاز به ارسال ایمیل از طرف دامنه شما هستند. اگر از SMTP خارجی (مثل Gmail) استفاده می‌کنید، باید رکورد مربوطه را اضافه کنید.</p>
-                </div>
-
-                <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded">DKIM Record</span>
-                        <span class="text-[10px] text-slate-400 font-bold">(بسیار مهم)</span>
-                    </div>
-                    <p class="text-[10px] text-slate-600 leading-relaxed mb-3">این رکورد حاوی یک امضای دیجیتال است. برای فعال‌سازی:</p>
-                    <ol class="text-[10px] text-slate-500 list-decimal list-inside space-y-1">
-                        <li>در کنترل پنل هاست خود (DirectAdmin/cPanel) بخش <span class="font-bold">DKIM Manager</span> را پیدا کنید.</li>
-                        <li>یک کلید جدید بسازید (یا کلید موجود را کپی کنید).</li>
-                        <li><span class="text-indigo-600">Private Key</span> را در فیلد بالا کپی کنید.</li>
-                        <li>مقدار <span class="text-indigo-600">Selector</span> (معمولاً default یا x) را در فیلد بالا وارد کنید.</li>
-                    </ol>
-                    <p class="text-[10px] text-slate-400 mt-2 font-bold italic">بدون تنظیم DKIM، احتمال اسپم شدن در یاهو و جیمیل بسیار بالا خواهد بود.</p>
-                </div>
-
-                <div class="p-4 bg-slate-50 rounded-lg border border-slate-100">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black rounded">DMARC Record</span>
-                        <span class="text-[10px] text-slate-400 font-bold">(TXT Record Name: _dmarc)</span>
-                    </div>
-                    <code class="text-xs font-mono break-all text-indigo-600">v=DMARC1; p=quarantine; adkim=r; aspf=r;</code>
-                    <p class="text-[10px] text-slate-400 mt-2">این سیاست نهایی برای نحوه برخورد با ایمیل‌هایی است که SPF یا DKIM آن‌ها تایید نشده است.</p>
-                </div>
-            </div>
-
-            <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-100 flex items-start gap-3">
-                <i data-lucide="shield-check" class="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5"></i>
-                <div class="text-xs text-indigo-800 leading-relaxed">
-                    <strong class="block mb-1">نکته طلایی برای عدم اسپم:</strong>
-                    همیشه از یک آدرس ایمیل رسمی (مانند <code class="bg-indigo-100 px-1 rounded">info@yourdomain.com</code>) به عنوان فرستنده استفاده کنید. استفاده از آدرس‌های عمومی مثل جیمیل به عنوان فرستنده باعث بلاک شدن ایمیل‌های شما می‌شود.
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Queue Management -->
     <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
@@ -461,11 +401,18 @@ async function testTemplate(slug) {
     const testEmail = await request_user_input('لطفاً آدرس ایمیل مقصد برای تست این قالب را وارد کنید:');
     if (!testEmail) return;
 
+    const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
     // Show loading state (could use a global loader or alert)
     const res = await fetch('../api/mail_test.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ test_email: testEmail, template_slug: slug, type: 'transactional' })
+        body: JSON.stringify({
+            test_email: testEmail,
+            template_slug: slug,
+            type: 'transactional',
+            csrf_token: csrfToken
+        })
     });
     const result = await res.json();
 
@@ -493,7 +440,8 @@ async function testSMTP() {
         dkim_domain: document.querySelector('input[name="dkim_domain"]').value,
         dkim_selector: document.querySelector('input[name="dkim_selector"]').value,
         dkim_private: document.querySelector('textarea[name="dkim_private"]').value,
-        type: 'transactional'
+        type: 'transactional',
+        csrf_token: document.querySelector('input[name="csrf_token"]').value
     };
 
     const resultsDiv = document.getElementById('test_results');
