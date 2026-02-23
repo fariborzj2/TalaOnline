@@ -329,9 +329,7 @@ $router->add('/blog/tags/:tag_slug', function($params) {
     }
 
     if (!$tag) {
-        http_response_code(404);
-        echo "404 Tag Not Found";
-        exit;
+        ErrorHandler::renderError(404, 'برچسب پیدا نشد', 'متاسفانه برچسب مورد نظر شما در سیستم وجود ندارد.');
     }
 
     return View::renderPage('blog', [
@@ -397,9 +395,7 @@ $router->add('/blog/:category_slug', function($params) {
     }
 
     if (!$category) {
-        http_response_code(404);
-        echo "404 Category Not Found";
-        exit;
+        ErrorHandler::renderError(404, 'دسته‌بندی پیدا نشد', 'متاسفانه دسته‌بندی مورد نظر شما در سیستم وجود ندارد.');
     }
 
     return View::renderPage('blog', [
@@ -475,9 +471,7 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
     }
 
     if (!$post) {
-        http_response_code(404);
-        echo "404 Post Not Found";
-        exit;
+        ErrorHandler::renderError(404, 'مقاله پیدا نشد', 'متاسفانه مقاله مورد نظر شما یافت نشد یا هنوز منتشر نشده است.');
     }
 
     $canonical_url = get_base_url() . '/blog/' . ($post['category_slug'] ?: 'uncategorized') . '/' . $post['slug'];
@@ -552,9 +546,7 @@ $router->add('/:category/:slug', function($params) {
     $slug = $params['slug'];
 
     if (!$pdo) {
-        http_response_code(404);
-        echo "404 Not Found";
-        exit;
+        ErrorHandler::renderError(500, 'خطای پایگاه داده', 'متاسفانه در حال حاضر امکان اتصال به پایگاه داده وجود ندارد.');
     }
 
     try {
@@ -616,9 +608,7 @@ $router->add('/:category/:slug', function($params) {
         }
     } catch (Exception $e) {}
 
-    http_response_code(404);
-    echo "404 Not Found";
-    exit;
+    ErrorHandler::renderError(404, 'آیتم پیدا نشد', 'متاسفانه آیتم مورد نظر شما در این دسته‌بندی یافت نشد.');
 });
 
 $router->add('/:slug', function($params) {
@@ -626,9 +616,7 @@ $router->add('/:slug', function($params) {
     $slug = $params['slug'];
 
     if (!$pdo) {
-        http_response_code(404);
-        echo "404 Not Found";
-        exit;
+        ErrorHandler::renderError(500, 'خطای پایگاه داده', 'متاسفانه در حال حاضر امکان اتصال به پایگاه داده وجود ندارد.');
     }
 
     // 1. Check if it's a category
@@ -734,7 +722,5 @@ $router->add('/:slug', function($params) {
     } catch (Exception $e) {}
 
     // Fallback to 404
-    http_response_code(404);
-    echo "404 Not Found";
-    exit;
+    ErrorHandler::renderError(404, 'صفحه پیدا نشد', 'متاسفانه صفحه یا آیتم مورد نظر شما یافت نشد.');
 });
