@@ -70,7 +70,12 @@ include __DIR__ . '/layout/header.php';
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if (($user['is_verified'] ?? 0) == 1): ?>
+                        <?php
+                        $email_v = ($user['is_verified'] ?? 0) == 1;
+                        $phone_enabled = get_setting('mobile_verification_enabled') === '1';
+                        $phone_v = ($user['is_phone_verified'] ?? 0) == 1;
+
+                        if ($email_v && (!$phone_enabled || $phone_v)): ?>
                             <span class="px-2 py-1 rounded text-[10px] font-black bg-emerald-50 text-emerald-600 border border-emerald-100">
                                 فعال
                             </span>

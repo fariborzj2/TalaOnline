@@ -54,11 +54,16 @@
                 <div id="tab-overview" class="profile-tab-content pd-md">
                     <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">خوش آمدید، <?= htmlspecialchars($_SESSION['user_name']) ?></h2>
 
-                    <?php if (($_SESSION['is_verified'] ?? 0) == 0): ?>
+                    <?php
+                    $email_unverified = (($_SESSION['is_verified'] ?? 0) == 0);
+                    $phone_unverified = (get_setting('mobile_verification_enabled') === '1' && ($_SESSION['is_phone_verified'] ?? 0) == 0);
+                    ?>
+
+                    <?php if ($email_unverified): ?>
                         <div class="bg-error-light pd-md radius-12 border border-error mb-2 d-flex gap-1 align-center">
                             <i data-lucide="alert-circle" class="text-error shrink-0"></i>
                             <div class="grow-1">
-                                <p class="text-error font-bold mb-05">حساب شما هنوز تایید نشده است.</p>
+                                <p class="text-error font-bold mb-05">ایمیل شما هنوز تایید نشده است.</p>
                                 <p class="font-size-0-9 mb-1">برای استفاده از تمامی امکانات سایت، لطفا ایمیل خود را تایید کنید. اگر ایمیلی دریافت نکرده‌اید، پوشه <strong>هرزنامه (Spam)</strong> خود را نیز بررسی کنید.</p>
                                 <button id="resend-verification-btn" class="btn btn-error btn-sm radius-8">
                                     <i data-lucide="mail-plus" class="icon-size-3"></i> ارسال مجدد ایمیل تایید
@@ -67,10 +72,27 @@
                         </div>
                     <?php endif; ?>
 
+                    <?php if ($phone_unverified): ?>
+                        <div class="bg-orange-light pd-md radius-12 border border-orange mb-2 d-flex gap-1 align-center">
+                            <i data-lucide="smartphone" class="text-orange shrink-0"></i>
+                            <div class="grow-1">
+                                <p class="text-orange font-bold mb-05">شماره موبایل شما تایید نشده است.</p>
+                                <p class="font-size-0-9 mb-1">لطفاً کد تایید ارسال شده به شماره <strong><?= htmlspecialchars($_SESSION['user_phone'] ?? 'نامشخص') ?></strong> را وارد کنید.</p>
+                                <div class="d-flex gap-05 mt-1">
+                                    <div class="input-item grow-1">
+                                        <input type="text" id="phone-verification-code" placeholder="کد ۵ رقمی" class="text-center font-bold ltr" maxlength="10">
+                                    </div>
+                                    <button id="verify-phone-btn" class="btn btn-primary btn-sm radius-8">تایید شماره</button>
+                                    <button id="resend-sms-btn" class="btn btn-secondary btn-sm radius-8">ارسال مجدد</button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="grid-2 gap-1 mt-2">
                         <div class="pd-md radius-16 bg-secondary border d-column gap-05">
                             <span class="text-gray font-size-1">وضعیت حساب</span>
-                            <?php if (($_SESSION['is_verified'] ?? 0) == 1): ?>
+                            <?php if (!$email_unverified && !$phone_unverified): ?>
                                 <strong class="text-success font-size-2">فعال</strong>
                             <?php else: ?>
                                 <strong class="text-error font-size-2">غیر فعال</strong>

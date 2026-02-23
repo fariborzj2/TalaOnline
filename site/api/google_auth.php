@@ -107,6 +107,8 @@ if (isset($_GET['code'])) {
             $_SESSION['user_role'] = $user['role'] ?? 'user';
             $_SESSION['user_role_id'] = $user['role_id'] ?? 0;
             $_SESSION['user_avatar'] = $user['avatar'];
+            $_SESSION['is_verified'] = $user['is_verified'] ?? 1; // Google users are usually email-verified
+            $_SESSION['is_phone_verified'] = $user['is_phone_verified'] ?? 0;
 
             header("Location: /");
             exit;
