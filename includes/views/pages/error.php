@@ -15,24 +15,24 @@ if ($code == 500) {
 }
 ?>
 
-<div class="error-container d-column align-center just-center p-3 text-center gap-2" style="min-height: 60vh;">
-    <div class="error-visual relative" style="height: 180px;">
-        <div class="error-code font-bold ltr" style="font-size: 10rem; opacity: 0.05; line-height: 1;"><?= $code ?></div>
-        <div class="error-icon-wrapper absolute bg-block radius-24 shadow-lg d-flex align-center just-center" style="width: 120px; height: 120px; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-            <i data-lucide="<?= $icon ?>" style="width: 60px; height: 60px; color: var(--color-primary);"></i>
+<div class="error-container d-column align-center just-center p-3 text-center gap-2">
+    <div class="error-visual relative">
+        <div class="error-code font-bold ltr"><?= $code ?></div>
+        <div class="error-icon-wrapper absolute bg-block radius-24 shadow-lg d-flex align-center just-center">
+            <i data-lucide="<?= $icon ?>"></i>
         </div>
     </div>
 
-    <div class="error-content d-column gap-1" style="max-width: 500px;">
+    <div class="error-content d-column gap-1">
         <h2 class="font-bold font-size-6 text-title"><?= htmlspecialchars($title) ?></h2>
         <p class="text-gray font-size-3 line-height-2"><?= htmlspecialchars($message) ?></p>
     </div>
 
     <?php if (isset($details) && !empty($details)): ?>
-    <div class="error-details w-full mt-2 text-left ltr" style="max-width: 800px;">
+    <div class="error-details w-full mt-2 text-left ltr">
         <div class="bg-secondary p-2 radius-12 border overflow-hidden">
             <div class="font-bold mb-1 text-error font-size-1">Technical Details:</div>
-            <pre class="font-size-1 text-gray scrollbar-hidden" style="white-space: pre-wrap; word-break: break-all; overflow-x: auto; max-height: 300px;"><?= htmlspecialchars($details) ?></pre>
+            <pre class="font-size-1 text-gray scrollbar-hidden"><?= htmlspecialchars($details) ?></pre>
         </div>
     </div>
     <?php endif; ?>

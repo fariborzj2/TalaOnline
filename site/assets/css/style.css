@@ -823,3 +823,48 @@ input:focus {
         padding-bottom: 80px;
     }
 }
+
+/* Error Page Styles */
+.error-container {
+    min-height: 60vh;
+}
+.error-visual {
+    height: 180px;
+}
+.error-code {
+    font-size: 10rem;
+    opacity: 0.05;
+    line-height: 1;
+}
+.error-icon-wrapper {
+    width: 120px;
+    height: 120px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.error-icon-wrapper i, .error-icon-wrapper svg {
+    width: 60px !important;
+    height: 60px !important;
+    color: var(--color-primary);
+}
+.error-content {
+    max-width: 500px;
+}
+.error-details {
+    max-width: 800px;
+}
+.error-details pre {
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-x: auto;
+    max-height: 300px;
+}
+
+.error-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
