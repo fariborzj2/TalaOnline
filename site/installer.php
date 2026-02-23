@@ -81,6 +81,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         `is_verified` TINYINT DEFAULT 0,
                         `verification_token` VARCHAR(100),
                         `verification_token_expires_at` TIMESTAMP NULL,
+                        `is_phone_verified` TINYINT DEFAULT 0,
+                        `phone_verification_code` VARCHAR(10),
+                        `phone_verification_expires_at` TIMESTAMP NULL,
                         `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",

@@ -3,6 +3,7 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/mail.php';
+require_once __DIR__ . '/../../includes/sms.php';
 session_start();
 
 $action = $_GET['action'] ?? '';
@@ -113,6 +114,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'verification_link' => $verification_link
             ]);
 
+            // Send Phone Verification if enabled
+            if (get_setting('mobile_verification_enabled') === '1') {
+                $code = rand(10000, 99999);
+                $expires_at = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+                $stmt = $pdo->prepare("UPDATE users SET phone_verification_code = ?, phone_verification_expires_at = ? WHERE id = ?");
+                $stmt->execute([$code, $expires_at, $userId]);
+                SMS::sendLookup($phone, $code);
+            }
+
             $_SESSION['user_id'] = $userId;
             $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
@@ -122,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role_id'] = 0;
             $_SESSION['user_avatar'] = '';
             $_SESSION['is_verified'] = 0;
+            $_SESSION['is_phone_verified'] = 0;
 
             echo json_encode(['success' => true, 'message' => 'ثبت‌نام با موفقیت انجام شد. لطفاً ایمیل خود را جهت تایید حساب بررسی کنید.', 'user' => [
                 'name' => $name,
@@ -165,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_role_id'] = $user['role_id'] ?? 0;
             $_SESSION['user_avatar'] = $user['avatar'] ?? '';
             $_SESSION['is_verified'] = $user['is_verified'] ?? 0;
+            $_SESSION['is_phone_verified'] = $user['is_phone_verified'] ?? 0;
 
             echo json_encode(['success' => true, 'user' => [
                 'name' => $user['name'],
@@ -192,7 +204,8 @@ elseif ($action === 'get_user') {
                 'username' => $_SESSION['user_username'] ?? '',
                 'role' => $_SESSION['user_role'] ?? 'user',
                 'avatar' => $_SESSION['user_avatar'] ?? '',
-                'is_verified' => $_SESSION['is_verified'] ?? 0
+                'is_verified' => $_SESSION['is_verified'] ?? 0,
+                'is_phone_verified' => $_SESSION['is_phone_verified'] ?? 0
             ]
         ]);
     } else {

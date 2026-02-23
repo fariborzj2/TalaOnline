@@ -569,6 +569,61 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const verifyPhoneBtn = document.getElementById('verify-phone-btn');
+    const resendSmsBtn = document.getElementById('resend-sms-btn');
+    const phoneCodeInput = document.getElementById('phone-verification-code');
+
+    if (verifyPhoneBtn) {
+        verifyPhoneBtn.addEventListener('click', async () => {
+            const code = phoneCodeInput.value.trim();
+            if (!code) {
+                showAlert('لطفاً کد تایید را وارد کنید.', 'warning');
+                return;
+            }
+
+            verifyPhoneBtn.disabled = true;
+            try {
+                const response = await fetchWithCSRF(`${authState.apiBase}/profile.php?action=verify_phone`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    await showAlert(result.message, 'success');
+                    location.reload();
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (err) {
+                showAlert('خطا در تایید کد', 'error');
+            } finally {
+                verifyPhoneBtn.disabled = false;
+            }
+        });
+    }
+
+    if (resendSmsBtn) {
+        resendSmsBtn.addEventListener('click', async () => {
+            resendSmsBtn.disabled = true;
+            try {
+                const response = await fetchWithCSRF(`${authState.apiBase}/profile.php?action=send_phone_verification`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showAlert(result.message, 'success');
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (err) {
+                showAlert('خطا در ارسال پیامک', 'error');
+            } finally {
+                resendSmsBtn.disabled = false;
+            }
+        });
+    }
+
     const resendVerificationBtn = document.getElementById('resend-verification-btn');
     if (resendVerificationBtn) {
         resendVerificationBtn.addEventListener('click', async () => {

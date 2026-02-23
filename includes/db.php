@@ -186,6 +186,21 @@ if (file_exists($config_file)) {
                 }
             }
 
+            if (!in_array('is_phone_verified', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN is_phone_verified TINYINT DEFAULT 0");
+                $pdo->exec("UPDATE users SET is_phone_verified = 1"); // Set existing users as verified
+            }
+            if (!in_array('phone_verification_code', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN phone_verification_code VARCHAR(10)");
+            }
+            if (!in_array('phone_verification_expires_at', $cols)) {
+                if ($driver === 'sqlite') {
+                    $pdo->exec("ALTER TABLE users ADD COLUMN phone_verification_expires_at DATETIME");
+                } else {
+                    $pdo->exec("ALTER TABLE users ADD COLUMN phone_verification_expires_at TIMESTAMP NULL");
+                }
+            }
+
             // Email Templates Table
             if ($driver === 'sqlite') {
                 $pdo->exec("CREATE TABLE IF NOT EXISTS `email_templates` (

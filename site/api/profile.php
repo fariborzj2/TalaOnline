@@ -3,6 +3,7 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/mail.php';
+require_once __DIR__ . '/../../includes/sms.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -180,6 +181,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['success' => true, 'message' => 'ایمیل تایید مجدداً برای شما ارسال شد. لطفاً صندوق ورودی و پوشه هرزنامه خود را بررسی کنید.']);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => 'خطایی در ارسال ایمیل رخ داد.']);
+        }
+    }
+    elseif ($action === 'send_phone_verification') {
+        if (get_setting('mobile_verification_enabled') !== '1') {
+            echo json_encode(['success' => false, 'message' => 'تایید شماره موبایل غیرفعال است.']);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("SELECT phone, is_phone_verified FROM users WHERE id = ?");
+        $stmt->execute([$user_id]);
+        $user = $stmt->fetch();
+
+        if (!$user || empty($user['phone'])) {
+            echo json_encode(['success' => false, 'message' => 'شماره موبایل یافت نشد.']);
+            exit;
+        }
+
+        if ($user['is_phone_verified'] == 1) {
+            echo json_encode(['success' => false, 'message' => 'شماره موبایل قبلاً تایید شده است.']);
+            exit;
+        }
+
+        $code = rand(10000, 99999);
+        $expires_at = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET phone_verification_code = ?, phone_verification_expires_at = ? WHERE id = ?");
+            $stmt->execute([$code, $expires_at, $user_id]);
+
+            $result = SMS::sendLookup($user['phone'], $code);
+            echo json_encode($result);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'خطا در عملیات ارسال پیامک.']);
+        }
+    }
+    elseif ($action === 'verify_phone') {
+        $code = $data['code'] ?? '';
+        if (empty($code)) {
+            echo json_encode(['success' => false, 'message' => 'کد تایید الزامی است.']);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("SELECT phone_verification_code, phone_verification_expires_at FROM users WHERE id = ?");
+        $stmt->execute([$user_id]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            echo json_encode(['success' => false, 'message' => 'کاربر یافت نشد.']);
+            exit;
+        }
+
+        if ($user['phone_verification_code'] !== $code) {
+            echo json_encode(['success' => false, 'message' => 'کد تایید اشتباه است.']);
+            exit;
+        }
+
+        if (strtotime($user['phone_verification_expires_at']) < time()) {
+            echo json_encode(['success' => false, 'message' => 'کد تایید منقضی شده است. لطفا مجددا درخواست دهید.']);
+            exit;
+        }
+
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET is_phone_verified = 1, phone_verification_code = NULL, phone_verification_expires_at = NULL WHERE id = ?");
+            $stmt->execute([$user_id]);
+
+            $_SESSION['is_phone_verified'] = 1;
+            echo json_encode(['success' => true, 'message' => 'شماره موبایل با موفقیت تایید شد.']);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'خطایی در تایید شماره موبایل رخ داد.']);
         }
     }
 }

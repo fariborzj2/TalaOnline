@@ -53,6 +53,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('google_client_id', $google_client_id);
     set_setting('google_client_secret', $google_client_secret);
 
+    $mobile_verification_enabled = isset($_POST['mobile_verification_enabled']) ? '1' : '0';
+    $kavenegar_api_key = $_POST['kavenegar_api_key'];
+    $kavenegar_template = $_POST['kavenegar_template'];
+
+    set_setting('mobile_verification_enabled', $mobile_verification_enabled);
+    set_setting('kavenegar_api_key', $kavenegar_api_key);
+    set_setting('kavenegar_template', $kavenegar_template);
+
     $message = 'تنظیمات با موفقیت ذخیره شد.';
 }
 
@@ -165,6 +173,46 @@ include __DIR__ . '/layout/header.php';
                     <input type="text" name="tinymce_api_key" value="<?= htmlspecialchars(get_setting('tinymce_api_key')) ?>" placeholder="no-api-key" class="ltr-input font-mono text-xs">
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Mobile Verification Settings -->
+    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
+        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-orange-600 border border-orange-50">
+                <i data-lucide="smartphone" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h2 class="text-lg font-black text-slate-800">تنظیمات تایید شماره موبایل</h2>
+                <p class="text-[10px] text-slate-400 font-bold uppercase ">SMS Verification (Kavenegar)</p>
+            </div>
+        </div>
+        <div class="p-8 space-y-6">
+            <div class="form-group flex items-center gap-4">
+                <label class="mb-0">فعال‌سازی تایید شماره موبایل</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="mobile_verification_enabled" value="1" class="sr-only peer" <?= get_setting('mobile_verification_enabled') === '1' ? 'checked' : '' ?>>
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label>Kavenegar API Key</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="key" class="w-4 h-4"></i></span>
+                        <input type="text" name="kavenegar_api_key" value="<?= htmlspecialchars(get_setting('kavenegar_api_key')) ?>" class="ltr-input font-mono text-xs" placeholder="Kavenegar API Key">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Template Name (الگوی پیامک)</label>
+                    <div class="input-icon-wrapper">
+                        <span class="icon"><i data-lucide="file-text" class="w-4 h-4"></i></span>
+                        <input type="text" name="kavenegar_template" value="<?= htmlspecialchars(get_setting('kavenegar_template')) ?>" class="ltr-input font-mono text-xs" placeholder="verify">
+                    </div>
+                </div>
+            </div>
+            <p class="text-[10px] text-slate-400 font-bold uppercase ">توجه: برای ارسال کد تایید از متد Lookup کاوه نگار استفاده می‌شود. مطمئن شوید الگوی تعریف شده در پنل کاوه نگار دارای متغیر {token} باشد.</p>
         </div>
     </div>
 
