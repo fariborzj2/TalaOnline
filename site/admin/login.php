@@ -11,7 +11,7 @@ $lockout_minutes = 15;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ip = $_SERVER['REMOTE_ADDR'];
-    $identifier = $_POST['username'] ?? ''; // Email or Phone
+    $identifier = convert_to_en_num($_POST['username'] ?? ''); // Email or Phone
     $password = $_POST['password'] ?? '';
     $csrf_token = $_POST['csrf_token'] ?? '';
 
@@ -163,6 +163,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script>
     lucide.createIcons();
+
+    /**
+     * Converts Persian and Arabic numerals to English numerals
+     */
+    function convertDigitsToEnglish(str) {
+        if (!str || typeof str !== 'string') return str;
+        const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+        const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        let result = str;
+        for (let i = 0; i < 10; i++) {
+            result = result.replace(new RegExp(persian[i], 'g'), english[i]);
+            result = result.replace(new RegExp(arabic[i], 'g'), english[i]);
+        }
+        return result;
+    }
+
+    // Convert numerals on form submission
+    document.querySelector('form').addEventListener('submit', function() {
+        const usernameInput = this.querySelector('input[name="username"]');
+        if (usernameInput) {
+            usernameInput.value = convertDigitsToEnglish(usernameInput.value);
+        }
+    });
 
     function togglePassword(inputId, btn) {
         const input = document.getElementById(inputId);

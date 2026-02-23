@@ -4,6 +4,23 @@
     // Initialize Lucide icons
     lucide.createIcons();
 
+    /**
+     * Converts Persian and Arabic numerals to English numerals
+     */
+    window.convertDigitsToEnglish = (str) => {
+        if (!str || typeof str !== 'string') return str;
+        const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+        const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        let result = str;
+        for (let i = 0; i < 10; i++) {
+            result = result.replace(new RegExp(persian[i], 'g'), english[i]);
+            result = result.replace(new RegExp(arabic[i], 'g'), english[i]);
+        }
+        return result;
+    };
+
     // Global function to update icons if dynamic content is added
     window.refreshIcons = () => {
         lucide.createIcons();
@@ -33,9 +50,15 @@
         }
     });
 
-    // Global form submission loading state
+    // Global form submission loading state & numeral conversion
     document.addEventListener('submit', function(e) {
         if (e.target.tagName === 'FORM') {
+            // Convert numerals in numeric-likely fields
+            const numericFields = e.target.querySelectorAll('input[type="tel"], input[type="number"], input[name*="phone"], input[name*="code"], input[name*="price"], input[name*="fee"], input[name*="limit"], input[name*="interval"], input[name*="count"], input[name*="port"]');
+            numericFields.forEach(field => {
+                field.value = window.convertDigitsToEnglish(field.value);
+            });
+
             const submitBtn = e.target.querySelector('button[type="submit"]');
             if (submitBtn) {
                 submitBtn.classList.add('btn-loading');
