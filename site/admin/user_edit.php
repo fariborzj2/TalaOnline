@@ -30,7 +30,7 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
-    $phone = $_POST['phone'] ?? '';
+    $phone = convert_to_en_num($_POST['phone'] ?? '');
     $username = $_POST['username'] ?? '';
     $role_id = $_POST['role_id'] ?? 0;
     $password = $_POST['password'] ?? '';

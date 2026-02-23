@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Converts Persian and Arabic numerals to English (Western) numerals
+ */
+function convert_to_en_num($str) {
+    if ($str === null || $str === '') return $str;
+
+    $persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    $arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    $western = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    $str = str_replace($persian, $western, $str);
+    $str = str_replace($arabic, $western, $str);
+
+    return $str;
+}
+
 function fa_num($num) {
     if ($num === null || $num === '') return '---';
 

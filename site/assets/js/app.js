@@ -7,6 +7,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const formatPrice = (price) => toPersianDigits(price);
 
+    const convertDigitsToEnglish = (str) => {
+        if (!str || typeof str !== 'string') return str;
+        const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+        const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        let result = str;
+        for (let i = 0; i < 10; i++) {
+            result = result.replace(new RegExp(persian[i], 'g'), english[i]);
+            result = result.replace(new RegExp(arabic[i], 'g'), english[i]);
+        }
+        return result;
+    };
+
     window.togglePassword = function(inputId, btn) {
         const input = document.getElementById(inputId);
         const icon = btn.querySelector('i') || btn.querySelector('svg');
@@ -180,6 +194,16 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const enhanceContent = () => {
+        // Global numeral conversion for all forms
+        document.addEventListener('submit', (e) => {
+            if (e.target.tagName === 'FORM') {
+                const numericFields = e.target.querySelectorAll('input[type="tel"], input[type="number"], input[name*="phone"], input[name*="code"], input[name*="price"], input[name*="fee"], input[name*="limit"], input[name*="interval"], input[name*="count"], input[name*="port"]');
+                numericFields.forEach(field => {
+                    field.value = convertDigitsToEnglish(field.value);
+                });
+            }
+        });
+
         document.querySelectorAll('.content-text').forEach(area => {
             area.querySelectorAll('table').forEach(table => {
                 if (!table.parentElement.classList.contains('table-wrapper')) {
@@ -344,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(loginForm);
-            const email = formData.get('email');
+            const email = convertDigitsToEnglish(formData.get('email'));
             const password = formData.get('password');
 
             const submitBtn = loginForm.querySelector('button[type="submit"]');
@@ -382,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData(registerForm);
             const name = formData.get('name');
             const email = formData.get('email');
-            const phone = formData.get('phone');
+            const phone = convertDigitsToEnglish(formData.get('phone'));
             const password = formData.get('password');
 
             const submitBtn = registerForm.querySelector('button[type="submit"]');
@@ -494,6 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const formData = new FormData(profileUpdateForm);
             const data = Object.fromEntries(formData.entries());
+            if (data.phone) data.phone = convertDigitsToEnglish(data.phone);
             const submitBtn = profileUpdateForm.querySelector('button[type="submit"]');
 
             submitBtn.disabled = true;
@@ -575,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (verifyPhoneBtn) {
         verifyPhoneBtn.addEventListener('click', async () => {
-            const code = phoneCodeInput.value.trim();
+            const code = convertDigitsToEnglish(phoneCodeInput.value.trim());
             if (!code) {
                 showAlert('لطفاً کد تایید را وارد کنید.', 'warning');
                 return;

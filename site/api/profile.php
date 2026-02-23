@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'update_info') {
         $name = $data['name'] ?? '';
         $email = $data['email'] ?? '';
-        $phone = $data['phone'] ?? '';
+        $phone = convert_to_en_num($data['phone'] ?? '');
         $username = $data['username'] ?? '';
 
         if (empty($name) || empty($email)) {
@@ -272,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     elseif ($action === 'verify_phone') {
-        $code = $data['code'] ?? '';
+        $code = convert_to_en_num($data['code'] ?? '');
         if (empty($code)) {
             echo json_encode(['success' => false, 'message' => 'کد تایید الزامی است.']);
             exit;

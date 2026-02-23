@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'register') {
         $name = $data['name'] ?? '';
         $email = $data['email'] ?? '';
-        $phone = $data['phone'] ?? '';
+        $phone = convert_to_en_num($data['phone'] ?? '');
         $password = $data['password'] ?? '';
 
         if (empty($name) || empty($email) || empty($phone) || empty($password)) {
@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     elseif ($action === 'login') {
-        $identifier = $data['email'] ?? ''; // This can be email or phone
+        $identifier = convert_to_en_num($data['email'] ?? ''); // This can be email or phone (converted to handle phone login)
         $password = $data['password'] ?? '';
 
         if (empty($identifier) || empty($password)) {
