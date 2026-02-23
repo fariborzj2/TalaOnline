@@ -278,6 +278,30 @@
         </div>
     </main>
 
+    <nav class="mobile-nav">
+        <a href="/blog" class="<?= strpos($current_path, '/blog') === 0 ? 'active' : '' ?>">
+            <i data-lucide="newspaper"></i>
+            <span>وبلاگ</span>
+        </a>
+        <a href="/calculator" class="<?= $current_path == '/calculator' ? 'active' : '' ?>">
+            <i data-lucide="calculator"></i>
+            <span>ماشین حساب</span>
+        </a>
+        <div class="mobile-nav-home">
+            <a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>">
+                <i data-lucide="house"></i>
+            </a>
+        </div>
+        <a href="/about-us" class="<?= $current_path == '/about-us' ? 'active' : '' ?>">
+            <i data-lucide="book-open-text"></i>
+            <span>درباره ما</span>
+        </a>
+        <a href="/feedback" class="<?= $current_path == '/feedback' ? 'active' : '' ?>">
+            <i data-lucide="message-square-more"></i>
+            <span>تماس با ما</span>
+        </a>
+    </nav>
+
     <!-- Auth & Profile Modals -->
     <div id="auth-modal" class="modal-overlay d-none">
         <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-400">
