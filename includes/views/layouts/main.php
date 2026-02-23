@@ -282,15 +282,15 @@
     <div id="auth-modal" class="modal-overlay d-none">
         <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-400">
             <div class="pd-md border-bottom d-flex just-between align-center">
-                <div class="d-flex gap-1" id="auth-tabs">
-                    <button class="font-bold font-size-3 pointer active" data-tab="login">ورود</button>
-                    <button class="font-bold font-size-3 pointer" data-tab="register">ثبت نام</button>
+                <div class="pill-toggle-group grow-1" id="auth-tabs">
+                    <button class="pill-btn chart-toggle-btn active" data-tab="login">ورود</button>
+                    <button class="pill-btn chart-toggle-btn" data-tab="register">ثبت نام</button>
                 </div>
-                <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
+                <!-- <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button> -->
             </div>
 
             <div class="pd-md">
-                <form id="login-form" class="auth-form d-column gap-1-5">
+                <form id="login-form" class="auth-form d-column gap-05">
                     <div class="d-column gap-05">
                         <label class="font-size-1 font-bold pr-1">ایمیل یا شماره موبایل</label>
                         <div class="input-item">
