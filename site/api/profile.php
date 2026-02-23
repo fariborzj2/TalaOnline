@@ -222,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $code = rand(10000, 99999);
+        $code = random_int(10000, 99999);
         $expires_at = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
         try {

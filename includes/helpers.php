@@ -231,7 +231,7 @@ function generate_unique_username($name, $email = '') {
 
     // Try adding numbers until unique
     while (true) {
-        $username = $base . rand(100, 999);
+        $username = $base . random_int(100, 999);
         $stmt->execute([$username]);
         if ($stmt->fetchColumn() == 0) {
             return $username;
