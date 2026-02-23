@@ -36,7 +36,6 @@ include __DIR__ . '/layout/header.php';
                     <th>ایمیل</th>
                     <th>موبایل</th>
                     <th>نقش</th>
-                    <th>وضعیت</th>
                     <th>تاریخ عضویت</th>
                     <th class="text-center">عملیات</th>
                 </tr>
@@ -56,8 +55,22 @@ include __DIR__ . '/layout/header.php';
                             </div>
                         </div>
                     </td>
-                    <td class="ltr text-right"><?= htmlspecialchars($user['email']) ?></td>
-                    <td class="ltr text-right"><?= htmlspecialchars($user['phone'] ?? '-') ?></td>
+                    <td class="ltr text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <?php if (($user['is_verified'] ?? 0) == 1): ?>
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-500" title="تایید شده"></i>
+                            <?php endif; ?>
+                            <span><?= htmlspecialchars($user['email']) ?></span>
+                        </div>
+                    </td>
+                    <td class="ltr text-right">
+                        <div class="flex items-center justify-end gap-1">
+                            <?php if (($user['is_phone_verified'] ?? 0) == 1): ?>
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-500" title="تایید شده"></i>
+                            <?php endif; ?>
+                            <span><?= htmlspecialchars($user['phone'] ?? '-') ?></span>
+                        </div>
+                    </td>
                     <td>
                         <?php if ($user['role_id'] > 0): ?>
                             <span class="px-2 py-1 rounded text-[10px] font-black bg-indigo-50 text-indigo-600 border border-indigo-100">
@@ -66,22 +79,6 @@ include __DIR__ . '/layout/header.php';
                         <?php else: ?>
                             <span class="px-2 py-1 rounded text-[10px] font-black bg-slate-50 text-slate-400 border border-slate-100">
                                 کاربر معمولی
-                            </span>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <?php
-                        $email_v = ($user['is_verified'] ?? 0) == 1;
-                        $phone_enabled = get_setting('mobile_verification_enabled') === '1';
-                        $phone_v = ($user['is_phone_verified'] ?? 0) == 1;
-
-                        if ($email_v && (!$phone_enabled || $phone_v)): ?>
-                            <span class="px-2 py-1 rounded text-[10px] font-black bg-emerald-50 text-emerald-600 border border-emerald-100">
-                                فعال
-                            </span>
-                        <?php else: ?>
-                            <span class="px-2 py-1 rounded text-[10px] font-black bg-rose-50 text-rose-600 border border-rose-100">
-                                غیر فعال
                             </span>
                         <?php endif; ?>
                     </td>

@@ -127,11 +127,21 @@ include __DIR__ . '/layout/header.php';
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="form-group">
-                    <label>ایمیل</label>
+                    <label class="flex items-center gap-1">
+                        ایمیل
+                        <?php if (($user['is_verified'] ?? 0) == 1): ?>
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-500" title="تایید شده"></i>
+                        <?php endif; ?>
+                    </label>
                     <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required class="ltr text-left" placeholder="example@mail.com">
                 </div>
                 <div class="form-group">
-                    <label>شماره موبایل</label>
+                    <label class="flex items-center gap-1">
+                        شماره موبایل
+                        <?php if (($user['is_phone_verified'] ?? 0) == 1): ?>
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-500" title="تایید شده"></i>
+                        <?php endif; ?>
+                    </label>
                     <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" class="ltr text-left" placeholder="09123456789">
                 </div>
             </div>
