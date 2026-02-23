@@ -88,8 +88,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         try {
-            $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ?, phone = ?, username = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-            $stmt->execute([$name, $email, $phone, $username, $user_id]);
+            // Check if phone or email changed to reset verification
+            $stmt = $pdo->prepare("SELECT email, phone FROM users WHERE id = ?");
+            $stmt->execute([$user_id]);
+            $current_user = $stmt->fetch();
+
+            $email_changed = ($current_user['email'] !== $email);
+            $phone_changed = ($current_user['phone'] !== $phone);
+
+            $sql = "UPDATE users SET name = ?, email = ?, phone = ?, username = ?, updated_at = CURRENT_TIMESTAMP";
+            $params = [$name, $email, $phone, $username];
+
+            if ($email_changed) {
+                $sql .= ", is_verified = 0";
+                $_SESSION['is_verified'] = 0;
+            }
+            if ($phone_changed) {
+                $sql .= ", is_phone_verified = 0";
+                $_SESSION['is_phone_verified'] = 0;
+            }
+
+            $sql .= " WHERE id = ?";
+            $params[] = $user_id;
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
 
             $_SESSION['user_name'] = $name;
             $_SESSION['user_email'] = $email;
@@ -210,7 +233,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($user['is_phone_verified'] == 1) {
-            echo json_encode(['success' => false, 'message' => 'شماره موبایل قبلاً تایید شده است.']);
+            $_SESSION['is_phone_verified'] = 1;
+            echo json_encode(['success' => true, 'message' => 'شماره موبایل شما قبلاً تایید شده است.']);
             exit;
         }
 
@@ -248,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $stmt = $pdo->prepare("SELECT phone_verification_code, phone_verification_expires_at FROM users WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT phone_verification_code, phone_verification_expires_at, is_phone_verified FROM users WHERE id = ?");
         $stmt->execute([$user_id]);
         $user = $stmt->fetch();
 
@@ -257,7 +281,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        if ($user['phone_verification_code'] !== $code) {
+        if ($user['is_phone_verified'] == 1) {
+            $_SESSION['is_phone_verified'] = 1;
+            echo json_encode(['success' => true, 'message' => 'شماره موبایل شما قبلاً تایید شده است.']);
+            exit;
+        }
+
+        if ($user['phone_verification_code'] != $code) {
             echo json_encode(['success' => false, 'message' => 'کد تایید اشتباه است.']);
             exit;
         }
