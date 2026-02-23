@@ -1,3 +1,24 @@
+<?php
+// Refresh verification status from DB to ensure session is in sync
+global $pdo;
+if (isset($_SESSION['user_id']) && isset($pdo) && $pdo) {
+    try {
+        $stmt = $pdo->prepare("SELECT is_verified, is_phone_verified FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $db_user = $stmt->fetch();
+        if ($db_user) {
+            $_SESSION['is_verified'] = (int)$db_user['is_verified'];
+            $_SESSION['is_phone_verified'] = (int)$db_user['is_phone_verified'];
+        }
+    } catch (Exception $e) {
+        // Fallback to current session if DB fails
+    }
+}
+
+$email_unverified = empty($_SESSION['is_verified']);
+$phone_unverified = (get_setting('mobile_verification_enabled') === '1' && empty($_SESSION['is_phone_verified']));
+?>
+
 <div class="section">
     <div class="bg-block pd-md border radius-16 d-flex align-center gap-1-5">
         <div class="relative shrink-0">
@@ -53,21 +74,6 @@
                 <!-- Overview Tab -->
                 <div id="tab-overview" class="profile-tab-content pd-md">
                     <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">خوش آمدید، <?= htmlspecialchars($_SESSION['user_name']) ?></h2>
-
-                    <?php
-                    // Refresh verification status from DB to ensure session is in sync
-                    if (isset($_SESSION['user_id']) && isset($pdo) && $pdo) {
-                        $stmt = $pdo->prepare("SELECT is_verified, is_phone_verified FROM users WHERE id = ?");
-                        $stmt->execute([$_SESSION['user_id']]);
-                        $db_user = $stmt->fetch();
-                        if ($db_user) {
-                            $_SESSION['is_verified'] = $db_user['is_verified'];
-                            $_SESSION['is_phone_verified'] = $db_user['is_phone_verified'];
-                        }
-                    }
-                    $email_unverified = (($_SESSION['is_verified'] ?? 0) == 0);
-                    $phone_unverified = (get_setting('mobile_verification_enabled') === '1' && ($_SESSION['is_phone_verified'] ?? 0) == 0);
-                    ?>
 
                     <?php if ($email_unverified): ?>
                         <div class="bg-error-light pd-md radius-12 border border-error mb-2 d-flex gap-1 align-center">

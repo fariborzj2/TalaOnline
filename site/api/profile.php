@@ -89,12 +89,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             // Check if phone or email changed to reset verification
-            $stmt = $pdo->prepare("SELECT email, phone FROM users WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT email, phone, is_verified, is_phone_verified FROM users WHERE id = ?");
             $stmt->execute([$user_id]);
             $current_user = $stmt->fetch();
 
-            $email_changed = ($current_user['email'] !== $email);
-            $phone_changed = ($current_user['phone'] !== $phone);
+            // Normalize and compare
+            $new_email = strtolower(trim($email));
+            $old_email = strtolower(trim($current_user['email']));
+            $new_phone = trim($phone);
+            $old_phone = trim($current_user['phone']);
+
+            $email_changed = ($old_email !== $new_email);
+            $phone_changed = ($old_phone !== $new_phone);
 
             $sql = "UPDATE users SET name = ?, email = ?, phone = ?, username = ?, updated_at = CURRENT_TIMESTAMP";
             $params = [$name, $email, $phone, $username];
