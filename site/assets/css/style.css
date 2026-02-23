@@ -761,6 +761,7 @@ input:focus {
         right: 0;
         background: var(--color-block);
         height: 70px;
+        padding-top: 10px;;
         box-shadow: 0 -2px 15px rgba(0,0,0,0.08);
         z-index: 1000;
         align-items: center;
@@ -780,7 +781,6 @@ input:focus {
         font-size: 10px;
         font-weight: 600;
         transition: all 0.2s;
-        gap: 4px;
     }
 
     .mobile-nav a i {
@@ -802,18 +802,16 @@ input:focus {
     }
 
     .mobile-nav-home a {
-        background: var(--color-primary);
+        background: linear-gradient(0deg, #187971 , var(--color-primary));
         width: 58px;
         height: 58px;
         border-radius: 50%;
         color: white !important;
         box-shadow: 0 4px 12px rgba(36, 158, 148, 0.3);
-        border: 6px solid var(--color-body);
         flex: none;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0;
     }
 
     .mobile-nav-home a i {
