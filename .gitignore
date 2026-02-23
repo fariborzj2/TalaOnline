@@ -6,3 +6,4 @@ config.php
 site/uploads/
 *.sqlite
 vendor/
+.DS_Store
