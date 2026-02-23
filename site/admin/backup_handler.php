@@ -14,23 +14,41 @@ if ($action === 'export') {
 }
 
 function export_database($pdo) {
+    $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
     $tables = [];
-    $result = $pdo->query("SHOW TABLES");
+
+    if ($driver === 'mysql') {
+        $result = $pdo->query("SHOW TABLES");
+    } else {
+        $result = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+    }
+
     while ($row = $result->fetch(PDO::FETCH_NUM)) {
         $tables[] = $row[0];
     }
 
     $sql = "-- Database Backup\n";
-    $sql .= "-- Generated at: " . date('Y-m-d H:i:s') . "\n\n";
-    $sql .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+    $sql .= "-- Generated at: " . date('Y-m-d H:i:s') . "\n";
+    $sql .= "-- Driver: " . $driver . "\n\n";
+
+    if ($driver === 'mysql') {
+        $sql .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
+    } else {
+        $sql .= "PRAGMA foreign_keys = OFF;\n\n";
+    }
 
     foreach ($tables as $table) {
         // Drop table
         $sql .= "DROP TABLE IF EXISTS `$table`;\n";
 
         // Create table
-        $res = $pdo->query("SHOW CREATE TABLE `$table`")->fetch(PDO::FETCH_ASSOC);
-        $sql .= $res['Create Table'] . ";\n\n";
+        if ($driver === 'mysql') {
+            $res = $pdo->query("SHOW CREATE TABLE `$table`")->fetch(PDO::FETCH_ASSOC);
+            $sql .= $res['Create Table'] . ";\n\n";
+        } else {
+            $res = $pdo->query("SELECT sql FROM sqlite_master WHERE type='table' AND name = " . $pdo->quote($table))->fetch(PDO::FETCH_ASSOC);
+            $sql .= $res['sql'] . ";\n\n";
+        }
 
         // Insert data
         $res = $pdo->query("SELECT * FROM `$table` ");
@@ -46,7 +64,11 @@ function export_database($pdo) {
         $sql .= "\n";
     }
 
-    $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
+    if ($driver === 'mysql') {
+        $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
+    } else {
+        $sql .= "PRAGMA foreign_keys = ON;\n";
+    }
 
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="backup_' . date('Y-m-d_H-i') . '.sql"');
@@ -89,8 +111,20 @@ function execute_step($pdo) {
     $batch = array_slice($queries, $current, $batch_size);
 
     try {
+        // Disable foreign key checks for this connection/batch
+        $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        if ($driver === 'mysql') {
+            $pdo->exec("SET FOREIGN_KEY_CHECKS=0");
+        } elseif ($driver === 'sqlite') {
+            $pdo->exec("PRAGMA foreign_keys = OFF");
+        }
+
         foreach ($batch as $query) {
             if (!empty($query)) {
+                // Skip driver-specific commands that don't match current driver
+                if ($driver !== 'mysql' && (stripos($query, 'SET FOREIGN_KEY_CHECKS') === 0 || stripos($query, 'SET NAMES') === 0)) continue;
+                if ($driver !== 'sqlite' && stripos($query, 'PRAGMA') === 0) continue;
+
                 $pdo->exec($query);
             }
         }
