@@ -111,19 +111,66 @@ include __DIR__ . '/layout/header.php';
     </div>
 <?php endif; ?>
 
-<form method="POST" class="max-w-4xl space-y-8 pb-10">
-    <!-- General Settings -->
-    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 border border-indigo-50">
-                <i data-lucide="sliders" class="w-5 h-5"></i>
+<form method="POST" class="pb-10">
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+        <!-- Settings Sidebar -->
+        <aside class="w-full lg:w-72 flex-shrink-0 sticky top-24">
+            <div class="glass-card rounded-2xl border border-slate-200/60 p-3 shadow-sm">
+                <nav class="space-y-1" id="settings-tabs">
+                    <button type="button" onclick="switchTab('general', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 bg-indigo-50 text-indigo-600 group active-tab">
+                        <i data-lucide="sliders" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+                        تنظیمات عمومی
+                    </button>
+                    <button type="button" onclick="switchTab('mobile', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
+                        <i data-lucide="smartphone" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+                        تایید شماره موبایل
+                    </button>
+                    <button type="button" onclick="switchTab('rate-limit', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
+                        <i data-lucide="shield-alert" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+                        محدودیت ارسال
+                    </button>
+                    <button type="button" onclick="switchTab('google', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
+                        <i data-lucide="chrome" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+                        ورود با گوگل
+                    </button>
+                    <button type="button" onclick="switchTab('social', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
+                        <i data-lucide="share-2" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+                        شبکه‌های اجتماعی
+                    </button>
+                    <button type="button" onclick="switchTab('seo', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
+                        <i data-lucide="search" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+                        تنظیمات سئو
+                    </button>
+                    <button type="button" onclick="switchTab('backup', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
+                        <i data-lucide="database" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+                        پشتیبان‌گیری
+                    </button>
+                </nav>
+
+                <div class="mt-6 pt-6 border-t border-slate-100 px-2">
+                    <button type="submit" class="btn-v3 btn-v3-primary w-full gap-2 shadow-lg shadow-indigo-100">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        ذخیره تغییرات
+                    </button>
+                </div>
             </div>
-            <div>
-                <h2 class="text-lg font-black text-slate-800">تنظیمات عمومی</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase ">Main Configuration</p>
-            </div>
-        </div>
-        <div class="p-8 space-y-6">
+        </aside>
+
+        <!-- Settings Content -->
+        <div class="flex-1 space-y-8 min-w-0">
+            <!-- General Settings -->
+            <div id="tab-general" class="setting-section transition-all duration-300">
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
+                    <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 border border-indigo-50 shadow-sm">
+                            <i data-lucide="sliders" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-800">تنظیمات عمومی</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase ">Main Configuration</p>
+                        </div>
+                    </div>
+                    <div class="p-8 space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="form-group">
                     <label>عنوان اصلی وب‌سایت</label>
@@ -188,18 +235,21 @@ include __DIR__ . '/layout/header.php';
         </div>
     </div>
 
-    <!-- Mobile Verification Settings -->
-    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-orange-600 border border-orange-50">
-                <i data-lucide="smartphone" class="w-5 h-5"></i>
             </div>
-            <div>
-                <h2 class="text-lg font-black text-slate-800">تنظیمات تایید شماره موبایل</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase ">SMS Verification (Kavenegar)</p>
-            </div>
-        </div>
-        <div class="p-8 space-y-6">
+
+            <!-- Mobile Verification Settings -->
+            <div id="tab-mobile" class="setting-section hidden transition-all duration-300">
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
+                    <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-orange-600 border border-orange-50 shadow-sm">
+                            <i data-lucide="smartphone" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-800">تنظیمات تایید شماره موبایل</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase ">SMS Verification (Kavenegar)</p>
+                        </div>
+                    </div>
+                    <div class="p-8 space-y-6">
             <div class="form-group flex items-center gap-4">
                 <label class="mb-0">فعال‌سازی تایید شماره موبایل</label>
                 <label class="relative inline-flex items-center cursor-pointer">
@@ -228,18 +278,21 @@ include __DIR__ . '/layout/header.php';
         </div>
     </div>
 
-    <!-- Rate Limiting Settings -->
-    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50">
-                <i data-lucide="shield-alert" class="w-5 h-5"></i>
             </div>
-            <div>
-                <h2 class="text-lg font-black text-slate-800">تنظیمات محدودیت ارسال (Rate Limiting)</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase ">Security & Anti-Spam Measures</p>
-            </div>
-        </div>
-        <div class="p-8 space-y-8">
+
+            <!-- Rate Limiting Settings -->
+            <div id="tab-rate-limit" class="setting-section hidden transition-all duration-300">
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
+                    <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50 shadow-sm">
+                            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-800">تنظیمات محدودیت ارسال (Rate Limiting)</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase ">Security & Anti-Spam Measures</p>
+                        </div>
+                    </div>
+                    <div class="p-8 space-y-8">
             <div class="form-group flex items-center gap-4">
                 <label class="mb-0">فعال‌سازی قفل تصاعدی (Progressive Locking)</label>
                 <label class="relative inline-flex items-center cursor-pointer">
@@ -318,18 +371,21 @@ include __DIR__ . '/layout/header.php';
         </div>
     </div>
 
-    <!-- Google Login Settings -->
-    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 border border-blue-50">
-                <i data-lucide="chrome" class="w-5 h-5"></i>
             </div>
-            <div>
-                <h2 class="text-lg font-black text-slate-800">تنظیمات ورود با گوگل</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase ">Google OAuth Configuration</p>
-            </div>
-        </div>
-        <div class="p-8 space-y-6">
+
+            <!-- Google Login Settings -->
+            <div id="tab-google" class="setting-section hidden transition-all duration-300">
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
+                    <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 border border-blue-50 shadow-sm">
+                            <i data-lucide="chrome" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-800">تنظیمات ورود با گوگل</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase ">Google OAuth Configuration</p>
+                        </div>
+                    </div>
+                    <div class="p-8 space-y-6">
             <div class="form-group flex items-center gap-4">
                 <label class="mb-0">فعال‌سازی ورود با گوگل</label>
                 <label class="relative inline-flex items-center cursor-pointer">
@@ -370,18 +426,21 @@ include __DIR__ . '/layout/header.php';
         </div>
     </div>
 
-    <!-- Social Media Settings -->
-    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50">
-                <i data-lucide="share-2" class="w-5 h-5"></i>
             </div>
-            <div>
-                <h2 class="text-lg font-black text-slate-800">شبکه‌های اجتماعی</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase ">Social Media Links</p>
-            </div>
-        </div>
-        <div class="p-8 space-y-6">
+
+            <!-- Social Media Settings -->
+            <div id="tab-social" class="setting-section hidden transition-all duration-300">
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
+                    <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-rose-600 border border-rose-50 shadow-sm">
+                            <i data-lucide="share-2" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-800">شبکه‌های اجتماعی</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase ">Social Media Links</p>
+                        </div>
+                    </div>
+                    <div class="p-8 space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="form-group">
                     <label>تلگرام (Telegram)</label>
@@ -417,18 +476,21 @@ include __DIR__ . '/layout/header.php';
         </div>
     </div>
 
-    <!-- SEO Settings -->
-    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 border border-emerald-50">
-                <i data-lucide="search" class="w-5 h-5"></i>
             </div>
-            <div>
-                <h2 class="text-lg font-black text-slate-800">تنظیمات سئو (SEO)</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase ">Search Engine Optimization</p>
-            </div>
-        </div>
-        <div class="p-8 space-y-6">
+
+            <!-- SEO Settings -->
+            <div id="tab-seo" class="setting-section hidden transition-all duration-300">
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
+                    <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-emerald-600 border border-emerald-50 shadow-sm">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-800">تنظیمات سئو (SEO)</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase ">Search Engine Optimization</p>
+                        </div>
+                    </div>
+                    <div class="p-8 space-y-6">
             <div class="form-group">
                 <label>توضیحات متا (Meta Description)</label>
                 <textarea name="site_description" rows="4" class="resize-none"><?= htmlspecialchars($site_description) ?></textarea>
@@ -445,18 +507,21 @@ include __DIR__ . '/layout/header.php';
         </div>
     </div>
 
-    <!-- Backup & Restore -->
-    <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-amber-600 border border-amber-50">
-                <i data-lucide="database" class="w-5 h-5"></i>
             </div>
-            <div>
-                <h2 class="text-lg font-black text-slate-800">نسخه پشتیبان و بازگردانی</h2>
-                <p class="text-[10px] text-slate-400 font-bold uppercase ">Backup & Restore</p>
-            </div>
-        </div>
-        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- Backup & Restore -->
+            <div id="tab-backup" class="setting-section hidden transition-all duration-300">
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
+                    <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-amber-600 border border-amber-50 shadow-sm">
+                            <i data-lucide="database" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-black text-slate-800">نسخه پشتیبان و بازگردانی</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase ">Backup & Restore</p>
+                        </div>
+                    </div>
+                    <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="space-y-4">
                 <h4 class="font-black text-slate-700 text-sm">دریافت فایل پشتیبان</h4>
                 <p class="text-xs text-slate-400 leading-relaxed">یک نسخه کامل از دیتابیس شامل تمامی ارزها، پلتفرم‌ها و تنظیمات را بصورت فایل SQL دانلود کنید.</p>
@@ -494,13 +559,45 @@ include __DIR__ . '/layout/header.php';
         </div>
     </div>
 
-    <div class="flex items-center justify-end gap-4 pt-4">
-        <button type="submit" class="btn-v3 btn-v3-primary w-full md:w-auto min-w-[200px]">
-            <i data-lucide="save" class="w-5 h-5"></i>
-            ذخیره تمامی تنظیمات سایت
-        </button>
+        </div>
     </div>
 </form>
+
+<script>
+    function switchTab(tabId, btn) {
+        // Hide all sections
+        document.querySelectorAll('.setting-section').forEach(section => {
+            section.classList.add('hidden');
+        });
+
+        // Show selected section
+        document.getElementById('tab-' + tabId).classList.remove('hidden');
+
+        // Update active state in sidebar
+        document.querySelectorAll('#settings-tabs button').forEach(button => {
+            button.classList.remove('bg-indigo-50', 'text-indigo-600', 'active-tab');
+            button.classList.add('text-slate-500');
+        });
+
+        btn.classList.add('bg-indigo-50', 'text-indigo-600', 'active-tab');
+        btn.classList.remove('text-slate-500');
+
+        // Save last active tab to localStorage
+        localStorage.setItem('admin_settings_active_tab', tabId);
+    }
+
+    // Initialize from localStorage or default
+    document.addEventListener('DOMContentLoaded', () => {
+        const lastTab = localStorage.getItem('admin_settings_active_tab') || 'general';
+        const targetBtn = Array.from(document.querySelectorAll('#settings-tabs button')).find(btn =>
+            btn.getAttribute('onclick').includes(`'${lastTab}'`)
+        );
+
+        if (targetBtn) {
+            switchTab(lastTab, targetBtn);
+        }
+    });
+</script>
 
 <!-- Hidden Import Input -->
 <input type="file" id="importFile" accept=".sql" class="hidden" onchange="document.getElementById('fileNameDisplay').innerText = this.files[0].name">
