@@ -48,8 +48,12 @@ class Router {
     }
 
     private function notFound() {
-        http_response_code(404);
-        echo "404 Not Found";
+        if (class_exists('ErrorHandler')) {
+            ErrorHandler::renderError(404, 'صفحه پیدا نشد', 'متاسفانه صفحه‌ای که به دنبال آن بودید یافت نشد یا تغییر مکان داده است.');
+        } else {
+            http_response_code(404);
+            echo "404 Not Found";
+        }
         exit;
     }
 }

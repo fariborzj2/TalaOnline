@@ -2,11 +2,18 @@
 
 require_once __DIR__ . '/Router.php';
 require_once __DIR__ . '/View.php';
+require_once __DIR__ . '/ErrorHandler.php';
+
+if (!defined('DEV_MODE')) {
+    // Default to false for security, can be overridden in config.php
+    define('DEV_MODE', false);
+}
 
 class App {
     private $router;
 
     public function __construct() {
+        ErrorHandler::register();
         $this->router = new Router();
     }
 
