@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../../includes/mail.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -142,6 +143,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['success' => true, 'message' => 'رمز عبور با موفقیت تغییر کرد.']);
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => 'خطایی در تغییر رمز عبور رخ داد.']);
+        }
+    }
+    elseif ($action === 'resend_verification') {
+        // Fetch user data
+        $stmt = $pdo->prepare("SELECT name, email, is_verified FROM users WHERE id = ?");
+        $stmt->execute([$user_id]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            echo json_encode(['success' => false, 'message' => 'کاربر یافت نشد.']);
+            exit;
+        }
+
+        if ($user['is_verified'] == 1) {
+            echo json_encode(['success' => false, 'message' => 'حساب شما قبلاً تایید شده است.']);
+            exit;
+        }
+
+        try {
+            $verification_token = bin2hex(random_bytes(32));
+            $expires_at = date('Y-m-d H:i:s', strtotime('+24 hours'));
+
+            $stmt = $pdo->prepare("UPDATE users SET verification_token = ?, verification_token_expires_at = ? WHERE id = ?");
+            $stmt->execute([$verification_token, $expires_at, $user_id]);
+
+            // Send Verification Email
+            $base_url = get_site_url();
+            $verification_link = $base_url . "/api/verify.php?token=" . $verification_token;
+
+            Mail::queue($user['email'], 'verification', [
+                'name' => $user['name'],
+                'verification_link' => $verification_link
+            ]);
+
+            echo json_encode(['success' => true, 'message' => 'ایمیل تایید مجدداً برای شما ارسال شد. لطفاً صندوق ورودی و پوشه هرزنامه خود را بررسی کنید.']);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'خطایی در ارسال ایمیل رخ داد.']);
         }
     }
 }
