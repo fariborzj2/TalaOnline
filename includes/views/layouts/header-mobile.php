@@ -22,18 +22,18 @@
                 <?= isset($_SESSION['user_id']) ? htmlspecialchars($_SESSION['user_name']) : 'ورود / عضویت' ?>
             </span>
         </div>
+    </div>
 
-        <div class="mobile-header-date">
-            <div class="mobile-live-status">
-                <div class="mobile-pulse-container">
-                    <span class="mobile-pulse-dot"></span>
-                </div>
-                <span class="mobile-live-text">زنده</span>
+    <div class="mobile-header-date">
+        <div class="mobile-live-status">
+            <div class="mobile-pulse-container">
+                <span class="mobile-pulse-dot"></span>
             </div>
-            <div class="mobile-date-wrapper">
-                <span class="mobile-today-text">امروز </span>
-                <span class="mobile-date-text"><?= jalali_date('now', 'weekday') ?></span>
-            </div>
+            <span class="mobile-live-text">زنده</span>
+        </div>
+        <div class="mobile-date-wrapper">
+            <span class="mobile-today-text">امروز </span>
+            <span class="mobile-date-text"><?= jalali_date('now', 'weekday') ?></span>
         </div>
     </div>
 </header>
