@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tala-online-v2';
+const CACHE_NAME = 'tala-online-v3';
 const OFFLINE_URL = '/offline.php';
 
 const ASSETS_TO_CACHE = [
