@@ -101,6 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $pdo->commit();
+
+            if (get_setting('lscache_purge_on_update', '1') === '1') {
+                LSCache::purgeAll();
+            }
+
             header("Location: items.php?message=success");
             exit;
         } catch (Exception $e) {

@@ -3,6 +3,7 @@
 require_once __DIR__ . '/Router.php';
 require_once __DIR__ . '/View.php';
 require_once __DIR__ . '/ErrorHandler.php';
+require_once __DIR__ . '/LSCache.php';
 
 if (!defined('DEV_MODE')) {
     // Default to false for security, can be overridden in config.php
@@ -14,6 +15,7 @@ class App {
 
     public function __construct() {
         ErrorHandler::register();
+        LSCache::init();
         $this->router = new Router();
     }
 
