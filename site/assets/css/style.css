@@ -640,6 +640,7 @@ input:focus {
     z-index: 1000;
     backdrop-filter: blur(4px);
     transition: all 0.3s ease;
+    padding: 20px;
 }
 .modal-content {
     animation: modal-slide-up 0.3s ease-out;
