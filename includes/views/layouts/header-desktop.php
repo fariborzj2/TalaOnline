@@ -25,7 +25,6 @@
             </div>
             <div class="desktop-date-wrapper">
                 <span class="desktop-date-text"><?= jalali_date('now', 'weekday') ?></span>
-                <i data-lucide="calendar-days" class="desktop-calendar-icon"></i>
             </div>
         </div>
     </div>
