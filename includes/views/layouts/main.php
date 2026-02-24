@@ -201,6 +201,7 @@
     }
     ?>
     <main class="app">
+        <?php if (empty($hide_side_menu)): ?>
         <div class="side-menu">
             <div class="logo"><img src="<?= versioned_asset('/assets/images/logo.svg') ?>" alt="طلا آنلاین" width="100" height="100"></div>
             <ul>
@@ -211,8 +212,9 @@
                 <li><a href="/feedback" class="<?= $current_path == '/feedback' ? 'active' : '' ?>" aria-label="ارسال بازخورد"><i data-lucide="message-square-more" class="w-6 h-6"></i></a></li>
             </ul>
         </div>
+        <?php endif; ?>
 
-        <div class="container">
+        <div class="container" <?= !empty($hide_mobile_nav) ? 'style="padding-bottom: 20px;"' : '' ?>>
             <script>
                 window.__AUTH_STATE__ = {
                     apiBase: '<?= get_site_url() ?>/api',
@@ -268,12 +270,15 @@
                     <?= $content ?>
                 </div>
 
+                <?php if (empty($hide_sidebar)): ?>
                 <?= View::renderSection('sidebar') ?>
+                <?php endif; ?>
 
             </div>
         </div>
     </main>
 
+    <?php if (empty($hide_mobile_nav)): ?>
     <nav class="mobile-nav">
         <a href="/blog" class="<?= strpos($current_path, '/blog') === 0 ? 'active' : '' ?>">
             <i data-lucide="newspaper"></i>
@@ -297,6 +302,7 @@
             <span>تماس با ما</span>
         </a>
     </nav>
+    <?php endif; ?>
 
     <!-- Auth & Profile Modals -->
     <div id="auth-modal" class="modal-overlay d-none">

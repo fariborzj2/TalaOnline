@@ -1,0 +1,96 @@
+[Tue Feb 24 11:37:23 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Tue Feb 24 11:37:26 2026] [::1]:35366 Accepted
+[Tue Feb 24 11:37:26 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Tue Feb 24 11:37:26 2026] [::1]:35366 [200]: GET /offline.php
+[Tue Feb 24 11:37:26 2026] [::1]:35366 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35370 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35376 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35370 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1771930450
+[Tue Feb 24 11:37:26 2026] [::1]:35376 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1771930450
+[Tue Feb 24 11:37:26 2026] [::1]:35370 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35376 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35392 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35406 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35392 [200]: GET /assets/js/vendor/lucide.js?v=1771930450
+[Tue Feb 24 11:37:26 2026] [::1]:35406 [200]: GET /assets/js/app.js?v=1771931269
+[Tue Feb 24 11:37:26 2026] [::1]:35406 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35392 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35410 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35410 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1771930450
+[Tue Feb 24 11:37:26 2026] [::1]:35410 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35422 Accepted
+[Tue Feb 24 11:37:26 2026] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in /app/includes/navasan_service.php:89
+Stack trace:
+#0 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
+#1 {main}
+  thrown in /app/includes/navasan_service.php on line 89
+[Tue Feb 24 11:37:26 2026] [::1]:35422 [500]: GET /api/dashboard.php - Uncaught Error: Call to a member function query() on null in /app/includes/navasan_service.php:89
+Stack trace:
+#0 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
+#1 {main}
+  thrown in /app/includes/navasan_service.php on line 89
+[Tue Feb 24 11:37:26 2026] [::1]:35422 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35430 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35430 [200]: GET /sw.js
+[Tue Feb 24 11:37:26 2026] [::1]:35430 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35440 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35452 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35454 Accepted
+[Tue Feb 24 11:37:26 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Tue Feb 24 11:37:26 2026] [::1]:35440 [200]: GET /offline.php
+[Tue Feb 24 11:37:26 2026] [::1]:35440 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35452 [200]: GET /
+[Tue Feb 24 11:37:26 2026] [::1]:35452 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35454 [200]: GET /assets/images/logo.svg
+[Tue Feb 24 11:37:26 2026] [::1]:35468 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35468 [200]: GET /assets/images/favicon/favicon-32x32.png
+[Tue Feb 24 11:37:26 2026] [::1]:35454 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35468 Closing
+[Tue Feb 24 11:37:26 2026] [::1]:35474 Accepted
+[Tue Feb 24 11:37:26 2026] [::1]:35474 [200]: GET /assets/images/favicon/android-icon-192x192.png
+[Tue Feb 24 11:37:26 2026] [::1]:35474 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35480 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35480 [200]: GET /
+[Tue Feb 24 11:37:27 2026] [::1]:35480 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35496 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35504 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35512 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35522 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35496 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35504 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35512 [200]: GET /assets/js/charts.js?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35522 [200]: GET /assets/js/vendor/lucide.js?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35496 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35504 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35512 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35522 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35526 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35540 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35556 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35526 [200]: GET /assets/js/app.js?v=1771931269
+[Tue Feb 24 11:37:27 2026] [::1]:35526 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35540 [200]: GET /assets/images/logo.svg?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35556 [200]: GET /assets/images/gold/gold.webp?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35540 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35556 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35562 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35566 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35562 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35566 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35562 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35566 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35576 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35584 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35576 [200]: GET /assets/images/gold/rob.webp?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35592 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35576 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35584 [200]: GET /assets/images/platforms/gerami.webp?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35584 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35592 [200]: GET /assets/images/platforms/milli.webp?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35592 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35608 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35608 [200]: GET /api/prices.php?symbol=18ayar
+[Tue Feb 24 11:37:27 2026] [::1]:35608 Closing
+[Tue Feb 24 11:37:27 2026] [::1]:35620 Accepted
+[Tue Feb 24 11:37:27 2026] [::1]:35620 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1771930450
+[Tue Feb 24 11:37:27 2026] [::1]:35620 Closing
