@@ -1,9 +1,12 @@
-const CACHE_NAME = 'tala-online-v3';
+const CACHE_NAME = 'tala-online-v4';
 const OFFLINE_URL = '/offline.php';
 
 const ASSETS_TO_CACHE = [
     OFFLINE_URL,
     '/',
+    '/assets/css/style.css',
+    '/assets/js/app.js',
+    '/assets/images/logo.png',
     '/assets/images/logo.svg',
     '/assets/images/favicon/favicon-32x32.png',
     '/assets/images/favicon/android-icon-192x192.png'
