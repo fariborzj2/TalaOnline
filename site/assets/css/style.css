@@ -747,12 +747,164 @@ input:focus {
     height: 16px;
 }
 
+/* Header Styles */
+.hader {
+    margin-bottom: var(--pd-block);
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-profile, .header-date, .header-notifications {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 15px;
+    background: var(--color-block);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--color-title);
+}
+
+.header-profile {
+    padding-left: 10px;
+}
+
+.header-profile:hover {
+    background-color: var(--color-secondary);
+}
+
+.avatar-wrapper {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.header-profile .user-name {
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.header-date {
+    cursor: default;
+}
+
+.header-date .calendar-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.header-notifications {
+    margin-right: auto;
+    order: 2;
+}
+
+.header-profile {
+    order: 1;
+}
+
+.header-date {
+    order: 3;
+}
+
 /* Mobile Bottom Navigation */
 .mobile-nav {
     display: none;
 }
 
 @media (max-width: 600px) {
+    .hader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: var(--color-white);
+        padding: 0 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        height: 60px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 0;
+    }
+
+    .header-inner {
+        width: 100%;
+    }
+
+    .header-profile, .header-date, .header-notifications {
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+        order: unset !important;
+    }
+
+    .header-notifications {
+        margin-right: 0;
+    }
+
+    .header-date {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        flex-direction: row-reverse;
+        gap: 8px;
+    }
+
+    .header-date .calendar-icon,
+    .header-profile .user-name {
+        display: none;
+    }
+
+    .avatar-wrapper {
+        width: 32px;
+        height: 32px;
+        background: transparent;
+        border: none;
+    }
+
+    .header-notifications i {
+        width: 24px;
+        height: 24px;
+    }
+
+    .header-date .date-text {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--color-primary);
+    }
+    .pulse-dot::after {
+        background-color: var(--color-primary);
+    }
+
+    .container {
+        padding-top: 70px;
+    }
+
     .mobile-nav {
         display: flex;
         position: fixed;
