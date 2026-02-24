@@ -73,6 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('rate_limit_ip_lock', $_POST['rate_limit_ip_lock']);
     set_setting('rate_limit_progressive', isset($_POST['rate_limit_progressive']) ? '1' : '0');
 
+    // LiteSpeed Cache Settings
+    set_setting('lscache_enabled', isset($_POST['lscache_enabled']) ? '1' : '0');
+    set_setting('lscache_ttl', $_POST['lscache_ttl']);
+    set_setting('lscache_home_ttl', $_POST['lscache_home_ttl']);
+    set_setting('lscache_blog_ttl', $_POST['lscache_blog_ttl']);
+    set_setting('lscache_purge_on_update', isset($_POST['lscache_purge_on_update']) ? '1' : '0');
+
     $message = 'تنظیمات با موفقیت ذخیره شد.';
 }
 
@@ -144,6 +151,10 @@ include __DIR__ . '/layout/header.php';
                     <button type="button" onclick="switchTab('backup', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
                         <i data-lucide="database" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
                         پشتیبان‌گیری
+                    </button>
+                    <button type="button" onclick="switchTab('lscache', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
+                        <i data-lucide="zap" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+                        LiteSpeed Cache
                     </button>
                 </nav>
 
@@ -561,7 +572,101 @@ include __DIR__ . '/layout/header.php';
 
         </div>
     </div>
+
+            <!-- LiteSpeed Cache Settings -->
+            <div id="tab-lscache" class="setting-section hidden transition-all duration-300">
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
+                    <div class="px-6 py-5 md:px-8 md:py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-amber-500 border border-amber-50 shadow-sm">
+                            <i data-lucide="zap" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base md:text-lg font-black text-slate-800">تنظیمات LiteSpeed Web Cache</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase ">High-Performance Page Caching</p>
+                        </div>
+                    </div>
+                    <div class="p-6 md:p-8 space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="form-group flex items-center gap-4">
+                                    <label class="mb-0">فعال‌سازی LiteSpeed Cache</label>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="lscache_enabled" value="1" class="sr-only peer" <?= get_setting('lscache_enabled') === '1' ? 'checked' : '' ?>>
+                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>زمان کش پیش‌فرض (TTL - ثانیه)</label>
+                                    <div class="input-icon-wrapper">
+                                        <span class="icon"><i data-lucide="clock" class="w-4 h-4"></i></span>
+                                        <input type="number" name="lscache_ttl" value="<?= htmlspecialchars(get_setting('lscache_ttl', '3600')) ?>" min="60" class="ltr-input">
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-2 font-bold">زمان نگهداری صفحات در حافظه کش (مثلاً ۳۶۰۰ برای یک ساعت)</p>
+                                </div>
+
+                                <div class="form-group flex items-center gap-4">
+                                    <label class="mb-0">پاکسازی خودکار هنگام بروزرسانی</label>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="lscache_purge_on_update" value="1" class="sr-only peer" <?= get_setting('lscache_purge_on_update', '1') === '1' ? 'checked' : '' ?>>
+                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div class="form-group">
+                                    <label>زمان کش صفحه اصلی (ثانیه)</label>
+                                    <div class="input-icon-wrapper">
+                                        <span class="icon"><i data-lucide="home" class="w-4 h-4"></i></span>
+                                        <input type="number" name="lscache_home_ttl" value="<?= htmlspecialchars(get_setting('lscache_home_ttl', '600')) ?>" min="60" class="ltr-input">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>زمان کش صفحات وبلاگ (ثانیه)</label>
+                                    <div class="input-icon-wrapper">
+                                        <span class="icon"><i data-lucide="file-text" class="w-4 h-4"></i></span>
+                                        <input type="number" name="lscache_blog_ttl" value="<?= htmlspecialchars(get_setting('lscache_blog_ttl', '3600')) ?>" min="60" class="ltr-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-8 border-t border-slate-100">
+                            <h4 class="font-black text-slate-700 text-sm mb-4">عملیات پاکسازی حافظه کش</h4>
+                            <div class="flex flex-wrap gap-4">
+                                <button type="button" onclick="purgeCache('all')" class="btn-v3 btn-v3-outline border-rose-200 text-rose-600 hover:bg-rose-50 gap-2">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    پاکسازی کل حافظه کش (Purge All)
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-4 leading-relaxed">
+                                <i data-lucide="info" class="w-3 h-3 inline-block align-middle me-1"></i>
+                                برای استفاده از این قابلیت، وب‌سرور شما باید LiteSpeed باشد و ماژول LSCache روی آن فعال باشد. این پلاگین فقط هدرهای لازم را برای وب‌سرور ارسال می‌کند.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
+
+<script>
+async function purgeCache(type) {
+    try {
+        const res = await fetch('../api/lscache.php?action=purge_' + type);
+        const data = await res.json();
+        if (data.success) {
+            await showAlert('حافظه کش با موفقیت پاکسازی شد.', 'success');
+        } else {
+            throw new Error(data.error || 'خطایی رخ داد');
+        }
+    } catch (error) {
+        await showAlert('خطا: ' + error.message, 'error');
+    }
+}
+</script>
 
 <script>
     function switchTab(tabId, btn) {

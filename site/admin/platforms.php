@@ -54,6 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $stmt->execute([$name, $en_name, $logo, $buy_price, $sell_price, $fee, $status, $link, $is_active, $sort_order, $id]);
             $message = 'پلتفرم با موفقیت بروزرسانی شد.';
         }
+
+        if (get_setting('lscache_purge_on_update', '1') === '1') {
+            LSCache::purgeAll();
+        }
     } elseif ($action === 'delete') {
         $id = $_POST['id'];
         $stmt = $pdo->prepare("DELETE FROM platforms WHERE id = ?");
@@ -65,12 +69,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $stmt = $pdo->prepare("UPDATE platforms SET is_active = ? WHERE id = ?");
         $stmt->execute([$active_status, $id]);
         $message = 'وضعیت با موفقیت تغییر کرد.';
+
+        if (get_setting('lscache_purge_on_update', '1') === '1') {
+            LSCache::purgeAll();
+        }
     } elseif ($action === 'reorder') {
         $ids = $_POST['ids'] ?? [];
         foreach ($ids as $index => $id) {
             $stmt = $pdo->prepare("UPDATE platforms SET sort_order = ? WHERE id = ?");
             $stmt->execute([$index, $id]);
         }
+
+        if (get_setting('lscache_purge_on_update', '1') === '1') {
+            LSCache::purgeAll();
+        }
+
         echo json_encode(['success' => true]);
         exit;
     }

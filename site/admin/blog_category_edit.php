@@ -37,6 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$name, $slug, $description, $meta_title, $meta_description, $meta_keywords, $sort_order]);
             }
 
+            if (get_setting('lscache_purge_on_update', '1') === '1') {
+                LSCache::purgeAll();
+            }
+
             header("Location: blog_categories.php?message=success");
             exit;
         } catch (Exception $e) {
