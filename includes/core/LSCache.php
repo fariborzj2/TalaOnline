@@ -99,8 +99,11 @@ class LSCache {
         // 4. Add a tag for easier purging
         header("X-LiteSpeed-Tag: site_content");
 
-        // 5. Use Vary: Cookie to ensure separate cache if cookies exist
-        header("Vary: Cookie", false);
+        // 5. Remove Vary: Cookie for guest users to allow shared caching
+        // If we want different cache for different cookies, we would keep it.
+        // But for guest users, the content should be identical.
+        header_remove('Vary');
+        header("Vary: Accept-Encoding", false);
     }
 
     /**
@@ -134,5 +137,66 @@ class LSCache {
         if (get_setting('lscache_enabled') === '1' && !headers_sent()) {
             header("X-LiteSpeed-Purge: $tag");
         }
+    }
+
+    /**
+     * Estimates the size of the LiteSpeed cache
+     * Note: This depends on the server configuration.
+     */
+    public static function getCacheSize() {
+        $path = get_setting('lscache_path');
+
+        // Common paths to try if not set
+        $paths_to_check = [];
+        if ($path) $paths_to_check[] = $path;
+
+        // Try to detect home directory
+        $home = getenv('HOME');
+        if ($home) {
+            $paths_to_check[] = $home . '/lscache';
+        }
+
+        // Try web root sibling
+        $paths_to_check[] = realpath(__DIR__ . '/../../../') . '/lscache';
+
+        foreach ($paths_to_check as $p) {
+            if (is_dir($p) && is_readable($p)) {
+                return self::getDirectorySize($p);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Calculates directory size recursively
+     */
+    private static function getDirectorySize($dir) {
+        $size = 0;
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS)) as $file) {
+            $size += $file->getSize();
+        }
+        return $size;
+    }
+
+    /**
+     * Formats bytes into human readable string
+     */
+    public static function formatSize($bytes) {
+        if ($bytes === null) return 'نامشخص';
+        if ($bytes == 0) return '۰ بایت';
+
+        $units = ['بایت', 'کیلوبایت', 'مگابایت', 'گیگابایت'];
+        $power = $bytes > 0 ? floor(log($bytes, 1024)) : 0;
+
+        $value = $bytes / pow(1024, $power);
+        $formatted = number_format($value, 2);
+
+        // Convert to Persian numbers
+        $western = ['0','1','2','3','4','5','6','7','8','9'];
+        $persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+        $formatted = str_replace($western, $persian, $formatted);
+
+        return $formatted . ' ' . $units[$power];
     }
 }
