@@ -19,8 +19,8 @@
 
         <div class="desktop-header-date">
             <div class="desktop-live-status">
-                <div class="desktop-pulse-container">
-                    <span class="desktop-pulse-dot"></span>
+                <div class="pulse-container">
+                    <span class="pulse-dot"></span>
                 </div>
             </div>
             <div class="desktop-date-wrapper">

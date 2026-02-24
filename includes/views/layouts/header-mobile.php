@@ -23,8 +23,8 @@
 
     <div class="mobile-header-date">
         <div class="mobile-live-status">
-            <div class="mobile-pulse-container">
-                <span class="mobile-pulse-dot"></span>
+            <div class="pulse-container">
+                <span class="pulse-dot"></span>
             </div>
             <span class="mobile-live-text">زنده</span>
         </div>
