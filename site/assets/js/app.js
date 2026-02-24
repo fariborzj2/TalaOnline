@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Authentication & Modal Logic
-    const userMenuBtn = document.getElementById('user-menu-btn');
+    const userMenuBtns = document.querySelectorAll('.user-menu-btn');
     const authModal = document.getElementById('auth-modal');
     const profileModal = document.getElementById('profile-modal');
     const closeButtons = document.querySelectorAll('.close-modal');
@@ -274,26 +274,30 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const updateUIForAuth = () => {
-        const userText = document.getElementById('user-menu-text');
-        const userIcon = document.querySelector('#user-menu-btn .icon-size-5');
-        const userAvatar = document.querySelector('#user-menu-btn .user-avatar-nav');
+        const userTexts = document.querySelectorAll('.user-menu-text');
+        const userIcons = document.querySelectorAll('.user-menu-btn .icon-size-5');
+        const userAvatars = document.querySelectorAll('.user-menu-btn .user-avatar-nav');
 
         if (authState.isLoggedIn && authState.user) {
-            if (userText) userText.textContent = authState.user.name;
+            userTexts.forEach(text => text.textContent = authState.user.name);
 
             // Handle avatar in nav
             if (authState.user.avatar) {
-                if (userIcon) userIcon.classList.add('d-none');
-                if (userAvatar) {
-                    userAvatar.src = authState.user.avatar;
-                    userAvatar.classList.remove('d-none');
-                } else {
-                    const img = document.createElement('img');
-                    img.src = authState.user.avatar;
-                    img.className = 'w-full h-full object-cover radius-50 user-avatar-nav';
-                    const container = document.querySelector('#user-menu-btn .radius-50');
-                    if (container) container.appendChild(img);
-                }
+                userIcons.forEach(icon => icon.classList.add('d-none'));
+                userAvatars.forEach(avatar => {
+                    avatar.src = authState.user.avatar;
+                    avatar.classList.remove('d-none');
+                });
+
+                // For containers that don't have an avatar yet
+                document.querySelectorAll('.user-menu-btn .radius-50').forEach(container => {
+                    if (!container.querySelector('.user-avatar-nav')) {
+                        const img = document.createElement('img');
+                        img.src = authState.user.avatar;
+                        img.className = 'w-full h-full object-cover radius-50 user-avatar-nav';
+                        container.appendChild(img);
+                    }
+                });
             }
 
             const profileName = profileModal.querySelector('h4');
@@ -306,9 +310,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 profileAvatar.innerHTML = `<img src="${authState.user.avatar}" class="w-full h-full object-cover radius-50">`;
             }
         } else {
-            if (userText) userText.textContent = 'ورود / عضویت';
-            if (userIcon) userIcon.classList.remove('d-none');
-            if (userAvatar) userAvatar.classList.add('d-none');
+            userTexts.forEach(text => text.textContent = 'ورود / عضویت');
+            userIcons.forEach(icon => icon.classList.remove('d-none'));
+            userAvatars.forEach(avatar => avatar.classList.add('d-none'));
         }
     };
 
@@ -324,8 +328,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
     };
 
-    if (userMenuBtn) {
-        userMenuBtn.addEventListener('click', (e) => {
+    userMenuBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
             e.preventDefault();
             if (authState.isLoggedIn) {
                 openModal(profileModal);
@@ -333,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 openModal(authModal);
             }
         });
-    }
+    });
 
     closeButtons.forEach(btn => btn.addEventListener('click', closeModal));
 

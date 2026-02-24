@@ -757,6 +757,9 @@ input:focus {
     .d-flex.mobile-only {
         display: flex !important;
     }
+    .header-inner.mobile-only {
+        display: grid !important;
+    }
     .desktop-only {
         display: none !important;
     }
