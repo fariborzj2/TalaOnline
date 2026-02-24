@@ -1,4 +1,13 @@
 <?php
+/**
+ * Offline Fallback Page
+ */
+$hide_sidebar = true;
+$hide_side_menu = true;
+$hide_mobile_nav = true;
+$hide_layout_h1 = true;
+$body_class = 'offline-page';
+
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/core/View.php';
@@ -26,8 +35,4 @@ ob_start();
 </div>
 <?php
 $content = ob_get_clean();
-$hide_layout_h1 = true;
-$hide_sidebar = true;
-$hide_side_menu = true;
-$hide_mobile_nav = true;
 require __DIR__ . '/../includes/views/layouts/main.php';

@@ -1005,3 +1005,13 @@ input:focus {
     gap: 10px;
     margin-top: 10px;
 }
+
+/* Offline Page Refinements */
+body.offline-page .side-menu,
+body.offline-page .sidebar,
+body.offline-page .mobile-nav {
+    display: none !important;
+}
+body.offline-page .container {
+    padding-bottom: 20px !important;
+}
