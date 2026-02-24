@@ -771,6 +771,7 @@ input:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 5px;
 }
 
 .desktop-header-profile, .desktop-header-date, .desktop-header-notifications {
@@ -785,7 +786,9 @@ input:focus {
     transition: all 0.2s;
     color: var(--color-title);
 }
-
+.desktop-header-date {
+    padding-right: 15px;
+}
 .desktop-header-profile {
     padding-left: 10px;
     order: 1;
