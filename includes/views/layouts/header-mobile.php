@@ -6,7 +6,7 @@
 
         <div class="mobile-header-logo">
             <a href="<?= get_base_url(); ?>">
-                <img src="<?= versioned_asset('/assets/images/logo.svg') ?>" alt="طلا آنلاین" height="28">
+                <img src="<?= versioned_asset('/assets/images/logo-larg.svg') ?>" alt="طلا آنلاین" height="28">
             </a>
         </div>
 
