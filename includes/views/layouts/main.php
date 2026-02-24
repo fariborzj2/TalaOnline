@@ -232,38 +232,34 @@
             </script>
             <div class="center d-flex-wrap gap-md align-stretch main-layout">
                 <div class="main-content d-column gap-md grow-8 overflow-hidden basis-700" >
-                    <div class="hader">
-                        <div class="d-flex-wrap gap-1 just-between align-center">
-                            <!-- <div class="font-size-3 font-bold"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></div> -->
-                            
-                            <div class="border radius-10 pl-1 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title pointer hover-bg-secondary transition-all" id="user-menu-btn">
-                                <div class="w-6 h-6 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden shrink-0">
+                    <header class="hader">
+                        <div class="header-inner">
+                            <div class="header-profile" id="user-menu-btn">
+                                <div class="avatar-wrapper radius-50">
                                     <?php if (!empty($_SESSION['user_avatar'])): ?>
-                                        <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" class="w-full h-full object-cover user-avatar-nav">
+                                        <img src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>" class="user-avatar-nav">
                                     <?php else: ?>
-                                        <i data-lucide="user" class="icon-size-3"></i>
+                                        <i data-lucide="user" class="icon-size-5"></i>
                                     <?php endif; ?>
                                 </div>
-                                <span class="font-bold font-size-1" id="user-menu-text">
+                                <span class="user-name" id="user-menu-text">
                                     <?= isset($_SESSION['user_id']) ? htmlspecialchars($_SESSION['user_name']) : 'ورود / عضویت' ?>
                                 </span>
                             </div>
 
-                            <div class="d-flex gap-1">
-                                <div class="border radius-10 pl-1 pr-1 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title pointer">
-                                    <i data-lucide="bell" class="icon-size-3"></i>
+                            <div class="header-date">
+                                <div class="pulse-container">
+                                    <span class="pulse-dot"></span>
                                 </div>
+                                <i data-lucide="calendar-days" class="calendar-icon"></i>
+                                <span class="date-text"><?= jalali_time_tag() ?></span>
+                            </div>
 
-                                <div class="border radius-10 pl-1-5 pr-1-5 pt-05 pb-05 d-flex align-center gap-05 bg-block text-title">
-                                    <div class="pulse-container ml-05">
-                                        <span class="pulse-dot"></span>
-                                    </div>
-                                    <i data-lucide="calendar-days" class="icon-size-3"></i>
-                                    <span><?= jalali_time_tag() ?></span>
-                                </div>
+                            <div class="header-notifications">
+                                <i data-lucide="bell" class="icon-size-3"></i>
                             </div>
                         </div>
-                    </div>
+                    </header>
 
                     <?php if (empty($hide_layout_h1)): ?>
                         <h1 class="sr-only"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
