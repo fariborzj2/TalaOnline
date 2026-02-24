@@ -79,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('lscache_home_ttl', $_POST['lscache_home_ttl']);
     set_setting('lscache_blog_ttl', $_POST['lscache_blog_ttl']);
     set_setting('lscache_purge_on_update', isset($_POST['lscache_purge_on_update']) ? '1' : '0');
+    set_setting('lscache_path', $_POST['lscache_path']);
 
     $message = 'تنظیمات با موفقیت ذخیره شد.';
 }
@@ -568,10 +569,6 @@ include __DIR__ . '/layout/header.php';
                 </div>
             </div>
         </div>
-    </div>
-
-        </div>
-    </div>
 
             <!-- LiteSpeed Cache Settings -->
             <div id="tab-lscache" class="setting-section hidden transition-all duration-300">
@@ -639,6 +636,10 @@ include __DIR__ . '/layout/header.php';
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     پاکسازی کل حافظه کش (Purge All)
                                 </button>
+                                <div class="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
+                                    <span class="text-[10px] font-black text-slate-400 uppercase">حجم فعلی کش:</span>
+                                    <span class="text-xs font-black text-indigo-600"><?= LSCache::formatSize(LSCache::getCacheSize()) ?></span>
+                                </div>
                             </div>
                             <p class="text-[10px] text-slate-400 mt-4 leading-relaxed">
                                 <i data-lucide="info" class="w-3 h-3 inline-block align-middle me-1"></i>
