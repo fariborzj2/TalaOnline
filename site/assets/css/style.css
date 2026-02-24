@@ -980,7 +980,7 @@ input:focus {
         animation: pulse 2s infinite;
     }
 
-    .mobile-live-text, .mobile-today-text, .mobile-date-text {
+    .mobile-live-text, .mobile-date-text {
         font-weight: 600;
         font-size: 13px;
         color: var(--color-title);

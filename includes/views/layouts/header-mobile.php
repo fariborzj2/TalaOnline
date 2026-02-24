@@ -29,8 +29,7 @@
             <span class="mobile-live-text">زنده</span>
         </div>
         <div class="mobile-date-wrapper">
-            <span class="mobile-today-text">امروز </span>
-            <span class="mobile-date-text"><?= jalali_date('now', 'weekday') ?></span>
+            <span class="mobile-date-text">امروز <?= jalali_date('now', 'weekday') ?></span>
         </div>
     </div>
 </header>
