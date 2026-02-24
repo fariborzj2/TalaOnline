@@ -15,7 +15,6 @@ class App {
 
     public function __construct() {
         ErrorHandler::register();
-        LSCache::init();
         $this->router = new Router();
     }
 
@@ -24,6 +23,8 @@ class App {
     }
 
     public function run() {
+        ob_start();
+
         // Load routes
         if (file_exists(__DIR__ . '/../routes.php')) {
             $router = $this->router;
@@ -47,5 +48,10 @@ class App {
         $uri = '/' . ltrim($uri, '/');
 
         $this->router->dispatch($uri);
+
+        // Send LiteSpeed headers after all logic is done but before flushing output
+        LSCache::init();
+
+        ob_end_flush();
     }
 }

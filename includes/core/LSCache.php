@@ -26,7 +26,7 @@ class LSCache {
         }
 
         // 2. Don't cache for logged in users
-        if (!empty($_SESSION['user_id'])) {
+        if (session_status() === PHP_SESSION_ACTIVE && !empty($_SESSION['user_id'])) {
             return false;
         }
 
@@ -41,13 +41,13 @@ class LSCache {
             return false;
         }
 
-        // 5. Don't cache POST requests or other non-GET methods
-        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        // 5. Don't cache POST requests or other non-GET/HEAD methods
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET' && $_SERVER['REQUEST_METHOD'] !== 'HEAD') {
             return false;
         }
 
         // 6. Don't cache if there is a message in session (like flash messages)
-        if (!empty($_SESSION['message']) || !empty($_SESSION['error'])) {
+        if (session_status() === PHP_SESSION_ACTIVE && (!empty($_SESSION['message']) || !empty($_SESSION['error']))) {
             return false;
         }
 
@@ -78,10 +78,29 @@ class LSCache {
             $ttl = (int)get_setting('lscache_blog_ttl', $default_ttl);
         }
 
+        // 1. Remove conflicting headers sent by PHP session_start()
+        header_remove('Cache-Control');
+        header_remove('Pragma');
+        header_remove('Expires');
+
+        // 2. If it's a guest, also remove Set-Cookie to allow LiteSpeed caching
+        // Guests don't need a session cookie for viewing static-like pages.
+        // If they need a session (e.g. login), it will be started on the next non-cached request (POST).
+        if (session_status() === PHP_SESSION_ACTIVE && empty($_SESSION['user_id'])) {
+            header_remove('Set-Cookie');
+        }
+
+        // 3. Set LiteSpeed specific headers
         header("X-LiteSpeed-Cache-Control: public, max-age=$ttl");
 
-        // Add a tag for easier purging
+        // 3. Set standard Cache-Control for consistency
+        header("Cache-Control: public, max-age=$ttl");
+
+        // 4. Add a tag for easier purging
         header("X-LiteSpeed-Tag: site_content");
+
+        // 5. Use Vary: Cookie to ensure separate cache if cookies exist
+        header("Vary: Cookie", false);
     }
 
     /**
