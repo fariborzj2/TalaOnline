@@ -200,9 +200,23 @@ function get_asset_url($path) {
 }
 
 /**
+ * Ensures the session is started if it hasn't been already.
+ */
+function ensure_session() {
+    if (session_status() === PHP_SESSION_NONE) {
+        // If LiteSpeed Cache is enabled, we want to control headers ourselves
+        if (get_setting('lscache_enabled') === '1') {
+            session_cache_limiter('');
+        }
+        session_start();
+    }
+}
+
+/**
  * Generates and returns a CSRF token
  */
 function csrf_token() {
+    ensure_session();
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }

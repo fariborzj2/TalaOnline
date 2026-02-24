@@ -93,6 +93,11 @@ class ErrorHandler {
         // For testing/demonstration purposes, if we can't find a config, maybe we can look at the environment.
         // But let's stick to the constant.
 
+        // Ensure LiteSpeed Cache knows not to cache error pages
+        if (class_exists('LSCache')) {
+            header("X-LiteSpeed-Cache-Control: no-cache");
+        }
+
         if (class_exists('View')) {
             try {
                 View::renderPage('error', [
