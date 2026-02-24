@@ -950,7 +950,8 @@ input:focus {
     }
 
     .container {
-        padding-top: 105px;
+        padding-top: 90px;
+        padding-bottom: 90px;
     }
 
     .mobile-nav {
@@ -1017,10 +1018,6 @@ input:focus {
     .mobile-nav-home a i {
         width: 28px;
         height: 28px;
-    }
-
-    .container {
-        padding-bottom: 80px;
     }
 }
 
