@@ -190,7 +190,7 @@
     </script>
     <?php endif; ?>
 </head>
-<body>
+<body class="<?= $body_class ?? '' ?>">
     <?php
     $current_uri = $_SERVER['REQUEST_URI'];
     $current_path = parse_url($current_uri, PHP_URL_PATH);
