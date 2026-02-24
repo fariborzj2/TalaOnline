@@ -4,7 +4,7 @@
  */
 $hide_sidebar = true;
 $hide_side_menu = true;
-$hide_mobile_nav = true;
+$hide_mobile_nav = false;
 $hide_layout_h1 = true;
 $body_class = 'offline-page';
 
