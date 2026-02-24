@@ -884,7 +884,6 @@ input:focus {
         right: 0;
         z-index: 1000;
         background: var(--color-white);
-        padding: 10px 15px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         display: flex;
         flex-direction: column;
@@ -893,12 +892,10 @@ input:focus {
     }
 
     .mobile-header-inner {
-        width: 100%;
-        display: grid !important;
-        grid-template-areas:
-            "notif logo profile"
-            "date date date";
-        row-gap: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 15px;
     }
 
     .mobile-header-notifications {
@@ -915,14 +912,13 @@ input:focus {
     }
 
     .mobile-header-logo {
-        grid-area: logo;
         justify-self: center;
         display: flex;
         align-items: center;
     }
 
     .mobile-header-logo img {
-        height: 32px;
+        height: 24px;
         width: auto;
     }
 
@@ -947,13 +943,12 @@ input:focus {
     }
 
     .mobile-header-date {
-        grid-area: date;
         width: 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-top: 1px solid var(--color-border);
-        padding-top: 10px;
+        padding: 3px 15px;
     }
 
     .mobile-live-status {
