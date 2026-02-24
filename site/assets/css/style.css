@@ -757,26 +757,23 @@ input:focus {
     .d-flex.mobile-only {
         display: flex !important;
     }
-    .header-inner.mobile-only {
-        display: grid !important;
-    }
     .desktop-only {
         display: none !important;
     }
 }
 
-/* Header Styles */
-.hader {
+/* Desktop Header Styles */
+.desktop-header {
     margin-bottom: var(--pd-block);
 }
 
-.header-inner {
+.desktop-header-inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.header-profile, .header-date, .header-notifications {
+.desktop-header-profile, .desktop-header-date, .desktop-header-notifications {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -789,15 +786,16 @@ input:focus {
     color: var(--color-title);
 }
 
-.header-profile {
+.desktop-header-profile {
     padding-left: 10px;
+    order: 1;
 }
 
-.header-profile:hover {
+.desktop-header-profile:hover {
     background-color: var(--color-secondary);
 }
 
-.avatar-wrapper {
+.desktop-avatar-wrapper {
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -810,49 +808,66 @@ input:focus {
     flex-shrink: 0;
 }
 
-.avatar-wrapper img {
+.desktop-avatar-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.header-profile .user-name {
+.desktop-user-name {
     font-weight: 600;
     font-size: 12px;
 }
 
-.header-date {
-    cursor: default;
-}
-
-.header-date .calendar-icon {
-    width: 18px;
-    height: 18px;
-}
-
-.header-notifications {
+.desktop-header-notifications {
     margin-right: auto;
     order: 2;
 }
 
-.header-profile {
-    order: 1;
-}
-
-.header-date {
+.desktop-header-date {
+    cursor: default;
     order: 3;
 }
 
-.date-wrapper {
+.desktop-date-wrapper {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.live-status {
+.desktop-calendar-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.desktop-live-status {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.desktop-pulse-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.desktop-pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-success);
+    border-radius: 50%;
+    position: relative;
+}
+
+.desktop-pulse-dot::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-success);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
 }
 
 /* Mobile Bottom Navigation */
@@ -860,8 +875,9 @@ input:focus {
     display: none;
 }
 
+/* Mobile Header Styles */
 @media (max-width: 600px) {
-    .hader {
+    .mobile-header {
         position: fixed;
         top: 0;
         left: 0;
@@ -876,87 +892,109 @@ input:focus {
         margin-bottom: 0;
     }
 
-    .header-inner {
+    .mobile-header-inner {
         width: 100%;
-        display: grid;
+        display: grid !important;
         grid-template-areas:
             "notif logo profile"
             "date date date";
         row-gap: 15px;
     }
 
-    .header-notifications {
+    .mobile-header-notifications {
         grid-area: notif;
         justify-self: start;
+        background: transparent;
+        border: none;
+        padding: 0;
     }
 
-    .header-logo {
+    .mobile-header-notifications i {
+        width: 24px;
+        height: 24px;
+    }
+
+    .mobile-header-logo {
         grid-area: logo;
         justify-self: center;
         display: flex;
         align-items: center;
     }
 
-    .header-logo img {
+    .mobile-header-logo img {
         height: 32px;
         width: auto;
     }
 
-    .header-profile {
+    .mobile-header-profile {
         grid-area: profile;
         justify-self: end;
-    }
-
-    .header-date {
-        grid-area: date;
-        width: 100%;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center;
-        border-top: 1px solid var(--color-border);
-        padding-top: 10px !important;
-        position: static !important;
-        transform: none !important;
-        flex-direction: row !important;
-    }
-
-    .header-profile, .header-date, .header-notifications {
         background: transparent;
         border: none;
         padding: 0;
-        margin: 0;
-        order: unset !important;
     }
 
-    .header-profile .user-name {
-        display: none;
-    }
-
-    .avatar-wrapper {
+    .mobile-avatar-wrapper {
         width: 32px;
         height: 32px;
         background: transparent;
         border: none;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .header-notifications i {
-        width: 24px;
-        height: 24px;
+    .mobile-header-date {
+        grid-area: date;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--color-border);
+        padding-top: 10px;
     }
 
-    .header-date .date-text, .header-date .live-text, .header-date .today-text {
+    .mobile-live-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .mobile-pulse-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mobile-pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--color-primary);
+        border-radius: 50%;
+        position: relative;
+    }
+    .mobile-pulse-dot::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: var(--color-primary);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    .mobile-live-text, .mobile-today-text, .mobile-date-text {
         font-weight: 600;
         font-size: 13px;
         color: var(--color-title);
     }
 
-    .pulse-dot {
-        width: 8px;
-        height: 8px;
-        background-color: var(--color-primary);
-    }
-    .pulse-dot::after {
-        background-color: var(--color-primary);
+    .mobile-date-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .container {
