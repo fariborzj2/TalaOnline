@@ -172,11 +172,24 @@ class LSCache {
      * Calculates directory size recursively
      */
     private static function getDirectorySize($dir) {
-        $size = 0;
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS)) as $file) {
-            $size += $file->getSize();
+        try {
+            $size = 0;
+            if (!is_dir($dir) || !is_readable($dir)) return null;
+
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::SELF_FIRST
+            );
+
+            foreach ($iterator as $file) {
+                if ($file->isFile()) {
+                    $size += $file->getSize();
+                }
+            }
+            return $size;
+        } catch (Exception $e) {
+            return null;
         }
-        return $size;
     }
 
     /**
