@@ -2,6 +2,7 @@
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
+require_once __DIR__ . '/../../includes/core/LSCache.php';
 check_permission("settings.view");
 
 $message = '';
@@ -569,6 +570,8 @@ include __DIR__ . '/layout/header.php';
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
             <!-- LiteSpeed Cache Settings -->
             <div id="tab-lscache" class="setting-section hidden transition-all duration-300">
@@ -660,6 +663,7 @@ async function purgeCache(type) {
         const data = await res.json();
         if (data.success) {
             await showAlert('حافظه کش با موفقیت پاکسازی شد.', 'success');
+            location.reload();
         } else {
             throw new Error(data.error || 'خطایی رخ داد');
         }
@@ -667,42 +671,53 @@ async function purgeCache(type) {
         await showAlert('خطا: ' + error.message, 'error');
     }
 }
-</script>
 
-<script>
-    function switchTab(tabId, btn) {
-        // Hide all sections
-        document.querySelectorAll('.setting-section').forEach(section => {
-            section.classList.add('hidden');
-        });
+function switchTab(tabId, btn) {
+    // Hide all sections
+    document.querySelectorAll('.setting-section').forEach(section => {
+        section.classList.add('hidden');
+    });
 
-        // Show selected section
-        document.getElementById('tab-' + tabId).classList.remove('hidden');
-
-        // Update active state in sidebar
-        document.querySelectorAll('#settings-tabs button').forEach(button => {
-            button.classList.remove('bg-indigo-50', 'text-indigo-600', 'active-tab');
-            button.classList.add('text-slate-500');
-        });
-
-        btn.classList.add('bg-indigo-50', 'text-indigo-600', 'active-tab');
-        btn.classList.remove('text-slate-500');
-
-        // Save last active tab to localStorage
-        localStorage.setItem('admin_settings_active_tab', tabId);
+    // Show selected section
+    const targetSection = document.getElementById('tab-' + tabId);
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
     }
 
-    // Initialize from localStorage or default
-    document.addEventListener('DOMContentLoaded', () => {
-        const lastTab = localStorage.getItem('admin_settings_active_tab') || 'general';
-        const targetBtn = Array.from(document.querySelectorAll('#settings-tabs button')).find(btn =>
-            btn.getAttribute('onclick').includes(`'${lastTab}'`)
-        );
+    // Update active state in sidebar
+    document.querySelectorAll('#settings-tabs button').forEach(button => {
+        button.classList.remove('bg-indigo-50', 'text-indigo-600', 'active-tab');
+        button.classList.add('text-slate-500');
+    });
 
-        if (targetBtn) {
-            switchTab(lastTab, targetBtn);
+    if (btn) {
+        btn.classList.add('bg-indigo-50', 'text-indigo-600', 'active-tab');
+        btn.classList.remove('text-slate-500');
+    }
+
+    // Save last active tab to localStorage
+    localStorage.setItem('admin_settings_active_tab', tabId);
+}
+
+// Initialize from localStorage or default
+document.addEventListener('DOMContentLoaded', () => {
+    const lastTab = localStorage.getItem('admin_settings_active_tab') || 'general';
+    const buttons = document.querySelectorAll('#settings-tabs button');
+    let targetBtn = null;
+
+    buttons.forEach(btn => {
+        const onclick = btn.getAttribute('onclick');
+        if (onclick && onclick.includes("'" + lastTab + "'")) {
+            targetBtn = btn;
         }
     });
+
+    if (targetBtn) {
+        switchTab(lastTab, targetBtn);
+    } else {
+        switchTab('general', buttons[0]);
+    }
+});
 </script>
 
 <!-- Hidden Import Input -->
