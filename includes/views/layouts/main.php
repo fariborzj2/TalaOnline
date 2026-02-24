@@ -31,7 +31,7 @@
     <link rel="manifest" href="/assets/images/favicon/manifest.json">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/assets/images/favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#249E94">
 
     <style>
         /* CSS Inlining for Performance */

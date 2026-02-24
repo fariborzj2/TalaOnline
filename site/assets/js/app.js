@@ -716,6 +716,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('SW registered: ', registration);
+                })
+                .catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+        });
+    }
+
     // Async parts
     (async () => {
         if (window.__INITIAL_STATE__ && window.__INITIAL_STATE__.platforms) {
