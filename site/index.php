@@ -11,6 +11,13 @@ if (php_sapi_name() == 'cli-server') {
     }
 }
 
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/core/ErrorHandler.php';
+ErrorHandler::register();
+
+require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/core/App.php';
+
 // Initialize session only if it exists or if we are in admin area
 $is_admin = isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/admin') !== false;
 $is_post = isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST';
@@ -21,10 +28,6 @@ if (isset($_COOKIE['PHPSESSID']) || $is_admin || $is_post) {
     }
     session_start();
 }
-
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/core/App.php';
-require_once __DIR__ . '/../includes/helpers.php';
 
 $app = new App();
 $app->run();

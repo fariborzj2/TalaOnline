@@ -14,7 +14,6 @@ class App {
     private $router;
 
     public function __construct() {
-        ErrorHandler::register();
         $this->router = new Router();
     }
 
