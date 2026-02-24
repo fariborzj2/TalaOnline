@@ -249,16 +249,26 @@
                                 </span>
                             </div>
 
-                            <div class="header-date">
-                                <div class="pulse-container">
-                                    <span class="pulse-dot"></span>
-                                </div>
-                                <i data-lucide="calendar-days" class="calendar-icon"></i>
-                                <span class="date-text"><?= jalali_time_tag() ?></span>
+                            <div class="header-logo mobile-only">
+                                <img src="<?= versioned_asset('/assets/images/logo.svg') ?>" alt="طلا آنلاین" height="28">
                             </div>
 
                             <div class="header-notifications">
                                 <i data-lucide="bell" class="icon-size-3"></i>
+                            </div>
+
+                            <div class="header-date">
+                                <div class="live-status">
+                                    <div class="pulse-container">
+                                        <span class="pulse-dot"></span>
+                                    </div>
+                                    <span class="live-text mobile-only">زنده</span>
+                                </div>
+                                <div class="date-wrapper">
+                                    <span class="today-text mobile-only">امروز </span>
+                                    <span class="date-text"><?= jalali_date('now', 'weekday') ?></span>
+                                    <i data-lucide="calendar-days" class="calendar-icon"></i>
+                                </div>
                             </div>
                         </div>
                     </header>
