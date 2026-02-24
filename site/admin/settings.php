@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('lscache_home_ttl', $_POST['lscache_home_ttl']);
     set_setting('lscache_blog_ttl', $_POST['lscache_blog_ttl']);
     set_setting('lscache_purge_on_update', isset($_POST['lscache_purge_on_update']) ? '1' : '0');
-    set_setting('lscache_path', $_POST['lscache_path']);
+    set_setting('lscache_path', $_POST['lscache_path'] ?? '');
 
     $message = 'تنظیمات با موفقیت ذخیره شد.';
 }
@@ -611,6 +611,15 @@ include __DIR__ . '/layout/header.php';
                                         <input type="checkbox" name="lscache_purge_on_update" value="1" class="sr-only peer" <?= get_setting('lscache_purge_on_update', '1') === '1' ? 'checked' : '' ?>>
                                         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                                     </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>مسیر ذخیره‌سازی کش (اختیاری)</label>
+                                    <div class="input-icon-wrapper">
+                                        <span class="icon"><i data-lucide="folder" class="w-4 h-4"></i></span>
+                                        <input type="text" name="lscache_path" value="<?= htmlspecialchars(get_setting('lscache_path')) ?>" placeholder="/home/user/lscache" class="ltr-input font-mono text-xs">
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase">برای محاسبه دقیق حجم کش. در صورت خالی بودن، سیستم سعی در شناسایی خودکار دارد.</p>
                                 </div>
                             </div>
 
