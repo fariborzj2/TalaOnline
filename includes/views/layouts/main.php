@@ -234,10 +234,8 @@
             </script>
             <div class="center d-flex-wrap gap-md align-stretch main-layout">
                 <div class="main-content d-column gap-md grow-8 overflow-hidden basis-700" >
-                    <header class="hader">
-                        <?php include __DIR__ . '/header-desktop.php'; ?>
-                        <?php include __DIR__ . '/header-mobile.php'; ?>
-                    </header>
+                    <?php include __DIR__ . '/header-desktop.php'; ?>
+                    <?php include __DIR__ . '/header-mobile.php'; ?>
 
                     <?php if (empty($hide_layout_h1)): ?>
                         <h1 class="sr-only"><?= htmlspecialchars($h1_title ?? $page_title ?? 'طلا آنلاین') ?></h1>
