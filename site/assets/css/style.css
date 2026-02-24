@@ -778,7 +778,8 @@ input:focus {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 5px 15px;
+    padding: 5px 10px;
+    height: 40px;
     background: var(--color-block);
     border: 1px solid var(--color-border);
     border-radius: 10px;
