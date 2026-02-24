@@ -27,4 +27,7 @@ ob_start();
 <?php
 $content = ob_get_clean();
 $hide_layout_h1 = true;
+$hide_sidebar = true;
+$hide_side_menu = true;
+$hide_mobile_nav = true;
 require __DIR__ . '/../includes/views/layouts/main.php';
