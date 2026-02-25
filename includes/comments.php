@@ -18,7 +18,7 @@ class Comments {
     public function getComments($target_id, $target_type, $user_id = null) {
         if (!$this->pdo) return [];
 
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level,
+        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
