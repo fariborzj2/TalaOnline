@@ -93,10 +93,12 @@ class LSCache {
         // 3. Set LiteSpeed specific headers
         header("X-LiteSpeed-Cache-Control: public, max-age=$ttl");
 
-        // 3. Set standard Cache-Control for consistency
-        header("Cache-Control: public, max-age=$ttl");
+        // 4. Set standard Cache-Control to force browser revalidation.
+        // This ensures that when a user logs in, the browser doesn't serve a stale guest page from its own cache.
+        // LiteSpeed will still serve the cached version to guests from its own server-side cache.
+        header("Cache-Control: no-cache, private, max-age=0");
 
-        // 4. Add a tag for easier purging
+        // 5. Add a tag for easier purging
         header("X-LiteSpeed-Tag: site_content");
 
         // 5. Remove Vary: Cookie for guest users to allow shared caching
@@ -110,6 +112,10 @@ class LSCache {
      * Sends headers to prevent caching for private/dynamic pages
      */
     private static function sendNoCacheHeaders() {
+        header("Cache-Control: no-cache, no-store, must-revalidate, private");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
         if (get_setting('lscache_enabled') === '1') {
             header("X-LiteSpeed-Cache-Control: no-cache");
         }

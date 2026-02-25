@@ -111,7 +111,7 @@ if (isset($_GET['code'])) {
             $_SESSION['is_verified'] = $user['is_verified'] ?? 0;
             $_SESSION['is_phone_verified'] = $user['is_phone_verified'] ?? 0;
 
-            header("Location: /");
+            header("Location: /?login=success");
             exit;
         }
     }
