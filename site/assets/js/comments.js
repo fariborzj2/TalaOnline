@@ -1,5 +1,5 @@
 /**
- * Advanced Comment System Component
+ * Advanced Comment System Component - Refined to match UI/UX design
  */
 
 class CommentSystem {
@@ -22,7 +22,6 @@ class CommentSystem {
     async init() {
         this.renderSkeleton();
 
-        // Lazy loading using IntersectionObserver
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
                 this.loadAndRender();
@@ -60,9 +59,9 @@ class CommentSystem {
 
         let html = `
             <div class="comments-section">
-                <div class="flex items-center gap-2 mb-6">
-                    <i data-lucide="messages-square" class="text-primary w-6 h-6"></i>
-                    <h3 class="text-xl font-bold">نظرات کاربران (${this.getTotalCommentCount()})</h3>
+                <div class="comments-header">
+                    <i data-lucide="message-square" class="text-primary w-6 h-6"></i>
+                    <h3>نظرات کاربران <span class="comments-count-badge">(${this.getTotalCommentCount()})</span></h3>
                 </div>
 
                 ${this.targetType !== 'post' ? this.renderSentimentBar() : ''}
@@ -97,7 +96,7 @@ class CommentSystem {
         const bearishPercent = this.sentiment.total > 0 ? (this.sentiment.bearish / this.sentiment.total * 100) : 50;
 
         return `
-            <div class="sentiment-bar-container bg-block pd-md radius-16 border mb-6">
+            <div class="sentiment-bar-container">
                 <div class="sentiment-bar-info">
                     <span class="text-success flex items-center gap-1">
                         <i data-lucide="trending-up" class="w-4 h-4"></i>
@@ -119,7 +118,7 @@ class CommentSystem {
     renderCommentForm(parentId = null, initialContent = '') {
         if (!this.isLoggedIn) {
             return `
-                <div class="bg-orange-light pd-md radius-16 border border-orange mb-4 text-center">
+                <div class="bg-orange-light pd-md radius-24 border border-orange mb-4 text-center">
                     <p class="mb-3 font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
                     <button class="btn btn-orange" onclick="window.showAuthModal?.('login')">ورود / ثبت‌نام سریع</button>
                 </div>
@@ -151,7 +150,7 @@ class CommentSystem {
     renderComments(comments) {
         if (comments.length === 0) {
             return `
-                <div class="text-center py-12 bg-gray-50 radius-16 border border-dashed">
+                <div class="text-center py-12 bg-gray-50 radius-24 border border-dashed">
                     <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
                     <p class="text-gray-400">هنوز نظری ثبت نشده است. اولین تحلیل‌گر باشید!</p>
                 </div>
@@ -162,39 +161,60 @@ class CommentSystem {
     }
 
     renderCommentItem(c) {
+        const isExpert = c.user_role === 'admin' || c.user_role === 'editor';
+        const hasReplies = c.replies && c.replies.length > 0;
+
         return `
-            <div class="comment-item level-${c.user_level || 1}" id="comment-${c.id}">
-                <div class="comment-header">
-                    <div class="comment-user-info">
-                        <img src="/${c.user_avatar || 'assets/images/default-avatar.png'}" class="comment-avatar" alt="${c.user_name}">
-                        <div class="comment-meta">
-                            <span class="comment-author">
-                                ${c.user_name}
-                                ${c.sentiment ? `<span class="comment-sentiment-badge ${c.sentiment}" title="${c.sentiment === 'bullish' ? 'خوش‌بین' : 'بدبین'}"></span>` : ''}
-                                ${this.renderBadges(c)}
-                            </span>
-                            <span class="comment-date text-xs">${c.created_at}</span>
+            <div class="comment-wrapper ${hasReplies ? 'has-replies' : ''}" id="comment-wrapper-${c.id}">
+                <div class="comment-item ${isExpert ? 'is-expert' : ''}" id="comment-${c.id}">
+                    <div class="comment-header">
+                        <div class="comment-user-info">
+                            <div class="avatar-container">
+                                <img src="/${c.user_avatar || 'assets/images/default-avatar.png'}" class="comment-avatar" alt="${c.user_name}">
+                                <div class="online-dot"></div>
+                            </div>
+                            <div class="comment-meta">
+                                <span class="comment-author">
+                                    ${c.user_name}
+                                    <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
+                                    ${c.sentiment ? `<span class="comment-sentiment-badge ${c.sentiment}" title="${c.sentiment === 'bullish' ? 'خوش‌بین' : 'بدبین'}"></span>` : ''}
+                                </span>
+                                <span class="comment-date">${c.created_at}</span>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            ${c.can_edit ? `<div class="comment-header-btn edit-btn" title="ویرایش" data-id="${c.id}"><i data-lucide="edit-3" class="w-4 h-4"></i></div>` : ''}
+                            <div class="comment-header-btn report-btn" title="گزارش تخلف" data-id="${c.id}"><i data-lucide="flag" class="w-4 h-4"></i></div>
+                            <div class="comment-header-btn comment-share-btn" title="کپی لینک مستقیم" data-id="${c.id}">
+                                <i data-lucide="share-2" class="w-4 h-4"></i>
+                            </div>
                         </div>
                     </div>
-                    <div class="comment-share" title="کپی لینک مستقیم" data-id="${c.id}">
-                        <i data-lucide="share-2" class="w-4 h-4"></i>
+
+                    <div class="comment-content">
+                        ${c.content_html}
+                        ${isExpert ? `<div class="attachment-btn"><i data-lucide="file-text" class="w-4 h-4"></i> مشاهده پیوست</div>` : ''}
                     </div>
-                </div>
-                <div class="comment-content">
-                    ${c.content_html}
-                </div>
-                <div class="comment-footer">
-                    <div class="comment-actions">
-                        <div class="comment-action-btn btn-react-trigger" data-id="${c.id}">
-                            <i data-lucide="smile" class="w-4 h-4"></i>
-                            <span>واکنش</span>
+
+                    <div class="comment-footer">
+                        <div class="comment-footer-btn reply-btn" data-id="${c.id}">
+                            <i data-lucide="reply" class="w-4 h-4"></i>
+                            <span>پاسخ</span>
                         </div>
-                        <div class="comment-reactions">
-                            ${this.renderReaction(c, 'like', '👍')}
-                            ${this.renderReaction(c, 'heart', '❤️')}
-                            ${this.renderReaction(c, 'fire', '🔥')}
-                            ${this.renderReaction(c, 'dislike', '👎')}
+
+                        <div class="footer-right">
+                            <div class="reaction-pill">
+                                ${this.renderReaction(c, 'like', '👍')}
+                                ${this.renderReaction(c, 'heart', '❤️')}
+                                ${this.renderReaction(c, 'fire', '🔥')}
+                                ${this.renderReaction(c, 'dislike', '👎')}
+                            </div>
+                            <div class="comment-footer-btn btn-react-trigger" data-id="${c.id}">
+                                <i data-lucide="smile" class="w-4 h-4"></i>
+                                <span>واکنش</span>
+                            </div>
                         </div>
+
                         <div class="reactions-popover" id="popover-${c.id}">
                             <span class="emoji-btn" data-id="${c.id}" data-type="like">👍</span>
                             <span class="emoji-btn" data-id="${c.id}" data-type="heart">❤️</span>
@@ -202,25 +222,11 @@ class CommentSystem {
                             <span class="emoji-btn" data-id="${c.id}" data-type="dislike">👎</span>
                         </div>
                     </div>
-                    <div class="flex gap-2">
-                        ${c.can_edit ? `
-                            <div class="comment-action-btn btn-edit text-orange" data-id="${c.id}">
-                                <i data-lucide="edit-2" class="w-4 h-4"></i>
-                                <span>ویرایش</span>
-                            </div>
-                        ` : ''}
-                        <div class="comment-action-btn btn-report text-error" data-id="${c.id}">
-                            <i data-lucide="flag" class="w-4 h-4"></i>
-                            <span>گزارش</span>
-                        </div>
-                        <div class="comment-action-btn btn-reply" data-id="${c.id}">
-                            <i data-lucide="reply" class="w-4 h-4"></i>
-                            <span>پاسخ</span>
-                        </div>
-                    </div>
                 </div>
+
                 <div id="reply-form-container-${c.id}"></div>
-                ${c.replies && c.replies.length > 0 ? `
+
+                ${hasReplies ? `
                     <div class="replies-container">
                         ${c.replies.map(r => this.renderCommentItem(r)).join('')}
                     </div>
@@ -234,14 +240,13 @@ class CommentSystem {
         if (count === 0 && comment.user_reaction !== type) return '';
 
         return `
-            <span class="reaction-item ${comment.user_reaction === type ? 'active' : ''}" data-id="${comment.id}" data-type="${type}">
-                ${emoji} <span class="text-xs">${count > 0 ? count : ''}</span>
-            </span>
+            <div class="reaction-pill-item ${comment.user_reaction === type ? 'active' : ''}" data-id="${comment.id}" data-type="${type}">
+                <span>${count}</span> ${emoji}
+            </div>
         `;
     }
 
     bindEvents() {
-        // Sentiment Selector
         this.container.querySelectorAll('.sentiment-option').forEach(opt => {
             opt.onclick = () => {
                 const parent = opt.parentElement;
@@ -251,7 +256,6 @@ class CommentSystem {
             };
         });
 
-        // Submit Comment
         this.container.querySelectorAll('.submit-comment').forEach(btn => {
             btn.onclick = async () => {
                 const parentId = btn.dataset.parent || null;
@@ -269,12 +273,10 @@ class CommentSystem {
 
                 try {
                     const action = isEdit ? 'edit' : 'add';
-                    const payload = {
-                        content: content
-                    };
+                    const payload = { content: content };
 
                     if (isEdit) {
-                        payload.comment_id = parentId; // In edit mode, parentId is actually the comment id
+                        payload.comment_id = parentId;
                     } else {
                         payload.target_id = this.targetId;
                         payload.target_type = this.targetType;
@@ -308,23 +310,18 @@ class CommentSystem {
             };
         });
 
-        // Reaction Trigger
         this.container.querySelectorAll('.btn-react-trigger').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
                 const id = btn.dataset.id;
                 const popover = document.getElementById(`popover-${id}`);
                 const isShown = popover.classList.contains('show');
-
-                // Close all other popovers
                 this.container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
-
                 if (!isShown) popover.classList.add('show');
             };
         });
 
-        // Emoji Click & Reaction Removal
-        this.container.querySelectorAll('.emoji-btn, .reaction-item').forEach(btn => {
+        this.container.querySelectorAll('.emoji-btn, .reaction-pill-item').forEach(btn => {
             btn.onclick = async (e) => {
                 e.stopPropagation();
                 if (!this.isLoggedIn) {
@@ -357,8 +354,7 @@ class CommentSystem {
             };
         });
 
-        // Reply Button
-        this.container.querySelectorAll('.btn-reply').forEach(btn => {
+        this.container.querySelectorAll('.reply-btn').forEach(btn => {
             btn.onclick = () => {
                 if (!this.isLoggedIn) {
                     window.showAuthModal?.('login');
@@ -367,29 +363,8 @@ class CommentSystem {
                 const id = btn.dataset.id;
                 const container = document.getElementById(`reply-form-container-${id}`);
                 if (container.innerHTML === '') {
-                    // Close other reply forms
                     this.container.querySelectorAll('[id^="reply-form-container-"]').forEach(c => c.innerHTML = '');
-
                     container.innerHTML = this.renderCommentForm(id);
-                    if (window.lucide) lucide.createIcons();
-                    this.bindEvents(); // Re-bind for the new form
-                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    container.innerHTML = '';
-                }
-            };
-        });
-
-        // Edit Button
-        this.container.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.onclick = () => {
-                const id = btn.dataset.id;
-                const comment = this.findComment(id);
-                const container = document.getElementById(`reply-form-container-${id}`);
-
-                if (container.innerHTML === '') {
-                    this.container.querySelectorAll('[id^="reply-form-container-"]').forEach(c => c.innerHTML = '');
-                    container.innerHTML = this.renderCommentForm(id, comment.content);
                     if (window.lucide) lucide.createIcons();
                     this.bindEvents();
                     container.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -399,8 +374,40 @@ class CommentSystem {
             };
         });
 
-        // Report Button
-        this.container.querySelectorAll('.btn-report').forEach(btn => {
+        this.container.querySelectorAll('.comment-share-btn').forEach(btn => {
+            btn.onclick = () => {
+                const id = btn.dataset.id;
+                const url = window.location.origin + window.location.pathname + '#comment-' + id;
+                navigator.clipboard.writeText(url).then(() => {
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-success"></i>';
+                    if (window.lucide) lucide.createIcons();
+                    setTimeout(() => {
+                        btn.innerHTML = originalHtml;
+                        if (window.lucide) lucide.createIcons();
+                    }, 2000);
+                });
+            };
+        });
+
+        this.container.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.onclick = () => {
+                const id = btn.dataset.id;
+                const comment = this.findComment(id);
+                if (!comment) return;
+
+                const wrapper = document.getElementById(`comment-${id}`);
+                const body = wrapper.querySelector('.comment-content');
+                const originalHtml = body.innerHTML;
+
+                // Show form instead of body
+                body.innerHTML = this.renderCommentForm(id, comment.content);
+                if (window.lucide) lucide.createIcons();
+                this.bindEvents();
+            };
+        });
+
+        this.container.querySelectorAll('.report-btn').forEach(btn => {
             btn.onclick = async () => {
                 if (!this.isLoggedIn) {
                     window.showAuthModal?.('login');
@@ -427,46 +434,11 @@ class CommentSystem {
             };
         });
 
-        // Share Button (Direct Link)
-        this.container.querySelectorAll('.comment-share').forEach(btn => {
-            btn.onclick = () => {
-                const id = btn.dataset.id;
-                const url = window.location.origin + window.location.pathname + '#comment-' + id;
-                navigator.clipboard.writeText(url).then(() => {
-                    const originalHtml = btn.innerHTML;
-                    btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-success"></i>';
-                    if (window.lucide) lucide.createIcons();
-                    setTimeout(() => {
-                        btn.innerHTML = originalHtml;
-                        if (window.lucide) lucide.createIcons();
-                    }, 2000);
-                });
-            };
-        });
-
-        // Close popovers on click outside
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.comment-actions')) {
+            if (!e.target.closest('.footer-right')) {
                 this.container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
             }
         });
-    }
-
-    renderBadges(c) {
-        const level = c.user_level || 1;
-        let badges = `<span class="comment-badge">سطح ${level}</span>`;
-
-        if (level >= 5) {
-            badges += `<span class="comment-badge bg-primary text-white" title="تحلیل‌گر برتر">
-                <i data-lucide="award" class="w-3 h-3 inline-block"></i> تحلیل‌گر برتر
-            </span>`;
-        } else if (level >= 3) {
-            badges += `<span class="comment-badge bg-secondary text-primary" title="کاربر فعال">
-                <i data-lucide="zap" class="w-3 h-3 inline-block"></i> فعال
-            </span>`;
-        }
-
-        return badges;
     }
 
     findComment(id) {
@@ -483,7 +455,6 @@ class CommentSystem {
     }
 }
 
-// Global initialization helper
 window.initComments = (targetId, targetType) => {
     new CommentSystem({ targetId, targetType });
 };
