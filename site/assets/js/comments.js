@@ -4,20 +4,29 @@
 
 class CommentSystem {
     constructor(options) {
-        this.targetId = options.targetId;
-        this.targetType = options.targetType;
         this.containerId = options.containerId || 'comments-app';
         this.container = document.getElementById(this.containerId);
+        if (!this.container) return;
+
+        this.targetId = options.targetId || this.container.dataset.targetId;
+        this.targetType = options.targetType || this.container.dataset.targetType;
         this.isLoggedIn = window.__AUTH_STATE__?.isLoggedIn || false;
         this.currentUsername = window.__AUTH_STATE__?.user?.username;
         this.csrfToken = window.__AUTH_STATE__?.csrfToken;
-        this.comments = options.initialComments || [];
-        this.sentiment = { total: 0, bullish: 0, bearish: 0 };
+
+        const initialData = window.__COMMENTS_INITIAL_DATA__?.[`${this.targetType}_${this.targetId}`];
+        this.comments = options.initialComments || initialData?.comments || [];
+        this.sentiment = initialData?.sentiment || { total: 0, bullish: 0, bearish: 0 };
+        this.totalCount = initialData?.total_count || 0;
         this.readOnly = options.readOnly || (this.targetType === 'user_profile');
 
-        if (this.container) {
-            if (options.initialComments) {
-                this.render();
+        if (options.initialComments) {
+            this.render();
+        } else {
+            // Check if already rendered by server
+            if (this.container.querySelector('.comment-item')) {
+                this.bindEvents();
+                this.handleAnchorScroll();
             } else {
                 this.init();
             }
@@ -25,8 +34,10 @@ class CommentSystem {
     }
 
     async init() {
-        this.renderSkeleton();
+        // Only load via AJAX if not already present
+        if (this.container.querySelector('.comment-item')) return;
 
+        this.renderSkeleton();
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
                 this.loadAndRender();
@@ -69,6 +80,7 @@ class CommentSystem {
             if (data.success) {
                 this.comments = data.comments;
                 this.sentiment = data.sentiment;
+                this.totalCount = data.total_count;
             }
         } catch (error) {
             console.error('Failed to load comments:', error);
@@ -82,8 +94,8 @@ class CommentSystem {
             <div class="comments-section ${this.readOnly ? 'read-only' : ''}">
                 ${!this.readOnly ? `
                 <div class="comments-header">
-                    <i data-lucide="message-square" class="text-primary w-6 h-6"></i>
-                    <h3>نظرات کاربران <span class="comments-count-badge">(${this.getTotalCommentCount()})</span></h3>
+                    <i data-lucide="message-square" class="text-primary icon-size-6"></i>
+                    <h3>نظرات کاربران <span class="comments-count-badge">(${this.toPersianDigits(this.totalCount || this.getTotalCommentCount())})</span></h3>
                 </div>
 
                 ${this.targetType !== 'post' ? this.renderSentimentBar() : ''}
@@ -122,12 +134,12 @@ class CommentSystem {
             <div class="sentiment-bar-container">
                 <div class="sentiment-bar-info">
                     <span class="text-success d-flex align-center gap-1">
-                        <i data-lucide="trending-up" class="w-4 h-4"></i>
-                        خوش‌بین (${Math.round(bullishPercent)}%)
+                        <i data-lucide="trending-up" class="icon-size-4"></i>
+                        خوش‌بین (${this.toPersianDigits(Math.round(bullishPercent))}%)
                     </span>
                     <span class="text-error d-flex align-center gap-1">
-                        <i data-lucide="trending-down" class="w-4 h-4"></i>
-                        بدبین (${Math.round(bearishPercent)}%)
+                        <i data-lucide="trending-down" class="icon-size-4"></i>
+                        بدبین (${this.toPersianDigits(Math.round(bearishPercent))}%)
                     </span>
                 </div>
                 <div class="sentiment-bar">
@@ -221,27 +233,27 @@ class CommentSystem {
                                     ${c.sentiment ? `<span class="comment-sentiment-badge ${c.sentiment}" title="${c.sentiment === 'bullish' ? 'خوش‌بین' : 'بدبین'}"></span>` : ''}
                                 </span>
                                 ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline font-size-0-8">${c.target_info.title}</a>` : ''}
-                                <span class="comment-date">${c.created_at}</span>
+                                <span class="comment-date">${c.created_at_fa || c.created_at}</span>
                             </div>
                         </div>
                         <div class="header-actions">
-                            ${c.can_edit ? `<div class="comment-header-btn edit-btn" title="ویرایش" data-id="${c.id}"><i data-lucide="edit-3" class="w-4 h-4"></i></div>` : ''}
-                            <div class="comment-header-btn report-btn" title="گزارش تخلف" data-id="${c.id}"><i data-lucide="flag" class="w-4 h-4"></i></div>
+                            ${c.can_edit ? `<div class="comment-header-btn edit-btn" title="ویرایش" data-id="${c.id}"><i data-lucide="edit-3" class="icon-size-4"></i></div>` : ''}
+                            <div class="comment-header-btn report-btn" title="گزارش تخلف" data-id="${c.id}"><i data-lucide="flag" class="icon-size-4"></i></div>
                             <div class="comment-header-btn comment-share-btn" title="کپی لینک مستقیم" data-id="${c.id}">
-                                <i data-lucide="share-2" class="w-4 h-4"></i>
+                                <i data-lucide="share-2" class="icon-size-4"></i>
                             </div>
                         </div>
                     </div>
 
                     <div class="comment-content">
                         ${c.content_html}
-                        ${isExpert ? `<div class="attachment-btn"><i data-lucide="file-text" class="w-4 h-4"></i> مشاهده پیوست</div>` : ''}
+                        ${isExpert ? `<div class="attachment-btn"><i data-lucide="file-text" class="icon-size-4"></i> مشاهده پیوست</div>` : ''}
                     </div>
 
                     <div class="comment-footer">
                         ${!this.readOnly ? `
                         <div class="comment-footer-btn reply-btn" data-id="${c.id}">
-                            <i data-lucide="reply" class="w-4 h-4"></i>
+                            <i data-lucide="reply" class="icon-size-4"></i>
                             <span>پاسخ</span>
                         </div>
                         ` : ''}
@@ -254,7 +266,7 @@ class CommentSystem {
                                 ${this.renderReaction(c, 'dislike', '👎')}
                             </div>
                             <div class="comment-footer-btn btn-react-trigger" data-id="${c.id}">
-                                <i data-lucide="smile" class="w-4 h-4"></i>
+                                <i data-lucide="smile" class="icon-size-4"></i>
                                 <span>واکنش</span>
                             </div>
                         </div>
@@ -285,9 +297,15 @@ class CommentSystem {
 
         return `
             <div class="reaction-pill-item ${comment.user_reaction === type ? 'active' : ''}" data-id="${comment.id}" data-type="${type}">
-                <span>${count}</span> ${emoji}
+                <span>${this.toPersianDigits(count)}</span> ${emoji}
             </div>
         `;
+    }
+
+    toPersianDigits(num) {
+        if (num === null || num === undefined) return '';
+        const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        return num.toString().replace(/\d/g, x => persian[x]);
     }
 
     bindEvents() {

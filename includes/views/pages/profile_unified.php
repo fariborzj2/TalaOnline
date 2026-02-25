@@ -111,18 +111,14 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                 <!-- Activity Tab (User's Comments) -->
                 <div id="tab-activity" class="profile-tab-content pd-md">
                     <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">آخرین دیدگاه‌ها</h2>
-                    <div id="user-comments-list" class="comment-list mt-1">
-                        <?php if (empty($user_comments)): ?>
-                            <div class="text-center py-12 bg-gray-50 radius-24 border border-dashed">
-                                <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
-                                <p class="text-gray-400">هنوز نظری ثبت نشده است.</p>
-                            </div>
-                        <?php else: ?>
-                            <div id="profile-comments-app"></div>
-                            <script>
-                                window.__PROFILE_COMMENTS_DATA__ = <?= json_encode($user_comments, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
-                            </script>
-                        <?php endif; ?>
+                    <div id="user-comments-list" class="mt-1">
+                        <?php
+                        $comments = $user_comments;
+                        $target_id = $user['id'];
+                        $target_type = 'user_profile';
+                        $read_only = true;
+                        include __DIR__ . '/../components/comments.php';
+                        ?>
                     </div>
                 </div>
 
@@ -291,14 +287,6 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 <script src="<?= versioned_asset('/assets/js/comments.js') ?>"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize profile comments if they exist
-    if (window.__PROFILE_COMMENTS_DATA__) {
-        const app = new CommentSystem({
-            containerId: 'profile-comments-app',
-            targetId: '<?= $user['id'] ?>',
-            targetType: 'user_profile',
-            initialComments: window.__PROFILE_COMMENTS_DATA__
-        });
-    }
+    new CommentSystem({ containerId: 'comments-app' });
 });
 </script>

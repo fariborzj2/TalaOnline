@@ -196,7 +196,16 @@
         <?php endif; ?>
 
         <!-- Comment Section -->
-        <div id="comments-app" class="radius-16 overflow-hidden"></div>
+        <?php
+        $comments = $comments_data['comments'];
+        $total_count = $comments_data['total_count'];
+        $total_pages = $comments_data['total_pages'];
+        $current_page = $comments_data['current_page'];
+        $sentiment = $sentiment_stats;
+        $target_id = $post['id'];
+        $target_type = 'post';
+        include __DIR__ . '/../components/comments.php';
+        ?>
     </div>
 
 </article>
@@ -205,7 +214,7 @@
 <script src="<?= versioned_asset('/assets/js/comments.js') ?>"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        window.initComments('<?= $post['id'] ?>', 'post');
+        new CommentSystem({ containerId: 'comments-app' });
     });
 </script>
 
