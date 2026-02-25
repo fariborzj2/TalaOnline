@@ -66,6 +66,77 @@ class Comments {
     }
 
     /**
+     * Fetch all comments by a specific user (limited to recent 50)
+     */
+    public function getUserComments($user_id, $viewer_id = null, $limit = 50) {
+        if (!$this->pdo) return [];
+
+        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
+                FROM comments c
+                LEFT JOIN users u ON c.user_id = u.id
+                WHERE c.user_id = :user_id AND c.status = 'approved'
+                ORDER BY c.created_at DESC
+                LIMIT :limit";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        $comments = $stmt->fetchAll();
+
+        $user_reactions = [];
+        if ($viewer_id) {
+            $stmt = $this->pdo->prepare("SELECT comment_id, reaction_type FROM comment_reactions WHERE user_id = ?");
+            $stmt->execute([$viewer_id]);
+            while ($row = $stmt->fetch()) {
+                $user_reactions[$row['comment_id']] = $row['reaction_type'];
+            }
+        }
+
+        foreach ($comments as &$c) {
+            $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
+            $c['replies'] = [];
+            $c['content_html'] = $this->parseMentions($c['content']);
+            $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < 300);
+            $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
+        }
+
+        return $comments;
+    }
+
+    /**
+     * Get target info (title and URL) for a comment
+     */
+    public function getTargetInfo($target_id, $target_type) {
+        if (!$this->pdo) return null;
+
+        try {
+            if ($target_type === 'post') {
+                $stmt = $this->pdo->prepare("SELECT p.title, p.slug, c.slug as cat_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id WHERE p.id = ?");
+                $stmt->execute([$target_id]);
+                $res = $stmt->fetch();
+                if ($res) return ['title' => $res['title'], 'url' => '/blog/' . ($res['cat_slug'] ?: 'uncategorized') . '/' . $res['slug']];
+            } elseif ($target_type === 'item') {
+                $stmt = $this->pdo->prepare("SELECT name, symbol, category FROM items WHERE symbol = ?");
+                $stmt->execute([$target_id]);
+                $res = $stmt->fetch();
+                if ($res) return ['title' => $res['name'], 'url' => '/' . $res['category'] . '/' . $res['symbol']];
+            } elseif ($target_type === 'category') {
+                $stmt = $this->pdo->prepare("SELECT name, slug FROM categories WHERE slug = ?");
+                $stmt->execute([$target_id]);
+                $res = $stmt->fetch();
+                if ($res) return ['title' => $res['name'], 'url' => '/' . $res['slug']];
+            }
+        } catch (Exception $e) {}
+
+        return null;
+    }
+
+    /**
      * Add a new comment
      */
     public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $sentiment = null) {

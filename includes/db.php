@@ -155,6 +155,17 @@ if (file_exists($config_file)) {
                     `unlock_at` DATETIME,
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `follows` (
+                    `follower_id` INTEGER,
+                    `following_id` INTEGER,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`follower_id`, `following_id`),
+                    FOREIGN KEY (`follower_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+                    FOREIGN KEY (`following_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                )");
+                try {
+                    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_follows_following ON follows(following_id)");
+                } catch (Exception $e) {}
             } else {
                 $pdo->exec("CREATE TABLE IF NOT EXISTS `roles` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -204,6 +215,17 @@ if (file_exists($config_file)) {
                     `unlock_at` TIMESTAMP NULL,
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `follows` (
+                    `follower_id` INT,
+                    `following_id` INT,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`follower_id`, `following_id`),
+                    FOREIGN KEY (`follower_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+                    FOREIGN KEY (`following_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                try {
+                    $pdo->exec("CREATE INDEX idx_follows_following ON follows(following_id)");
+                } catch (Exception $e) {}
             }
 
             if (!in_array('role_id', $cols)) {

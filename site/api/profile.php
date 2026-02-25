@@ -14,6 +14,43 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $action = $_GET['action'] ?? '';
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if ($action === 'get_followers' || $action === 'get_following') {
+        $target_username = $_GET['username'] ?? '';
+        if (empty($target_username)) {
+             echo json_encode(['success' => false, 'message' => 'نام کاربری الزامی است.']);
+             exit;
+        }
+
+        try {
+            // Find user id (Case-insensitive)
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE LOWER(username) = LOWER(?)");
+            $stmt->execute([$target_username]);
+            $target_user_id = $stmt->fetchColumn();
+
+            if (!$target_user_id) {
+                echo json_encode(['success' => false, 'message' => 'کاربر یافت نشد.']);
+                exit;
+            }
+
+            if ($action === 'get_followers') {
+                $sql = "SELECT u.id, u.name, u.username, u.avatar FROM follows f JOIN users u ON f.follower_id = u.id WHERE f.following_id = ? ORDER BY f.created_at DESC";
+            } else {
+                $sql = "SELECT u.id, u.name, u.username, u.avatar FROM follows f JOIN users u ON f.following_id = u.id WHERE f.follower_id = ? ORDER BY f.created_at DESC";
+            }
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$target_user_id]);
+            $users = $stmt->fetchAll();
+
+            echo json_encode(['success' => true, 'users' => $users]);
+        } catch (Exception $e) {
+             echo json_encode(['success' => false, 'message' => 'خطایی رخ داد.']);
+        }
+        exit;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $csrf_token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
     if (!verify_csrf_token($csrf_token)) {
@@ -312,5 +349,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Exception $e) {
             echo json_encode(['success' => false, 'message' => 'خطایی در تایید شماره موبایل رخ داد.']);
         }
+    }
+    elseif ($action === 'toggle_follow') {
+        $following_id = (int)($data['user_id'] ?? 0);
+        if ($following_id <= 0 || $following_id === $user_id) {
+            echo json_encode(['success' => false, 'message' => 'درخواست نامعتبر.']);
+            exit;
+        }
+
+        try {
+            // Check if already following
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ? AND following_id = ?");
+            $stmt->execute([$user_id, $following_id]);
+            $is_following = ($stmt->fetchColumn() > 0);
+
+            if ($is_following) {
+                // Unfollow
+                $stmt = $pdo->prepare("DELETE FROM follows WHERE follower_id = ? AND following_id = ?");
+                $stmt->execute([$user_id, $following_id]);
+                $following = false;
+            } else {
+                // Follow
+                $stmt = $pdo->prepare("INSERT INTO follows (follower_id, following_id) VALUES (?, ?)");
+                $stmt->execute([$user_id, $following_id]);
+                $following = true;
+            }
+
+            // Get new count
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE following_id = ?");
+            $stmt->execute([$following_id]);
+            $count = $stmt->fetchColumn();
+
+            echo json_encode(['success' => true, 'following' => $following, 'count' => (int)$count]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'خطایی در انجام عملیات رخ داد.']);
+        }
+        exit;
     }
 }
