@@ -11,11 +11,15 @@ class CommentSystem {
         this.isLoggedIn = window.__AUTH_STATE__?.isLoggedIn || false;
         this.currentUsername = window.__AUTH_STATE__?.user?.username;
         this.csrfToken = window.__AUTH_STATE__?.csrfToken;
-        this.comments = [];
+        this.comments = options.initialComments || [];
         this.sentiment = { total: 0, bullish: 0, bearish: 0 };
 
         if (this.container) {
-            this.init();
+            if (options.initialComments) {
+                this.render();
+            } else {
+                this.init();
+            }
         }
     }
 
@@ -213,6 +217,7 @@ class CommentSystem {
                                     <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
                                     ${c.sentiment ? `<span class="comment-sentiment-badge ${c.sentiment}" title="${c.sentiment === 'bullish' ? 'خوش‌بین' : 'بدبین'}"></span>` : ''}
                                 </span>
+                                ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline font-size-0-8">${c.target_info.title}</a>` : ''}
                                 <span class="comment-date">${c.created_at}</span>
                             </div>
                         </div>

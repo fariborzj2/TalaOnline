@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     closeButtons.forEach(btn => btn.addEventListener('click', closeModal));
 
-    [authModal, profileModal].forEach(modal => {
+    [authModal, profileModal, followersModal, followingModal].forEach(modal => {
         if (modal) {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) closeModal();
@@ -501,6 +501,102 @@ document.addEventListener('DOMContentLoaded', function() {
 
     updateUIForAuth();
     enhanceContent();
+
+    // Following System
+    const followBtn = document.getElementById('follow-btn');
+    if (followBtn) {
+        followBtn.addEventListener('click', async () => {
+            const userId = followBtn.dataset.userId;
+            followBtn.disabled = true;
+            try {
+                const response = await fetchWithCSRF(`${authState.apiBase}/profile.php?action=toggle_follow`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    const icon = followBtn.querySelector('i');
+                    const text = followBtn.querySelector('span');
+                    const countEl = document.getElementById('follower-count');
+
+                    if (result.following) {
+                        followBtn.classList.replace('btn-primary', 'btn-secondary');
+                        text.textContent = 'لغو دنبال کردن';
+                        icon.setAttribute('data-lucide', 'user-minus');
+                    } else {
+                        followBtn.classList.replace('btn-secondary', 'btn-primary');
+                        text.textContent = 'دنبال کردن';
+                        icon.setAttribute('data-lucide', 'user-plus');
+                    }
+                    if (window.lucide) window.lucide.createIcons({ root: followBtn });
+                    if (countEl) countEl.textContent = toPersianDigits(result.count);
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (err) {
+                showAlert('خطا در ارتباط با سرور', 'error');
+            } finally {
+                followBtn.disabled = false;
+            }
+        });
+    }
+
+    const followersModal = document.getElementById('followers-modal');
+    const followingModal = document.getElementById('following-modal');
+    const followersTrigger = document.getElementById('followers-trigger');
+    const followingTrigger = document.getElementById('following-trigger');
+
+    const loadUserList = async (action, username, containerId) => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '<div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>';
+        if (window.lucide) window.lucide.createIcons({ root: container });
+
+        try {
+            const response = await fetch(`${authState.apiBase}/profile.php?action=${action}&username=${username}`);
+            const data = await response.json();
+            if (data.success) {
+                if (data.users.length === 0) {
+                    container.innerHTML = '<p class="text-center text-gray py-4">لیست خالی است.</p>';
+                } else {
+                    container.innerHTML = data.users.map(u => `
+                        <a href="/profile/${u.username}" class="user-row">
+                            <img src="${u.avatar || '/assets/images/default-avatar.png'}" alt="${u.name}" onerror="this.src='/assets/images/default-avatar.png'">
+                            <div class="grow-1">
+                                <div class="font-bold text-title">${u.name}</div>
+                                <div class="text-gray font-size-0-8">@${u.username}</div>
+                            </div>
+                            <i data-lucide="chevron-left" class="text-gray icon-size-4"></i>
+                        </a>
+                    `).join('');
+                    if (window.lucide) window.lucide.createIcons({ root: container });
+                }
+            } else {
+                container.innerHTML = `<p class="text-center text-error py-4">${data.message}</p>`;
+            }
+        } catch (err) {
+            container.innerHTML = '<p class="text-center text-error py-4">خطا در بارگذاری لیست</p>';
+        }
+    };
+
+    if (followersTrigger) {
+        followersTrigger.onclick = () => {
+            const pathParts = window.location.pathname.split('/').filter(p => p !== '');
+            const username = pathParts[pathParts.length - 1];
+            openModal(followersModal);
+            loadUserList('get_followers', username, 'followers-list');
+        };
+    }
+
+    if (followingTrigger) {
+        followingTrigger.onclick = () => {
+            const pathParts = window.location.pathname.split('/').filter(p => p !== '');
+            const username = pathParts[pathParts.length - 1];
+            openModal(followingModal);
+            loadUserList('get_following', username, 'following-list');
+        };
+    }
 
     // Profile Page Logic
     const profileTabsContainer = document.getElementById('profile-tabs');
