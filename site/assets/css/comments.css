@@ -68,20 +68,42 @@
     border: 1px solid #e2e8f0;
     cursor: pointer;
     font-size: 0.85rem;
-    color: #64748b;
+    font-weight: 700;
     transition: all 0.2s;
 }
 
+/* Bullish (Optimistic) - Semantic Green */
+.sentiment-option[data-sentiment="bullish"] {
+    color: #059669; /* success green */
+    border-color: #a7f3d0;
+    background-color: #ecfdf5;
+}
+
+.sentiment-option[data-sentiment="bullish"]:hover {
+    border-color: #059669;
+}
+
 .sentiment-option.selected[data-sentiment="bullish"] {
-    background-color: #249E94;
+    background-color: #059669;
     color: #fff;
-    border-color: #249E94;
+    border-color: #059669;
+}
+
+/* Bearish (Pessimistic) - Semantic Red */
+.sentiment-option[data-sentiment="bearish"] {
+    color: #dc2626; /* danger red */
+    border-color: #fecaca;
+    background-color: #fef2f2;
+}
+
+.sentiment-option[data-sentiment="bearish"]:hover {
+    border-color: #dc2626;
 }
 
 .sentiment-option.selected[data-sentiment="bearish"] {
-    background-color: #ef4444;
+    background-color: #dc2626;
     color: #fff;
-    border-color: #ef4444;
+    border-color: #dc2626;
 }
 
 .comment-item {
@@ -176,8 +198,8 @@
     border-radius: 50%;
     margin-right: 4px;
 }
-.comment-sentiment-badge.bullish { background-color: #249E94; }
-.comment-sentiment-badge.bearish { background-color: #ef4444; }
+.comment-sentiment-badge.bullish { background-color: #059669; }
+.comment-sentiment-badge.bearish { background-color: #dc2626; }
 
 .user-level-badge {
     font-size: 10px;
@@ -378,8 +400,8 @@
     display: flex;
 }
 
-.sentiment-bullish { background-color: #249E94; transition: width 0.5s; }
-.sentiment-bearish { background-color: #ef4444; transition: width 0.5s; }
+.sentiment-bullish { background-color: #059669; transition: width 0.5s; }
+.sentiment-bearish { background-color: #dc2626; transition: width 0.5s; }
 
 [dir="rtl"] .header-actions { margin-right: auto; margin-left: 0; }
 [dir="rtl"] .comment-sentiment-badge,
@@ -387,3 +409,19 @@
 [dir="rtl"] .replies-container { margin-right: 48px; border-right: none; }
 [dir="rtl"] .replies-container::before { right: -24px; }
 [dir="rtl"] .has-replies > .comment-item::before { right: 24px; }
+
+/* Highlight effect for anchor scroll */
+.highlight-comment {
+    animation: highlight-fade 3s ease-out;
+}
+
+@keyframes highlight-fade {
+    0% {
+        box-shadow: 0 0 0 4px rgba(36, 158, 148, 0.4);
+        border-color: #249E94;
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(36, 158, 148, 0);
+        border-color: #e2e8f0;
+    }
+}

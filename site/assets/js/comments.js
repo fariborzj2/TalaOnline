@@ -35,6 +35,22 @@ class CommentSystem {
     async loadAndRender() {
         await this.loadComments();
         this.render();
+        this.handleAnchorScroll();
+    }
+
+    handleAnchorScroll() {
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#comment-')) {
+            // Give a small delay for DOM to settle and images to load
+            setTimeout(() => {
+                const el = document.querySelector(hash);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    el.classList.add('highlight-comment');
+                    setTimeout(() => el.classList.remove('highlight-comment'), 3000);
+                }
+            }, 500);
+        }
     }
 
     renderSkeleton() {
@@ -125,12 +141,14 @@ class CommentSystem {
             `;
         }
 
+        const showSentiment = !parentId && this.targetType !== 'post';
+
         return `
             <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${parentId || 'main'}">
                 <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید (استفاده از @ برای منشن)..." id="textarea-${parentId || 'main'}">${initialContent}</textarea>
                 <div class="comment-form-footer">
                     <div class="sentiment-selector">
-                        ${this.targetType !== 'post' ? `
+                        ${showSentiment ? `
                             <div class="sentiment-option" data-sentiment="bullish">
                                 <i data-lucide="trending-up" class="w-4 h-4"></i> خوش‌بین
                             </div>
@@ -163,6 +181,19 @@ class CommentSystem {
     renderCommentItem(c) {
         const isExpert = c.user_role === 'admin' || c.user_role === 'editor';
         const hasReplies = c.replies && c.replies.length > 0;
+        const baseUrl = window.location.origin;
+        const defaultAvatar = `${baseUrl}/assets/images/default-avatar.png`;
+
+        let avatarUrl = c.user_avatar;
+        if (avatarUrl) {
+            if (!avatarUrl.startsWith('http')) {
+                // Ensure no double slashes
+                const path = avatarUrl.startsWith('/') ? avatarUrl.substring(1) : avatarUrl;
+                avatarUrl = `${baseUrl}/${path}`;
+            }
+        } else {
+            avatarUrl = defaultAvatar;
+        }
 
         return `
             <div class="comment-wrapper ${hasReplies ? 'has-replies' : ''}" id="comment-wrapper-${c.id}">
@@ -170,7 +201,10 @@ class CommentSystem {
                     <div class="comment-header">
                         <div class="comment-user-info">
                             <div class="avatar-container">
-                                <img src="/${c.user_avatar || 'assets/images/default-avatar.png'}" class="comment-avatar" alt="${c.user_name}">
+                                <img src="${avatarUrl}"
+                                     class="comment-avatar"
+                                     alt="${c.user_name}"
+                                     onerror="this.src='${defaultAvatar}'">
                                 <div class="online-dot"></div>
                             </div>
                             <div class="comment-meta">
