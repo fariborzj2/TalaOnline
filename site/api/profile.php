@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = $data['name'] ?? '';
         $email = $data['email'] ?? '';
         $phone = convert_to_en_num($data['phone'] ?? '');
-        $username = $data['username'] ?? '';
+        $username = strtolower(trim($data['username'] ?? ''));
 
         if (empty($name) || empty($email)) {
             echo json_encode(['success' => false, 'message' => 'نام و ایمیل الزامی هستند.']);
