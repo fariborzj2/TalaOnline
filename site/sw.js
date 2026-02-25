@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tala-online-v4';
+const CACHE_NAME = 'tala-online-v5';
 const OFFLINE_URL = '/offline.php';
 
 const ASSETS_TO_CACHE = [
@@ -46,7 +46,16 @@ self.addEventListener('fetch', (event) => {
     // For HTML requests, try network first, fallback to cache/offline page
     if (event.request.mode === 'navigate') {
         event.respondWith(
-            fetch(event.request).catch(() => {
+            fetch(event.request).then((response) => {
+                // Optional: Update the cache with the fresh version
+                if (response && response.status === 200 && response.type === 'basic') {
+                    const responseToCache = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                }
+                return response;
+            }).catch(() => {
                 return caches.match(event.request).then((response) => {
                     return response || caches.match(OFFLINE_URL);
                 });
