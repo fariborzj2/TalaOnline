@@ -114,6 +114,26 @@
             transform: scale(1);
             opacity: 1;
         }
+
+        /* Mobile Bottom Sheet for Custom Dialogs */
+        @media (max-width: 600px) {
+            .custom-dialog-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+            .custom-dialog-box {
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 16px 16px 0 0;
+                transform: translateY(100%);
+                opacity: 1;
+            }
+            .custom-dialog-overlay.active .custom-dialog-box {
+                transform: translateY(0);
+            }
+        }
+
         .dialog-icon-container {
             width: 64px;
             height: 64px;
