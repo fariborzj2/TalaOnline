@@ -110,3 +110,15 @@
         cursor: pointer;
     }
 </style>
+
+<div class="section">
+    <div id="comments-app" class="radius-16 overflow-hidden"></div>
+</div>
+
+<link rel="stylesheet" href="<?= versioned_asset('/assets/css/comments.css') ?>">
+<script src="<?= versioned_asset('/assets/js/comments.js') ?>"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        window.initComments('<?= $category['slug'] ?>', 'category');
+    });
+</script>

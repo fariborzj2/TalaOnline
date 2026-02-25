@@ -155,6 +155,79 @@ if (file_exists($config_file)) {
                     `unlock_at` DATETIME,
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )");
+
+                // Additional tables for SQLite (Self-healing)
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `categories` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `slug` VARCHAR(50) NOT NULL UNIQUE,
+                    `name` VARCHAR(100) NOT NULL,
+                    `en_name` VARCHAR(100),
+                    `icon` VARCHAR(50),
+                    `page_title` VARCHAR(255),
+                    `h1_title` VARCHAR(255),
+                    `meta_description` TEXT,
+                    `meta_keywords` TEXT,
+                    `short_description` TEXT,
+                    `description` TEXT,
+                    `views` INTEGER DEFAULT 0,
+                    `sort_order` INTEGER DEFAULT 0
+                )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `items` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `symbol` VARCHAR(50) NOT NULL UNIQUE,
+                    `slug` VARCHAR(50) UNIQUE,
+                    `name` VARCHAR(100) NOT NULL,
+                    `en_name` VARCHAR(100),
+                    `logo` VARCHAR(255),
+                    `page_title` VARCHAR(255),
+                    `h1_title` VARCHAR(255),
+                    `meta_description` TEXT,
+                    `meta_keywords` TEXT,
+                    `description` TEXT,
+                    `long_description` TEXT,
+                    `category` VARCHAR(50),
+                    `manual_price` VARCHAR(50),
+                    `is_manual` TINYINT DEFAULT 0,
+                    `is_active` TINYINT DEFAULT 1,
+                    `show_in_summary` TINYINT DEFAULT 0,
+                    `show_chart` TINYINT DEFAULT 1,
+                    `related_item_symbol` VARCHAR(50),
+                    `views` INTEGER DEFAULT 0,
+                    `sort_order` INTEGER DEFAULT 0
+                )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_categories` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `slug` VARCHAR(100) NOT NULL UNIQUE,
+                    `name` VARCHAR(100) NOT NULL,
+                    `description` TEXT,
+                    `meta_title` VARCHAR(255),
+                    `meta_description` TEXT,
+                    `meta_keywords` TEXT,
+                    `sort_order` INTEGER DEFAULT 0
+                )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_posts` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `category_id` INTEGER,
+                    `title` VARCHAR(255) NOT NULL,
+                    `slug` VARCHAR(255) NOT NULL UNIQUE,
+                    `excerpt` TEXT,
+                    `content` TEXT,
+                    `thumbnail` VARCHAR(255),
+                    `status` VARCHAR(20) DEFAULT 'draft',
+                    `is_featured` TINYINT DEFAULT 0,
+                    `views` INTEGER DEFAULT 0,
+                    `meta_title` VARCHAR(255),
+                    `meta_description` TEXT,
+                    `meta_keywords` TEXT,
+                    `tags` TEXT,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `blog_post_categories` (
+                    `post_id` INTEGER,
+                    `category_id` INTEGER,
+                    PRIMARY KEY (`post_id`, `category_id`)
+                )");
             } else {
                 $pdo->exec("CREATE TABLE IF NOT EXISTS `roles` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -284,6 +357,70 @@ if (file_exists($config_file)) {
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            }
+
+            // Comment System Tables
+            if ($driver === 'sqlite') {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `comments` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `user_id` INTEGER,
+                    `target_id` VARCHAR(255),
+                    `target_type` VARCHAR(50),
+                    `content` TEXT,
+                    `parent_id` INTEGER DEFAULT NULL,
+                    `sentiment` VARCHAR(20) DEFAULT NULL,
+                    `status` VARCHAR(20) DEFAULT 'approved',
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `comment_reactions` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `comment_id` INTEGER,
+                    `user_id` INTEGER,
+                    `reaction_type` VARCHAR(20),
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `comment_reports` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `comment_id` INTEGER,
+                    `user_id` INTEGER,
+                    `reason` TEXT,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+            } else {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `comments` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `user_id` INT,
+                    `target_id` VARCHAR(255),
+                    `target_type` VARCHAR(50),
+                    `content` TEXT,
+                    `parent_id` INT DEFAULT NULL,
+                    `sentiment` VARCHAR(20) DEFAULT NULL,
+                    `status` VARCHAR(20) DEFAULT 'approved',
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `comment_reactions` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `comment_id` INT,
+                    `user_id` INT,
+                    `reaction_type` VARCHAR(20),
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `comment_reports` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `comment_id` INT,
+                    `user_id` INT,
+                    `reason` TEXT,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+            }
+
+            if (!in_array('points', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN points INTEGER DEFAULT 0");
+            }
+            if (!in_array('level', $cols)) {
+                $pdo->exec("ALTER TABLE users ADD COLUMN level INTEGER DEFAULT 1");
             }
 
             // Seeding Default Email Templates
