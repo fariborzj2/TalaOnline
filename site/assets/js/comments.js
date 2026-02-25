@@ -118,7 +118,7 @@ class CommentSystem {
                         <i data-lucide="trending-up" class="w-4 h-4"></i>
                         خوش‌بین (${Math.round(bullishPercent)}%)
                     </span>
-                    <span class="text-error flex items-center gap-1">
+                    <span class="text-error d-flex align-center gap-1">
                         <i data-lucide="trending-down" class="w-4 h-4"></i>
                         بدبین (${Math.round(bearishPercent)}%)
                     </span>
