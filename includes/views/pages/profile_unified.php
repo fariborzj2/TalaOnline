@@ -287,6 +287,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
     .user-row img { width: 40px; height: 40px; border-radius: 50%; object-cover: cover; }
 </style>
 
+<link rel="stylesheet" href="<?= versioned_asset('/assets/css/comments.css') ?>">
 <script src="<?= versioned_asset('/assets/js/comments.js') ?>"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -298,9 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
             targetType: 'user_profile',
             initialComments: window.__PROFILE_COMMENTS_DATA__
         });
-        // Hide form on profile comments
-        const form = document.querySelector('#profile-comments-app .comment-form');
-        if (form) form.classList.add('d-none');
     }
 });
 </script>
