@@ -12,6 +12,17 @@
             <div class="d-flex align-center gap-1 mt-05">
                 <span class="bg-secondary px-1 radius-8 border text-gray font-bold">@<?= htmlspecialchars($user['username']) ?></span>
                 <span class="bg-primary px-1 radius-8 text-white font-bold">سطح <?= $user['level'] ?></span>
+                <?php if ($user['level'] >= 5): ?>
+                    <span class="bg-orange-light px-1 radius-8 text-orange font-bold d-flex align-center gap-05">
+                        <i data-lucide="award" class="icon-size-4"></i>
+                        تحلیل‌گر برتر
+                    </span>
+                <?php elseif ($user['level'] >= 3): ?>
+                    <span class="bg-success-light px-1 radius-8 text-success font-bold d-flex align-center gap-05">
+                        <i data-lucide="check-circle" class="icon-size-4"></i>
+                        کاربر فعال
+                    </span>
+                <?php endif; ?>
             </div>
             <p class="text-gray font-size-0-9 mt-1">عضویت از: <?= jalali_date($user['created_at'], 'compact') ?></p>
         </div>
