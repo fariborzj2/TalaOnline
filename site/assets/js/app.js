@@ -270,6 +270,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const userMenuBtns = document.querySelectorAll('.user-menu-btn');
     const authModal = document.getElementById('auth-modal');
     const profileModal = document.getElementById('profile-modal');
+    const followersModal = document.getElementById('followers-modal');
+    const followingModal = document.getElementById('following-modal');
+    const followersTrigger = document.getElementById('followers-trigger');
+    const followingTrigger = document.getElementById('following-trigger');
     const closeButtons = document.querySelectorAll('.close-modal');
     const authTabs = document.getElementById('auth-tabs');
     const loginForm = document.getElementById('login-form');
@@ -335,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const closeModal = () => {
-        const modals = [authModal, profileModal];
+        const modals = [authModal, profileModal, followersModal, followingModal];
         modals.forEach(modal => {
             if (modal && !modal.classList.contains('d-none')) {
                 const content = modal.querySelector('.modal-content');
@@ -541,11 +545,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
-    const followersModal = document.getElementById('followers-modal');
-    const followingModal = document.getElementById('following-modal');
-    const followersTrigger = document.getElementById('followers-trigger');
-    const followingTrigger = document.getElementById('following-trigger');
 
     const loadUserList = async (action, username, containerId) => {
         const container = document.getElementById(containerId);
