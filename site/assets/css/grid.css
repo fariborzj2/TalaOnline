@@ -676,9 +676,12 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
-    padding: 10px 20px;
+    padding: 8px 20px;
+    height: 40px;
+    border-radius: 8px;
     text-decoration: none;
     transition: background-color 0.3s;
+    cursor: pointer;
 }
 .btn-primary {
     color: #fff;

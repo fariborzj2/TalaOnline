@@ -114,7 +114,7 @@ class CommentSystem {
         return `
             <div class="sentiment-bar-container">
                 <div class="sentiment-bar-info">
-                    <span class="text-success flex items-center gap-1">
+                    <span class="text-success d-flex align-center gap-1">
                         <i data-lucide="trending-up" class="w-4 h-4"></i>
                         خوش‌بین (${Math.round(bullishPercent)}%)
                     </span>
@@ -157,7 +157,7 @@ class CommentSystem {
                             </div>
                         ` : '<div></div>'}
                     </div>
-                    <button class="btn btn-primary submit-comment" data-parent="${parentId || ''}" data-edit="${initialContent ? 'true' : 'false'}">
+                    <button class="btn btn-primary submit-comment radius-10" data-parent="${parentId || ''}" data-edit="${initialContent ? 'true' : 'false'}">
                         ${initialContent ? 'بروزرسانی نظر' : 'ارسال نظر'}
                     </button>
                 </div>
