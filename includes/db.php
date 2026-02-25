@@ -387,6 +387,12 @@ if (file_exists($config_file)) {
                     `reason` TEXT,
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )");
+
+                // Comment System Indexes
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comments_target ON comments(target_id, target_type, status)");
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_id)");
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comment_reactions_lookup ON comment_reactions(comment_id, reaction_type)");
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comment_reactions_user ON comment_reactions(user_id)");
             } else {
                 $pdo->exec("CREATE TABLE IF NOT EXISTS `comments` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -414,6 +420,12 @@ if (file_exists($config_file)) {
                     `reason` TEXT,
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
+                // Comment System Indexes
+                $pdo->exec("CREATE INDEX idx_comments_target ON comments(target_id, target_type, status)");
+                $pdo->exec("CREATE INDEX idx_comments_parent ON comments(parent_id)");
+                $pdo->exec("CREATE INDEX idx_comment_reactions_lookup ON comment_reactions(comment_id, reaction_type)");
+                $pdo->exec("CREATE INDEX idx_comment_reactions_user ON comment_reactions(user_id)");
             }
 
             if (!in_array('points', $cols)) {

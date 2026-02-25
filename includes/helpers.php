@@ -294,6 +294,61 @@ function is_username_available($username, $exclude_user_id = null) {
 }
 
 /**
+ * Checks if an action is rate limited
+ * @return true|int Returns true if not limited, or number of seconds to wait if limited
+ */
+function check_rate_limit($action_type, $identifier_type, $identifier_value, $limit_prefix = null) {
+    global $pdo;
+    if (!$pdo) return true;
+
+    if ($limit_prefix === null) {
+        $limit_prefix = $action_type;
+    }
+
+    // A. Check for active lock
+    $stmt = $pdo->prepare("SELECT unlock_at FROM verification_locks WHERE identifier_type = ? AND identifier_value = ? AND unlock_at > ? ORDER BY unlock_at DESC LIMIT 1");
+    $stmt->execute([$identifier_type, $identifier_value, date('Y-m-d H:i:s')]);
+    $lock = $stmt->fetch();
+    if ($lock) {
+        $wait = strtotime($lock['unlock_at']) - time();
+        return ($wait > 0) ? $wait : true;
+    }
+
+    // B. Check counts in window
+    $max = (int)get_setting("rate_limit_{$limit_prefix}_max", 5);
+    $window = (int)get_setting("rate_limit_{$limit_prefix}_window", 15);
+
+    // Format for MySQL/SQLite compatibility
+    $since = date('Y-m-d H:i:s', strtotime("-$window minutes"));
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM verification_attempts WHERE type = ? AND identifier_type = ? AND identifier_value = ? AND created_at > ?");
+    $stmt->execute([$action_type, $identifier_type, $identifier_value, $since]);
+    $count = $stmt->fetchColumn();
+
+    if ($count >= $max) {
+        // Create lock
+        $lock_duration = (int)get_setting("rate_limit_{$limit_prefix}_lock", 60);
+
+        // Progressive lock logic
+        if (get_setting('rate_limit_progressive') === '1') {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM verification_locks WHERE identifier_type = ? AND identifier_value = ? AND created_at > ?");
+            $stmt->execute([$identifier_type, $identifier_value, date('Y-m-d H:i:s', strtotime("-24 hours"))]);
+            $lock_count = $stmt->fetchColumn();
+            if ($lock_count > 0) {
+                $lock_duration *= pow(2, min($lock_count, 10)); // Cap at 2^10 to avoid overflow
+            }
+        }
+
+        $unlock_at = date('Y-m-d H:i:s', strtotime("+$lock_duration minutes"));
+        $stmt = $pdo->prepare("INSERT INTO verification_locks (identifier_type, identifier_value, unlock_at) VALUES (?, ?, ?)");
+        $stmt->execute([$identifier_type, $identifier_value, $unlock_at]);
+
+        return $lock_duration * 60;
+    }
+
+    return true;
+}
+
+/**
  * Checks if a verification action is rate limited
  * @return true|int Returns true if not limited, or number of seconds to wait if limited
  */
@@ -368,28 +423,33 @@ function check_single_verification_limit($identifier_type, $value, $limit_prefix
 }
 
 /**
- * Records a verification attempt for rate limiting
+ * Records an attempt for rate limiting
  */
-function record_verification_attempt($action_type, $email = null, $phone = null) {
+function record_rate_limit_attempt($action_type, $identifier_type, $identifier_value) {
     global $pdo;
     if (!$pdo) return;
 
-    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     $now = date('Y-m-d H:i:s');
+    $stmt = $pdo->prepare("INSERT INTO verification_attempts (type, identifier_type, identifier_value, created_at) VALUES (?, ?, ?, ?)");
+    $stmt->execute([$action_type, $identifier_type, $identifier_value, $now]);
+}
+
+/**
+ * Records a verification attempt for rate limiting
+ */
+function record_verification_attempt($action_type, $email = null, $phone = null) {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
     // Record for IP
-    $stmt = $pdo->prepare("INSERT INTO verification_attempts (type, identifier_type, identifier_value, created_at) VALUES (?, 'ip', ?, ?)");
-    $stmt->execute([$action_type, $ip, $now]);
+    record_rate_limit_attempt($action_type, 'ip', $ip);
 
     // Record for Email
     if ($email) {
-        $stmt = $pdo->prepare("INSERT INTO verification_attempts (type, identifier_type, identifier_value, created_at) VALUES (?, 'email', ?, ?)");
-        $stmt->execute([$action_type, $email, $now]);
+        record_rate_limit_attempt($action_type, 'email', $email);
     }
 
     // Record for Phone
     if ($phone) {
-        $stmt = $pdo->prepare("INSERT INTO verification_attempts (type, identifier_type, identifier_value, created_at) VALUES (?, 'phone', ?, ?)");
-        $stmt->execute([$action_type, $phone, $now]);
+        record_rate_limit_attempt($action_type, 'phone', $phone);
     }
 }

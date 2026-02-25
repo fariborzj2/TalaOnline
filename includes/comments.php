@@ -99,21 +99,34 @@ class Comments {
     public function react($user_id, $comment_id, $reaction_type) {
         if (!$this->pdo) return false;
 
+        // 1. Fetch current reaction to handle point reversal
+        $stmt = $this->pdo->prepare("SELECT reaction_type FROM comment_reactions WHERE user_id = ? AND comment_id = ?");
+        $stmt->execute([$user_id, $comment_id]);
+        $old_reaction = $stmt->fetchColumn();
+
+        // 2. Fetch author to update their points
+        $stmt = $this->pdo->prepare("SELECT user_id FROM comments WHERE id = ?");
+        $stmt->execute([$comment_id]);
+        $author_id = $stmt->fetchColumn();
+
         // Remove existing reaction if any
         $stmt = $this->pdo->prepare("DELETE FROM comment_reactions WHERE user_id = ? AND comment_id = ?");
         $stmt->execute([$user_id, $comment_id]);
+
+        // Deduct points from old reaction if author is different
+        if ($old_reaction && $author_id && $author_id != $user_id) {
+            $old_points = in_array($old_reaction, ['like', 'heart', 'fire']) ? 5 : -2;
+            $this->rewardUser($author_id, -$old_points);
+        }
 
         if ($reaction_type) {
             $stmt = $this->pdo->prepare("INSERT INTO comment_reactions (user_id, comment_id, reaction_type) VALUES (?, ?, ?)");
             $stmt->execute([$user_id, $comment_id, $reaction_type]);
 
-            // Reward author of the comment
-            $stmt = $this->pdo->prepare("SELECT user_id FROM comments WHERE id = ?");
-            $stmt->execute([$comment_id]);
-            $author_id = $stmt->fetchColumn();
+            // Reward author for new reaction
             if ($author_id && $author_id != $user_id) {
-                $points = in_array($reaction_type, ['like', 'heart', 'fire']) ? 5 : -2;
-                $this->rewardUser($author_id, $points);
+                $new_points = in_array($reaction_type, ['like', 'heart', 'fire']) ? 5 : -2;
+                $this->rewardUser($author_id, $new_points);
             }
         }
         return true;

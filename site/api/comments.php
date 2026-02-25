@@ -46,6 +46,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'add') {
+        // Rate Limiting
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $ip_limit = check_rate_limit('comment', 'ip', $ip);
+        if ($ip_limit !== true) {
+            echo json_encode(['success' => false, 'message' => 'تعداد درخواست‌های شما بیش از حد مجاز است. لطفاً ' . fa_num(ceil($ip_limit / 60)) . ' دقیقه صبر کنید.']);
+            exit;
+        }
+
+        $user_limit = check_rate_limit('comment', 'user', $user_id);
+        if ($user_limit !== true) {
+            echo json_encode(['success' => false, 'message' => 'شما به تازگی نظر ثبت کرده‌اید. لطفاً کمی صبر کنید.']);
+            exit;
+        }
+
         $target_id = $input['target_id'] ?? '';
         $target_type = $input['target_type'] ?? '';
         $content = $input['content'] ?? '';
@@ -59,6 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id, $sentiment);
         if ($id) {
+            record_rate_limit_attempt('comment', 'ip', $ip);
+            record_rate_limit_attempt('comment', 'user', $user_id);
             echo json_encode(['success' => true, 'id' => $id, 'message' => 'نظر شما با موفقیت ثبت شد.']);
         } else {
             echo json_encode(['success' => false, 'message' => 'خطا در ثبت نظر.']);
