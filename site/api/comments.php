@@ -18,15 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if ($action === 'list') {
         $target_id = $_GET['target_id'] ?? '';
         $target_type = $_GET['target_type'] ?? '';
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $per_page = 20;
 
         if (empty($target_id) || empty($target_type)) {
             echo json_encode(['success' => false, 'message' => 'پارامترهای نامعتبر']);
             exit;
         }
 
-        $comments = $comments_handler->getComments($target_id, $target_type, $user_id);
+        $data = $comments_handler->getComments($target_id, $target_type, $user_id, $page, $per_page);
         $sentiment = $comments_handler->getSentimentStats($target_id, $target_type);
-        echo json_encode(['success' => true, 'comments' => $comments, 'sentiment' => $sentiment]);
+        echo json_encode(array_merge(['success' => true, 'sentiment' => $sentiment], $data));
         exit;
     }
 }

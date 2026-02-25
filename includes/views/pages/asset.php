@@ -210,13 +210,22 @@
 </script>
 
 <div class="section">
-    <div id="comments-app" class="radius-16 overflow-hidden"></div>
+    <?php
+    $comments = $comments_data['comments'];
+    $total_count = $comments_data['total_count'];
+    $total_pages = $comments_data['total_pages'];
+    $current_page = $comments_data['current_page'];
+    $sentiment = $sentiment_stats;
+    $target_id = $item['symbol'];
+    $target_type = 'item';
+    include __DIR__ . '/../components/comments.php';
+    ?>
 </div>
 
 <link rel="stylesheet" href="<?= versioned_asset('/assets/css/comments.css') ?>">
 <script src="<?= versioned_asset('/assets/js/comments.js') ?>"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        window.initComments('<?= $item['symbol'] ?>', 'item');
+        new CommentSystem({ containerId: 'comments-app' });
     });
 </script>

@@ -13,10 +13,55 @@ class Comments {
     }
 
     /**
-     * Fetch comments for a specific target
+     * Fetch comments for a specific target with pagination
      */
-    public function getComments($target_id, $target_type, $user_id = null) {
-        if (!$this->pdo) return [];
+    public function getComments($target_id, $target_type, $user_id = null, $page = 1, $per_page = 20) {
+        if (!$this->pdo) return ['comments' => [], 'total_pages' => 0, 'total_count' => 0];
+
+        // Only count top-level comments for pagination
+        $count_sql = "SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND status = 'approved' AND parent_id IS NULL";
+        $stmt = $this->pdo->prepare($count_sql);
+        $stmt->execute([$target_id, $target_type]);
+        $total_top_level = $stmt->fetchColumn();
+        $total_pages = ceil($total_top_level / $per_page);
+
+        $offset = ($page - 1) * $per_page;
+
+        // 1. Get top-level comments for the current page
+        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
+                FROM comments c
+                LEFT JOIN users u ON c.user_id = u.id
+                WHERE c.target_id = ? AND c.target_type = ? AND c.status = 'approved' AND c.parent_id IS NULL
+                ORDER BY c.created_at DESC
+                LIMIT ? OFFSET ?";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(1, $target_id);
+        $stmt->bindValue(2, $target_type);
+        $stmt->bindValue(3, (int)$per_page, PDO::PARAM_INT);
+        $stmt->bindValue(4, (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $top_level_comments = $stmt->fetchAll();
+
+        if (empty($top_level_comments)) {
+            return ['comments' => [], 'total_pages' => $total_pages, 'total_count' => $total_top_level];
+        }
+
+        // 2. Fetch ALL replies for these top-level comments (recursively or in one go if depth is limited)
+        // For simplicity and to avoid many queries, we fetch all comments for this target and then filter,
+        // OR we can fetch recursively. Let's fetch all approved comments for this target to build the tree.
+        // Actually, if we paginate top-level, we must fetch all their descendants.
+
+        $top_ids = array_column($top_level_comments, 'id');
+        $placeholders = implode(',', array_fill(0, count($top_ids), '?'));
+
+        // We need all descendants. In a simple adjacency list, we can't easily get all descendants in one SQL without CTE.
+        // But we can assume a reasonable depth or just fetch all comments for the target and filter in PHP.
+        // Fetching all might be heavy if there are thousands, but usually it's fine.
 
         $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
@@ -26,11 +71,11 @@ class Comments {
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
                 WHERE c.target_id = ? AND c.target_type = ? AND c.status = 'approved'
-                ORDER BY c.created_at DESC";
+                ORDER BY c.created_at ASC"; // ASC for better tree building
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$target_id, $target_type]);
-        $comments = $stmt->fetchAll();
+        $all_comments = $stmt->fetchAll();
 
         // If user is logged in, fetch their reactions to these comments
         $user_reactions = [];
@@ -43,26 +88,42 @@ class Comments {
         }
 
         // Organize into tree
-        $tree = [];
         $lookup = [];
-        foreach ($comments as &$c) {
+        foreach ($all_comments as &$c) {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['replies'] = [];
-            // Parse mentions in content
             $c['content_html'] = $this->parseMentions($c['content']);
+            $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < 300);
             $lookup[$c['id']] = &$c;
         }
 
-        foreach ($comments as &$c) {
+        foreach ($all_comments as &$c) {
             if ($c['parent_id'] && isset($lookup[$c['parent_id']])) {
                 $lookup[$c['parent_id']]['replies'][] = &$c;
-            } else {
+            }
+        }
+
+        // Only return the top-level comments that are in the current page, but now they have their replies attached
+        $tree = [];
+        $top_ids_flipped = array_flip($top_ids);
+        foreach ($all_comments as &$c) {
+            if (!$c['parent_id'] && isset($top_ids_flipped[$c['id']])) {
                 $tree[] = &$c;
             }
         }
 
-        return $tree;
+        // Sort tree back to DESC (created_at) because we used ASC for building
+        usort($tree, function($a, $b) {
+            return strtotime($b['created_at']) - strtotime($a['created_at']);
+        });
+
+        return [
+            'comments' => $tree,
+            'total_pages' => $total_pages,
+            'total_count' => $total_top_level,
+            'current_page' => $page
+        ];
     }
 
     /**
@@ -101,6 +162,7 @@ class Comments {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['replies'] = [];
             $c['content_html'] = $this->parseMentions($c['content']);
+            $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < 300);
             $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
         }
