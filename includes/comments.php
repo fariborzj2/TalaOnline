@@ -216,7 +216,7 @@ class Comments {
         $usernames = array_unique($matches[1]);
 
         foreach ($usernames as $username) {
-            $stmt = $this->pdo->prepare("SELECT id, email, name FROM users WHERE username = ?");
+            $stmt = $this->pdo->prepare("SELECT id, email, name FROM users WHERE LOWER(username) = LOWER(?)");
             $stmt->execute([$username]);
             $user = $stmt->fetch();
 

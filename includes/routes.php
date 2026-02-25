@@ -188,7 +188,8 @@ $router->add('/profile/:username', function($params) {
         ErrorHandler::renderError(500, 'خطای پایگاه داده', 'متاسفانه در حال حاضر امکان اتصال به پایگاه داده وجود ندارد.');
     }
 
-    $stmt = $pdo->prepare("SELECT name, username, avatar, level, created_at FROM users WHERE username = ?");
+    // Use LOWER() for case-insensitive matching (compatible with MySQL and SQLite)
+    $stmt = $pdo->prepare("SELECT name, username, avatar, level, created_at FROM users WHERE LOWER(username) = LOWER(?)");
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 

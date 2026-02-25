@@ -237,11 +237,11 @@ function generate_unique_username($name, $email = '') {
     global $pdo;
     if (!$pdo) return uniqid('user_');
 
-    // Clean name: remove non-alphanumeric, lowercase
-    $base = preg_replace('/[^a-zA-Z0-9]/', '', $name);
+    // Clean name: remove non-alphanumeric (except underscore), lowercase
+    $base = preg_replace('/[^a-zA-Z0-9_]/', '', $name);
     if (empty($base) && !empty($email)) {
         $base = explode('@', $email)[0];
-        $base = preg_replace('/[^a-zA-Z0-9]/', '', $base);
+        $base = preg_replace('/[^a-zA-Z0-9_]/', '', $base);
     }
 
     if (empty($base)) {
@@ -280,7 +280,7 @@ function is_username_available($username, $exclude_user_id = null) {
     global $pdo;
     if (!$pdo) return false;
 
-    $sql = "SELECT COUNT(*) FROM users WHERE username = ?";
+    $sql = "SELECT COUNT(*) FROM users WHERE LOWER(username) = LOWER(?)";
     $params = [$username];
 
     if ($exclude_user_id) {
