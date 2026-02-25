@@ -180,6 +180,28 @@ $router->add('/about-us', function() {
     ]);
 });
 
+$router->add('/profile/:username', function($params) {
+    global $pdo;
+    $username = urldecode($params['username'] ?? '');
+
+    if (!$pdo) {
+        ErrorHandler::renderError(500, 'خطای پایگاه داده', 'متاسفانه در حال حاضر امکان اتصال به پایگاه داده وجود ندارد.');
+    }
+
+    $stmt = $pdo->prepare("SELECT name, username, avatar, level, created_at FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        ErrorHandler::renderError(404, 'کاربر پیدا نشد', 'کاربری با این مشخصات یافت نشد.');
+    }
+
+    return View::renderPage('public_profile', [
+        'user' => $user,
+        'page_title' => 'پروفایل ' . $user['name']
+    ]);
+});
+
 $router->add('/profile', function() {
     if (!isset($_SESSION['user_id'])) {
         header('Location: /');

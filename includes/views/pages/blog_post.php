@@ -194,9 +194,20 @@
             </div>
         </section>
         <?php endif; ?>
+
+        <!-- Comment Section -->
+        <div id="comments-app" class="radius-16 overflow-hidden"></div>
     </div>
 
 </article>
+
+<link rel="stylesheet" href="<?= versioned_asset('/assets/css/comments.css') ?>">
+<script src="<?= versioned_asset('/assets/js/comments.js') ?>"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        window.initComments('<?= $post['id'] ?>', 'post');
+    });
+</script>
 
 <style>
     .post-main-card h1 { line-height: 1.5; }
