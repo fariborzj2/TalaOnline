@@ -453,8 +453,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     authState.user = data.user;
                     updateUIForAuth();
                     closeModal();
-                    showAlert('ثبت نام با موفقیت انجام شد. لطفاً ایمیل خود را چک کنید.', 'success');
+                    await showAlert('ثبت نام با موفقیت انجام شد. لطفاً ایمیل خود را چک کنید.', 'success');
                     fetch(`${authState.apiBase}/mail_worker.php`).catch(() => {});
+                    location.href = '/profile';
                 } else {
                     showAlert(data.message || 'خطا در ثبت نام', 'error');
                 }
