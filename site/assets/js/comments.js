@@ -13,6 +13,7 @@ class CommentSystem {
         this.csrfToken = window.__AUTH_STATE__?.csrfToken;
         this.comments = options.initialComments || [];
         this.sentiment = { total: 0, bullish: 0, bearish: 0 };
+        this.readOnly = options.readOnly || (this.targetType === 'user_profile');
 
         if (this.container) {
             if (options.initialComments) {
@@ -78,7 +79,8 @@ class CommentSystem {
         if (!this.container) return;
 
         let html = `
-            <div class="comments-section">
+            <div class="comments-section ${this.readOnly ? 'read-only' : ''}">
+                ${!this.readOnly ? `
                 <div class="comments-header">
                     <i data-lucide="message-square" class="text-primary w-6 h-6"></i>
                     <h3>نظرات کاربران <span class="comments-count-badge">(${this.getTotalCommentCount()})</span></h3>
@@ -87,8 +89,9 @@ class CommentSystem {
                 ${this.targetType !== 'post' ? this.renderSentimentBar() : ''}
 
                 ${this.renderCommentForm()}
+                ` : ''}
 
-                <div class="comment-list mt-8">
+                <div class="comment-list ${this.readOnly ? 'mt-0' : 'mt-8'}">
                     ${this.renderComments(this.comments)}
                 </div>
             </div>
@@ -236,10 +239,12 @@ class CommentSystem {
                     </div>
 
                     <div class="comment-footer">
+                        ${!this.readOnly ? `
                         <div class="comment-footer-btn reply-btn" data-id="${c.id}">
                             <i data-lucide="reply" class="w-4 h-4"></i>
                             <span>پاسخ</span>
                         </div>
+                        ` : ''}
 
                         <div class="footer-right">
                             <div class="reaction-pill">
