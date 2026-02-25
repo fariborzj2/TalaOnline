@@ -72,8 +72,15 @@ document.addEventListener('DOMContentLoaded', function() {
             dialogOverlay.classList.add('active');
 
             const close = () => {
-                dialogOverlay.classList.remove('active');
-                resolve();
+                const box = dialogOverlay.querySelector('.custom-dialog-box');
+                dialogOverlay.classList.add('closing');
+                if (box) box.classList.add('closing');
+                setTimeout(() => {
+                    dialogOverlay.classList.remove('active');
+                    dialogOverlay.classList.remove('closing');
+                    if (box) box.classList.remove('closing');
+                    resolve();
+                }, 300);
             };
 
             dialogConfirmBtn.onclick = close;
@@ -96,15 +103,20 @@ document.addEventListener('DOMContentLoaded', function() {
             if (window.lucide) window.lucide.createIcons({ root: dialogIconContainer });
             dialogOverlay.classList.add('active');
 
-            dialogConfirmBtn.onclick = () => {
-                dialogOverlay.classList.remove('active');
-                resolve(true);
+            const close = (result) => {
+                const box = dialogOverlay.querySelector('.custom-dialog-box');
+                dialogOverlay.classList.add('closing');
+                if (box) box.classList.add('closing');
+                setTimeout(() => {
+                    dialogOverlay.classList.remove('active');
+                    dialogOverlay.classList.remove('closing');
+                    if (box) box.classList.remove('closing');
+                    resolve(result);
+                }, 300);
             };
 
-            dialogCancelBtn.onclick = () => {
-                dialogOverlay.classList.remove('active');
-                resolve(false);
-            };
+            dialogConfirmBtn.onclick = () => close(true);
+            dialogCancelBtn.onclick = () => close(false);
         });
     };
 
@@ -323,9 +335,21 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const closeModal = () => {
-        if (authModal) authModal.classList.add('d-none');
-        if (profileModal) profileModal.classList.add('d-none');
-        document.body.style.overflow = '';
+        const modals = [authModal, profileModal];
+        modals.forEach(modal => {
+            if (modal && !modal.classList.contains('d-none')) {
+                const content = modal.querySelector('.modal-content');
+                modal.classList.add('closing');
+                if (content) content.classList.add('closing');
+
+                setTimeout(() => {
+                    modal.classList.add('d-none');
+                    modal.classList.remove('closing');
+                    if (content) content.classList.remove('closing');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+        });
     };
 
     userMenuBtns.forEach(btn => {

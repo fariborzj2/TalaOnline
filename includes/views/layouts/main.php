@@ -114,6 +114,13 @@
             transform: scale(1);
             opacity: 1;
         }
+        .custom-dialog-box.closing {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        .custom-dialog-overlay.closing {
+            opacity: 0;
+        }
 
         /* Mobile Bottom Sheet for Custom Dialogs */
         @media (max-width: 600px) {
@@ -128,9 +135,14 @@
                 border-radius: 16px 16px 0 0;
                 transform: translateY(100%);
                 opacity: 1;
+                transition: transform 0.3s cubic-bezier(0.36, 1, 0.66, 1), opacity 0.3s ease;
             }
             .custom-dialog-overlay.active .custom-dialog-box {
                 transform: translateY(0);
+            }
+            .custom-dialog-box.closing {
+                transform: translateY(100%);
+                opacity: 1;
             }
         }
 
