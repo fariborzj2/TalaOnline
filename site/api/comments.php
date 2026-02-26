@@ -100,10 +100,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'react') {
+        // Rate Limiting (30 per 15 mins by default)
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $ip_limit = check_rate_limit('comment_react', 'ip', $ip, null, 30, 15);
+        if ($ip_limit !== true) {
+            echo json_encode(['success' => false, 'message' => 'تعداد واکنش‌های شما بیش از حد مجاز است. لطفاً کمی صبر کنید.']);
+            exit;
+        }
+
+        $user_limit = check_rate_limit('comment_react', 'user', $user_id, null, 30, 15);
+        if ($user_limit !== true) {
+            echo json_encode(['success' => false, 'message' => 'لطفاً کمی صبر کنید.']);
+            exit;
+        }
+
         $comment_id = $input['comment_id'] ?? 0;
         $reaction_type = $input['reaction_type'] ?? null;
         $success = $comments_handler->react($user_id, $comment_id, $reaction_type);
         if ($success) {
+            record_rate_limit_attempt('comment_react', 'ip', $ip);
+            record_rate_limit_attempt('comment_react', 'user', $user_id);
+
             $stmt = $pdo->prepare("SELECT
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'dislike') as dislikes,
