@@ -214,7 +214,11 @@
 <script src="<?= versioned_asset('/assets/js/comments.js') ?>"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        new CommentSystem({ containerId: 'comments-app' });
+        if (window.initComments) {
+            window.initComments('<?= $target_id ?>', '<?= $target_type ?>');
+        } else {
+            window.commentSystem = new CommentSystem({ containerId: 'comments-app' });
+        }
     });
 </script>
 
