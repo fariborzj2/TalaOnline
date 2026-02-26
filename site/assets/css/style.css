@@ -1142,7 +1142,7 @@ body.offline-page .sidebar {
 }
 
 .sentiment-content-wrapper {
-    padding: var(--pd-block);
+    padding: 20px;
     position: relative;
 }
 .sentiment-close-btn {
