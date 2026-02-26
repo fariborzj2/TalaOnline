@@ -1254,14 +1254,12 @@ body.offline-page .sidebar {
 .sentiment-bar-segment.bearish {
     background: var(--color-error);
 }
-.sentiment-percent {
-    position: absolute;
-    top: 15px;
-    font-size: 0.8rem;
-    font-weight: 800;
+.sentiment-percentage-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.85rem;
 }
-.sentiment-bar-segment.bullish .sentiment-percent { color: var(--color-primary); right: 0; }
-.sentiment-bar-segment.bearish .sentiment-percent { color: var(--color-error); left: 0; }
 
 .sentiment-bar-segment.user-selection::after {
     content: '';
