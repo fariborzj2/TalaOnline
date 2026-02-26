@@ -37,7 +37,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error("Invalid content type received");
             }
 
-            const data = await response.json();
+            let data;
+            const text = await response.text();
+            try {
+                data = JSON.parse(text);
+            } catch (parseErr) {
+                console.error('Sentiment API response is not valid JSON:', text.substring(0, 200));
+                throw parseErr;
+            }
 
             if (data.success) {
                 updateUI(data);
@@ -105,7 +112,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`Server returned ${response.status}`);
             }
 
-            const data = await response.json();
+            let data;
+            const text = await response.text();
+            try {
+                data = JSON.parse(text);
+            } catch (parseErr) {
+                console.error('Sentiment API response is not valid JSON:', text.substring(0, 200));
+                throw parseErr;
+            }
+
             if (data.success) {
                 updateUI(data);
                 // After vote, if it was prediction mode, it will switch to result mode automatically via updateUI
