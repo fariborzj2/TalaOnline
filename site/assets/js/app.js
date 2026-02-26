@@ -426,6 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     authState.isLoggedIn = true;
                     authState.user = data.user;
                     updateUIForAuth();
+                    document.dispatchEvent(new CustomEvent('auth:status-changed', { detail: authState }));
                     closeModal();
                     showAlert('با موفقیت وارد شدید', 'success');
                 } else {
@@ -464,6 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     authState.isLoggedIn = true;
                     authState.user = data.user;
                     updateUIForAuth();
+                    document.dispatchEvent(new CustomEvent('auth:status-changed', { detail: authState }));
                     closeModal();
                     await showAlert('ثبت نام با موفقیت انجام شد. لطفاً ایمیل خود را چک کنید.', 'success');
                     fetch(`${authState.apiBase}/mail_worker.php`).catch(() => {});
@@ -502,6 +504,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 await fetchWithCSRF(`${authState.apiBase}/auth.php?action=logout`, { method: 'POST' });
                 authState.isLoggedIn = false;
                 authState.user = null;
+                updateUIForAuth();
+                document.dispatchEvent(new CustomEvent('auth:status-changed', { detail: authState }));
                 closeModal();
                 await showAlert('از حساب خارج شدید', 'info');
                 location.reload();
