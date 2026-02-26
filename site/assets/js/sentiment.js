@@ -94,8 +94,8 @@ document.addEventListener('DOMContentLoaded', function() {
             bullishBar.style.width = `${results.bullish_percent}%`;
             bearishBar.style.width = `${results.bearish_percent}%`;
 
-            bullishBar.querySelector('.sentiment-percent').textContent = `${toPersianDigits(results.bullish_percent)}%`;
-            bearishBar.querySelector('.sentiment-percent').textContent = `${toPersianDigits(results.bearish_percent)}%`;
+            document.getElementById('sentiment-bullish-percent-label').textContent = `${toPersianDigits(results.bullish_percent)}%`;
+            document.getElementById('sentiment-bearish-percent-label').textContent = `${toPersianDigits(results.bearish_percent)}%`;
 
             // Highlight user's selection
             bullishBar.classList.remove('user-selection');

@@ -23,13 +23,13 @@
                 <p class="sentiment-question">تحلیل روند قیمت <strong class="text-primary"><?= htmlspecialchars($target_name) ?></strong> امروز چطور پیش‌بینی می‌کنید: صعود یا نزول؟</p>
 
                 <div class="sentiment-actions">
-                    <button class="sentiment-btn bullish-btn" data-vote="bullish">
-                         <span class="font-bold">خوش‌بین</span>
-                         <i data-lucide="trending-up" class="icon-size-5"></i>
-                    </button>
                     <button class="sentiment-btn bearish-btn" data-vote="bearish">
                          <span class="font-bold">بدبین</span>
                          <i data-lucide="trending-down" class="icon-size-5"></i>
+                    </button>
+                    <button class="sentiment-btn bullish-btn" data-vote="bullish">
+                         <span class="font-bold">خوش‌بین</span>
+                         <i data-lucide="trending-up" class="icon-size-5"></i>
                     </button>
                 </div>
             </div>
@@ -54,12 +54,12 @@
                         <span class="text-success font-bold">خوش‌بین</span>
                     </div>
                     <div class="sentiment-progress-bar">
-                        <div id="sentiment-bearish-bar" class="sentiment-bar-segment bearish">
-                            <span class="sentiment-percent">0%</span>
-                        </div>
-                        <div id="sentiment-bullish-bar" class="sentiment-bar-segment bullish">
-                            <span class="sentiment-percent">0%</span>
-                        </div>
+                        <div id="sentiment-bearish-bar" class="sentiment-bar-segment bearish"></div>
+                        <div id="sentiment-bullish-bar" class="sentiment-bar-segment bullish"></div>
+                    </div>
+                    <div class="sentiment-percentage-labels">
+                        <span id="sentiment-bearish-percent-label" class="text-error font-bold">۰%</span>
+                        <span id="sentiment-bullish-percent-label" class="text-success font-bold">۰%</span>
                     </div>
                 </div>
 
