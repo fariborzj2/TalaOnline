@@ -97,9 +97,10 @@ document.addEventListener('DOMContentLoaded', function() {
             resultMode.classList.remove('d-none');
 
             // Text logic
-            const majorityType = results.bullish_percent >= results.bearish_percent ? 'خوش‌بین' : 'بدبین';
+            const isBullishMajority = results.bullish_percent >= results.bearish_percent;
+            const majorityTrend = isBullishMajority ? 'صعودی' : 'نزولی';
             const majorityPercent = Math.max(results.bullish_percent, results.bearish_percent);
-            const resultText = `از جمع <strong class="text-primary">${toPersianDigits(results.total)}</strong> کاربر رأی‌دهنده، <strong class="text-success">${toPersianDigits(majorityPercent)} درصد</strong> نسبت به روند رشد/نزول <strong class="text-primary">${currencyName}</strong> در تاریخ <span class="text-gray">${toPersianDigits(todayFa)}</span> ${majorityType} هستند.`;
+            const resultText = `بر اساس آرای ثبت‌شده، <strong class="text-success">${toPersianDigits(majorityPercent)}٪</strong> از شرکت‌کنندگان معتقدند در تاریخ <span class="text-gray">${toPersianDigits(todayFa)}</span> قیمت <strong class="text-primary">${currencyName}</strong> روندی <span class="${isBullishMajority ? 'text-success' : 'text-error'}">${majorityTrend}</span> خواهد داشت.`;
 
             document.getElementById('sentiment-result-text').innerHTML = resultText;
             document.getElementById('sentiment-total-votes').textContent = `${toPersianDigits(results.total)} کاربر`;

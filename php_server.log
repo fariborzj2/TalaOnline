@@ -1,0 +1,97 @@
+[Thu Feb 26 14:30:25 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Thu Feb 26 14:30:45 2026] [::1]:58958 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:58958 [200]: GET /gold/18ayar
+[Thu Feb 26 14:30:45 2026] [::1]:58958 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:58962 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:58978 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:58982 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:58990 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:58962 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772104761
+[Thu Feb 26 14:30:45 2026] [::1]:58978 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772104761
+[Thu Feb 26 14:30:45 2026] [::1]:58982 [200]: GET /assets/images/logo-larg.svg?v=1772104762
+[Thu Feb 26 14:30:45 2026] [::1]:58962 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:58978 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:58990 [200]: GET /assets/js/sentiment.js?v=1772116068
+[Thu Feb 26 14:30:45 2026] [::1]:58982 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:58990 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:59002 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:59018 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:59024 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:59030 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:59038 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:59044 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:59002 [200]: GET /assets/css/comments.css?v=1772106961
+[Thu Feb 26 14:30:45 2026] [::1]:59018 [200]: GET /assets/js/comments.js?v=1772106769
+[Thu Feb 26 14:30:45 2026] [::1]:59024 [200]: GET /assets/js/vendor/lucide.js?v=1772104762
+[Thu Feb 26 14:30:45 2026] [::1]:59002 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:59018 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:59048 Accepted
+[Thu Feb 26 14:30:45 2026] [::1]:59030 [200]: GET /assets/js/charts.js?v=1772104762
+[Thu Feb 26 14:30:45 2026] [::1]:59038 [200]: GET /assets/js/app.js?v=1772104762
+[Thu Feb 26 14:30:45 2026] [::1]:59044 [200]: GET /assets/images/logo.svg?v=1772104762
+[Thu Feb 26 14:30:45 2026] [::1]:59024 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:59030 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:59038 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:59044 Closing
+[Thu Feb 26 14:30:45 2026] [::1]:59048 [404]: GET /assets/images/gold/18ayar.webp - No such file or directory
+[Thu Feb 26 14:30:45 2026] [::1]:59048 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59052 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59054 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59052 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772104761
+[Thu Feb 26 14:30:46 2026] [::1]:59054 [200]: GET /assets/fonts/estedad/Estedad-FD-ExtraBold.woff2?v=1772104761
+[Thu Feb 26 14:30:46 2026] [::1]:59052 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59054 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59068 Accepted
+[Thu Feb 26 14:30:46 2026] PHP Warning:  Undefined array key "is_manual" in /app/includes/navasan_service.php on line 107
+[Thu Feb 26 14:30:46 2026] PHP Warning:  Undefined array key "en_name" in /app/includes/navasan_service.php on line 116
+[Thu Feb 26 14:30:46 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Thu Feb 26 14:30:46 2026] [::1]:59068 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Thu Feb 26 14:30:46 2026] [::1]:59068 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59072 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59072 [200]: GET /sw.js
+[Thu Feb 26 14:30:46 2026] [::1]:59072 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59080 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59080 [200]: GET /api/prices.php?symbol=18ayar
+[Thu Feb 26 14:30:46 2026] [::1]:59080 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59092 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59092 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772104762
+[Thu Feb 26 14:30:46 2026] [::1]:59092 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59102 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59116 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59132 Accepted
+[Thu Feb 26 14:30:46 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Thu Feb 26 14:30:46 2026] [::1]:59102 [200]: GET /offline.php
+[Thu Feb 26 14:30:46 2026] [::1]:59102 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59116 [200]: GET /
+[Thu Feb 26 14:30:46 2026] [::1]:59116 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59132 [200]: GET /assets/css/style.css
+[Thu Feb 26 14:30:46 2026] [::1]:59138 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59138 [200]: GET /assets/js/app.js
+[Thu Feb 26 14:30:46 2026] [::1]:59132 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59138 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59150 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59166 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59174 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59150 [200]: GET /assets/images/logo.png
+[Thu Feb 26 14:30:46 2026] [::1]:59166 [200]: GET /assets/images/logo.svg
+[Thu Feb 26 14:30:46 2026] [::1]:59174 [200]: GET /assets/images/favicon/favicon-32x32.png
+[Thu Feb 26 14:30:46 2026] [::1]:59150 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59166 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59174 Closing
+[Thu Feb 26 14:30:46 2026] [::1]:59176 Accepted
+[Thu Feb 26 14:30:46 2026] [::1]:59176 [200]: GET /assets/images/favicon/android-icon-192x192.png
+[Thu Feb 26 14:30:46 2026] [::1]:59176 Closing
+[Thu Feb 26 14:30:51 2026] [::1]:59184 Accepted
+[Thu Feb 26 14:30:51 2026] [::1]:59184 [200]: GET /api/sentiment.php?action=get_results&currency_id=18ayar
+[Thu Feb 26 14:30:51 2026] [::1]:59184 Closing
+[Thu Feb 26 14:30:51 2026] [::1]:59194 Accepted
+[Thu Feb 26 14:30:51 2026] [::1]:59194 [200]: POST /api/sentiment.php?action=vote
+[Thu Feb 26 14:30:51 2026] [::1]:59194 Closing
