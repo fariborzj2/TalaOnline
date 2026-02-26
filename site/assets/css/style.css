@@ -1096,3 +1096,10 @@ body.offline-page .side-menu,
 body.offline-page .sidebar {
     display: none !important;
 }
+
+/* Comment Reaction Loading State */
+.reaction-pill-item.loading, .emoji-btn.loading {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+}

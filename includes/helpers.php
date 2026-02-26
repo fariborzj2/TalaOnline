@@ -297,7 +297,7 @@ function is_username_available($username, $exclude_user_id = null) {
  * Checks if an action is rate limited
  * @return true|int Returns true if not limited, or number of seconds to wait if limited
  */
-function check_rate_limit($action_type, $identifier_type, $identifier_value, $limit_prefix = null) {
+function check_rate_limit($action_type, $identifier_type, $identifier_value, $limit_prefix = null, $default_max = 5, $default_window = 15) {
     global $pdo;
     if (!$pdo) return true;
 
@@ -315,8 +315,8 @@ function check_rate_limit($action_type, $identifier_type, $identifier_value, $li
     }
 
     // B. Check counts in window
-    $max = (int)get_setting("rate_limit_{$limit_prefix}_max", 5);
-    $window = (int)get_setting("rate_limit_{$limit_prefix}_window", 15);
+    $max = (int)get_setting("rate_limit_{$limit_prefix}_max", $default_max);
+    $window = (int)get_setting("rate_limit_{$limit_prefix}_window", $default_window);
 
     // Format for MySQL/SQLite compatibility
     $since = date('Y-m-d H:i:s', strtotime("-$window minutes"));

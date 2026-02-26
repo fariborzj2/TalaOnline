@@ -185,6 +185,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
+            // Regenerate session for security
+            session_regenerate_id(true);
+            unset($_SESSION['csrf_token']); // Force new CSRF token
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_email'] = $user['email'];
@@ -196,16 +200,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['is_verified'] = $user['is_verified'] ?? 0;
             $_SESSION['is_phone_verified'] = $user['is_phone_verified'] ?? 0;
 
-            echo json_encode(['success' => true, 'user' => [
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'phone' => $user['phone'],
-                'username' => $user['username'] ?? '',
-                'role' => $user['role'],
-                'role_id' => $user['role_id'] ?? 0,
-                'avatar' => $user['avatar'] ?? '',
-                'is_verified' => $user['is_verified'] ?? 0
-            ]]);
+            echo json_encode([
+                'success' => true,
+                'csrfToken' => csrf_token(),
+                'user' => [
+                    'name' => $user['name'],
+                    'email' => $user['email'],
+                    'phone' => $user['phone'],
+                    'username' => $user['username'] ?? '',
+                    'role' => $user['role'],
+                    'role_id' => $user['role_id'] ?? 0,
+                    'avatar' => $user['avatar'] ?? '',
+                    'is_verified' => $user['is_verified'] ?? 0
+                ]
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'ایمیل یا کلمه عبور اشتباه است.']);
         }

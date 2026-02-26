@@ -425,6 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     authState.isLoggedIn = true;
                     authState.user = data.user;
+                    if (data.csrfToken) authState.csrfToken = data.csrfToken;
                     updateUIForAuth();
                     document.dispatchEvent(new CustomEvent('auth:status-changed', { detail: authState }));
                     closeModal();
@@ -464,6 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     authState.isLoggedIn = true;
                     authState.user = data.user;
+                    if (data.csrfToken) authState.csrfToken = data.csrfToken;
                     updateUIForAuth();
                     document.dispatchEvent(new CustomEvent('auth:status-changed', { detail: authState }));
                     closeModal();

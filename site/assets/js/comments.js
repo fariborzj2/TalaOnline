@@ -461,6 +461,7 @@ class CommentSystem {
         this.container.querySelectorAll('.emoji-btn, .reaction-pill-item').forEach(btn => {
             btn.onclick = async (e) => {
                 e.stopPropagation();
+                if (btn.classList.contains('loading')) return;
                 if (!this.isLoggedIn) {
                     window.showAuthModal?.('login');
                     return;
@@ -470,6 +471,8 @@ class CommentSystem {
                 const comment = this.findComment(id);
                 const currentReaction = comment ? comment.user_reaction : null;
                 const newType = (currentReaction === type) ? null : type;
+
+                btn.classList.add('loading');
 
                 try {
                     const res = await fetch('/api/comments.php?action=react', {
@@ -506,9 +509,13 @@ class CommentSystem {
                             `;
                             this.bindEvents(); // Re-bind for new reaction items
                         }
+                    } else if (data.message) {
+                        alert(data.message);
                     }
                 } catch (error) {
                     console.error(error);
+                } finally {
+                    btn.classList.remove('loading');
                 }
             };
         });
