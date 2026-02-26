@@ -81,6 +81,79 @@ if (file_exists($config_file)) {
                 $pdo->exec("ALTER TABLE email_queue ADD COLUMN metadata TEXT");
             }
 
+            // Fix items table missing sort_order
+            $item_cols = [];
+            try {
+                if ($driver === 'sqlite') {
+                    $stmt = $pdo->query("PRAGMA table_info(items)");
+                    while ($row = $stmt->fetch()) { $item_cols[] = $row['name']; }
+                } else {
+                    $item_cols = $pdo->query("DESCRIBE items")->fetchAll(PDO::FETCH_COLUMN);
+                }
+                if (!empty($item_cols) && !in_array('sort_order', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN sort_order INTEGER DEFAULT 0");
+                }
+                if (!empty($item_cols) && !in_array('slug', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN slug VARCHAR(255)");
+                }
+                if (!empty($item_cols) && !in_array('logo', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN logo VARCHAR(255)");
+                }
+                if (!empty($item_cols) && !in_array('page_title', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN page_title VARCHAR(255)");
+                }
+                if (!empty($item_cols) && !in_array('h1_title', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN h1_title VARCHAR(255)");
+                }
+                if (!empty($item_cols) && !in_array('meta_description', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN meta_description TEXT");
+                }
+                if (!empty($item_cols) && !in_array('meta_keywords', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN meta_keywords TEXT");
+                }
+                if (!empty($item_cols) && !in_array('description', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN description TEXT");
+                }
+                if (!empty($item_cols) && !in_array('long_description', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN long_description TEXT");
+                }
+                if (!empty($item_cols) && !in_array('related_item_symbol', $item_cols)) {
+                    $pdo->exec("ALTER TABLE items ADD COLUMN related_item_symbol VARCHAR(100)");
+                }
+            } catch (Exception $e) {}
+
+            // Fix categories table missing sort_order
+            $cat_cols = [];
+            try {
+                if ($driver === 'sqlite') {
+                    $stmt = $pdo->query("PRAGMA table_info(categories)");
+                    while ($row = $stmt->fetch()) { $cat_cols[] = $row['name']; }
+                } else {
+                    $cat_cols = $pdo->query("DESCRIBE categories")->fetchAll(PDO::FETCH_COLUMN);
+                }
+                if (!empty($cat_cols) && !in_array('sort_order', $cat_cols)) {
+                    $pdo->exec("ALTER TABLE categories ADD COLUMN sort_order INTEGER DEFAULT 0");
+                }
+                if (!empty($cat_cols) && !in_array('page_title', $cat_cols)) {
+                    $pdo->exec("ALTER TABLE categories ADD COLUMN page_title VARCHAR(255)");
+                }
+                if (!empty($cat_cols) && !in_array('h1_title', $cat_cols)) {
+                    $pdo->exec("ALTER TABLE categories ADD COLUMN h1_title VARCHAR(255)");
+                }
+                if (!empty($cat_cols) && !in_array('meta_description', $cat_cols)) {
+                    $pdo->exec("ALTER TABLE categories ADD COLUMN meta_description TEXT");
+                }
+                if (!empty($cat_cols) && !in_array('meta_keywords', $cat_cols)) {
+                    $pdo->exec("ALTER TABLE categories ADD COLUMN meta_keywords TEXT");
+                }
+                if (!empty($cat_cols) && !in_array('logo', $cat_cols)) {
+                    $pdo->exec("ALTER TABLE categories ADD COLUMN logo VARCHAR(255)");
+                }
+                if (!empty($cat_cols) && !in_array('views', $cat_cols)) {
+                    $pdo->exec("ALTER TABLE categories ADD COLUMN views INTEGER DEFAULT 0");
+                }
+            } catch (Exception $e) {}
+
             if (!in_array('phone', $cols)) {
                 $pdo->exec("ALTER TABLE users ADD COLUMN phone VARCHAR(20)");
             }

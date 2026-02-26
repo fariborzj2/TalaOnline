@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let isTriggered = false;
     let hasVoted = false;
 
+    const VOTED_KEY = `tala_sentiment_voted_${currencyId}`;
+    const CLOSED_KEY = `tala_sentiment_closed_${currencyId}`;
+
     const toPersianDigits = (num) => {
         if (num === null || num === undefined) return '';
         const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
@@ -24,6 +27,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const showSentiment = async () => {
         if (isTriggered) return;
+
+        // Final check for suppression before calling API
+        if (localStorage.getItem(VOTED_KEY)) return;
+        const closedTime = localStorage.getItem(CLOSED_KEY);
+        if (closedTime && (Date.now() - parseInt(closedTime)) < 2 * 60 * 60 * 1000) {
+            return;
+        }
+
         isTriggered = true;
 
         try {
@@ -59,6 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (data.success) {
+                // If user has already voted, suppress auto-display
+                if (data.user_vote) {
+                    localStorage.setItem(VOTED_KEY, 'true');
+                    return;
+                }
+
                 updateUI(data);
                 sentimentContainer.classList.remove('d-none');
                 sentimentContainer.classList.add('active');
@@ -145,8 +162,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (data.success) {
+                localStorage.setItem(VOTED_KEY, 'true');
                 updateUI(data);
-                // After vote, if it was prediction mode, it will switch to result mode automatically via updateUI
+                // After vote, it switches to result mode automatically via updateUI
             } else {
                 if (window.showAlert) window.showAlert(data.message, 'error');
                 else alert(data.message);
@@ -158,6 +176,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Triggers
     const triggerEvents = () => {
+        // Check suppressors before attaching listeners
+        if (localStorage.getItem(VOTED_KEY)) return;
+
+        const closedTime = localStorage.getItem(CLOSED_KEY);
+        if (closedTime && (Date.now() - parseInt(closedTime)) < 2 * 60 * 60 * 1000) {
+            return;
+        }
+
         // 1. Scroll trigger (e.g. after 300px)
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) showSentiment();
@@ -173,6 +199,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Close handler
     if (closeBtn) {
         closeBtn.onclick = () => {
+            // Save dismissal time
+            localStorage.setItem(CLOSED_KEY, Date.now());
+
             sentimentContainer.classList.add('closing');
             setTimeout(() => {
                 sentimentContainer.classList.add('d-none');
