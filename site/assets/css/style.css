@@ -1112,9 +1112,9 @@ body.offline-page .sidebar {
     right: 0;
     z-index: 1050;
     display: flex;
-    justify-content: center;
+    justify-content: end;
     pointer-events: none;
-    padding: 0 15px 15px;
+    padding: var(--pd-block);
 }
 #market-sentiment-container.active {
     pointer-events: auto;
