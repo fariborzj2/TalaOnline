@@ -431,11 +431,19 @@ class CommentSystem {
                         if (window.lucide) lucide.createIcons();
                         this.bindEvents(); // Re-bind events for new elements
                     } else {
-                        alert(data.message);
+                        if (window.showAlert) {
+                            window.showAlert(data.message, 'error');
+                        } else {
+                            alert(data.message);
+                        }
                     }
                 } catch (error) {
                     console.error(error);
-                    alert('خطا در برقراری ارتباط با سرور');
+                    if (window.showAlert) {
+                        window.showAlert('خطا در برقراری ارتباط با سرور', 'error');
+                    } else {
+                        alert('خطا در برقراری ارتباط با سرور');
+                    }
                 } finally {
                     btn.disabled = false;
                     btn.innerText = originalText;
@@ -510,7 +518,11 @@ class CommentSystem {
                             this.bindEvents(); // Re-bind for new reaction items
                         }
                     } else if (data.message) {
-                        alert(data.message);
+                        if (window.showAlert) {
+                            window.showAlert(data.message, 'warning');
+                        } else {
+                            alert(data.message);
+                        }
                     }
                 } catch (error) {
                     console.error(error);
@@ -593,7 +605,11 @@ class CommentSystem {
                         body: JSON.stringify({ comment_id: id, reason: reason })
                     });
                     const data = await res.json();
-                    alert(data.message);
+                    if (window.showAlert) {
+                        window.showAlert(data.message, data.success ? 'success' : 'error');
+                    } else {
+                        alert(data.message);
+                    }
                 } catch (error) {
                     console.error(error);
                 }
@@ -622,5 +638,5 @@ class CommentSystem {
 }
 
 window.initComments = (targetId, targetType) => {
-    new CommentSystem({ targetId, targetType });
+    window.commentSystem = new CommentSystem({ targetId, targetType });
 };
