@@ -39,11 +39,16 @@
             <!-- Mode 2: Results -->
             <div id="sentiment-result-mode" class="sentiment-mode d-none">
                 <div class="sentiment-header">
-                    <div class="sentiment-title-icon">
-                        <i data-lucide="trending-up" class="text-success icon-size-4"></i>
-                        <i data-lucide="trending-down" class="text-error icon-size-4"></i>
-                   </div>
-                   <h3 class="sentiment-title">نتیجه پیش‌بینی</h3>
+                    <div class="d-flex align-center gap-05">
+                        <div class="sentiment-title-icon">
+                            <i data-lucide="trending-up-down" class="icon-size-4"></i>
+                        </div>
+                        <h3 class="sentiment-title">نتیجه پیش‌بینی</h3>
+                    </div>
+
+                   <button class="sentiment-close-btn" id="sentiment-close-btn">
+                        <i data-lucide="x" class="icon-size-4"></i>
+                    </button>
                 </div>
 
                 <p id="sentiment-result-text" class="sentiment-result-text">
