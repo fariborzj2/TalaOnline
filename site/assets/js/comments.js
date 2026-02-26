@@ -153,8 +153,8 @@ class CommentSystem {
     renderCommentForm(parentId = null, initialContent = '') {
         if (!this.isLoggedIn) {
             return `
-                <div class="bg-orange-light pd-md radius-24 border border-orange mb-4 text-center">
-                    <p class="mb-3 font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
+                <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
+                    <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
                     <button class="btn btn-orange" onclick="window.showAuthModal?.('login')">ورود / ثبت‌نام سریع</button>
                 </div>
             `;
@@ -187,7 +187,7 @@ class CommentSystem {
     renderComments(comments) {
         if (comments.length === 0) {
             return `
-                <div class="text-center py-12 bg-gray-50 radius-24 border border-dashed">
+                <div class="bg-block text-center pd-md radius-16 border d-column just-center align-center">
                     <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
                     <p class="text-gray-400">هنوز نظری ثبت نشده است. اولین تحلیل‌گر باشید!</p>
                 </div>
