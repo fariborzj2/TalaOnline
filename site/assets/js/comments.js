@@ -148,7 +148,10 @@ class CommentSystem {
             return `
                 <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
                     <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
-                    <button class="btn btn-orange" onclick="window.showAuthModal?.('login')">ورود / ثبت‌نام سریع</button>
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-orange btn-sm" onclick="window.showAuthModal?.('login')">ورود به حساب</button>
+                        <button class="btn btn-secondary btn-sm bg-block" onclick="window.showAuthModal?.('register')">عضویت رایگان</button>
+                    </div>
                 </div>
             `;
         }
@@ -434,6 +437,10 @@ class CommentSystem {
         this.container.querySelectorAll('.btn-react-trigger').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
+                if (!this.isLoggedIn) {
+                    window.showAuthModal?.('login');
+                    return;
+                }
                 const id = btn.dataset.id;
                 const popover = document.getElementById(`popover-${id}`);
                 const isShown = popover.classList.contains('show');

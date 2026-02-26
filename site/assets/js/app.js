@@ -338,6 +338,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = 'hidden';
     };
 
+    window.showAuthModal = (tab = 'login') => {
+        openModal(authModal);
+        if (authTabs) {
+            const btn = authTabs.querySelector(`button[data-tab="${tab}"]`);
+            if (btn) btn.click();
+        }
+    };
+
     const closeModal = () => {
         const modals = [authModal, profileModal, followersModal, followingModal];
         modals.forEach(modal => {
