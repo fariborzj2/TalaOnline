@@ -31,6 +31,15 @@ class CommentSystem {
                 this.init();
             }
         }
+
+        // Listen for global auth changes
+        document.addEventListener('auth:status-changed', (e) => {
+            const state = e.detail;
+            this.isLoggedIn = state.isLoggedIn;
+            this.currentUsername = state.user?.username;
+            this.csrfToken = state.csrfToken;
+            this.render();
+        });
     }
 
     async init() {
