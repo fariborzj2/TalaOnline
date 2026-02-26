@@ -112,6 +112,14 @@
 </style>
 
 <div class="section">
+    <?= View::renderComponent('market_sentiment', [
+        'target_id' => $category['slug'],
+        'target_name' => $category['name']
+    ]) ?>
+</div>
+<script src="<?= versioned_asset('/assets/js/sentiment.js') ?>"></script>
+
+<div class="section">
     <?php
     $comments = $comments_data['comments'];
     $total_count = $comments_data['total_count'];
