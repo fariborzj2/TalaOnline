@@ -317,7 +317,6 @@ if (file_exists($config_file)) {
                     `target_type` VARCHAR(50),
                     `content` TEXT,
                     `parent_id` INTEGER DEFAULT NULL,
-                    `sentiment` VARCHAR(20) DEFAULT NULL,
                     `status` VARCHAR(20) DEFAULT 'approved',
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -362,7 +361,6 @@ if (file_exists($config_file)) {
                     `target_type` VARCHAR(50),
                     `content` TEXT,
                     `parent_id` INT DEFAULT NULL,
-                    `sentiment` VARCHAR(20) DEFAULT NULL,
                     `status` VARCHAR(20) DEFAULT 'approved',
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

@@ -125,7 +125,6 @@
     $total_count = $comments_data['total_count'];
     $total_pages = $comments_data['total_pages'];
     $current_page = $comments_data['current_page'];
-    $sentiment = $sentiment_stats;
     $target_id = $category['slug'];
     $target_type = 'category';
     include __DIR__ . '/../components/comments.php';

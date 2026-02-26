@@ -2,7 +2,6 @@
 /**
  * Comments Component (Server-Side Rendering)
  * @var array $comments
- * @var array $sentiment
  * @var string $target_id
  * @var string $target_type
  * @var int $total_pages
@@ -37,9 +36,6 @@ function render_comment_item($c, $read_only = false) {
                         <span class="comment-author">
                             <?= htmlspecialchars($c['user_name']) ?>
                             <span class="user-level-badge level-<?= $c['user_level'] ?>">سطح <?= $c['user_level'] ?></span>
-                            <?php if ($c['sentiment']): ?>
-                                <span class="comment-sentiment-badge <?= $c['sentiment'] ?>" title="<?= $c['sentiment'] === 'bullish' ? 'خوش‌بین' : 'بدبین' ?>"></span>
-                            <?php endif; ?>
                         </span>
                         <?php if (isset($c['target_info']) && $c['target_info']): ?>
                             <span class="text-gray-400 font-size-0-8 mx-1">در</span>
@@ -123,43 +119,11 @@ function render_reaction($c, $type, $emoji) {
             <h3>نظرات کاربران <span class="comments-count-badge">(<?= fa_num($total_count ?? 0) ?>)</span></h3>
         </div>
 
-        <?php if ($target_type !== 'post'): ?>
-            <?php
-                $bullishPercent = ($sentiment['total'] ?? 0) > 0 ? (($sentiment['bullish'] ?? 0) / $sentiment['total'] * 100) : 50;
-                $bearishPercent = ($sentiment['total'] ?? 0) > 0 ? (($sentiment['bearish'] ?? 0) / $sentiment['total'] * 100) : 50;
-            ?>
-            <div class="sentiment-bar-container">
-                <div class="sentiment-bar-info">
-                    <span class="text-success d-flex align-center gap-1">
-                        <i data-lucide="trending-up" class="icon-size-4"></i>
-                        خوش‌بین (<?= fa_num(round($bullishPercent)) ?>%)
-                    </span>
-                    <span class="text-error d-flex align-center gap-1">
-                        <i data-lucide="trending-down" class="icon-size-4"></i>
-                        بدبین (<?= fa_num(round($bearishPercent)) ?>%)
-                    </span>
-                </div>
-                <div class="sentiment-bar">
-                    <div class="sentiment-bullish" style="width: <?= $bullishPercent ?>%"></div>
-                    <div class="sentiment-bearish" style="width: <?= $bearishPercent ?>%"></div>
-                </div>
-            </div>
-        <?php endif; ?>
-
         <?php if ($is_logged_in): ?>
             <div class="comment-form" id="form-main">
                 <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید (استفاده از @ برای منشن)..." id="textarea-main"></textarea>
                 <div class="comment-form-footer">
-                    <div class="sentiment-selector">
-                        <?php if ($target_type !== 'post'): ?>
-                            <div class="sentiment-option" data-sentiment="bullish">
-                                <i data-lucide="trending-up" class="icon-size-4"></i> خوش‌بین
-                            </div>
-                            <div class="sentiment-option" data-sentiment="bearish">
-                                <i data-lucide="trending-down" class="icon-size-4"></i> بدبین
-                            </div>
-                        <?php endif; ?>
-                    </div>
+                    <div></div>
                     <button class="btn btn-primary submit-comment radius-10" data-parent="">ارسال نظر</button>
                 </div>
             </div>
@@ -203,7 +167,6 @@ function render_reaction($c, $type, $emoji) {
         window.__COMMENTS_INITIAL_DATA__ = window.__COMMENTS_INITIAL_DATA__ || {};
         window.__COMMENTS_INITIAL_DATA__['<?= $target_type . '_' . $target_id ?>'] = {
             comments: <?= json_encode($comments, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
-            sentiment: <?= json_encode($sentiment, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
             total_count: <?= (int)($total_count ?? 0) ?>
         };
     </script>

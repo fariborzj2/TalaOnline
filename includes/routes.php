@@ -532,7 +532,6 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
                 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
                 $comment_data = $comments_handler->getComments($post['id'], 'post', $_SESSION['user_id'] ?? null, $page);
                 $post['comments_data'] = $comment_data;
-                $post['sentiment_stats'] = $comments_handler->getSentimentStats($post['id'], 'post');
             }
         } catch (Exception $e) {}
     }
@@ -546,7 +545,6 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
     return View::renderPage('blog_post', [
         'post' => $post,
         'comments_data' => $post['comments_data'] ?? ['comments' => [], 'total_pages' => 0, 'total_count' => 0],
-        'sentiment_stats' => $post['sentiment_stats'] ?? ['total' => 0, 'bullish' => 0, 'bearish' => 0],
         'all_categories' => $post['all_categories'] ?? [],
         'faqs' => $post['faqs'] ?? [],
         'related_posts' => $related_posts,
@@ -655,7 +653,6 @@ $router->add('/:category/:slug', function($params) {
             $comments_handler = new Comments($pdo);
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $comment_data = $comments_handler->getComments($item_data['symbol'], 'item', $_SESSION['user_id'] ?? null, $page);
-            $sentiment_stats = $comments_handler->getSentimentStats($item_data['symbol'], 'item');
 
             $og_image = !empty($item_data['logo']) ? (get_base_url() . '/' . ltrim($item_data['logo'], '/')) : null;
 
@@ -670,7 +667,6 @@ $router->add('/:category/:slug', function($params) {
                 'related_item' => $related_item,
                 'faqs' => $faqs,
                 'comments_data' => $comment_data,
-                'sentiment_stats' => $sentiment_stats,
                 'hide_layout_h1' => true,
                 'page_title' => $item_data['page_title'] ?: $item_data['name'],
                 'h1_title' => $item_data['h1_title'] ?: $item_data['name'],
@@ -727,7 +723,6 @@ $router->add('/:slug', function($params) {
             $comments_handler = new Comments($pdo);
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $comment_data = $comments_handler->getComments($category['slug'], 'category', $_SESSION['user_id'] ?? null, $page);
-            $sentiment_stats = $comments_handler->getSentimentStats($category['slug'], 'category');
 
             $og_image = !empty($category['logo']) ? (get_base_url() . '/' . ltrim($category['logo'], '/')) : null;
 
@@ -737,7 +732,6 @@ $router->add('/:slug', function($params) {
                 'items' => $items,
                 'faqs' => $faqs,
                 'comments_data' => $comment_data,
-                'sentiment_stats' => $sentiment_stats,
                 'page_title' => $category['page_title'] ?: $category['name'],
                 'h1_title' => $category['h1_title'],
                 'meta_description' => $category['meta_description'],
@@ -786,7 +780,6 @@ $router->add('/:slug', function($params) {
             $comments_handler = new Comments($pdo);
             $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
             $comment_data = $comments_handler->getComments($item_data['symbol'], 'item', $_SESSION['user_id'] ?? null, $page);
-            $sentiment_stats = $comments_handler->getSentimentStats($item_data['symbol'], 'item');
 
             $og_image = !empty($item_data['logo']) ? (get_base_url() . '/' . ltrim($item_data['logo'], '/')) : null;
 
@@ -801,7 +794,6 @@ $router->add('/:slug', function($params) {
                 'related_item' => $related_item,
                 'faqs' => $faqs,
                 'comments_data' => $comment_data,
-                'sentiment_stats' => $sentiment_stats,
                 'hide_layout_h1' => true,
                 'page_title' => $item_data['page_title'] ?: $item_data['name'],
                 'h1_title' => $item_data['h1_title'] ?: $item_data['name'],

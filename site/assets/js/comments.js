@@ -16,7 +16,6 @@ class CommentSystem {
 
         const initialData = window.__COMMENTS_INITIAL_DATA__?.[`${this.targetType}_${this.targetId}`];
         this.comments = options.initialComments || initialData?.comments || [];
-        this.sentiment = initialData?.sentiment || { total: 0, bullish: 0, bearish: 0 };
         this.totalCount = initialData?.total_count || 0;
         this.readOnly = options.readOnly || (this.targetType === 'user_profile');
 
@@ -81,7 +80,6 @@ class CommentSystem {
             const data = await response.json();
             if (data.success) {
                 this.comments = data.comments;
-                this.sentiment = data.sentiment;
                 this.totalCount = data.total_count;
             }
         } catch (error) {
@@ -99,8 +97,6 @@ class CommentSystem {
                     <i data-lucide="message-square" class="text-primary icon-size-6"></i>
                     <h3>نظرات کاربران <span class="comments-count-badge">(${this.toPersianDigits(this.totalCount || this.getTotalCommentCount())})</span></h3>
                 </div>
-
-                ${this.targetType !== 'post' ? this.renderSentimentBar() : ''}
 
                 ${this.renderCommentForm()}
                 ` : ''}
@@ -128,30 +124,6 @@ class CommentSystem {
         return count;
     }
 
-    renderSentimentBar() {
-        const bullishPercent = this.sentiment.total > 0 ? (this.sentiment.bullish / this.sentiment.total * 100) : 50;
-        const bearishPercent = this.sentiment.total > 0 ? (this.sentiment.bearish / this.sentiment.total * 100) : 50;
-
-        return `
-            <div class="sentiment-bar-container">
-                <div class="sentiment-bar-info">
-                    <span class="text-success d-flex align-center gap-1">
-                        <i data-lucide="trending-up" class="icon-size-4"></i>
-                        خوش‌بین (${this.toPersianDigits(Math.round(bullishPercent))}%)
-                    </span>
-                    <span class="text-error d-flex align-center gap-1">
-                        <i data-lucide="trending-down" class="icon-size-4"></i>
-                        بدبین (${this.toPersianDigits(Math.round(bearishPercent))}%)
-                    </span>
-                </div>
-                <div class="sentiment-bar">
-                    <div class="sentiment-bullish" style="width: ${bullishPercent}%"></div>
-                    <div class="sentiment-bearish" style="width: ${bearishPercent}%"></div>
-                </div>
-            </div>
-        `;
-    }
-
     renderCommentForm(parentId = null, initialContent = '') {
         if (!this.isLoggedIn) {
             return `
@@ -165,22 +137,11 @@ class CommentSystem {
             `;
         }
 
-        const showSentiment = !parentId && this.targetType !== 'post';
-
         return `
             <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${parentId || 'main'}">
                 <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید (استفاده از @ برای منشن)..." id="textarea-${parentId || 'main'}">${initialContent}</textarea>
                 <div class="comment-form-footer">
-                    <div class="sentiment-selector">
-                        ${showSentiment ? `
-                            <div class="sentiment-option" data-sentiment="bullish">
-                                <i data-lucide="trending-up" class="w-4 h-4"></i> خوش‌بین
-                            </div>
-                            <div class="sentiment-option" data-sentiment="bearish">
-                                <i data-lucide="trending-down" class="w-4 h-4"></i> بدبین
-                            </div>
-                        ` : '<div></div>'}
-                    </div>
+                    <div></div>
                     <button class="btn btn-primary submit-comment radius-10" data-parent="${parentId || ''}" data-edit="${initialContent ? 'true' : 'false'}">
                         ${initialContent ? 'بروزرسانی نظر' : 'ارسال نظر'}
                     </button>
@@ -235,7 +196,6 @@ class CommentSystem {
                                 <span class="comment-author">
                                     ${c.user_name}
                                     <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
-                                    ${c.sentiment ? `<span class="comment-sentiment-badge ${c.sentiment}" title="${c.sentiment === 'bullish' ? 'خوش‌بین' : 'بدبین'}"></span>` : ''}
                                 </span>
                                 ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline font-size-0-8">${c.target_info.title}</a>` : ''}
                                 <span class="comment-date">${c.created_at_fa || c.created_at}</span>
@@ -318,35 +278,9 @@ class CommentSystem {
         if (countBadge) {
             countBadge.innerText = `(${this.toPersianDigits(this.totalCount)})`;
         }
-
-        if (this.targetType !== 'post') {
-            const bullishPercent = this.sentiment.total > 0 ? (this.sentiment.bullish / this.sentiment.total * 100) : 50;
-            const bearishPercent = this.sentiment.total > 0 ? (this.sentiment.bearish / this.sentiment.total * 100) : 50;
-
-            const bullishText = this.container.querySelector('.text-success');
-            const bearishText = this.container.querySelector('.text-error');
-            if (bullishText) bullishText.innerHTML = `<i data-lucide="trending-up" class="icon-size-4"></i> خوش‌بین (${this.toPersianDigits(Math.round(bullishPercent))}%)`;
-            if (bearishText) bearishText.innerHTML = `<i data-lucide="trending-down" class="icon-size-4"></i> بدبین (${this.toPersianDigits(Math.round(bearishPercent))}%)`;
-
-            const bullishBar = this.container.querySelector('.sentiment-bullish');
-            const bearishBar = this.container.querySelector('.sentiment-bearish');
-            if (bullishBar) bullishBar.style.width = `${bullishPercent}%`;
-            if (bearishBar) bearishBar.style.width = `${bearishPercent}%`;
-
-            if (window.lucide) lucide.createIcons();
-        }
     }
 
     bindEvents() {
-        this.container.querySelectorAll('.sentiment-option').forEach(opt => {
-            opt.onclick = () => {
-                const parent = opt.parentElement;
-                const isSelected = opt.classList.contains('selected');
-                parent.querySelectorAll('.sentiment-option').forEach(o => o.classList.remove('selected'));
-                if (!isSelected) opt.classList.add('selected');
-            };
-        });
-
         this.container.querySelectorAll('.submit-comment').forEach(btn => {
             btn.onclick = async () => {
                 const parentId = btn.dataset.parent || null;
@@ -354,7 +288,6 @@ class CommentSystem {
                 const suffix = parentId || 'main';
                 const textarea = document.getElementById(`textarea-${suffix}`);
                 const content = textarea.value;
-                const sentiment = document.querySelector(`#form-${suffix} .sentiment-option.selected`)?.dataset.sentiment || null;
 
                 if (!content.trim()) return;
 
@@ -372,7 +305,6 @@ class CommentSystem {
                         payload.target_id = this.targetId;
                         payload.target_type = this.targetType;
                         payload.parent_id = parentId;
-                        payload.sentiment = sentiment;
                     }
 
                     const res = await fetch(`/api/comments.php?action=${action}`, {
@@ -422,9 +354,8 @@ class CommentSystem {
                                 list.insertAdjacentHTML('afterbegin', commentHtml);
                             }
 
-                            // Update count and sentiment
+                            // Update count
                             this.totalCount = data.total_count;
-                            this.sentiment = data.sentiment;
                             this.updateStatsUI();
                         }
 
