@@ -11,7 +11,7 @@
                 <div class="sentiment-header">
                     <div class="d-flex align-center gap-05">
                         <div class="sentiment-title-icon">
-                            <i data-lucide="arrow-up-down" class="text-success icon-size-4"></i>
+                            <i data-lucide="trending-up-down" class="icon-size-4"></i>
                         </div>
                         <h3 class="sentiment-title">پیش‌بینی بازار</h3>
                    </div>

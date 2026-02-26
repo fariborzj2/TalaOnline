@@ -1142,7 +1142,7 @@ body.offline-page .sidebar {
 }
 
 .sentiment-content-wrapper {
-    padding: 25px;
+    padding: var(--pd-block);
     position: relative;
 }
 .sentiment-close-btn {
@@ -1283,9 +1283,6 @@ body.offline-page .sidebar {
         border-radius: 20px 20px 0 0;
         border-bottom: none;
         max-width: 100%
-    }
-    .sentiment-content-wrapper {
-        padding: 20px;
     }
     .sentiment-btn {
         padding: 12px;
