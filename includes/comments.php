@@ -15,6 +15,43 @@ class Comments {
     /**
      * Fetch comments for a specific target with pagination
      */
+    /**
+     * Fetch a single comment with full data
+     */
+    public function getComment($id, $user_id = null) {
+        if (!$this->pdo) return null;
+
+        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
+                FROM comments c
+                LEFT JOIN users u ON c.user_id = u.id
+                WHERE c.id = ?";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id]);
+        $c = $stmt->fetch();
+
+        if (!$c) return null;
+
+        $user_reaction = null;
+        if ($user_id) {
+            $stmt = $this->pdo->prepare("SELECT reaction_type FROM comment_reactions WHERE user_id = ? AND comment_id = ?");
+            $stmt->execute([$user_id, $id]);
+            $user_reaction = $stmt->fetchColumn();
+        }
+
+        $c['user_reaction'] = $user_reaction;
+        $c['replies'] = [];
+        $c['content_html'] = $this->parseMentions($c['content']);
+        $c['created_at_fa'] = jalali_date($c['created_at']);
+        $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < 300);
+
+        return $c;
+    }
+
     public function getComments($target_id, $target_type, $user_id = null, $page = 1, $per_page = 20) {
         if (!$this->pdo) return ['comments' => [], 'total_pages' => 0, 'total_count' => 0];
 

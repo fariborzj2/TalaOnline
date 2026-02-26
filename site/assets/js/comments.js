@@ -34,18 +34,11 @@ class CommentSystem {
     }
 
     async init() {
-        // Only load via AJAX if not already present
+        // Strictly non-AJAX for initial load as per requirements
         if (this.container.querySelector('.comment-item')) return;
 
-        this.renderSkeleton();
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                this.loadAndRender();
-                observer.disconnect();
-            }
-        }, { threshold: 0.1 });
-
-        observer.observe(this.container);
+        // If no comments and not rendered by server, we just bind events to the form
+        this.bindEvents();
     }
 
     async loadAndRender() {
@@ -308,6 +301,30 @@ class CommentSystem {
         return num.toString().replace(/\d/g, x => persian[x]);
     }
 
+    updateStatsUI() {
+        const countBadge = this.container.querySelector('.comments-count-badge');
+        if (countBadge) {
+            countBadge.innerText = `(${this.toPersianDigits(this.totalCount)})`;
+        }
+
+        if (this.targetType !== 'post') {
+            const bullishPercent = this.sentiment.total > 0 ? (this.sentiment.bullish / this.sentiment.total * 100) : 50;
+            const bearishPercent = this.sentiment.total > 0 ? (this.sentiment.bearish / this.sentiment.total * 100) : 50;
+
+            const bullishText = this.container.querySelector('.text-success');
+            const bearishText = this.container.querySelector('.text-error');
+            if (bullishText) bullishText.innerHTML = `<i data-lucide="trending-up" class="icon-size-4"></i> خوش‌بین (${this.toPersianDigits(Math.round(bullishPercent))}%)`;
+            if (bearishText) bearishText.innerHTML = `<i data-lucide="trending-down" class="icon-size-4"></i> بدبین (${this.toPersianDigits(Math.round(bearishPercent))}%)`;
+
+            const bullishBar = this.container.querySelector('.sentiment-bullish');
+            const bearishBar = this.container.querySelector('.sentiment-bearish');
+            if (bullishBar) bullishBar.style.width = `${bullishPercent}%`;
+            if (bearishBar) bearishBar.style.width = `${bearishPercent}%`;
+
+            if (window.lucide) lucide.createIcons();
+        }
+    }
+
     bindEvents() {
         this.container.querySelectorAll('.sentiment-option').forEach(opt => {
             opt.onclick = () => {
@@ -357,8 +374,50 @@ class CommentSystem {
                     const data = await res.json();
                     if (data.success) {
                         textarea.value = '';
-                        await this.loadComments();
-                        this.render();
+                        if (isEdit) {
+                            // Update existing comment in DOM
+                            const commentItem = document.getElementById(`comment-${parentId}`);
+                            if (commentItem) {
+                                commentItem.querySelector('.comment-content').innerHTML = data.content_html;
+                                // Update internal state if necessary
+                                const comment = this.findComment(parentId);
+                                if (comment) comment.content = data.content;
+                            }
+                        } else {
+                            // Add new comment to DOM
+                            const commentHtml = this.renderCommentItem(data.comment);
+                            if (parentId) {
+                                // It's a reply
+                                const container = document.getElementById(`reply-form-container-${parentId}`);
+                                container.innerHTML = ''; // Hide form
+
+                                let repliesContainer = document.querySelector(`#comment-wrapper-${parentId} > .replies-container`);
+                                if (!repliesContainer) {
+                                    const wrapper = document.getElementById(`comment-wrapper-${parentId}`);
+                                    repliesContainer = document.createElement('div');
+                                    repliesContainer.className = 'replies-container';
+                                    wrapper.appendChild(repliesContainer);
+                                    wrapper.classList.add('has-replies');
+                                }
+                                repliesContainer.insertAdjacentHTML('beforeend', commentHtml);
+                            } else {
+                                // It's a top-level comment
+                                const list = this.container.querySelector('.comment-list');
+                                // Remove "no comments" message if present
+                                if (list.querySelector('.text-gray-400')) {
+                                    list.innerHTML = '';
+                                }
+                                list.insertAdjacentHTML('afterbegin', commentHtml);
+                            }
+
+                            // Update count and sentiment
+                            this.totalCount = data.total_count;
+                            this.sentiment = data.sentiment;
+                            this.updateStatsUI();
+                        }
+
+                        if (window.lucide) lucide.createIcons();
+                        this.bindEvents(); // Re-bind events for new elements
                     } else {
                         alert(data.message);
                     }
@@ -407,8 +466,30 @@ class CommentSystem {
                     });
                     const data = await res.json();
                     if (data.success) {
-                        await this.loadComments();
-                        this.render();
+                        // Update DOM directly
+                        const commentId = id;
+                        const counts = data.counts;
+                        const userReaction = data.user_reaction;
+
+                        const comment = this.findComment(commentId);
+                        if (comment) {
+                            comment.likes = counts.likes;
+                            comment.dislikes = counts.dislikes;
+                            comment.hearts = counts.hearts;
+                            comment.fires = counts.fires;
+                            comment.user_reaction = userReaction;
+                        }
+
+                        const pill = document.querySelector(`#comment-${commentId} .reaction-pill`);
+                        if (pill) {
+                            pill.innerHTML = `
+                                ${this.renderReaction({id: commentId, likes: counts.likes, user_reaction: userReaction}, 'like', '👍')}
+                                ${this.renderReaction({id: commentId, hearts: counts.hearts, user_reaction: userReaction}, 'heart', '❤️')}
+                                ${this.renderReaction({id: commentId, fires: counts.fires, user_reaction: userReaction}, 'fire', '🔥')}
+                                ${this.renderReaction({id: commentId, dislikes: counts.dislikes, user_reaction: userReaction}, 'dislike', '👎')}
+                            `;
+                            this.bindEvents(); // Re-bind for new reaction items
+                        }
                     }
                 } catch (error) {
                     console.error(error);

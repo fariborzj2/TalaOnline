@@ -77,7 +77,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id) {
             record_rate_limit_attempt('comment', 'ip', $ip);
             record_rate_limit_attempt('comment', 'user', $user_id);
-            echo json_encode(['success' => true, 'id' => $id, 'message' => 'نظر شما با موفقیت ثبت شد.']);
+
+            // Fetch the full comment data to return for AJAX insertion
+            $new_comment = $comments_handler->getComment($id, $user_id);
+            $sentiment_stats = $comments_handler->getSentimentStats($target_id, $target_type);
+            $total_count = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND status = 'approved'");
+            $total_count->execute([$target_id, $target_type]);
+            $count = $total_count->fetchColumn();
+
+            echo json_encode([
+                'success' => true,
+                'id' => $id,
+                'comment' => $new_comment,
+                'sentiment' => $sentiment_stats,
+                'total_count' => $count,
+                'message' => 'نظر شما با موفقیت ثبت شد.'
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'خطا در ثبت نظر.']);
         }
@@ -88,7 +103,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $comment_id = $input['comment_id'] ?? 0;
         $reaction_type = $input['reaction_type'] ?? null;
         $success = $comments_handler->react($user_id, $comment_id, $reaction_type);
-        echo json_encode(['success' => $success]);
+        if ($success) {
+            $stmt = $pdo->prepare("SELECT
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'like') as likes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'dislike') as dislikes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'heart') as hearts,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'fire') as fires");
+            $stmt->execute([$comment_id, $comment_id, $comment_id, $comment_id]);
+            $counts = $stmt->fetch();
+            echo json_encode(['success' => true, 'counts' => $counts, 'user_reaction' => $reaction_type]);
+        } else {
+            echo json_encode(['success' => false]);
+        }
         exit;
     }
 
@@ -105,7 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $content = $input['content'] ?? '';
         $success = $comments_handler->updateComment($user_id, $comment_id, $content);
         if ($success) {
-            echo json_encode(['success' => true, 'message' => 'نظر ویرایش شد.']);
+            $content_html = $comments_handler->parseMentions($content);
+            echo json_encode(['success' => true, 'message' => 'نظر ویرایش شد.', 'content_html' => $content_html, 'content' => $content]);
         } else {
             echo json_encode(['success' => false, 'message' => 'امکان ویرایش این نظر وجود ندارد (زمان سپری شده است یا نظر متعلق به شما نیست).']);
         }
