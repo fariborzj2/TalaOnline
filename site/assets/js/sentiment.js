@@ -28,6 +28,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const response = await fetch(`/api/sentiment.php?action=get_results&currency_id=${currencyId}`);
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status}`);
+            }
+
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new Error("Invalid content type received");
+            }
+
             const data = await response.json();
 
             if (data.success) {
@@ -91,6 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({ currency_id: currencyId, vote: vote })
             });
+
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status}`);
+            }
+
             const data = await response.json();
             if (data.success) {
                 updateUI(data);
