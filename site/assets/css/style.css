@@ -1122,7 +1122,7 @@ body.offline-page .sidebar {
 .sentiment-bottom-sheet {
     background: var(--color-block);
     width: 100%;
-    max-width: 500px;
+    max-width: 350px;
     border-radius: 20px;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1), 0 15px 25px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--color-border);
@@ -1146,9 +1146,6 @@ body.offline-page .sidebar {
     position: relative;
 }
 .sentiment-close-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
     background: var(--color-secondary);
     border-radius: 50%;
     width: 32px;
@@ -1164,13 +1161,12 @@ body.offline-page .sidebar {
     background: var(--color-border);
     color: var(--color-title);
 }
-
 .sentiment-header {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
-    justify-content: center;
+    justify-content: space-between;
 }
 .sentiment-title-icon {
     display: flex;
@@ -1178,7 +1174,6 @@ body.offline-page .sidebar {
 }
 .sentiment-title {
     font-size: 1.1rem;
-    font-weight: 800;
     color: var(--color-title);
 }
 
@@ -1189,23 +1184,19 @@ body.offline-page .sidebar {
     margin-bottom: 25px;
     color: var(--color-text);
 }
-.sentiment-question strong {
-    font-weight: 800;
-}
-
 .sentiment-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 10px;
 }
 .sentiment-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 14px;
-    border-radius: 12px;
-    font-size: 1rem;
+    padding: 5px 14px;
+    border-radius: 8px;
+    height: 40px;
     transition: all 0.2s;
 }
 .bullish-btn {
@@ -1234,11 +1225,9 @@ body.offline-page .sidebar {
     font-size: 0.9rem;
 }
 .sentiment-progress-bar {
-    height: 10px;
+    height: 8px;
     background: var(--color-secondary);
-    border-radius: 99px;
     display: flex;
-    overflow: hidden;
 }
 .sentiment-bar-segment {
     height: 100%;
@@ -1250,9 +1239,13 @@ body.offline-page .sidebar {
 }
 .sentiment-bar-segment.bullish {
     background: var(--color-primary);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 .sentiment-bar-segment.bearish {
     background: var(--color-error);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 .sentiment-percentage-labels {
     display: flex;
@@ -1264,10 +1257,10 @@ body.offline-page .sidebar {
 .sentiment-bar-segment.user-selection::after {
     content: '';
     position: absolute;
-    top: -4px;
+    top: -2px;
     left: 0;
     right: 0;
-    height: 18px;
+    height: 8px;
     border: 2px solid var(--color-white);
     border-radius: 99px;
     box-shadow: 0 0 0 2px var(--color-title);
@@ -1289,6 +1282,7 @@ body.offline-page .sidebar {
     .sentiment-bottom-sheet {
         border-radius: 20px 20px 0 0;
         border-bottom: none;
+        max-width: 100%
     }
     .sentiment-content-wrapper {
         padding: 20px;
