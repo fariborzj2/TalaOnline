@@ -341,18 +341,6 @@ if (file_exists($config_file)) {
                 $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_id)");
                 $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comment_reactions_lookup ON comment_reactions(comment_id, reaction_type)");
                 $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comment_reactions_user ON comment_reactions(user_id)");
-
-                // Market Sentiment Table (Independent)
-                $pdo->exec("CREATE TABLE IF NOT EXISTS `market_sentiment` (
-                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                    `currency_id` VARCHAR(100) NOT NULL,
-                    `user_id` INTEGER DEFAULT NULL,
-                    `ip_address` VARCHAR(45) NOT NULL,
-                    `vote` VARCHAR(20) NOT NULL, -- 'bullish' or 'bearish'
-                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
-                )");
-                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_sentiment_lookup ON market_sentiment(currency_id, created_at)");
             } else {
                 $pdo->exec("CREATE TABLE IF NOT EXISTS `comments` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -381,22 +369,10 @@ if (file_exists($config_file)) {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
                 // Comment System Indexes
-                $pdo->exec("CREATE INDEX idx_comments_target ON comments(target_id, target_type, status)");
-                $pdo->exec("CREATE INDEX idx_comments_parent ON comments(parent_id)");
-                $pdo->exec("CREATE INDEX idx_comment_reactions_lookup ON comment_reactions(comment_id, reaction_type)");
-                $pdo->exec("CREATE INDEX idx_comment_reactions_user ON comment_reactions(user_id)");
-
-                // Market Sentiment Table (Independent)
-                $pdo->exec("CREATE TABLE IF NOT EXISTS `market_sentiment` (
-                    `id` INT AUTO_INCREMENT PRIMARY KEY,
-                    `currency_id` VARCHAR(100) NOT NULL,
-                    `user_id` INT DEFAULT NULL,
-                    `ip_address` VARCHAR(45) NOT NULL,
-                    `vote` VARCHAR(20) NOT NULL, -- 'bullish' or 'bearish'
-                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
-                $pdo->exec("CREATE INDEX idx_sentiment_lookup ON market_sentiment(currency_id, created_at)");
+                try { $pdo->exec("CREATE INDEX idx_comments_target ON comments(target_id, target_type, status)"); } catch (Exception $e) {}
+                try { $pdo->exec("CREATE INDEX idx_comments_parent ON comments(parent_id)"); } catch (Exception $e) {}
+                try { $pdo->exec("CREATE INDEX idx_comment_reactions_lookup ON comment_reactions(comment_id, reaction_type)"); } catch (Exception $e) {}
+                try { $pdo->exec("CREATE INDEX idx_comment_reactions_user ON comment_reactions(user_id)"); } catch (Exception $e) {}
             }
 
             if (!in_array('points', $cols)) {
@@ -472,6 +448,34 @@ if (file_exists($config_file)) {
                 $pdo->exec("UPDATE users SET role_id = $super_admin_id WHERE role = 'admin'");
             }
 
+        } catch (Exception $e) {}
+
+        // Independent Market Sentiment Table (Ensured to run even if other migrations fail)
+        try {
+            $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+            if ($driver === 'sqlite') {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `market_sentiment` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `currency_id` VARCHAR(100) NOT NULL,
+                    `user_id` INTEGER DEFAULT NULL,
+                    `ip_address` VARCHAR(45) NOT NULL,
+                    `vote` VARCHAR(20) NOT NULL,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )");
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_sentiment_lookup ON market_sentiment(currency_id, created_at)");
+            } else {
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `market_sentiment` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `currency_id` VARCHAR(100) NOT NULL,
+                    `user_id` INT DEFAULT NULL,
+                    `ip_address` VARCHAR(45) NOT NULL,
+                    `vote` VARCHAR(20) NOT NULL,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                try { $pdo->exec("CREATE INDEX idx_sentiment_lookup ON market_sentiment(currency_id, created_at)"); } catch (Exception $e) {}
+            }
         } catch (Exception $e) {}
     }
 } else {
