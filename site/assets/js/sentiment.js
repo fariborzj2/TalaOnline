@@ -37,7 +37,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error("Invalid content type received");
             }
 
-            const data = await response.json();
+            let data;
+            const text = await response.text();
+            try {
+                data = JSON.parse(text);
+            } catch (parseErr) {
+                console.error('Sentiment API response is not valid JSON. First 500 chars:', text.substring(0, 500));
+
+                // Attempt to recover if there is leading garbage
+                const firstBrace = text.indexOf('{');
+                if (firstBrace > 0) {
+                    try {
+                        data = JSON.parse(text.substring(firstBrace));
+                        console.warn('Recovered JSON data by bypassing leading garbage.');
+                    } catch (e) {
+                        throw parseErr;
+                    }
+                } else {
+                    throw parseErr;
+                }
+            }
 
             if (data.success) {
                 updateUI(data);
@@ -105,7 +124,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`Server returned ${response.status}`);
             }
 
-            const data = await response.json();
+            let data;
+            const text = await response.text();
+            try {
+                data = JSON.parse(text);
+            } catch (parseErr) {
+                console.error('Sentiment API response is not valid JSON. First 500 chars:', text.substring(0, 500));
+
+                const firstBrace = text.indexOf('{');
+                if (firstBrace > 0) {
+                    try {
+                        data = JSON.parse(text.substring(firstBrace));
+                        console.warn('Recovered JSON data by bypassing leading garbage.');
+                    } catch (e) {
+                        throw parseErr;
+                    }
+                } else {
+                    throw parseErr;
+                }
+            }
+
             if (data.success) {
                 updateUI(data);
                 // After vote, if it was prediction mode, it will switch to result mode automatically via updateUI
