@@ -27,8 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
 
         $data = $comments_handler->getComments($target_id, $target_type, $user_id, $page, $per_page);
-        $sentiment = $comments_handler->getSentimentStats($target_id, $target_type);
-        echo json_encode(array_merge(['success' => true, 'sentiment' => $sentiment], $data));
+        echo json_encode(array_merge(['success' => true], $data));
         exit;
     }
 }
@@ -66,21 +65,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $target_type = $input['target_type'] ?? '';
         $content = $input['content'] ?? '';
         $parent_id = $input['parent_id'] ?? null;
-        $sentiment = $input['sentiment'] ?? null;
 
         if (empty($content)) {
             echo json_encode(['success' => false, 'message' => 'متن نظر نمی‌تواند خالی باشد.']);
             exit;
         }
 
-        $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id, $sentiment);
+        $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id);
         if ($id) {
             record_rate_limit_attempt('comment', 'ip', $ip);
             record_rate_limit_attempt('comment', 'user', $user_id);
 
             // Fetch the full comment data to return for AJAX insertion
             $new_comment = $comments_handler->getComment($id, $user_id);
-            $sentiment_stats = $comments_handler->getSentimentStats($target_id, $target_type);
             $total_count = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND status = 'approved'");
             $total_count->execute([$target_id, $target_type]);
             $count = $total_count->fetchColumn();
@@ -89,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'success' => true,
                 'id' => $id,
                 'comment' => $new_comment,
-                'sentiment' => $sentiment_stats,
                 'total_count' => $count,
                 'message' => 'نظر شما با موفقیت ثبت شد.'
             ]);

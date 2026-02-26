@@ -238,11 +238,11 @@ class Comments {
     /**
      * Add a new comment
      */
-    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $sentiment = null) {
+    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null) {
         if (!$this->pdo) return false;
 
-        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, sentiment) VALUES (?, ?, ?, ?, ?, ?)");
-        $success = $stmt->execute([$user_id, $target_id, $target_type, $content, $parent_id, $sentiment]);
+        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id) VALUES (?, ?, ?, ?, ?)");
+        $success = $stmt->execute([$user_id, $target_id, $target_type, $content, $parent_id]);
 
         if ($success) {
             $comment_id = $this->pdo->lastInsertId();
@@ -326,22 +326,6 @@ class Comments {
             return $stmt->execute([$content, $comment_id]);
         }
         return false;
-    }
-
-    /**
-     * Get aggregate sentiment for a target
-     */
-    public function getSentimentStats($target_id, $target_type) {
-        if (!$this->pdo) return ['total' => 0, 'bullish' => 0, 'bearish' => 0];
-
-        $stmt = $this->pdo->prepare("SELECT
-            COUNT(*) as total,
-            SUM(CASE WHEN sentiment = 'bullish' THEN 1 ELSE 0 END) as bullish,
-            SUM(CASE WHEN sentiment = 'bearish' THEN 1 ELSE 0 END) as bearish
-            FROM comments
-            WHERE target_id = ? AND target_type = ? AND sentiment IS NOT NULL AND status = 'approved'");
-        $stmt->execute([$target_id, $target_type]);
-        return $stmt->fetch();
     }
 
     /**
