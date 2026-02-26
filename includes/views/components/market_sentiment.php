@@ -20,7 +20,7 @@
                    <h3 class="sentiment-title">پیش‌بینی بازار</h3>
                 </div>
 
-                <p class="sentiment-question">تحلیل روند قیمت <strong class="text-primary"><?= htmlspecialchars($target_name) ?></strong> امروز چطور پیش‌بینی می‌کنید: صعود یا نزول؟</p>
+                <p class="sentiment-question"><strong class="text-primary"><?= htmlspecialchars($target_name) ?></strong> بر سر دوراهی؛ صعود یا نزول؟ پیش‌بینی شما از قیمت امروز چیست؟</p>
 
                 <div class="sentiment-actions">
                     <button class="sentiment-btn bearish-btn" data-vote="bearish">
