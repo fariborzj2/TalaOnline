@@ -1,9 +1,7 @@
-<?php
+<?php ob_start();
 /**
  * Market Sentiment API
  */
-
-ob_start(); // Start buffering all output
 
 require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
@@ -68,7 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Ensure no previous output (like warnings) breaks the JSON response
-if (ob_get_level()) ob_clean();
+while (ob_get_level() > 1) {
+    ob_end_clean();
+}
+ob_clean();
 
 header('Content-Type: application/json; charset=utf-8');
 echo json_encode($response, JSON_UNESCAPED_UNICODE);

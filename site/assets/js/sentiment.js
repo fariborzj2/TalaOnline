@@ -42,8 +42,20 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 data = JSON.parse(text);
             } catch (parseErr) {
-                console.error('Sentiment API response is not valid JSON:', text.substring(0, 200));
-                throw parseErr;
+                console.error('Sentiment API response is not valid JSON. First 500 chars:', text.substring(0, 500));
+
+                // Attempt to recover if there is leading garbage
+                const firstBrace = text.indexOf('{');
+                if (firstBrace > 0) {
+                    try {
+                        data = JSON.parse(text.substring(firstBrace));
+                        console.warn('Recovered JSON data by bypassing leading garbage.');
+                    } catch (e) {
+                        throw parseErr;
+                    }
+                } else {
+                    throw parseErr;
+                }
             }
 
             if (data.success) {
@@ -117,8 +129,19 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 data = JSON.parse(text);
             } catch (parseErr) {
-                console.error('Sentiment API response is not valid JSON:', text.substring(0, 200));
-                throw parseErr;
+                console.error('Sentiment API response is not valid JSON. First 500 chars:', text.substring(0, 500));
+
+                const firstBrace = text.indexOf('{');
+                if (firstBrace > 0) {
+                    try {
+                        data = JSON.parse(text.substring(firstBrace));
+                        console.warn('Recovered JSON data by bypassing leading garbage.');
+                    } catch (e) {
+                        throw parseErr;
+                    }
+                } else {
+                    throw parseErr;
+                }
             }
 
             if (data.success) {
