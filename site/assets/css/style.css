@@ -1103,3 +1103,200 @@ body.offline-page .sidebar {
     pointer-events: none;
     cursor: default;
 }
+
+/* Market Sentiment Bottom Sheet */
+#market-sentiment-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    padding: 0 15px 15px;
+}
+#market-sentiment-container.active {
+    pointer-events: auto;
+}
+.sentiment-bottom-sheet {
+    background: var(--color-block);
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1), 0 15px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-border);
+    position: relative;
+    animation: sentiment-slide-up 0.5s cubic-bezier(0.36, 1, 0.66, 1);
+}
+@keyframes sentiment-slide-up {
+    from { transform: translateY(120%); }
+    to { transform: translateY(0); }
+}
+#market-sentiment-container.closing .sentiment-bottom-sheet {
+    animation: sentiment-slide-down 0.4s cubic-bezier(0.36, 1, 0.66, 1) forwards;
+}
+@keyframes sentiment-slide-down {
+    from { transform: translateY(0); }
+    to { transform: translateY(120%); }
+}
+
+.sentiment-content-wrapper {
+    padding: 25px;
+    position: relative;
+}
+.sentiment-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--color-secondary);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-gray);
+    transition: all 0.2s;
+    z-index: 10;
+}
+.sentiment-close-btn:hover {
+    background: var(--color-border);
+    color: var(--color-title);
+}
+
+.sentiment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+.sentiment-title-icon {
+    display: flex;
+    gap: 4px;
+}
+.sentiment-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--color-title);
+}
+
+.sentiment-question, .sentiment-result-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--color-text);
+}
+.sentiment-question strong {
+    font-weight: 800;
+}
+
+.sentiment-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.sentiment-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+.bullish-btn {
+    background: var(--color-primary);
+    color: white;
+}
+.bullish-btn:hover {
+    background: #1e857c;
+}
+.bearish-btn {
+    background: var(--color-error);
+    color: white;
+}
+.bearish-btn:hover {
+    background: #b01a1a;
+}
+
+/* Results Mode */
+.sentiment-progress-container {
+    margin-bottom: 20px;
+}
+.sentiment-progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+.sentiment-progress-bar {
+    height: 10px;
+    background: var(--color-secondary);
+    border-radius: 99px;
+    display: flex;
+    overflow: hidden;
+}
+.sentiment-bar-segment {
+    height: 100%;
+    transition: width 0.8s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.sentiment-bar-segment.bullish {
+    background: var(--color-primary);
+}
+.sentiment-bar-segment.bearish {
+    background: var(--color-error);
+}
+.sentiment-percent {
+    position: absolute;
+    top: 15px;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+.sentiment-bar-segment.bullish .sentiment-percent { color: var(--color-primary); right: 0; }
+.sentiment-bar-segment.bearish .sentiment-percent { color: var(--color-error); left: 0; }
+
+.sentiment-bar-segment.user-selection::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 18px;
+    border: 2px solid var(--color-white);
+    border-radius: 99px;
+    box-shadow: 0 0 0 2px var(--color-title);
+    z-index: 5;
+}
+
+.sentiment-footer {
+    border-top: 1px solid var(--color-border);
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media (max-width: 600px) {
+    #market-sentiment-container {
+        padding: 0 0 env(safe-area-inset-bottom);
+    }
+    .sentiment-bottom-sheet {
+        border-radius: 20px 20px 0 0;
+        border-bottom: none;
+    }
+    .sentiment-content-wrapper {
+        padding: 20px;
+    }
+    .sentiment-btn {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+}
