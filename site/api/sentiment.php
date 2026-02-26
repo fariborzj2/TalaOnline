@@ -3,6 +3,9 @@
  * Market Sentiment API
  */
 
+// Ensure no previous output (like warnings) breaks the JSON response
+if (ob_get_level()) ob_clean();
+
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../includes/db.php';
