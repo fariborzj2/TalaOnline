@@ -465,7 +465,7 @@ class Comments {
      */
     private function extractMentionedUsers($content, $userMap) {
         preg_match_all('/\[user:(\d+)\]/', $content, $matches);
-        $userIds = array_unique($matches[1]);
+        $userIds = array_values(array_unique($matches[1]));
         $mentions = [];
         foreach ($userIds as $uid) {
             if (isset($userMap[$uid])) {
@@ -480,7 +480,7 @@ class Comments {
      */
     private function convertMentionsToPlaceholders($content) {
         preg_match_all('/@([a-zA-Z0-9_]+)/', $content, $matches);
-        $usernames = array_unique($matches[1]);
+        $usernames = array_values(array_unique($matches[1]));
 
         foreach ($usernames as $username) {
             $stmt = $this->pdo->prepare("SELECT id FROM users WHERE LOWER(username) = LOWER(?)");
@@ -514,7 +514,7 @@ class Comments {
             }
         }
 
-        $userIds = array_unique($userIds);
+        $userIds = array_values(array_unique($userIds));
         if (empty($userIds)) return [];
 
         $placeholders = implode(',', array_fill(0, count($userIds), '?'));
@@ -561,7 +561,7 @@ class Comments {
     private function handleMentions($content, $comment_id, $sender_id) {
         // 1. Handle [user:ID] placeholders
         preg_match_all('/\[user:(\d+)\]/', $content, $matches);
-        $userIds = array_unique($matches[1]);
+        $userIds = array_values(array_unique($matches[1]));
 
         foreach ($userIds as $uid) {
             if ($uid != $sender_id) {
@@ -571,7 +571,7 @@ class Comments {
 
         // 2. Legacy Support: Handle @username mentions that weren't converted (just in case)
         preg_match_all('/@([a-zA-Z0-9_]+)/', $content, $matches);
-        $usernames = array_unique($matches[1]);
+        $usernames = array_values(array_unique($matches[1]));
 
         foreach ($usernames as $username) {
             $stmt = $this->pdo->prepare("SELECT id, email, name FROM users WHERE LOWER(username) = LOWER(?)");
