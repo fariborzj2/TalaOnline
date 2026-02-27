@@ -275,61 +275,9 @@ $router->add('/profile/:identifier', function($params) {
         exit;
     }
 
-    if (!$user) {
-        ErrorHandler::renderError(404, 'کاربر پیدا نشد', 'کاربری با این مشخصات یافت نشد.');
-    }
-    $viewer_id = $_SESSION['user_id'] ?? null;
-
-    // Fetch Follow Stats
-    $follower_count = 0;
-    $following_count = 0;
-    $is_following = false;
-
-    try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE following_id = ?");
-        $stmt->execute([$user['id']]);
-        $follower_count = $stmt->fetchColumn();
-
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ?");
-        $stmt->execute([$user['id']]);
-        $following_count = $stmt->fetchColumn();
-
-        if (isset($_SESSION['user_id']) && !$is_owner) {
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ? AND following_id = ?");
-            $stmt->execute([$_SESSION['user_id'], $user['id']]);
-            $is_following = ($stmt->fetchColumn() > 0);
-        }
-    } catch (Exception $e) {}
-
-    // Fetch User Comments
-    require_once __DIR__ . '/comments.php';
-    $comments_handler = new Comments($pdo);
-    $user_comments = $comments_handler->getUserComments($user['id'], $viewer_id);
-
-    return View::renderPage('profile_unified', [
-        'user' => $user,
-        'is_owner' => $is_owner,
-        'follower_count' => $follower_count,
-        'following_count' => $following_count,
-        'is_following' => $is_following,
-        'user_comments' => $user_comments,
-        'page_title' => 'پروفایل ' . $user['name']
-    ]);
+    ErrorHandler::renderError(404, 'کاربر پیدا نشد', 'کاربری با این مشخصات یافت نشد.');
 });
 
-$router->add('/profile', function() {
-    ensure_session();
-    if (!isset($_SESSION['user_id'])) {
-        header('Location: /');
-        exit;
-    }
-
-    $id = $_SESSION['user_id'];
-    $username = $_SESSION['user_username'] ?? 'user';
-
-    header('Location: /profile/' . $id . '/' . urlencode($username));
-    exit;
-});
 
 // Blog Routes
 $router->add('/blog', function() {

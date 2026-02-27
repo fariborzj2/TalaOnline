@@ -411,11 +411,16 @@
                 </div>
 
                 <div class="w-full d-column gap-05 border-top pt-1-5">
-                    <a href="/profile" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
+                    <?php
+                    $logged_user_id = $_SESSION['user_id'] ?? 0;
+                    $logged_username = $_SESSION['user_username'] ?? 'user';
+                    $profile_url = "/profile/$logged_user_id/" . urlencode($logged_username);
+                    ?>
+                    <a href="<?= $profile_url ?>" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
                         <i data-lucide="user" class="icon-size-4"></i>
                         <span class="font-bold">مشاهده پروفایل</span>
                     </a>
-                    <a href="/profile?tab=edit" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
+                    <a href="<?= $profile_url ?>?tab=edit" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
                         <i data-lucide="settings" class="icon-size-4"></i>
                         <span class="font-bold">تنظیمات حساب</span>
                     </a>

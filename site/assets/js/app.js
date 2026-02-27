@@ -322,6 +322,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (profileName) profileName.textContent = authState.user.name;
             if (profileEmail) profileEmail.textContent = authState.user.email;
+
+            // Update profile links in modal
+            const profileLink = profileModal.querySelector('a[href*="/profile/"]');
+            if (profileLink && authState.user.id) {
+                const baseUrl = `/profile/${authState.user.id}/${encodeURIComponent(authState.user.username || 'user')}`;
+                profileLink.href = baseUrl;
+                const settingsLink = profileModal.querySelector('a[href*="?tab=edit"]');
+                if (settingsLink) settingsLink.href = baseUrl + '?tab=edit';
+            }
+
             if (profileAvatar && authState.user.avatar) {
                 profileAvatar.innerHTML = `<img src="${authState.user.avatar}" class="w-full h-full object-cover radius-50">`;
             }
