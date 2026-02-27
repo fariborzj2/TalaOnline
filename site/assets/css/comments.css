@@ -194,9 +194,9 @@
 
 .reply-preview-block {
     background-color: #f8fafc;
-    border-right: 4px solid #249E94;
+    border-right: 3px solid #249E94;
     padding: 8px 12px;
-    border-radius: 4px 12px 12px 4px;
+    border-radius: 4px;
     margin-bottom: 12px;
     font-size: 0.85rem;
     cursor: default;
@@ -207,6 +207,8 @@
     color: #249E94;
     font-weight: 700;
     margin-bottom: 2px;
+    direction: ltr;
+    text-align: right;
 }
 
 .reply-preview-content {
@@ -215,32 +217,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-}
-
-[dir="rtl"] .reply-preview-block {
-    border-right: 4px solid #249E94;
-    border-left: none;
-    border-radius: 4px 12px 12px 4px;
-}
-
-.replying-to-text.ltr {
-    direction: ltr;
-    display: inline-block;
-}
-
-.comment-content.ltr-content {
-    direction: ltr;
-    text-align: left;
-}
-
-.comment-body-text {
-    direction: rtl;
-    text-align: right;
-}
-
-.comment-content.ltr-content .comment-body-text {
-    direction: rtl;
-    text-align: right;
 }
 
 .comment-footer {

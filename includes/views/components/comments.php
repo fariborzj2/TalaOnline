@@ -26,7 +26,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
     ?>
     <div class="comment-wrapper <?= $has_replies ? 'has-replies' : '' ?>" id="comment-wrapper-<?= $c['id'] ?>">
         <div class="comment-item <?= $is_expert ? 'is-expert' : '' ?> <?= $is_reply ? 'is-reply' : '' ?>" id="comment-<?= $c['id'] ?>">
-            <div class="comment-header ltr-meta">
+            <div class="comment-header">
                 <div class="comment-user-info">
                     <div class="avatar-container">
                         <img src="<?= htmlspecialchars($avatar) ?>" class="comment-avatar" alt="<?= htmlspecialchars($c['user_name']) ?>" onerror="this.src='<?= $default_avatar ?>'">
@@ -37,14 +37,9 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                             <?= htmlspecialchars($c['user_name']) ?>
                             <span class="user-level-badge level-<?= $c['user_level'] ?>">سطح <?= $c['user_level'] ?></span>
                         </span>
-                        <?php if (isset($c['reply_to_username']) && $c['reply_to_username']): ?>
-                            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1 ltr">
-                                در پاسخ به <a href="/profile/<?= $c['reply_to_username'] ?>" class="text-primary hover-underline">@<?= $c['reply_to_username'] ?></a>
-                            </span>
-                        <?php endif; ?>
                         <?php if (isset($c['target_info']) && $c['target_info']): ?>
                             <span class="text-gray-400 font-size-0-8 mx-1">در</span>
-                            <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline font-size-0-8"><?= htmlspecialchars($c['target_info']['title']) ?></a>
+                            <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline d-inline-block ltr font-size-0-8"><?= htmlspecialchars($c['target_info']['title']) ?></a>
                         <?php endif; ?>
                         <span class="comment-date"><?= jalali_date($c['created_at']) ?></span>
                     </div>
@@ -60,10 +55,10 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                 </div>
             </div>
 
-            <div class="comment-content ltr-content">
+            <div class="comment-content">
                 <?php if (!empty($c['reply_to_content'])): ?>
                     <div class="reply-preview-block">
-                        <div class="reply-preview-author">@<?= htmlspecialchars($c['reply_to_username'] ?? 'user') ?></div>
+                        <div class="">در پاسخ به <span class="reply-preview-author">@<?= htmlspecialchars($c['reply_to_username'] ?? 'user') ?></span></div>
                         <div class="reply-preview-content"><?= htmlspecialchars(mb_substr($c['reply_to_content'], 0, 100)) . (mb_strlen($c['reply_to_content']) > 100 ? '...' : '') ?></div>
                     </div>
                 <?php endif; ?>

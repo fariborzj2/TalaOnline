@@ -181,8 +181,8 @@ class CommentSystem {
         }
 
         const replyingTo = c.reply_to_username ? `
-            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1 ltr">
-                در پاسخ به <a href="/profile/${c.reply_to_username}" class="text-primary hover-underline">@${c.reply_to_username}</a>
+            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1">
+                در پاسخ به <a href="/profile/${c.reply_to_username}" class="text-primary hover-underline d-inline-block ltr">@${c.reply_to_username}</a>
             </span>
         ` : '';
 
@@ -196,7 +196,7 @@ class CommentSystem {
         return `
             <div class="comment-wrapper ${hasReplies ? 'has-replies' : ''}" id="comment-wrapper-${c.id}">
                 <div class="comment-item ${isExpert ? 'is-expert' : ''} ${isReply ? 'is-reply' : ''}" id="comment-${c.id}">
-                    <div class="comment-header ltr-meta">
+                    <div class="comment-header">
                         <div class="comment-user-info">
                             <div class="avatar-container">
                                 <img src="${avatarUrl}"
@@ -211,7 +211,7 @@ class CommentSystem {
                                     <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
                                 </span>
                                 ${replyingTo}
-                                ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline font-size-0-8">${c.target_info.title}</a>` : ''}
+                                ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline d-inline-block ltr font-size-0-8">${c.target_info.title}</a>` : ''}
                                 <span class="comment-date">${c.created_at_fa || c.created_at}</span>
                             </div>
                         </div>
@@ -224,7 +224,7 @@ class CommentSystem {
                         </div>
                     </div>
 
-                    <div class="comment-content ltr-content">
+                    <div class="comment-content">
                         ${replyPreview}
                         <div class="comment-body-text">${c.content_html}</div>
                         ${isExpert ? `<div class="attachment-btn"><i data-lucide="file-text" class="icon-size-4"></i> مشاهده پیوست</div>` : ''}
