@@ -182,7 +182,7 @@ class CommentSystem {
 
         const replyPreview = c.reply_to_content ? `
             <div class="reply-preview-block">
-                <div>در پاسخ به <span class="reply-preview-author">@${c.reply_to_username || 'user'}</span></div>
+                <div>در پاسخ به <a href="/profile/${c.reply_to_user_id}/${c.reply_to_username || 'user'}" class="reply-preview-author">@${c.reply_to_username || 'user'}</a></div>
                 <div class="reply-preview-content">${c.reply_to_content.substring(0, 100)}${c.reply_to_content.length > 100 ? '...' : ''}</div>
             </div>
         ` : '';
@@ -200,10 +200,10 @@ class CommentSystem {
                                 <div class="online-dot"></div>
                             </div>
                             <div class="comment-meta">
-                                <span class="comment-author">
+                                <a href="/profile/${c.user_id}/${c.user_username || 'user'}" class="comment-author">
                                     ${c.user_name}
                                     <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
-                                </span>
+                                </a>
                                 ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline d-inline-block ltr font-size-0-8">${c.target_info.title}</a>` : ''}
                                 <span class="comment-date">${c.created_at_fa || c.created_at}</span>
                             </div>

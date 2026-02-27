@@ -574,7 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     container.innerHTML = '<p class="text-center text-gray py-4">لیست خالی است.</p>';
                 } else {
                     container.innerHTML = data.users.map(u => `
-                        <a href="/profile/${u.username}" class="user-row">
+                        <a href="/profile/${u.id}/${u.username}" class="user-row">
                             <img src="${u.avatar || '/assets/images/default-avatar.png'}" alt="${u.name}" onerror="this.src='/assets/images/default-avatar.png'">
                             <div class="grow-1">
                                 <div class="font-bold text-title">${u.name}</div>
@@ -596,18 +596,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (followersTrigger) {
         followersTrigger.onclick = () => {
             const pathParts = window.location.pathname.split('/').filter(p => p !== '');
-            const username = pathParts[pathParts.length - 1];
+            // For /profile/ID/slug, username is still the identifier used by the API currently
+            const identifier = pathParts[pathParts.length - 1];
             openModal(followersModal);
-            loadUserList('get_followers', username, 'followers-list');
+            loadUserList('get_followers', identifier, 'followers-list');
         };
     }
 
     if (followingTrigger) {
         followingTrigger.onclick = () => {
             const pathParts = window.location.pathname.split('/').filter(p => p !== '');
-            const username = pathParts[pathParts.length - 1];
+            const identifier = pathParts[pathParts.length - 1];
             openModal(followingModal);
-            loadUserList('get_following', username, 'following-list');
+            loadUserList('get_following', identifier, 'following-list');
         };
     }
 
