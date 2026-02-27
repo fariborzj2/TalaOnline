@@ -232,6 +232,14 @@ $router->add('/profile/:identifier/:slug', function($params) {
     $comments_handler = new Comments($pdo);
     $user_comments = $comments_handler->getUserComments($user['id'], $viewer_id);
 
+    // Fetch total comment count for stats
+    $comment_count = 0;
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE user_id = ? AND status = 'approved'");
+        $stmt->execute([$user['id']]);
+        $comment_count = $stmt->fetchColumn();
+    } catch (Exception $e) {}
+
     return View::renderPage('profile_unified', [
         'user' => $user,
         'is_owner' => $is_owner,
@@ -239,6 +247,7 @@ $router->add('/profile/:identifier/:slug', function($params) {
         'following_count' => $following_count,
         'is_following' => $is_following,
         'user_comments' => $user_comments,
+        'comment_count' => $comment_count,
         'page_title' => 'پروفایل ' . $user['name']
     ]);
 });
