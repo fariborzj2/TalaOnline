@@ -156,8 +156,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $content = $input['content'] ?? '';
         $success = $comments_handler->updateComment($user_id, $comment_id, $content);
         if ($success) {
-            $content_html = $comments_handler->parseMentions($content);
-            echo json_encode(['success' => true, 'message' => 'نظر ویرایش شد.', 'content_html' => $content_html, 'content' => $content]);
+            // Get the updated comment to have correctly parsed mentions
+            $updated_comment = $comments_handler->getComment($comment_id, $user_id);
+            echo json_encode([
+                'success' => true,
+                'message' => 'نظر ویرایش شد.',
+                'content_html' => $updated_comment['content_html'],
+                'content' => $content
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'امکان ویرایش این نظر وجود ندارد (زمان سپری شده است یا نظر متعلق به شما نیست).']);
         }
