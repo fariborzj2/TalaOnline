@@ -138,12 +138,11 @@ function render_reaction($c, $type, $emoji) {
             <div class="comment-form" id="form-main">
                 <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-main"></textarea>
 
-                <div class="mention-tag-area mb-2">
-                    <div class="selected-mentions d-flex-wrap gap-05 mb-1" id="mentions-container-main"></div>
-                    <div class="mention-input-wrapper relative">
+                <div class="mention-tag-area mb-2" id="mention-area-main">
+                    <div class="mention-input-wrapper relative d-flex-wrap gap-05 align-center" id="mentions-container-main">
                         <input type="text"
-                               class="mention-tag-input w-full radius-12 border px-1 py-05 font-size-0-9"
-                               placeholder="منشن کردن کاربر (آیدی را اینجا جستجو کنید...)"
+                               class="mention-tag-input font-size-0-8"
+                               placeholder="منشن کردن کاربر..."
                                id="mention-input-main">
                         <div class="mention-suggestions d-none" id="suggestions-main"></div>
                     </div>

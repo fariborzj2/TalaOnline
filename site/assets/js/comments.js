@@ -132,12 +132,11 @@ class CommentSystem {
             <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${suffix}">
                 <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-${suffix}">${initialContent}</textarea>
 
-                <div class="mention-tag-area mb-2">
-                    <div class="selected-mentions d-flex-wrap gap-05 mb-1" id="mentions-container-${suffix}"></div>
-                    <div class="mention-input-wrapper relative">
+                <div class="mention-tag-area mb-2" id="mention-area-${suffix}">
+                    <div class="mention-input-wrapper relative d-flex-wrap gap-05 align-center" id="mentions-container-${suffix}">
                         <input type="text"
-                               class="mention-tag-input w-full radius-12 border px-1 py-05 font-size-0-9"
-                               placeholder="منشن کردن کاربر (آیدی را اینجا جستجو کنید...)"
+                               class="mention-tag-input font-size-0-8"
+                               placeholder="منشن کردن کاربر..."
                                id="mention-input-${suffix}">
                         <div class="mention-suggestions d-none" id="suggestions-${suffix}"></div>
                     </div>
@@ -545,6 +544,7 @@ class CommentSystem {
             const suffix = input.id.replace('mention-input-', '');
             const suggestionsEl = document.getElementById(`suggestions-${suffix}`);
             const containerEl = document.getElementById(`mentions-container-${suffix}`);
+            const areaEl = document.getElementById(`mention-area-${suffix}`);
             if (!suggestionsEl || !containerEl) return;
 
             input.oninput = async () => {
@@ -558,6 +558,17 @@ class CommentSystem {
                 }
             };
             input.onfocus = () => { if (input.value.trim().length >= 1) suggestionsEl.classList.remove('d-none'); };
+            input.onkeydown = (e) => {
+                if (e.key === 'Backspace' && input.value === '') {
+                    const tags = containerEl.querySelectorAll('.mention-tag');
+                    if (tags.length > 0) {
+                        tags[tags.length - 1].remove();
+                    }
+                }
+            };
+            if (areaEl) {
+                areaEl.onclick = () => input.focus();
+            }
         });
     }
 
@@ -595,8 +606,18 @@ class CommentSystem {
         tag.className = 'mention-tag';
         tag.dataset.userId = data.id;
         tag.innerHTML = `<span>@${data.username}</span><i class="remove-tag">&times;</i>`;
-        tag.querySelector('.remove-tag').onclick = () => tag.remove();
-        container.appendChild(tag);
+        tag.querySelector('.remove-tag').onclick = (e) => {
+            e.stopPropagation();
+            tag.remove();
+        };
+
+        // Insert before the input field
+        const input = container.querySelector('.mention-tag-input');
+        if (input) {
+            container.insertBefore(tag, input);
+        } else {
+            container.appendChild(tag);
+        }
     }
 
     findComment(id) {
