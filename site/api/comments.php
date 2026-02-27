@@ -76,13 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $content = $input['content'] ?? '';
         $parent_id = $input['parent_id'] ?? null;
         $reply_to_user_id = $input['reply_to_user_id'] ?? null;
+        $reply_to_id = $input['reply_to_id'] ?? null;
 
         if (empty($content)) {
             echo json_encode(['success' => false, 'message' => 'متن نظر نمی‌تواند خالی باشد.']);
             exit;
         }
 
-        $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id, $reply_to_user_id);
+        $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id, $reply_to_user_id, $reply_to_id);
         if ($id) {
             record_rate_limit_attempt('comment', 'ip', $ip);
             record_rate_limit_attempt('comment', 'user', $user_id);
