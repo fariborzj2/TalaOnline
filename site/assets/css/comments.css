@@ -190,6 +190,8 @@
     color: #249E94;
     font-weight: 700;
     text-decoration: none;
+    display: inline-block;
+    direction: ltr;
 }
 
 .reply-preview-block {
