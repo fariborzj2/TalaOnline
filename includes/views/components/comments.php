@@ -12,9 +12,9 @@
 $is_logged_in = isset($_SESSION['user_id']);
 $read_only = $read_only ?? ($target_type === 'user_profile');
 
-function render_comment_item($c, $read_only = false) {
+function render_comment_item($c, $read_only = false, $is_reply = false) {
     global $pdo;
-    $has_replies = !empty($c['replies']);
+    $has_replies = !$is_reply && (!empty($c['replies']) || ($c['total_replies'] ?? 0) > 0);
     $is_expert = in_array($c['user_role'], ['admin', 'editor']);
     $default_avatar = '/assets/images/default-avatar.png';
     $avatar = $c['user_avatar'] ?: $default_avatar;
@@ -25,7 +25,7 @@ function render_comment_item($c, $read_only = false) {
     ob_start();
     ?>
     <div class="comment-wrapper <?= $has_replies ? 'has-replies' : '' ?>" id="comment-wrapper-<?= $c['id'] ?>">
-        <div class="comment-item <?= $is_expert ? 'is-expert' : '' ?>" id="comment-<?= $c['id'] ?>">
+        <div class="comment-item <?= $is_expert ? 'is-expert' : '' ?> <?= $is_reply ? 'is-reply' : '' ?>" id="comment-<?= $c['id'] ?>">
             <div class="comment-header">
                 <div class="comment-user-info">
                     <div class="avatar-container">
@@ -37,6 +37,11 @@ function render_comment_item($c, $read_only = false) {
                             <?= htmlspecialchars($c['user_name']) ?>
                             <span class="user-level-badge level-<?= $c['user_level'] ?>">سطح <?= $c['user_level'] ?></span>
                         </span>
+                        <?php if (isset($c['reply_to_username']) && $c['reply_to_username']): ?>
+                            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1">
+                                در پاسخ به <a href="/profile/<?= $c['reply_to_username'] ?>" class="text-primary hover-underline">@<?= $c['reply_to_username'] ?></a>
+                            </span>
+                        <?php endif; ?>
                         <?php if (isset($c['target_info']) && $c['target_info']): ?>
                             <span class="text-gray-400 font-size-0-8 mx-1">در</span>
                             <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline font-size-0-8"><?= htmlspecialchars($c['target_info']['title']) ?></a>
@@ -95,8 +100,17 @@ function render_comment_item($c, $read_only = false) {
         <div id="reply-form-container-<?= $c['id'] ?>"></div>
 
         <?php if ($has_replies): ?>
-            <div class="replies-container">
-                <?php foreach ($c['replies'] as $reply) echo render_comment_item($reply, $read_only); ?>
+            <div class="replies-container" id="replies-container-<?= $c['id'] ?>">
+                <div class="replies-list">
+                    <?php if (!empty($c['replies'])) foreach ($c['replies'] as $reply) echo render_comment_item($reply, $read_only, true); ?>
+                </div>
+                <?php if (($c['total_replies'] ?? 0) > 3): ?>
+                    <button class="btn btn-sm btn-secondary w-full mt-2 view-more-replies"
+                            data-id="<?= $c['id'] ?>"
+                            data-total="<?= $c['total_replies'] ?>">
+                        مشاهده پاسخ‌های بیشتر (<?= fa_num($c['total_replies'] - 3) ?>)
+                    </button>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
     </div>
@@ -145,7 +159,7 @@ function render_reaction($c, $type, $emoji) {
                 <p class="text-gray-400"><?= $read_only ? 'هنوز نظری ثبت نشده است.' : 'هنوز نظری ثبت نشده است. اولین تحلیل‌گر باشید!' ?></p>
             </div>
         <?php else: ?>
-            <?php foreach ($comments as $c) echo render_comment_item($c, $read_only); ?>
+            <?php foreach ($comments as $c) echo render_comment_item($c, $read_only, false); ?>
         <?php endif; ?>
     </div>
 

@@ -22,12 +22,14 @@ class Comments {
         if (!$this->pdo) return null;
 
         $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+                ru.username as reply_to_username, ru.name as reply_to_name,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
+                LEFT JOIN users ru ON c.reply_to_user_id = ru.id
                 WHERE c.id = ?";
 
         $stmt = $this->pdo->prepare($sql);
@@ -88,33 +90,7 @@ class Comments {
             return ['comments' => [], 'total_pages' => $total_pages, 'total_count' => $total_top_level];
         }
 
-        // 2. Fetch ALL replies for these top-level comments (recursively or in one go if depth is limited)
-        // For simplicity and to avoid many queries, we fetch all comments for this target and then filter,
-        // OR we can fetch recursively. Let's fetch all approved comments for this target to build the tree.
-        // Actually, if we paginate top-level, we must fetch all their descendants.
-
-        $top_ids = array_column($top_level_comments, 'id');
-        $placeholders = implode(',', array_fill(0, count($top_ids), '?'));
-
-        // We need all descendants. In a simple adjacency list, we can't easily get all descendants in one SQL without CTE.
-        // But we can assume a reasonable depth or just fetch all comments for the target and filter in PHP.
-        // Fetching all might be heavy if there are thousands, but usually it's fine.
-
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
-                FROM comments c
-                LEFT JOIN users u ON c.user_id = u.id
-                WHERE c.target_id = ? AND c.target_type = ? AND c.status = 'approved'
-                ORDER BY c.created_at ASC"; // ASC for better tree building
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([$target_id, $target_type]);
-        $all_comments = $stmt->fetchAll();
-
-        // If user is logged in, fetch their reactions to these comments
+        // 2. Fetch first 3 replies for each top-level comment
         $user_reactions = [];
         if ($user_id) {
             $stmt = $this->pdo->prepare("SELECT comment_id, reaction_type FROM comment_reactions WHERE user_id = ?");
@@ -124,43 +100,72 @@ class Comments {
             }
         }
 
-        // Organize into tree
-        $lookup = [];
-        foreach ($all_comments as &$c) {
+        foreach ($top_level_comments as &$c) {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
-            $c['replies'] = [];
             $c['content_html'] = $this->parseMentions($c['content']);
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < 300);
-            $lookup[$c['id']] = &$c;
-        }
 
-        foreach ($all_comments as &$c) {
-            if ($c['parent_id'] && isset($lookup[$c['parent_id']])) {
-                $lookup[$c['parent_id']]['replies'][] = &$c;
-            }
-        }
+            // Fetch total reply count
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE parent_id = ? AND status = 'approved'");
+            $stmt->execute([$c['id']]);
+            $c['total_replies'] = (int)$stmt->fetchColumn();
 
-        // Only return the top-level comments that are in the current page, but now they have their replies attached
-        $tree = [];
-        $top_ids_flipped = array_flip($top_ids);
-        foreach ($all_comments as &$c) {
-            if (!$c['parent_id'] && isset($top_ids_flipped[$c['id']])) {
-                $tree[] = &$c;
-            }
+            // Fetch first 3 replies
+            $c['replies'] = $this->getReplies($c['id'], 0, 3, $user_id);
         }
-
-        // Sort tree back to DESC (created_at) because we used ASC for building
-        usort($tree, function($a, $b) {
-            return strtotime($b['created_at']) - strtotime($a['created_at']);
-        });
 
         return [
-            'comments' => $tree,
+            'comments' => $top_level_comments,
             'total_pages' => $total_pages,
             'total_count' => $total_top_level,
             'current_page' => $page
         ];
+    }
+
+    /**
+     * Fetch replies for a specific comment
+     */
+    public function getReplies($parent_id, $offset = 0, $limit = 10, $user_id = null) {
+        if (!$this->pdo) return [];
+
+        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+                ru.username as reply_to_username, ru.name as reply_to_name,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
+                FROM comments c
+                LEFT JOIN users u ON c.user_id = u.id
+                LEFT JOIN users ru ON c.reply_to_user_id = ru.id
+                WHERE c.parent_id = ? AND c.status = 'approved'
+                ORDER BY c.likes_count DESC, c.created_at ASC
+                LIMIT ? OFFSET ?";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(1, $parent_id);
+        $stmt->bindValue(2, (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(3, (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $replies = $stmt->fetchAll();
+
+        $user_reactions = [];
+        if ($user_id) {
+            $stmt = $this->pdo->prepare("SELECT comment_id, reaction_type FROM comment_reactions WHERE user_id = ?");
+            $stmt->execute([$user_id]);
+            while ($row = $stmt->fetch()) {
+                $user_reactions[$row['comment_id']] = $row['reaction_type'];
+            }
+        }
+
+        foreach ($replies as &$r) {
+            $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
+            $r['content_html'] = $this->parseMentions($r['content']);
+            $r['created_at_fa'] = jalali_date($r['created_at']);
+            $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < 300);
+        }
+
+        return $replies;
     }
 
     /**
@@ -238,11 +243,27 @@ class Comments {
     /**
      * Add a new comment
      */
-    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null) {
+    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $reply_to_user_id = null) {
         if (!$this->pdo) return false;
 
-        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id) VALUES (?, ?, ?, ?, ?)");
-        $success = $stmt->execute([$user_id, $target_id, $target_type, $content, $parent_id]);
+        // Validation: Enforce depth limit 1 at application layer
+        if ($parent_id) {
+            $stmt = $this->pdo->prepare("SELECT parent_id, user_id FROM comments WHERE id = ?");
+            $stmt->execute([$parent_id]);
+            $parent = $stmt->fetch();
+
+            if (!$parent) return false; // Invalid parent
+
+            if ($parent['parent_id'] !== null) {
+                // The intended parent is already a reply.
+                // We MUST re-point to the actual top-level parent.
+                $reply_to_user_id = $parent['user_id'];
+                $parent_id = $parent['parent_id'];
+            }
+        }
+
+        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_user_id) VALUES (?, ?, ?, ?, ?, ?)");
+        $success = $stmt->execute([$user_id, $target_id, $target_type, $content, $parent_id, $reply_to_user_id]);
 
         if ($success) {
             $comment_id = $this->pdo->lastInsertId();
@@ -256,6 +277,10 @@ class Comments {
             // Notify parent author
             if ($parent_id) {
                 $this->notifyReply($parent_id, $comment_id);
+            }
+            // Also notify if it's a direct reply to a user in a thread
+            if ($reply_to_user_id && $reply_to_user_id != $user_id) {
+                $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $user_id);
             }
 
             return $comment_id;
@@ -299,6 +324,11 @@ class Comments {
                 $this->rewardUser($author_id, $new_points);
             }
         }
+
+        // Sync likes_count for sorting performance
+        $stmt = $this->pdo->prepare("UPDATE comments SET likes_count = (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'like') WHERE id = ?");
+        $stmt->execute([$comment_id, $comment_id]);
+
         return true;
     }
 
@@ -401,6 +431,14 @@ class Comments {
      * Send notification email
      */
     private function sendNotificationEmail($user, $type, $comment_id, $sender_id) {
+        // Fetch full user data if only ID is provided
+        if (!isset($user['email'])) {
+            $stmt = $this->pdo->prepare("SELECT name, email FROM users WHERE id = ?");
+            $stmt->execute([$user['id']]);
+            $user = $stmt->fetch();
+            if (!$user) return;
+        }
+
         $stmt = $this->pdo->prepare("SELECT name FROM users WHERE id = ?");
         $stmt->execute([$sender_id]);
         $sender_name = $stmt->fetchColumn();

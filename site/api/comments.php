@@ -30,6 +30,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode(array_merge(['success' => true], $data));
         exit;
     }
+
+    if ($action === 'replies') {
+        $parent_id = $_GET['parent_id'] ?? 0;
+        $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+        $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+
+        $replies = $comments_handler->getReplies($parent_id, $offset, $limit, $user_id);
+        echo json_encode(['success' => true, 'replies' => $replies]);
+        exit;
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -65,13 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $target_type = $input['target_type'] ?? '';
         $content = $input['content'] ?? '';
         $parent_id = $input['parent_id'] ?? null;
+        $reply_to_user_id = $input['reply_to_user_id'] ?? null;
 
         if (empty($content)) {
             echo json_encode(['success' => false, 'message' => 'متن نظر نمی‌تواند خالی باشد.']);
             exit;
         }
 
-        $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id);
+        $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id, $reply_to_user_id);
         if ($id) {
             record_rate_limit_attempt('comment', 'ip', $ip);
             record_rate_limit_attempt('comment', 'user', $user_id);
