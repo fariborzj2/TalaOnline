@@ -695,14 +695,17 @@ class CommentSystem {
         const list = document.createElement('div');
         list.className = 'mentions-autocomplete';
 
-        // Position roughly near the cursor
-        // A more advanced solution would use a hidden mirror div to find exact cursor coordinates
-        list.style.position = 'fixed';
-        list.style.top = (rect.top + 30) + 'px';
-        list.style.left = (rect.left + 10) + 'px';
-        list.style.width = (rect.width - 20) + 'px';
-        list.style.maxWidth = '300px';
-        list.style.zIndex = '1000';
+        // Mobile positioning is handled via CSS media queries (@media (max-width: 600px))
+        // For Desktop, we try to position it relative to the textarea but out of the way
+        const isMobile = window.innerWidth <= 600;
+
+        if (!isMobile) {
+            list.style.position = 'fixed';
+            // Position it below the textarea to avoid covering content
+            list.style.top = (rect.bottom + 5) + 'px';
+            list.style.left = (rect.left) + 'px';
+            list.style.zIndex = '1000';
+        }
 
         users.forEach((user, index) => {
             const item = document.createElement('div');
