@@ -16,6 +16,8 @@ if (file_exists($config_file)) {
     try {
         if (defined('USE_SQLITE') && USE_SQLITE) {
             $pdo = new PDO("sqlite:" . __DIR__ . '/../site/database.sqlite');
+            $pdo->exec("PRAGMA journal_mode = WAL;");
+            $pdo->exec("PRAGMA busy_timeout = 5000;");
         } else {
             $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASS);
             $pdo->exec("SET time_zone = '+03:30'");

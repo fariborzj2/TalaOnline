@@ -111,7 +111,7 @@ class LSCache {
     /**
      * Sends headers to prevent caching for private/dynamic pages
      */
-    private static function sendNoCacheHeaders() {
+    public static function sendNoCacheHeaders() {
         header("Cache-Control: no-cache, no-store, must-revalidate, private");
         header("Pragma: no-cache");
         header("Expires: 0");

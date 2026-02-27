@@ -701,7 +701,9 @@ $router->add('/:category/:slug', function($params) {
                 'site_title' => $item_data['page_title'] ?: ($item_data['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
             ]);
         }
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        ErrorHandler::handleException($e);
+    }
 
     ErrorHandler::renderError(404, 'آیتم پیدا نشد', 'متاسفانه آیتم مورد نظر شما در این دسته‌بندی یافت نشد.');
 });
@@ -764,7 +766,9 @@ $router->add('/:slug', function($params) {
                 'site_title' => $category['page_title'] ?: ($category['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
             ]);
         }
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        ErrorHandler::handleException($e);
+    }
 
     // 2. Check if it's an asset (item)
     try {
@@ -828,7 +832,9 @@ $router->add('/:slug', function($params) {
                 'site_title' => $item_data['page_title'] ?: ($item_data['name'] . ' | ' . get_setting('site_title', 'طلا آنلاین')),
             ]);
         }
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        ErrorHandler::handleException($e);
+    }
 
     // Fallback to 404
     ErrorHandler::renderError(404, 'صفحه پیدا نشد', 'متاسفانه صفحه یا آیتم مورد نظر شما یافت نشد.');

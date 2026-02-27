@@ -95,7 +95,7 @@ class ErrorHandler {
 
         // Ensure LiteSpeed Cache knows not to cache error pages
         if (class_exists('LSCache')) {
-            header("X-LiteSpeed-Cache-Control: no-cache");
+            LSCache::sendNoCacheHeaders();
         }
 
         if (class_exists('View')) {
