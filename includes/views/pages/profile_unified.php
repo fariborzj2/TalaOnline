@@ -20,61 +20,68 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 ?>
 
 <div class="section">
-    <div class="bg-block pd-md border radius-16 d-flex align-center gap-1-5">
-        <div class="relative shrink-0">
-            <div class="w-24 h-24 radius-50 bg-secondary d-flex align-center just-center border overflow-hidden">
-                <?php if (!empty($user['avatar'])): ?>
-                    <img src="<?= htmlspecialchars($user['avatar']) ?>" alt="<?= htmlspecialchars($user['name']) ?>" class="w-full h-full object-cover" id="profile-avatar-img">
-                <?php else: ?>
-                    <i data-lucide="user" class="icon-size-8 text-primary" id="profile-avatar-icon"></i>
+    <div class="profile-card bg-block border radius-24 overflow-hidden shadow-sm">
+        <div class="profile-header-gradient relative">
+            <div class="level-badge d-flex align-center gap-05">
+                <i data-lucide="crown" class="icon-size-4"></i>
+                <span class="font-bold">level <?= $user['level'] ?></span>
+            </div>
+            <div class="profile-avatar-wrapper">
+                <div class="profile-avatar-container">
+                    <?php if (!empty($user['avatar'])): ?>
+                        <img src="<?= htmlspecialchars($user['avatar']) ?>" alt="<?= htmlspecialchars($user['name']) ?>" class="profile-avatar" id="profile-avatar-img">
+                    <?php else: ?>
+                        <div class="profile-avatar-placeholder"><i data-lucide="user" class="icon-size-10 text-primary"></i></div>
+                    <?php endif; ?>
+                </div>
+                <?php if ($is_owner): ?>
+                    <button class="btn-avatar-upload" onclick="document.getElementById('avatar-input').click()" title="تغییر تصویر پروفایل">
+                        <i data-lucide="camera" class="icon-size-3"></i>
+                    </button>
+                    <input type="file" id="avatar-input" class="d-none" accept="image/jpeg,image/png,image/webp">
                 <?php endif; ?>
             </div>
-            <?php if ($is_owner): ?>
-                <button class="btn-avatar-upload" onclick="document.getElementById('avatar-input').click()" title="تغییر تصویر پروفایل">
-                    <i data-lucide="camera" class="icon-size-3"></i>
-                </button>
-                <input type="file" id="avatar-input" class="d-none" accept="image/jpeg,image/png,image/webp">
-            <?php endif; ?>
         </div>
-        <div class="grow-1">
-            <div class="d-flex just-between align-start flex-wrap gap-1">
-                <div>
-                    <h1 class="font-size-4 font-black text-title"><?= htmlspecialchars($user['name']) ?></h1>
-                    <div class="d-flex align-center gap-1 mt-05 flex-wrap">
-                        <span class="bg-secondary px-1 radius-8 border text-gray font-bold">@<?= htmlspecialchars($user['username']) ?></span>
-                        <span class="bg-primary px-1 radius-8 text-white font-bold">سطح <?= $user['level'] ?></span>
-                        <?php if ($user['level'] >= 5): ?>
-                            <span class="bg-orange-light px-1 radius-8 text-orange font-bold d-flex align-center gap-05">
-                                <i data-lucide="award" class="icon-size-4"></i>
-                                تحلیل‌گر برتر
-                            </span>
-                        <?php elseif ($user['level'] >= 3): ?>
-                            <span class="bg-success-light px-1 radius-8 text-success font-bold d-flex align-center gap-05">
-                                <i data-lucide="check-circle" class="icon-size-4"></i>
-                                کاربر فعال
-                            </span>
-                        <?php endif; ?>
-                    </div>
+
+        <div class="profile-body pd-md pt-0">
+            <div class="d-flex just-between align-end mt-1">
+                <div class="membership-date text-gray font-size-0-9 pb-1">
+                    عضویت <?= jalali_date($user['created_at']) ?>
                 </div>
-                <?php if (!$is_owner && isset($_SESSION['user_id'])): ?>
-                    <button id="follow-btn" class="btn <?= $is_following ? 'btn-secondary' : 'btn-primary' ?> radius-12 px-2 d-flex align-center gap-05" data-user-id="<?= $user['id'] ?>">
-                        <i data-lucide="<?= $is_following ? 'user-minus' : 'user-plus' ?>" class="icon-size-4"></i>
-                        <span><?= $is_following ? 'لغو دنبال کردن' : 'دنبال کردن' ?></span>
-                    </button>
-                <?php endif; ?>
+                <div class="user-info text-right">
+                    <h1 class="font-size-5 font-black text-title mb-0"><?= htmlspecialchars($user['name']) ?></h1>
+                    <div class="text-gray font-size-1-2">@<?= htmlspecialchars($user['username']) ?></div>
+                </div>
             </div>
 
-            <div class="d-flex align-center gap-2 mt-1-5 flex-wrap">
-                <div class="pointer hover-text-primary transition-all" id="followers-trigger">
-                    <strong class="text-title font-size-1-2" id="follower-count"><?= fa_num($follower_count) ?></strong>
-                    <span class="text-gray font-size-0-9">دنبال‌کننده</span>
+            <div class="divider my-1-5" style="opacity: 0.3;"></div>
+
+            <div class="profile-stats d-flex just-around text-center mb-1-5">
+                <div class="stat-item">
+                    <div class="stat-value font-size-3 font-black"><?= fa_num($comment_count) ?></div>
+                    <div class="stat-label text-gray font-size-1">نظر</div>
                 </div>
-                <div class="pointer hover-text-primary transition-all" id="following-trigger">
-                    <strong class="text-title font-size-1-2" id="following-count"><?= fa_num($following_count) ?></strong>
-                    <span class="text-gray font-size-0-9">دنبال‌شونده</span>
+                <div class="stat-item">
+                    <div class="stat-value font-size-3 font-black"><?= fa_num($following_count) ?></div>
+                    <div class="stat-label text-gray font-size-1" id="following-trigger" style="cursor:pointer">دنبال شونده</div>
                 </div>
-                <div class="mr-auto text-gray font-size-0-9">عضویت از: <?= jalali_date($user['created_at'], 'compact') ?></div>
+                <div class="stat-item">
+                    <div class="stat-value font-size-3 font-black"><?= fa_num($follower_count) ?></div>
+                    <div class="stat-label text-gray font-size-1" id="followers-trigger" style="cursor:pointer">دنبال کننده</div>
+                </div>
             </div>
+
+            <?php if (!$is_owner): ?>
+                <button id="follow-btn" class="btn-follow-large w-full <?= $is_following ? 'active' : '' ?>" data-user-id="<?= $user['id'] ?>">
+                    <span><?= $is_following ? 'لغو دنبال کردن' : 'دنبال کردن' ?></span>
+                    <i data-lucide="<?= $is_following ? 'user-minus' : 'user-plus' ?>" class="icon-size-6"></i>
+                </button>
+            <?php else: ?>
+                <button class="btn-follow-large w-full active" onclick="document.querySelector('[data-tab=edit]').click()">
+                    <span>ویرایش پروفایل</span>
+                    <i data-lucide="user-cog" class="icon-size-6"></i>
+                </button>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -260,6 +267,50 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 </div>
 
 <style>
+    .profile-card { max-width: 600px; margin: 0 auto 30px auto; border: 1px solid rgba(0,0,0,0.05); background: white; }
+    .profile-header-gradient {
+        height: 200px;
+        background: linear-gradient(110deg, #fefce8 0%, #dcfce7 40%, #e0f2fe 100%);
+        padding: 20px;
+        border-radius: 23px 23px 0 0;
+        opacity: 0.9;
+    }
+    .level-badge {
+        position: absolute; top: 25px; left: 25px;
+        background: rgba(40, 40, 40, 0.9); color: white;
+        padding: 10px 22px; border-radius: 50px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        z-index: 2;
+        font-size: 1.1rem;
+    }
+    .profile-avatar-wrapper {
+        position: absolute; bottom: -50px; right: 40px;
+    }
+    .profile-avatar-container {
+        width: 140px; height: 140px; border-radius: 50%;
+        border: 6px solid white; background: #f3f4f6;
+        overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .profile-avatar { width: 100%; height: 100%; object-fit: cover; }
+    .profile-avatar-placeholder {
+        width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    }
+    .btn-avatar-upload {
+        position: absolute; bottom: 5px; left: 5px; background: var(--color-primary); color: white;
+        width: 32px; height: 32px; border-radius: 50%; border: 2px solid white;
+        display: flex; align-items: center; justify-content: center; cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .btn-follow-large {
+        background: #249E94; color: white; border: none; padding: 18px;
+        border-radius: 18px; font-weight: 800; font-size: 1.3rem;
+        display: flex; align-items: center; justify-content: center; gap: 12px;
+        transition: all 0.2s; cursor: pointer;
+        box-shadow: 0 4px 12px rgba(36, 158, 148, 0.2);
+    }
+    .btn-follow-large:hover { background: #1d827a; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(36, 158, 148, 0.3); }
+    .btn-follow-large.active { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; box-shadow: none; }
+
     .profile-tab-btn {
         display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: 12px;
         font-weight: 600; font-size: 14px; color: var(--color-gray); transition: all 0.2s;
@@ -269,18 +320,19 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
     .profile-tab-btn.active { background: var(--color-primary-light); color: var(--color-primary); }
     .min-h-400 { min-height: 400px; }
     .max-h-400 { max-height: 400px; }
-    .btn-avatar-upload {
-        position: absolute; bottom: 0; left: 0; background: var(--color-primary); color: white;
-        width: 32px; height: 32px; border-radius: 50%; border: 3px solid white;
-        display: flex; align-items: center; justify-content: center; cursor: pointer;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-    }
+
     .user-row {
         display: flex; align-items: center; gap: 1rem; padding: 0.75rem; border-radius: 12px;
         transition: background 0.2s; text-decoration: none; color: inherit;
     }
     .user-row:hover { background: var(--color-secondary); }
     .user-row img { width: 40px; height: 40px; border-radius: 50%; object-cover: cover; }
+
+    @media (max-width: 600px) {
+        .profile-header-gradient { height: 140px; }
+        .profile-avatar-container { width: 90px; height: 90px; }
+        .profile-avatar-wrapper { bottom: -30px; right: 20px; }
+    }
 </style>
 
 <link rel="stylesheet" href="<?= versioned_asset('/assets/css/comments.css') ?>">
