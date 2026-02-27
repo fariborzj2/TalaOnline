@@ -205,8 +205,8 @@
 
 .reply-preview-author {
     color: #249E94;
-    font-weight: 700;
-    margin-bottom: 2px;
+    font-weight: 600;
+    display: inline-block;
     direction: ltr;
     text-align: right;
 }

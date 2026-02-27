@@ -58,7 +58,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
             <div class="comment-content">
                 <?php if (!empty($c['reply_to_content'])): ?>
                     <div class="reply-preview-block">
-                        <div class="">در پاسخ به <span class="reply-preview-author">@<?= htmlspecialchars($c['reply_to_username'] ?? 'user') ?></span></div>
+                        <div>در پاسخ به <span class="reply-preview-author">@<?= htmlspecialchars($c['reply_to_username'] ?? 'user') ?></span></div>
                         <div class="reply-preview-content"><?= htmlspecialchars(mb_substr($c['reply_to_content'], 0, 100)) . (mb_strlen($c['reply_to_content']) > 100 ? '...' : '') ?></div>
                     </div>
                 <?php endif; ?>

@@ -171,7 +171,7 @@ class CommentSystem {
 
         let avatarUrl = c.user_avatar;
         if (avatarUrl) {
-            if (!avatarUrl.startsWith('http')) {
+            if (!avatarUrl.startsWith('https')) {
                 // Ensure no double slashes
                 const path = avatarUrl.startsWith('/') ? avatarUrl.substring(1) : avatarUrl;
                 avatarUrl = `${baseUrl}/${path}`;
@@ -180,15 +180,9 @@ class CommentSystem {
             avatarUrl = defaultAvatar;
         }
 
-        const replyingTo = c.reply_to_username ? `
-            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1">
-                در پاسخ به <a href="/profile/${c.reply_to_username}" class="text-primary hover-underline d-inline-block ltr">@${c.reply_to_username}</a>
-            </span>
-        ` : '';
-
         const replyPreview = c.reply_to_content ? `
             <div class="reply-preview-block">
-                <div class="reply-preview-author">@${c.reply_to_username || 'user'}</div>
+                <div>در پاسخ به <span class="reply-preview-author">@${c.reply_to_username || 'user'}</span></div>
                 <div class="reply-preview-content">${c.reply_to_content.substring(0, 100)}${c.reply_to_content.length > 100 ? '...' : ''}</div>
             </div>
         ` : '';
@@ -210,7 +204,6 @@ class CommentSystem {
                                     ${c.user_name}
                                     <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
                                 </span>
-                                ${replyingTo}
                                 ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline d-inline-block ltr font-size-0-8">${c.target_info.title}</a>` : ''}
                                 <span class="comment-date">${c.created_at_fa || c.created_at}</span>
                             </div>
