@@ -258,18 +258,26 @@ $router->add('/profile/:identifier', function($params) {
         $user = $stmt->fetch();
     }
 
-    if (!$user) {
-        // Fallback or legacy username lookup
-        $stmt = $pdo->prepare("SELECT id, name, username, avatar, level, points, created_at FROM users WHERE LOWER(username) = LOWER(?)");
-        $stmt->execute([$identifier]);
-        $user = $stmt->fetch();
+    if ($user) {
+        // Redirect to canonical ID-based URL with slug
+        header("Location: /profile/" . $user['id'] . "/" . urlencode($user['username']), true, 301);
+        exit;
+    }
+
+    // Fallback or legacy username lookup
+    $stmt = $pdo->prepare("SELECT id, name, username, avatar, level, points, created_at FROM users WHERE LOWER(username) = LOWER(?)");
+    $stmt->execute([$identifier]);
+    $user = $stmt->fetch();
+
+    if ($user) {
+        // Redirect to canonical ID-based URL
+        header("Location: /profile/" . $user['id'] . "/" . urlencode($user['username']), true, 301);
+        exit;
     }
 
     if (!$user) {
         ErrorHandler::renderError(404, 'کاربر پیدا نشد', 'کاربری با این مشخصات یافت نشد.');
     }
-
-    $is_owner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $user['id']);
     $viewer_id = $_SESSION['user_id'] ?? null;
 
     // Fetch Follow Stats
