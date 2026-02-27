@@ -33,10 +33,10 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                         <div class="online-dot"></div>
                     </div>
                     <div class="comment-meta">
-                        <span class="comment-author">
+                        <a href="/profile/<?= $c['user_id'] ?>/<?= urlencode($c['user_username'] ?? 'user') ?>" class="comment-author">
                             <?= htmlspecialchars($c['user_name']) ?>
                             <span class="user-level-badge level-<?= $c['user_level'] ?>">سطح <?= $c['user_level'] ?></span>
-                        </span>
+                        </a>
                         <?php if (isset($c['target_info']) && $c['target_info']): ?>
                             <span class="text-gray-400 font-size-0-8 mx-1">در</span>
                             <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline d-inline-block ltr font-size-0-8"><?= htmlspecialchars($c['target_info']['title']) ?></a>
@@ -58,7 +58,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
             <div class="comment-content">
                 <?php if (!empty($c['reply_to_content'])): ?>
                     <div class="reply-preview-block">
-                        <div>در پاسخ به <span class="reply-preview-author">@<?= htmlspecialchars($c['reply_to_username'] ?? 'user') ?></span></div>
+                        <div>در پاسخ به <a href="/profile/<?= $c['reply_to_user_id'] ?>/<?= urlencode($c['reply_to_username'] ?? 'user') ?>" class="reply-preview-author">@<?= htmlspecialchars($c['reply_to_username'] ?? 'user') ?></a></div>
                         <div class="reply-preview-content"><?= htmlspecialchars(mb_substr($c['reply_to_content'], 0, 100)) . (mb_strlen($c['reply_to_content']) > 100 ? '...' : '') ?></div>
                     </div>
                 <?php endif; ?>

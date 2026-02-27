@@ -324,13 +324,10 @@ $router->add('/profile', function() {
         exit;
     }
 
-    $username = $_SESSION['user_username'] ?? '';
-    if (empty($username)) {
-        header('Location: /');
-        exit;
-    }
+    $id = $_SESSION['user_id'];
+    $username = $_SESSION['user_username'] ?? 'user';
 
-    header('Location: /profile/' . $username);
+    header('Location: /profile/' . $id . '/' . urlencode($username));
     exit;
 });
 
