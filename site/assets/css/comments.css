@@ -346,11 +346,11 @@
     background-color: #e2e8f0;
 }
 
-[dir="rtl"] .header-actions { margin-right: auto; margin-left: 0; }
-[dir="rtl"] .user-level-badge { margin-right: 5px; margin-left: 5px; }
-[dir="rtl"] .replies-container { margin-right: 48px; border-right: none; }
-[dir="rtl"] .replies-container::before { right: -24px; }
-[dir="rtl"] .has-replies > .comment-item::before { right: 24px; }
+.header-actions { margin-right: auto; margin-left: 0; }
+.user-level-badge { margin-right: 5px; margin-left: 5px; }
+.replies-container { margin-right: 48px; border-right: none; }
+.replies-container::before { right: -23px; }
+.has-replies > .comment-item::before { right: 24px; }
 
 /* Highlight effect for anchor scroll */
 .highlight-comment {
