@@ -49,7 +49,12 @@ class Comments {
 
         $c['user_reaction'] = $user_reaction;
         $c['replies'] = [];
-        $c['content_html'] = $this->parseMentions($c['content']);
+
+        // Fetch mentioned users for this single comment
+        $userMap = $this->loadMentionedUsers([$c]);
+        $c['content_html'] = $this->parseMentions($c['content'], $userMap);
+        $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap);
+
         $c['created_at_fa'] = jalali_date($c['created_at']);
         $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < 300);
 
@@ -104,7 +109,6 @@ class Comments {
 
         foreach ($top_level_comments as &$c) {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
-            $c['content_html'] = $this->parseMentions($c['content']);
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < 300);
 
@@ -113,8 +117,19 @@ class Comments {
             $stmt->execute([$c['id']]);
             $c['total_replies'] = (int)$stmt->fetchColumn();
 
-            // Fetch first 3 replies
-            $c['replies'] = $this->getReplies($c['id'], 0, 3, $user_id);
+            // Fetch first 3 replies (don't parse mentions yet, we will do it in bulk)
+            $c['replies'] = $this->getReplies($c['id'], 0, 3, $user_id, false);
+        }
+
+        // 3. Bulk parse mentions
+        $userMap = $this->loadMentionedUsers($top_level_comments);
+        foreach ($top_level_comments as &$c) {
+            $c['content_html'] = $this->parseMentions($c['content'], $userMap);
+            $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap);
+            foreach ($c['replies'] as &$r) {
+                $r['content_html'] = $this->parseMentions($r['content'], $userMap);
+                $r['content_edit'] = $this->convertPlaceholdersToMentions($r['content'], $userMap);
+            }
         }
 
         return [
@@ -128,7 +143,7 @@ class Comments {
     /**
      * Fetch replies for a specific comment
      */
-    public function getReplies($parent_id, $offset = 0, $limit = 10, $user_id = null) {
+    public function getReplies($parent_id, $offset = 0, $limit = 10, $user_id = null, $parse = true) {
         if (!$this->pdo) return [];
 
         $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
@@ -162,9 +177,17 @@ class Comments {
             }
         }
 
+        if ($parse) {
+            // Bulk parse mentions for replies
+            $userMap = $this->loadMentionedUsers($replies);
+            foreach ($replies as &$r) {
+                $r['content_html'] = $this->parseMentions($r['content'], $userMap);
+                $r['content_edit'] = $this->convertPlaceholdersToMentions($r['content'], $userMap);
+            }
+        }
+
         foreach ($replies as &$r) {
             $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
-            $r['content_html'] = $this->parseMentions($r['content']);
             $r['created_at_fa'] = jalali_date($r['created_at']);
             $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < 300);
         }
@@ -208,10 +231,13 @@ class Comments {
             }
         }
 
+        // Bulk parse mentions for user profile feed
+        $userMap = $this->loadMentionedUsers($comments);
         foreach ($comments as &$c) {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['replies'] = [];
-            $c['content_html'] = $this->parseMentions($c['content']);
+            $c['content_html'] = $this->parseMentions($c['content'], $userMap);
+            $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap);
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < 300);
             $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
@@ -274,8 +300,11 @@ class Comments {
             }
         }
 
+        // Convert @mentions to [user:ID] placeholders before storing
+        $stored_content = $this->convertMentionsToPlaceholders($content);
+
         $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_id, reply_to_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $success = $stmt->execute([$user_id, $target_id, $target_type, $content, $parent_id, $reply_to_id, $reply_to_user_id]);
+        $success = $stmt->execute([$user_id, $target_id, $target_type, $stored_content, $parent_id, $reply_to_id, $reply_to_user_id]);
 
         if ($success) {
             $comment_id = $this->pdo->lastInsertId();
@@ -283,7 +312,7 @@ class Comments {
             // Reward user
             $this->rewardUser($user_id, 10); // 10 points for comment
 
-            // Check for mentions
+            // Check for mentions (uses original content to notify by username)
             $this->handleMentions($content, $comment_id, $user_id);
 
             // Notify parent author
@@ -364,17 +393,98 @@ class Comments {
         $created_at = $stmt->fetchColumn();
 
         if ($created_at && (time() - strtotime($created_at)) < 300) {
+            $stored_content = $this->convertMentionsToPlaceholders($content);
             $stmt = $this->pdo->prepare("UPDATE comments SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-            return $stmt->execute([$content, $comment_id]);
+            return $stmt->execute([$stored_content, $comment_id]);
         }
         return false;
     }
 
     /**
-     * Parse @mentions in content and convert to links
+     * Parse [user:ID] placeholders in content and convert to links
      */
-    public function parseMentions($content) {
-        return preg_replace('/@([a-zA-Z0-9_]+)/', '<a href="/profile/$1" class="mention">@$1</a>', htmlspecialchars($content));
+    public function parseMentions($content, $userMap = []) {
+        $content = htmlspecialchars($content);
+        return preg_replace_callback('/\[user:(\d+)\]/', function($matches) use ($userMap) {
+            $userId = $matches[1];
+            if (isset($userMap[$userId])) {
+                $username = $userMap[$userId]['username'];
+                $name = $userMap[$userId]['name'];
+                // ID-based routing: /profile/ID/username
+                return '<a href="/profile/' . $userId . '/' . urlencode($username) . '" class="mention" title="' . htmlspecialchars($name) . '">@' . htmlspecialchars($username) . '</a>';
+            }
+            return '<span class="mention-deleted text-gray-400">@user:' . $userId . '</span>';
+        }, $content);
+    }
+
+    /**
+     * Convert [user:ID] placeholders back to @username (for editing)
+     */
+    public function convertPlaceholdersToMentions($content, $userMap = []) {
+        return preg_replace_callback('/\[user:(\d+)\]/', function($matches) use ($userMap) {
+            $userId = $matches[1];
+            if (isset($userMap[$userId])) {
+                return '@' . $userMap[$userId]['username'];
+            }
+
+            $stmt = $this->pdo->prepare("SELECT username FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $username = $stmt->fetchColumn();
+            return $username ? '@' . $username : '[user:' . $userId . ']';
+        }, $content);
+    }
+
+    /**
+     * Convert @username to [user:ID] placeholders
+     */
+    private function convertMentionsToPlaceholders($content) {
+        preg_match_all('/@([a-zA-Z0-9_]+)/', $content, $matches);
+        $usernames = array_unique($matches[1]);
+
+        foreach ($usernames as $username) {
+            $stmt = $this->pdo->prepare("SELECT id FROM users WHERE LOWER(username) = LOWER(?)");
+            $stmt->execute([$username]);
+            $uid = $stmt->fetchColumn();
+            if ($uid) {
+                // Use word boundary to avoid partial matches
+                $content = preg_replace('/@' . preg_quote($username, '/') . '\b/i', "[user:$uid]", $content);
+            }
+        }
+        return $content;
+    }
+
+    /**
+     * Bulk load users mentioned in a list of comments
+     */
+    private function loadMentionedUsers($comments) {
+        $userIds = [];
+        foreach ($comments as $c) {
+            preg_match_all('/\[user:(\d+)\]/', $c['content'], $matches);
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $uid) $userIds[] = (int)$uid;
+            }
+            if (!empty($c['replies'])) {
+                foreach ($c['replies'] as $r) {
+                    preg_match_all('/\[user:(\d+)\]/', $r['content'], $matches);
+                    if (!empty($matches[1])) {
+                        foreach ($matches[1] as $uid) $userIds[] = (int)$uid;
+                    }
+                }
+            }
+        }
+
+        $userIds = array_unique($userIds);
+        if (empty($userIds)) return [];
+
+        $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+        $stmt = $this->pdo->prepare("SELECT id, username, name FROM users WHERE id IN ($placeholders)");
+        $stmt->execute($userIds);
+
+        $map = [];
+        while ($row = $stmt->fetch()) {
+            $map[$row['id']] = $row;
+        }
+        return $map;
     }
 
     /**

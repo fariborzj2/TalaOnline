@@ -180,18 +180,90 @@ $router->add('/about-us', function() {
     ]);
 });
 
-$router->add('/profile/:username', function($params) {
+$router->add('/profile/:identifier/:slug', function($params) {
     global $pdo;
-    $username = urldecode($params['username'] ?? '');
+    $id = $params['identifier'];
+    $slug = urldecode($params['slug'] ?? '');
 
     if (!$pdo) {
         ErrorHandler::renderError(500, 'خطای پایگاه داده', 'متاسفانه در حال حاضر امکان اتصال به پایگاه داده وجود ندارد.');
     }
 
-    // Use LOWER() for case-insensitive matching (compatible with MySQL and SQLite)
-    $stmt = $pdo->prepare("SELECT id, name, username, avatar, level, points, created_at FROM users WHERE LOWER(username) = LOWER(?)");
-    $stmt->execute([$username]);
+    $stmt = $pdo->prepare("SELECT id, name, username, avatar, level, points, created_at FROM users WHERE id = ?");
+    $stmt->execute([$id]);
     $user = $stmt->fetch();
+
+    if (!$user) {
+        ErrorHandler::renderError(404, 'کاربر پیدا نشد', 'کاربری با این مشخصات یافت نشد.');
+    }
+
+    // Optional: Canonical Redirect if slug doesn't match current username
+    if (strtolower($user['username']) !== strtolower($slug)) {
+        header("Location: /profile/" . $user['id'] . "/" . urlencode($user['username']), true, 301);
+        exit;
+    }
+
+    $is_owner = (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $user['id']);
+    $viewer_id = $_SESSION['user_id'] ?? null;
+
+    // Fetch Follow Stats
+    $follower_count = 0;
+    $following_count = 0;
+    $is_following = false;
+
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE following_id = ?");
+        $stmt->execute([$user['id']]);
+        $follower_count = $stmt->fetchColumn();
+
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ?");
+        $stmt->execute([$user['id']]);
+        $following_count = $stmt->fetchColumn();
+
+        if (isset($_SESSION['user_id']) && !$is_owner) {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ? AND following_id = ?");
+            $stmt->execute([$_SESSION['user_id'], $user['id']]);
+            $is_following = ($stmt->fetchColumn() > 0);
+        }
+    } catch (Exception $e) {}
+
+    // Fetch User Comments
+    require_once __DIR__ . '/comments.php';
+    $comments_handler = new Comments($pdo);
+    $user_comments = $comments_handler->getUserComments($user['id'], $viewer_id);
+
+    return View::renderPage('profile_unified', [
+        'user' => $user,
+        'is_owner' => $is_owner,
+        'follower_count' => $follower_count,
+        'following_count' => $following_count,
+        'is_following' => $is_following,
+        'user_comments' => $user_comments,
+        'page_title' => 'پروفایل ' . $user['name']
+    ]);
+});
+
+$router->add('/profile/:identifier', function($params) {
+    global $pdo;
+    $identifier = urldecode($params['identifier'] ?? '');
+
+    if (!$pdo) {
+        ErrorHandler::renderError(500, 'خطای پایگاه داده', 'متاسفانه در حال حاضر امکان اتصال به پایگاه داده وجود ندارد.');
+    }
+
+    $user = null;
+    if (is_numeric($identifier)) {
+        $stmt = $pdo->prepare("SELECT id, name, username, avatar, level, points, created_at FROM users WHERE id = ?");
+        $stmt->execute([$identifier]);
+        $user = $stmt->fetch();
+    }
+
+    if (!$user) {
+        // Fallback or legacy username lookup
+        $stmt = $pdo->prepare("SELECT id, name, username, avatar, level, points, created_at FROM users WHERE LOWER(username) = LOWER(?)");
+        $stmt->execute([$identifier]);
+        $user = $stmt->fetch();
+    }
 
     if (!$user) {
         ErrorHandler::renderError(404, 'کاربر پیدا نشد', 'کاربری با این مشخصات یافت نشد.');

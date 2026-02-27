@@ -536,8 +536,8 @@ class CommentSystem {
                 const body = wrapper.querySelector('.comment-content');
                 const originalHtml = body.innerHTML;
 
-                // Show form instead of body
-                body.innerHTML = this.renderCommentForm(id, comment.content);
+                // Show form instead of body (use content_edit which has @usernames)
+                body.innerHTML = this.renderCommentForm(id, comment.content_edit || comment.content);
                 if (window.lucide) lucide.createIcons();
                 this.bindEvents();
             };
@@ -620,7 +620,148 @@ class CommentSystem {
             if (!e.target.closest('.footer-right')) {
                 this.container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
             }
+            if (!e.target.closest('.mentions-autocomplete')) {
+                document.querySelectorAll('.mentions-autocomplete').forEach(a => a.remove());
+            }
         });
+
+        // Initialize autocomplete for textareas
+        this.container.querySelectorAll('textarea').forEach(textarea => {
+            this.initAutocomplete(textarea);
+        });
+    }
+
+    initAutocomplete(textarea) {
+        let autocompleteList = null;
+        let selectedIndex = -1;
+        let query = "";
+        let mentionStartPos = -1;
+
+        textarea.addEventListener('input', async (e) => {
+            const val = textarea.value;
+            const cursor = textarea.selectionStart;
+            const beforeCursor = val.substring(0, cursor);
+            const lastAt = beforeCursor.lastIndexOf('@');
+
+            if (lastAt !== -1 && !/\s/.test(beforeCursor.substring(lastAt + 1))) {
+                query = beforeCursor.substring(lastAt + 1);
+                mentionStartPos = lastAt;
+
+                if (query.length >= 1) {
+                    const users = await this.searchUsers(query);
+                    if (users.length > 0) {
+                        this.showAutocomplete(textarea, users, lastAt);
+                        return;
+                    }
+                }
+            }
+            this.removeAutocomplete();
+        });
+
+        textarea.addEventListener('keydown', (e) => {
+            if (!this.autocompleteList) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                this.moveSelection(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.moveSelection(-1);
+            } else if (e.key === 'Enter' || e.key === 'Tab') {
+                if (this.selectedIndex !== -1) {
+                    e.preventDefault();
+                    this.selectUser(textarea, mentionStartPos);
+                }
+            } else if (e.key === 'Escape') {
+                this.removeAutocomplete();
+            }
+        });
+    }
+
+    async searchUsers(q) {
+        try {
+            const res = await fetch(`/api/users.php?action=search&q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            return data.success ? data.users : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    showAutocomplete(textarea, users, pos) {
+        this.removeAutocomplete();
+
+        const rect = textarea.getBoundingClientRect();
+        const list = document.createElement('div');
+        list.className = 'mentions-autocomplete';
+
+        // Position roughly near the cursor
+        // A more advanced solution would use a hidden mirror div to find exact cursor coordinates
+        list.style.position = 'fixed';
+        list.style.top = (rect.top + 30) + 'px';
+        list.style.left = (rect.left + 10) + 'px';
+        list.style.width = (rect.width - 20) + 'px';
+        list.style.maxWidth = '300px';
+        list.style.zIndex = '1000';
+
+        users.forEach((user, index) => {
+            const item = document.createElement('div');
+            item.className = 'autocomplete-item';
+            item.innerHTML = `
+                <img src="${user.avatar}" class="autocomplete-avatar">
+                <div class="autocomplete-info">
+                    <div class="autocomplete-name">${user.name}</div>
+                    <div class="autocomplete-username">@${user.username}</div>
+                </div>
+            `;
+            item.onclick = () => {
+                this.selectedIndex = index;
+                this.selectUser(textarea, pos);
+            };
+            list.appendChild(item);
+        });
+
+        document.body.appendChild(list);
+        this.autocompleteList = list;
+        this.autocompleteUsers = users;
+        this.selectedIndex = 0;
+        this.updateSelection();
+    }
+
+    removeAutocomplete() {
+        if (this.autocompleteList) {
+            this.autocompleteList.remove();
+            this.autocompleteList = null;
+        }
+        this.selectedIndex = -1;
+    }
+
+    moveSelection(dir) {
+        this.selectedIndex += dir;
+        if (this.selectedIndex < 0) this.selectedIndex = this.autocompleteUsers.length - 1;
+        if (this.selectedIndex >= this.autocompleteUsers.length) this.selectedIndex = 0;
+        this.updateSelection();
+    }
+
+    updateSelection() {
+        const items = this.autocompleteList.querySelectorAll('.autocomplete-item');
+        items.forEach((item, i) => {
+            item.classList.toggle('active', i === this.selectedIndex);
+        });
+    }
+
+    selectUser(textarea, pos) {
+        const user = this.autocompleteUsers[this.selectedIndex];
+        const val = textarea.value;
+        const before = val.substring(0, pos);
+        const cursor = textarea.selectionStart;
+        const after = val.substring(cursor);
+
+        textarea.value = before + '@' + user.username + ' ' + after;
+        textarea.focus();
+        const newCursor = pos + user.username.length + 2;
+        textarea.setSelectionRange(newCursor, newCursor);
+        this.removeAutocomplete();
     }
 
     findComment(id) {
