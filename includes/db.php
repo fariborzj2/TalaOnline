@@ -390,6 +390,8 @@ if (file_exists($config_file)) {
                     `target_type` VARCHAR(50),
                     `content` TEXT,
                     `parent_id` INTEGER DEFAULT NULL,
+                    `reply_to_user_id` INTEGER DEFAULT NULL,
+                    `likes_count` INTEGER DEFAULT 0,
                     `status` VARCHAR(20) DEFAULT 'approved',
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -412,6 +414,8 @@ if (file_exists($config_file)) {
                 // Comment System Indexes
                 $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comments_target ON comments(target_id, target_type, status)");
                 $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_id)");
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comments_target_parent ON comments(target_id, parent_id)");
+                $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comments_reply_to ON comments(reply_to_user_id)");
                 $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comment_reactions_lookup ON comment_reactions(comment_id, reaction_type)");
                 $pdo->exec("CREATE INDEX IF NOT EXISTS idx_comment_reactions_user ON comment_reactions(user_id)");
             } else {
@@ -422,6 +426,8 @@ if (file_exists($config_file)) {
                     `target_type` VARCHAR(50),
                     `content` TEXT,
                     `parent_id` INT DEFAULT NULL,
+                    `reply_to_user_id` INT DEFAULT NULL,
+                    `likes_count` INT DEFAULT 0,
                     `status` VARCHAR(20) DEFAULT 'approved',
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -444,6 +450,8 @@ if (file_exists($config_file)) {
                 // Comment System Indexes
                 try { $pdo->exec("CREATE INDEX idx_comments_target ON comments(target_id, target_type, status)"); } catch (Exception $e) {}
                 try { $pdo->exec("CREATE INDEX idx_comments_parent ON comments(parent_id)"); } catch (Exception $e) {}
+                try { $pdo->exec("CREATE INDEX idx_comments_target_parent ON comments(target_id, parent_id)"); } catch (Exception $e) {}
+                try { $pdo->exec("CREATE INDEX idx_comments_reply_to ON comments(reply_to_user_id)"); } catch (Exception $e) {}
                 try { $pdo->exec("CREATE INDEX idx_comment_reactions_lookup ON comment_reactions(comment_id, reaction_type)"); } catch (Exception $e) {}
                 try { $pdo->exec("CREATE INDEX idx_comment_reactions_user ON comment_reactions(user_id)"); } catch (Exception $e) {}
             }
@@ -454,6 +462,32 @@ if (file_exists($config_file)) {
             if (!in_array('level', $cols)) {
                 $pdo->exec("ALTER TABLE users ADD COLUMN level INTEGER DEFAULT 1");
             }
+
+            // Fix comments table columns for existing installations
+            $comment_cols = [];
+            try {
+                if ($driver === 'sqlite') {
+                    $stmt = $pdo->query("PRAGMA table_info(comments)");
+                    while ($row = $stmt->fetch()) { $comment_cols[] = $row['name']; }
+                } else {
+                    $comment_cols = $pdo->query("DESCRIBE comments")->fetchAll(PDO::FETCH_COLUMN);
+                }
+                if (!empty($comment_cols)) {
+                    if (!in_array('reply_to_user_id', $comment_cols)) {
+                        $pdo->exec("ALTER TABLE comments ADD COLUMN reply_to_user_id INTEGER DEFAULT NULL");
+                        try { $pdo->exec("CREATE INDEX idx_comments_reply_to ON comments(reply_to_user_id)"); } catch (Exception $e) {}
+                    }
+                    if (!in_array('likes_count', $comment_cols)) {
+                        $pdo->exec("ALTER TABLE comments ADD COLUMN likes_count INTEGER DEFAULT 0");
+                        // Backfill likes_count for existing comments
+                        try {
+                            $pdo->exec("UPDATE comments SET likes_count = (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = comments.id AND reaction_type = 'like')");
+                        } catch (Exception $e) {}
+                    }
+                    // Ensure target_id/parent_id composite index
+                    try { $pdo->exec("CREATE INDEX idx_comments_target_parent ON comments(target_id, parent_id)"); } catch (Exception $e) {}
+                }
+            } catch (Exception $e) {}
 
             // Seeding Default Email Templates
             $template_count = $pdo->query("SELECT COUNT(*) FROM email_templates")->fetchColumn();

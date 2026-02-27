@@ -163,9 +163,9 @@ class CommentSystem {
         return comments.map(c => this.renderCommentItem(c)).join('');
     }
 
-    renderCommentItem(c) {
+    renderCommentItem(c, isReply = false) {
         const isExpert = c.user_role === 'admin' || c.user_role === 'editor';
-        const hasReplies = c.replies && c.replies.length > 0;
+        const hasReplies = !isReply && ((c.replies && c.replies.length > 0) || (c.total_replies > 0));
         const baseUrl = window.location.origin;
         const defaultAvatar = `${baseUrl}/assets/images/default-avatar.png`;
 
@@ -180,9 +180,15 @@ class CommentSystem {
             avatarUrl = defaultAvatar;
         }
 
+        const replyingTo = c.reply_to_username ? `
+            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1">
+                در پاسخ به <a href="/profile/${c.reply_to_username}" class="text-primary hover-underline">@${c.reply_to_username}</a>
+            </span>
+        ` : '';
+
         return `
             <div class="comment-wrapper ${hasReplies ? 'has-replies' : ''}" id="comment-wrapper-${c.id}">
-                <div class="comment-item ${isExpert ? 'is-expert' : ''}" id="comment-${c.id}">
+                <div class="comment-item ${isExpert ? 'is-expert' : ''} ${isReply ? 'is-reply' : ''}" id="comment-${c.id}">
                     <div class="comment-header">
                         <div class="comment-user-info">
                             <div class="avatar-container">
@@ -197,6 +203,7 @@ class CommentSystem {
                                     ${c.user_name}
                                     <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
                                 </span>
+                                ${replyingTo}
                                 ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline font-size-0-8">${c.target_info.title}</a>` : ''}
                                 <span class="comment-date">${c.created_at_fa || c.created_at}</span>
                             </div>
@@ -247,9 +254,18 @@ class CommentSystem {
 
                 <div id="reply-form-container-${c.id}"></div>
 
-                ${hasReplies ? `
-                    <div class="replies-container">
-                        ${c.replies.map(r => this.renderCommentItem(r)).join('')}
+                ${!isReply ? `
+                    <div class="replies-container" id="replies-container-${c.id}">
+                        <div class="replies-list">
+                            ${c.replies ? c.replies.map(r => this.renderCommentItem(r, true)).join('') : ''}
+                        </div>
+                        ${c.total_replies > 3 ? `
+                            <button class="btn btn-sm btn-secondary w-full mt-2 view-more-replies"
+                                    data-id="${c.id}"
+                                    data-total="${c.total_replies}">
+                                مشاهده پاسخ‌های بیشتر (${this.toPersianDigits(c.total_replies - 3)})
+                            </button>
+                        ` : ''}
                     </div>
                 ` : ''}
             </div>
@@ -335,15 +351,18 @@ class CommentSystem {
                                 const container = document.getElementById(`reply-form-container-${parentId}`);
                                 container.innerHTML = ''; // Hide form
 
-                                let repliesContainer = document.querySelector(`#comment-wrapper-${parentId} > .replies-container`);
+                                let repliesContainer = document.getElementById(`replies-container-${parentId}`);
                                 if (!repliesContainer) {
                                     const wrapper = document.getElementById(`comment-wrapper-${parentId}`);
                                     repliesContainer = document.createElement('div');
                                     repliesContainer.className = 'replies-container';
+                                    repliesContainer.id = `replies-container-${parentId}`;
+                                    repliesContainer.innerHTML = '<div class="replies-list"></div>';
                                     wrapper.appendChild(repliesContainer);
                                     wrapper.classList.add('has-replies');
                                 }
-                                repliesContainer.insertAdjacentHTML('beforeend', commentHtml);
+                                const list = repliesContainer.querySelector('.replies-list');
+                                list.insertAdjacentHTML('beforeend', commentHtml);
                             } else {
                                 // It's a top-level comment
                                 const list = this.container.querySelector('.comment-list');
@@ -543,6 +562,48 @@ class CommentSystem {
                     }
                 } catch (error) {
                     console.error(error);
+                }
+            };
+        });
+
+        this.container.querySelectorAll('.view-more-replies').forEach(btn => {
+            btn.onclick = async () => {
+                const id = btn.dataset.id;
+                const total = parseInt(btn.dataset.total);
+
+                if (btn.classList.contains('showing-all')) {
+                    // Collapse
+                    const list = document.querySelector(`#replies-container-${id} .replies-list`);
+                    const allReplies = list.querySelectorAll('.comment-item');
+                    for (let i = 3; i < allReplies.length; i++) {
+                        allReplies[i].closest('.comment-wrapper')?.remove();
+                    }
+                    btn.innerText = `مشاهده پاسخ‌های بیشتر (${this.toPersianDigits(total - 3)})`;
+                    btn.classList.remove('showing-all');
+                    return;
+                }
+
+                btn.disabled = true;
+                const originalText = btn.innerText;
+                btn.innerText = 'در حال دریافت...';
+
+                try {
+                    const res = await fetch(`/api/comments.php?action=replies&parent_id=${id}&offset=3&limit=100`);
+                    const data = await res.json();
+                    if (data.success) {
+                        const list = document.querySelector(`#replies-container-${id} .replies-list`);
+                        data.replies.forEach(r => {
+                            list.insertAdjacentHTML('beforeend', this.renderCommentItem(r, true));
+                        });
+                        btn.innerText = 'پنهان کردن پاسخ‌ها';
+                        btn.classList.add('showing-all');
+                        if (window.lucide) lucide.createIcons();
+                        this.bindEvents();
+                    }
+                } catch (error) {
+                    console.error(error);
+                } finally {
+                    btn.disabled = false;
                 }
             };
         });

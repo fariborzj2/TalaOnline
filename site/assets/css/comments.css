@@ -246,6 +246,10 @@
     /*! padding-top: 24px; */
 }
 
+.replies-container .comment-item.is-reply {
+    /* No additional indentation for reply-to-reply as per requirement */
+}
+
 /* Vertical line for replies */
 .replies-container::before {
     content: '';
