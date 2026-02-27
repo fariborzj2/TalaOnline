@@ -181,15 +181,22 @@ class CommentSystem {
         }
 
         const replyingTo = c.reply_to_username ? `
-            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1">
+            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1 ltr">
                 در پاسخ به <a href="/profile/${c.reply_to_username}" class="text-primary hover-underline">@${c.reply_to_username}</a>
             </span>
+        ` : '';
+
+        const replyPreview = c.reply_to_content ? `
+            <div class="reply-preview-block">
+                <div class="reply-preview-author">@${c.reply_to_username || 'user'}</div>
+                <div class="reply-preview-content">${c.reply_to_content.substring(0, 100)}${c.reply_to_content.length > 100 ? '...' : ''}</div>
+            </div>
         ` : '';
 
         return `
             <div class="comment-wrapper ${hasReplies ? 'has-replies' : ''}" id="comment-wrapper-${c.id}">
                 <div class="comment-item ${isExpert ? 'is-expert' : ''} ${isReply ? 'is-reply' : ''}" id="comment-${c.id}">
-                    <div class="comment-header">
+                    <div class="comment-header ltr-meta">
                         <div class="comment-user-info">
                             <div class="avatar-container">
                                 <img src="${avatarUrl}"
@@ -217,8 +224,9 @@ class CommentSystem {
                         </div>
                     </div>
 
-                    <div class="comment-content">
-                        ${c.content_html}
+                    <div class="comment-content ltr-content">
+                        ${replyPreview}
+                        <div class="comment-body-text">${c.content_html}</div>
                         ${isExpert ? `<div class="attachment-btn"><i data-lucide="file-text" class="icon-size-4"></i> مشاهده پیوست</div>` : ''}
                     </div>
 
@@ -321,6 +329,9 @@ class CommentSystem {
                         payload.target_id = this.targetId;
                         payload.target_type = this.targetType;
                         payload.parent_id = parentId;
+                        if (parentId) {
+                            payload.reply_to_id = parentId;
+                        }
                     }
 
                     const res = await fetch(`/api/comments.php?action=${action}`, {
@@ -345,18 +356,22 @@ class CommentSystem {
                             }
                         } else {
                             // Add new comment to DOM
-                            const commentHtml = this.renderCommentItem(data.comment);
-                            if (parentId) {
-                                // It's a reply
-                                const container = document.getElementById(`reply-form-container-${parentId}`);
-                                container.innerHTML = ''; // Hide form
+                            const comment = data.comment;
+                            const commentHtml = this.renderCommentItem(comment, !!comment.parent_id);
 
-                                let repliesContainer = document.getElementById(`replies-container-${parentId}`);
+                            if (parentId) {
+                                // Hide the form that was used
+                                const formContainer = document.getElementById(`reply-form-container-${parentId}`);
+                                if (formContainer) formContainer.innerHTML = '';
+
+                                // Always use the ACTUAL parent_id from server (enforces depth limit 1)
+                                const actualParentId = comment.parent_id;
+                                let repliesContainer = document.getElementById(`replies-container-${actualParentId}`);
                                 if (!repliesContainer) {
-                                    const wrapper = document.getElementById(`comment-wrapper-${parentId}`);
+                                    const wrapper = document.getElementById(`comment-wrapper-${actualParentId}`);
                                     repliesContainer = document.createElement('div');
                                     repliesContainer.className = 'replies-container';
-                                    repliesContainer.id = `replies-container-${parentId}`;
+                                    repliesContainer.id = `replies-container-${actualParentId}`;
                                     repliesContainer.innerHTML = '<div class="replies-list"></div>';
                                     wrapper.appendChild(repliesContainer);
                                     wrapper.classList.add('has-replies');

@@ -23,6 +23,7 @@ class Comments {
 
         $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username, ru.name as reply_to_name,
+                rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
@@ -30,6 +31,7 @@ class Comments {
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
                 LEFT JOIN users ru ON c.reply_to_user_id = ru.id
+                LEFT JOIN comments rc ON c.reply_to_id = rc.id
                 WHERE c.id = ?";
 
         $stmt = $this->pdo->prepare($sql);
@@ -79,8 +81,8 @@ class Comments {
                 LIMIT ? OFFSET ?";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(1, $target_id);
-        $stmt->bindValue(2, $target_type);
+        $stmt->bindValue(1, (string)$target_id);
+        $stmt->bindValue(2, (string)$target_type);
         $stmt->bindValue(3, (int)$per_page, PDO::PARAM_INT);
         $stmt->bindValue(4, (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -131,6 +133,7 @@ class Comments {
 
         $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username, ru.name as reply_to_name,
+                rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
@@ -138,6 +141,7 @@ class Comments {
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
                 LEFT JOIN users ru ON c.reply_to_user_id = ru.id
+                LEFT JOIN comments rc ON c.reply_to_id = rc.id
                 WHERE c.parent_id = ? AND c.status = 'approved'
                 ORDER BY c.likes_count DESC, c.created_at ASC
                 LIMIT ? OFFSET ?";
@@ -175,12 +179,16 @@ class Comments {
         if (!$this->pdo) return [];
 
         $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+                ru.username as reply_to_username, ru.name as reply_to_name,
+                rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
+                LEFT JOIN users ru ON c.reply_to_user_id = ru.id
+                LEFT JOIN comments rc ON c.reply_to_id = rc.id
                 WHERE c.user_id = :user_id AND c.status = 'approved'
                 ORDER BY c.created_at DESC
                 LIMIT :limit";
@@ -243,7 +251,7 @@ class Comments {
     /**
      * Add a new comment
      */
-    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $reply_to_user_id = null) {
+    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $reply_to_user_id = null, $reply_to_id = null) {
         if (!$this->pdo) return false;
 
         // Validation: Enforce depth limit 1 at application layer
@@ -257,13 +265,17 @@ class Comments {
             if ($parent['parent_id'] !== null) {
                 // The intended parent is already a reply.
                 // We MUST re-point to the actual top-level parent.
+                $reply_to_id = $parent_id;
                 $reply_to_user_id = $parent['user_id'];
                 $parent_id = $parent['parent_id'];
+            } else {
+                // It's a direct reply to a main comment
+                $reply_to_id = $parent_id;
             }
         }
 
-        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_user_id) VALUES (?, ?, ?, ?, ?, ?)");
-        $success = $stmt->execute([$user_id, $target_id, $target_type, $content, $parent_id, $reply_to_user_id]);
+        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_id, reply_to_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $success = $stmt->execute([$user_id, $target_id, $target_type, $content, $parent_id, $reply_to_id, $reply_to_user_id]);
 
         if ($success) {
             $comment_id = $this->pdo->lastInsertId();

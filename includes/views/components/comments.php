@@ -26,7 +26,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
     ?>
     <div class="comment-wrapper <?= $has_replies ? 'has-replies' : '' ?>" id="comment-wrapper-<?= $c['id'] ?>">
         <div class="comment-item <?= $is_expert ? 'is-expert' : '' ?> <?= $is_reply ? 'is-reply' : '' ?>" id="comment-<?= $c['id'] ?>">
-            <div class="comment-header">
+            <div class="comment-header ltr-meta">
                 <div class="comment-user-info">
                     <div class="avatar-container">
                         <img src="<?= htmlspecialchars($avatar) ?>" class="comment-avatar" alt="<?= htmlspecialchars($c['user_name']) ?>" onerror="this.src='<?= $default_avatar ?>'">
@@ -38,7 +38,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                             <span class="user-level-badge level-<?= $c['user_level'] ?>">سطح <?= $c['user_level'] ?></span>
                         </span>
                         <?php if (isset($c['reply_to_username']) && $c['reply_to_username']): ?>
-                            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1">
+                            <span class="replying-to-text text-gray-400 font-size-0-8 mx-1 ltr">
                                 در پاسخ به <a href="/profile/<?= $c['reply_to_username'] ?>" class="text-primary hover-underline">@<?= $c['reply_to_username'] ?></a>
                             </span>
                         <?php endif; ?>
@@ -60,8 +60,14 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                 </div>
             </div>
 
-            <div class="comment-content">
-                <?= $c['content_html'] ?>
+            <div class="comment-content ltr-content">
+                <?php if (!empty($c['reply_to_content'])): ?>
+                    <div class="reply-preview-block">
+                        <div class="reply-preview-author">@<?= htmlspecialchars($c['reply_to_username'] ?? 'user') ?></div>
+                        <div class="reply-preview-content"><?= htmlspecialchars(mb_substr($c['reply_to_content'], 0, 100)) . (mb_strlen($c['reply_to_content']) > 100 ? '...' : '') ?></div>
+                    </div>
+                <?php endif; ?>
+                <div class="comment-body-text"><?= $c['content_html'] ?></div>
                 <?php if ($is_expert): ?>
                     <div class="attachment-btn"><i data-lucide="file-text" class="icon-size-4"></i> مشاهده پیوست</div>
                 <?php endif; ?>
