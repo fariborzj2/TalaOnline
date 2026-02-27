@@ -48,6 +48,9 @@ class Router {
     }
 
     private function notFound() {
+        if (class_exists('LSCache')) {
+            LSCache::sendNoCacheHeaders();
+        }
         if (class_exists('ErrorHandler')) {
             ErrorHandler::renderError(404, 'صفحه پیدا نشد', 'متاسفانه صفحه‌ای که به دنبال آن بودید یافت نشد یا تغییر مکان داده است.');
         } else {
