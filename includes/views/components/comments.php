@@ -136,7 +136,19 @@ function render_reaction($c, $type, $emoji) {
 
         <?php if ($is_logged_in): ?>
             <div class="comment-form" id="form-main">
-                <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید (استفاده از @ برای منشن)..." id="textarea-main"></textarea>
+                <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-main"></textarea>
+
+                <div class="mention-tag-area mb-2">
+                    <div class="selected-mentions d-flex-wrap gap-05 mb-1" id="mentions-container-main"></div>
+                    <div class="mention-input-wrapper relative">
+                        <input type="text"
+                               class="mention-tag-input w-full radius-12 border px-1 py-05 font-size-0-9"
+                               placeholder="منشن کردن کاربر (آیدی را اینجا جستجو کنید...)"
+                               id="mention-input-main">
+                        <div class="mention-suggestions d-none" id="suggestions-main"></div>
+                    </div>
+                </div>
+
                 <div class="comment-form-footer">
                     <div></div>
                     <button class="btn btn-primary submit-comment radius-10" data-parent="">ارسال نظر</button>

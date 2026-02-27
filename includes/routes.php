@@ -258,16 +258,12 @@ $router->add('/profile/:identifier', function($params) {
         $user = $stmt->fetch();
     }
 
-    if ($user) {
-        // Redirect to canonical ID-based URL with slug
-        header("Location: /profile/" . $user['id'] . "/" . urlencode($user['username']), true, 301);
-        exit;
+    if (!$user) {
+        // Fallback or legacy username lookup
+        $stmt = $pdo->prepare("SELECT id, name, username, avatar, level, points, created_at FROM users WHERE LOWER(username) = LOWER(?)");
+        $stmt->execute([$identifier]);
+        $user = $stmt->fetch();
     }
-
-    // Fallback or legacy username lookup
-    $stmt = $pdo->prepare("SELECT id, name, username, avatar, level, points, created_at FROM users WHERE LOWER(username) = LOWER(?)");
-    $stmt->execute([$identifier]);
-    $user = $stmt->fetch();
 
     if ($user) {
         // Redirect to canonical ID-based URL

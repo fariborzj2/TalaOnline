@@ -1,5 +1,5 @@
 /**
- * Advanced Comment System Component - Refined to match UI/UX design
+ * Advanced Comment System Component - Refined with Tag-based Mentions
  */
 
 class CommentSystem {
@@ -22,7 +22,6 @@ class CommentSystem {
         if (options.initialComments) {
             this.render();
         } else {
-            // Check if already rendered by server
             if (this.container.querySelector('.comment-item')) {
                 this.bindEvents();
                 this.handleAnchorScroll();
@@ -31,7 +30,6 @@ class CommentSystem {
             }
         }
 
-        // Listen for global auth changes
         document.addEventListener('auth:status-changed', (e) => {
             const state = e.detail;
             this.isLoggedIn = state.isLoggedIn;
@@ -42,10 +40,7 @@ class CommentSystem {
     }
 
     async init() {
-        // Strictly non-AJAX for initial load as per requirements
         if (this.container.querySelector('.comment-item')) return;
-
-        // If no comments and not rendered by server, we just bind events to the form
         this.bindEvents();
     }
 
@@ -58,7 +53,6 @@ class CommentSystem {
     handleAnchorScroll() {
         const hash = window.location.hash;
         if (hash && hash.startsWith('#comment-')) {
-            // Give a small delay for DOM to settle and images to load
             setTimeout(() => {
                 const el = document.querySelector(hash);
                 if (el) {
@@ -68,10 +62,6 @@ class CommentSystem {
                 }
             }, 500);
         }
-    }
-
-    renderSkeleton() {
-        this.container.innerHTML = `<div class="pd-md text-center text-gray-400">در حال بارگذاری بخش نظرات...</div>`;
     }
 
     async loadComments() {
@@ -137,9 +127,22 @@ class CommentSystem {
             `;
         }
 
+        const suffix = parentId || 'main';
         return `
-            <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${parentId || 'main'}">
-                <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید (استفاده از @ برای منشن)..." id="textarea-${parentId || 'main'}">${initialContent}</textarea>
+            <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${suffix}">
+                <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-${suffix}">${initialContent}</textarea>
+
+                <div class="mention-tag-area mb-2">
+                    <div class="selected-mentions d-flex-wrap gap-05 mb-1" id="mentions-container-${suffix}"></div>
+                    <div class="mention-input-wrapper relative">
+                        <input type="text"
+                               class="mention-tag-input w-full radius-12 border px-1 py-05 font-size-0-9"
+                               placeholder="منشن کردن کاربر (آیدی را اینجا جستجو کنید...)"
+                               id="mention-input-${suffix}">
+                        <div class="mention-suggestions d-none" id="suggestions-${suffix}"></div>
+                    </div>
+                </div>
+
                 <div class="comment-form-footer">
                     <div></div>
                     <button class="btn btn-primary submit-comment radius-10" data-parent="${parentId || ''}" data-edit="${initialContent ? 'true' : 'false'}">
@@ -159,12 +162,10 @@ class CommentSystem {
                 </div>
             `;
         }
-
         return comments.map(c => this.renderCommentItem(c)).join('');
     }
 
     renderCommentItem(c, isReply = false) {
-        const isExpert = c.user_role === 'admin' || c.user_role === 'editor';
         const hasReplies = !isReply && ((c.replies && c.replies.length > 0) || (c.total_replies > 0));
         const baseUrl = window.location.origin;
         const defaultAvatar = `${baseUrl}/assets/images/default-avatar.png`;
@@ -172,7 +173,6 @@ class CommentSystem {
         let avatarUrl = c.user_avatar;
         if (avatarUrl) {
             if (!avatarUrl.startsWith('https')) {
-                // Ensure no double slashes
                 const path = avatarUrl.startsWith('/') ? avatarUrl.substring(1) : avatarUrl;
                 avatarUrl = `${baseUrl}/${path}`;
             }
@@ -180,23 +180,13 @@ class CommentSystem {
             avatarUrl = defaultAvatar;
         }
 
-        const replyPreview = c.reply_to_content ? `
-            <div class="reply-preview-block">
-                <div>در پاسخ به <a href="/profile/${c.reply_to_user_id}/${c.reply_to_username || 'user'}" class="reply-preview-author">@${c.reply_to_username || 'user'}</a></div>
-                <div class="reply-preview-content">${c.reply_to_content.substring(0, 100)}${c.reply_to_content.length > 100 ? '...' : ''}</div>
-            </div>
-        ` : '';
-
         return `
             <div class="comment-wrapper ${hasReplies ? 'has-replies' : ''}" id="comment-wrapper-${c.id}">
-                <div class="comment-item ${isExpert ? 'is-expert' : ''} ${isReply ? 'is-reply' : ''}" id="comment-${c.id}">
+                <div class="comment-item ${c.user_role === 'admin' || c.user_role === 'editor' ? 'is-expert' : ''} ${isReply ? 'is-reply' : ''}" id="comment-${c.id}">
                     <div class="comment-header">
                         <div class="comment-user-info">
                             <div class="avatar-container">
-                                <img src="${avatarUrl}"
-                                     class="comment-avatar"
-                                     alt="${c.user_name}"
-                                     onerror="this.src='${defaultAvatar}'">
+                                <img src="${avatarUrl}" class="comment-avatar" alt="${c.user_name}" onerror="this.src='${defaultAvatar}'">
                                 <div class="online-dot"></div>
                             </div>
                             <div class="comment-meta">
@@ -218,9 +208,7 @@ class CommentSystem {
                     </div>
 
                     <div class="comment-content">
-                        ${replyPreview}
-                        <div class="comment-body-text">${c.content_html}</div>
-                        ${isExpert ? `<div class="attachment-btn"><i data-lucide="file-text" class="icon-size-4"></i> مشاهده پیوست</div>` : ''}
+                        ${this.renderCommentBody(c)}
                     </div>
 
                     <div class="comment-footer">
@@ -230,7 +218,6 @@ class CommentSystem {
                             <span>پاسخ</span>
                         </div>
                         ` : ''}
-
                         <div class="footer-right">
                             <div class="reaction-pill">
                                 ${this.renderReaction(c, 'like', '👍')}
@@ -243,7 +230,6 @@ class CommentSystem {
                                 <span>واکنش</span>
                             </div>
                         </div>
-
                         <div class="reactions-popover" id="popover-${c.id}">
                             <span class="emoji-btn" data-id="${c.id}" data-type="like">👍</span>
                             <span class="emoji-btn" data-id="${c.id}" data-type="heart">❤️</span>
@@ -252,18 +238,14 @@ class CommentSystem {
                         </div>
                     </div>
                 </div>
-
                 <div id="reply-form-container-${c.id}"></div>
-
                 ${!isReply ? `
                     <div class="replies-container" id="replies-container-${c.id}">
                         <div class="replies-list">
                             ${c.replies ? c.replies.map(r => this.renderCommentItem(r, true)).join('') : ''}
                         </div>
                         ${c.total_replies > 3 ? `
-                            <button class="btn btn-sm btn-secondary w-full mt-2 view-more-replies"
-                                    data-id="${c.id}"
-                                    data-total="${c.total_replies}">
+                            <button class="btn btn-sm btn-secondary w-full mt-2 view-more-replies" data-id="${c.id}" data-total="${c.total_replies}">
                                 مشاهده پاسخ‌های بیشتر (${this.toPersianDigits(c.total_replies - 3)})
                             </button>
                         ` : ''}
@@ -273,10 +255,25 @@ class CommentSystem {
         `;
     }
 
+    renderCommentBody(c) {
+        const isExpert = c.user_role === 'admin' || c.user_role === 'editor';
+        const replyPreview = c.reply_to_content ? `
+            <div class="reply-preview-block">
+                <div>در پاسخ به <a href="/profile/${c.reply_to_user_id}/${c.reply_to_username || 'user'}" class="reply-preview-author">@${c.reply_to_username || 'user'}</a></div>
+                <div class="reply-preview-content">${c.reply_to_content.substring(0, 100)}${c.reply_to_content.length > 100 ? '...' : ''}</div>
+            </div>
+        ` : '';
+
+        return `
+            ${replyPreview}
+            <div class="comment-body-text">${c.content_html}</div>
+            ${isExpert ? `<div class="attachment-btn"><i data-lucide="file-text" class="icon-size-4"></i> مشاهده پیوست</div>` : ''}
+        `;
+    }
+
     renderReaction(comment, type, emoji) {
         const count = comment[type + 's'] || 0;
         if (count === 0 && comment.user_reaction !== type) return '';
-
         return `
             <div class="reaction-pill-item ${comment.user_reaction === type ? 'active' : ''}" data-id="${comment.id}" data-type="${type}">
                 <span>${this.toPersianDigits(count)}</span> ${emoji}
@@ -292,9 +289,7 @@ class CommentSystem {
 
     updateStatsUI() {
         const countBadge = this.container.querySelector('.comments-count-badge');
-        if (countBadge) {
-            countBadge.innerText = `(${this.toPersianDigits(this.totalCount)})`;
-        }
+        if (countBadge) countBadge.innerText = `(${this.toPersianDigits(this.totalCount)})`;
     }
 
     bindEvents() {
@@ -305,59 +300,47 @@ class CommentSystem {
                 const suffix = parentId || 'main';
                 const textarea = document.getElementById(`textarea-${suffix}`);
                 const content = textarea.value;
+                const mentionsContainer = document.getElementById(`mentions-container-${suffix}`);
+                const mentionIds = Array.from(mentionsContainer?.querySelectorAll('.mention-tag') || []).map(tag => tag.dataset.userId);
 
                 if (!content.trim()) return;
-
                 btn.disabled = true;
                 const originalText = btn.innerText;
                 btn.innerText = 'در حال ارسال...';
 
                 try {
                     const action = isEdit ? 'edit' : 'add';
-                    const payload = { content: content };
-
+                    const payload = { content, mentions: mentionIds };
                     if (isEdit) {
                         payload.comment_id = parentId;
                     } else {
                         payload.target_id = this.targetId;
                         payload.target_type = this.targetType;
                         payload.parent_id = parentId;
-                        if (parentId) {
-                            payload.reply_to_id = parentId;
-                        }
+                        if (parentId) payload.reply_to_id = parentId;
                     }
 
                     const res = await fetch(`/api/comments.php?action=${action}`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-Token': this.csrfToken
-                        },
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
                         body: JSON.stringify(payload)
                     });
                     const data = await res.json();
                     if (data.success) {
                         textarea.value = '';
+                        if (mentionsContainer) mentionsContainer.innerHTML = '';
                         if (isEdit) {
-                            // Update existing comment in DOM
                             const commentItem = document.getElementById(`comment-${parentId}`);
                             if (commentItem) {
-                                commentItem.querySelector('.comment-content').innerHTML = data.content_html;
-                                // Update internal state if necessary
-                                const comment = this.findComment(parentId);
-                                if (comment) comment.content = data.content;
+                                const comment = data.comment || this.findComment(parentId);
+                                if (data.comment) this.updateCommentInCache(data.comment);
+                                commentItem.querySelector('.comment-content').innerHTML = this.renderCommentBody(data.comment || comment);
                             }
                         } else {
-                            // Add new comment to DOM
                             const comment = data.comment;
                             const commentHtml = this.renderCommentItem(comment, !!comment.parent_id);
-
                             if (parentId) {
-                                // Hide the form that was used
-                                const formContainer = document.getElementById(`reply-form-container-${parentId}`);
-                                if (formContainer) formContainer.innerHTML = '';
-
-                                // Always use the ACTUAL parent_id from server (enforces depth limit 1)
+                                document.getElementById(`reply-form-container-${parentId}`).innerHTML = '';
                                 const actualParentId = comment.parent_id;
                                 let repliesContainer = document.getElementById(`replies-container-${actualParentId}`);
                                 if (!repliesContainer) {
@@ -369,39 +352,23 @@ class CommentSystem {
                                     wrapper.appendChild(repliesContainer);
                                     wrapper.classList.add('has-replies');
                                 }
-                                const list = repliesContainer.querySelector('.replies-list');
-                                list.insertAdjacentHTML('beforeend', commentHtml);
+                                repliesContainer.querySelector('.replies-list').insertAdjacentHTML('beforeend', commentHtml);
                             } else {
-                                // It's a top-level comment
                                 const list = this.container.querySelector('.comment-list');
-                                // Remove "no comments" message if present
-                                if (list.querySelector('.text-gray-400')) {
-                                    list.innerHTML = '';
-                                }
+                                if (list.querySelector('.text-gray-400')) list.innerHTML = '';
                                 list.insertAdjacentHTML('afterbegin', commentHtml);
                             }
-
-                            // Update count
                             this.totalCount = data.total_count;
                             this.updateStatsUI();
                         }
-
                         if (window.lucide) lucide.createIcons();
-                        this.bindEvents(); // Re-bind events for new elements
+                        this.bindEvents();
                     } else {
-                        if (window.showAlert) {
-                            window.showAlert(data.message, 'error');
-                        } else {
-                            alert(data.message);
-                        }
+                        window.showAlert?.(data.message, 'error') || alert(data.message);
                     }
                 } catch (error) {
                     console.error(error);
-                    if (window.showAlert) {
-                        window.showAlert('خطا در برقراری ارتباط با سرور', 'error');
-                    } else {
-                        alert('خطا در برقراری ارتباط با سرور');
-                    }
+                    window.showAlert?.('خطا در برقراری ارتباط با سرور', 'error') || alert('خطا در برقراری ارتباط با سرور');
                 } finally {
                     btn.disabled = false;
                     btn.innerText = originalText;
@@ -412,10 +379,7 @@ class CommentSystem {
         this.container.querySelectorAll('.btn-react-trigger').forEach(btn => {
             btn.onclick = (e) => {
                 e.stopPropagation();
-                if (!this.isLoggedIn) {
-                    window.showAuthModal?.('login');
-                    return;
-                }
+                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
                 const id = btn.dataset.id;
                 const popover = document.getElementById(`popover-${id}`);
                 const isShown = popover.classList.contains('show');
@@ -428,74 +392,47 @@ class CommentSystem {
             btn.onclick = async (e) => {
                 e.stopPropagation();
                 if (btn.classList.contains('loading')) return;
-                if (!this.isLoggedIn) {
-                    window.showAuthModal?.('login');
-                    return;
-                }
+                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
                 const id = btn.dataset.id;
                 const type = btn.dataset.type;
                 const comment = this.findComment(id);
                 const currentReaction = comment ? comment.user_reaction : null;
                 const newType = (currentReaction === type) ? null : type;
-
                 btn.classList.add('loading');
-
                 try {
                     const res = await fetch('/api/comments.php?action=react', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-Token': this.csrfToken
-                        },
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
                         body: JSON.stringify({ comment_id: id, reaction_type: newType })
                     });
                     const data = await res.json();
                     if (data.success) {
-                        // Update DOM directly
-                        const commentId = id;
                         const counts = data.counts;
                         const userReaction = data.user_reaction;
-
-                        const comment = this.findComment(commentId);
+                        const comment = this.findComment(id);
                         if (comment) {
-                            comment.likes = counts.likes;
-                            comment.dislikes = counts.dislikes;
-                            comment.hearts = counts.hearts;
-                            comment.fires = counts.fires;
-                            comment.user_reaction = userReaction;
+                            Object.assign(comment, { likes: counts.likes, dislikes: counts.dislikes, hearts: counts.hearts, fires: counts.fires, user_reaction: userReaction });
                         }
-
-                        const pill = document.querySelector(`#comment-${commentId} .reaction-pill`);
+                        const pill = document.querySelector(`#comment-${id} .reaction-pill`);
                         if (pill) {
                             pill.innerHTML = `
-                                ${this.renderReaction({id: commentId, likes: counts.likes, user_reaction: userReaction}, 'like', '👍')}
-                                ${this.renderReaction({id: commentId, hearts: counts.hearts, user_reaction: userReaction}, 'heart', '❤️')}
-                                ${this.renderReaction({id: commentId, fires: counts.fires, user_reaction: userReaction}, 'fire', '🔥')}
-                                ${this.renderReaction({id: commentId, dislikes: counts.dislikes, user_reaction: userReaction}, 'dislike', '👎')}
+                                ${this.renderReaction({id, likes: counts.likes, user_reaction: userReaction}, 'like', '👍')}
+                                ${this.renderReaction({id, hearts: counts.hearts, user_reaction: userReaction}, 'heart', '❤️')}
+                                ${this.renderReaction({id, fires: counts.fires, user_reaction: userReaction}, 'fire', '🔥')}
+                                ${this.renderReaction({id, dislikes: counts.dislikes, user_reaction: userReaction}, 'dislike', '👎')}
                             `;
-                            this.bindEvents(); // Re-bind for new reaction items
+                            this.bindEvents();
                         }
                     } else if (data.message) {
-                        if (window.showAlert) {
-                            window.showAlert(data.message, 'warning');
-                        } else {
-                            alert(data.message);
-                        }
+                        window.showAlert?.(data.message, 'warning') || alert(data.message);
                     }
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    btn.classList.remove('loading');
-                }
+                } catch (error) { console.error(error); } finally { btn.classList.remove('loading'); }
             };
         });
 
         this.container.querySelectorAll('.reply-btn').forEach(btn => {
             btn.onclick = () => {
-                if (!this.isLoggedIn) {
-                    window.showAuthModal?.('login');
-                    return;
-                }
+                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
                 const id = btn.dataset.id;
                 const container = document.getElementById(`reply-form-container-${id}`);
                 if (container.innerHTML === '') {
@@ -531,13 +468,13 @@ class CommentSystem {
                 const id = btn.dataset.id;
                 const comment = this.findComment(id);
                 if (!comment) return;
-
                 const wrapper = document.getElementById(`comment-${id}`);
                 const body = wrapper.querySelector('.comment-content');
-                const originalHtml = body.innerHTML;
-
-                // Show form instead of body (use content_edit which has @usernames)
                 body.innerHTML = this.renderCommentForm(id, comment.content_edit || comment.content);
+                if (comment.mentioned_users) {
+                    const container = document.getElementById(`mentions-container-${id}`);
+                    comment.mentioned_users.forEach(u => this.addMentionTag(container, u));
+                }
                 if (window.lucide) lucide.createIcons();
                 this.bindEvents();
             };
@@ -545,32 +482,19 @@ class CommentSystem {
 
         this.container.querySelectorAll('.report-btn').forEach(btn => {
             btn.onclick = async () => {
-                if (!this.isLoggedIn) {
-                    window.showAuthModal?.('login');
-                    return;
-                }
+                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
                 const id = btn.dataset.id;
                 const reason = prompt('علت گزارش این نظر چیست؟');
                 if (!reason) return;
-
                 try {
                     const res = await fetch('/api/comments.php?action=report', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-Token': this.csrfToken
-                        },
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
                         body: JSON.stringify({ comment_id: id, reason: reason })
                     });
                     const data = await res.json();
-                    if (window.showAlert) {
-                        window.showAlert(data.message, data.success ? 'success' : 'error');
-                    } else {
-                        alert(data.message);
-                    }
-                } catch (error) {
-                    console.error(error);
-                }
+                    window.showAlert?.(data.message, data.success ? 'success' : 'error') || alert(data.message);
+                } catch (error) { console.error(error); }
             };
         });
 
@@ -578,41 +502,29 @@ class CommentSystem {
             btn.onclick = async () => {
                 const id = btn.dataset.id;
                 const total = parseInt(btn.dataset.total);
-
                 if (btn.classList.contains('showing-all')) {
-                    // Collapse
                     const list = document.querySelector(`#replies-container-${id} .replies-list`);
                     const allReplies = list.querySelectorAll('.comment-item');
-                    for (let i = 3; i < allReplies.length; i++) {
-                        allReplies[i].closest('.comment-wrapper')?.remove();
-                    }
+                    for (let i = 3; i < allReplies.length; i++) allReplies[i].closest('.comment-wrapper')?.remove();
                     btn.innerText = `مشاهده پاسخ‌های بیشتر (${this.toPersianDigits(total - 3)})`;
                     btn.classList.remove('showing-all');
                     return;
                 }
-
                 btn.disabled = true;
                 const originalText = btn.innerText;
                 btn.innerText = 'در حال دریافت...';
-
                 try {
                     const res = await fetch(`/api/comments.php?action=replies&parent_id=${id}&offset=3&limit=100`);
                     const data = await res.json();
                     if (data.success) {
                         const list = document.querySelector(`#replies-container-${id} .replies-list`);
-                        data.replies.forEach(r => {
-                            list.insertAdjacentHTML('beforeend', this.renderCommentItem(r, true));
-                        });
+                        data.replies.forEach(r => list.insertAdjacentHTML('beforeend', this.renderCommentItem(r, true)));
                         btn.innerText = 'پنهان کردن پاسخ‌ها';
                         btn.classList.add('showing-all');
                         if (window.lucide) lucide.createIcons();
                         this.bindEvents();
                     }
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    btn.disabled = false;
-                }
+                } catch (error) { console.error(error); } finally { btn.disabled = false; }
             };
         });
 
@@ -620,61 +532,32 @@ class CommentSystem {
             if (!e.target.closest('.footer-right')) {
                 this.container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
             }
-            if (!e.target.closest('.mentions-autocomplete')) {
-                document.querySelectorAll('.mentions-autocomplete').forEach(a => a.remove());
+            if (!e.target.closest('.mention-input-wrapper')) {
+                this.container.querySelectorAll('.mention-suggestions').forEach(s => s.classList.add('d-none'));
             }
         });
 
-        // Initialize autocomplete for textareas
-        this.container.querySelectorAll('textarea').forEach(textarea => {
-            this.initAutocomplete(textarea);
-        });
+        this.initTagMentions();
     }
 
-    initAutocomplete(textarea) {
-        let autocompleteList = null;
-        let selectedIndex = -1;
-        let query = "";
-        let mentionStartPos = -1;
+    initTagMentions() {
+        this.container.querySelectorAll('.mention-tag-input').forEach(input => {
+            const suffix = input.id.replace('mention-input-', '');
+            const suggestionsEl = document.getElementById(`suggestions-${suffix}`);
+            const containerEl = document.getElementById(`mentions-container-${suffix}`);
+            if (!suggestionsEl || !containerEl) return;
 
-        textarea.addEventListener('input', async (e) => {
-            const val = textarea.value;
-            const cursor = textarea.selectionStart;
-            const beforeCursor = val.substring(0, cursor);
-            const lastAt = beforeCursor.lastIndexOf('@');
-
-            if (lastAt !== -1 && !/\s/.test(beforeCursor.substring(lastAt + 1))) {
-                query = beforeCursor.substring(lastAt + 1);
-                mentionStartPos = lastAt;
-
-                if (query.length >= 1) {
-                    const users = await this.searchUsers(query);
-                    if (users.length > 0) {
-                        this.showAutocomplete(textarea, users, lastAt);
-                        return;
-                    }
+            input.oninput = async () => {
+                const q = input.value.trim();
+                if (q.length < 1) { suggestionsEl.classList.add('d-none'); return; }
+                const users = await this.searchUsers(q);
+                if (users.length > 0) {
+                    this.renderSuggestions(suggestionsEl, users, containerEl, input);
+                } else {
+                    suggestionsEl.classList.add('d-none');
                 }
-            }
-            this.removeAutocomplete();
-        });
-
-        textarea.addEventListener('keydown', (e) => {
-            if (!this.autocompleteList) return;
-
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                this.moveSelection(1);
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                this.moveSelection(-1);
-            } else if (e.key === 'Enter' || e.key === 'Tab') {
-                if (this.selectedIndex !== -1) {
-                    e.preventDefault();
-                    this.selectUser(textarea, mentionStartPos);
-                }
-            } else if (e.key === 'Escape') {
-                this.removeAutocomplete();
-            }
+            };
+            input.onfocus = () => { if (input.value.trim().length >= 1) suggestionsEl.classList.remove('d-none'); };
         });
     }
 
@@ -683,88 +566,37 @@ class CommentSystem {
             const res = await fetch(`/api/users.php?action=search&q=${encodeURIComponent(q)}`);
             const data = await res.json();
             return data.success ? data.users : [];
-        } catch (e) {
-            return [];
-        }
+        } catch (e) { return []; }
     }
 
-    showAutocomplete(textarea, users, pos) {
-        this.removeAutocomplete();
-
-        const rect = textarea.getBoundingClientRect();
-        const list = document.createElement('div');
-        list.className = 'mentions-autocomplete';
-
-        // Mobile positioning is handled via CSS media queries (@media (max-width: 600px))
-        // For Desktop, we try to position it relative to the textarea but out of the way
-        const isMobile = window.innerWidth <= 600;
-
-        if (!isMobile) {
-            list.style.position = 'fixed';
-            // Position it below the textarea to avoid covering content
-            list.style.top = (rect.bottom + 5) + 'px';
-            list.style.left = (rect.left) + 'px';
-            list.style.zIndex = '1000';
-        }
-
-        users.forEach((user, index) => {
-            const item = document.createElement('div');
-            item.className = 'autocomplete-item';
-            item.innerHTML = `
-                <img src="${user.avatar}" class="autocomplete-avatar">
-                <div class="autocomplete-info">
-                    <div class="autocomplete-name">${user.name}</div>
-                    <div class="autocomplete-username">@${user.username}</div>
+    renderSuggestions(el, users, container, input) {
+        el.innerHTML = users.map(u => `
+            <div class="suggestion-item" data-id="${u.id}" data-username="${u.username}" data-name="${u.name}" data-avatar="${u.avatar}">
+                <img src="${u.avatar}" class="suggestion-avatar">
+                <div class="suggestion-info">
+                    <div class="suggestion-name">${u.name}</div>
+                    <div class="suggestion-username">@${u.username}</div>
                 </div>
-            `;
+            </div>
+        `).join('');
+        el.classList.remove('d-none');
+        el.querySelectorAll('.suggestion-item').forEach(item => {
             item.onclick = () => {
-                this.selectedIndex = index;
-                this.selectUser(textarea, pos);
+                this.addMentionTag(container, item.dataset);
+                input.value = '';
+                el.classList.add('d-none');
             };
-            list.appendChild(item);
-        });
-
-        document.body.appendChild(list);
-        this.autocompleteList = list;
-        this.autocompleteUsers = users;
-        this.selectedIndex = 0;
-        this.updateSelection();
-    }
-
-    removeAutocomplete() {
-        if (this.autocompleteList) {
-            this.autocompleteList.remove();
-            this.autocompleteList = null;
-        }
-        this.selectedIndex = -1;
-    }
-
-    moveSelection(dir) {
-        this.selectedIndex += dir;
-        if (this.selectedIndex < 0) this.selectedIndex = this.autocompleteUsers.length - 1;
-        if (this.selectedIndex >= this.autocompleteUsers.length) this.selectedIndex = 0;
-        this.updateSelection();
-    }
-
-    updateSelection() {
-        const items = this.autocompleteList.querySelectorAll('.autocomplete-item');
-        items.forEach((item, i) => {
-            item.classList.toggle('active', i === this.selectedIndex);
         });
     }
 
-    selectUser(textarea, pos) {
-        const user = this.autocompleteUsers[this.selectedIndex];
-        const val = textarea.value;
-        const before = val.substring(0, pos);
-        const cursor = textarea.selectionStart;
-        const after = val.substring(cursor);
-
-        textarea.value = before + '@' + user.username + ' ' + after;
-        textarea.focus();
-        const newCursor = pos + user.username.length + 2;
-        textarea.setSelectionRange(newCursor, newCursor);
-        this.removeAutocomplete();
+    addMentionTag(container, data) {
+        if (container.querySelector(`.mention-tag[data-user-id="${data.id}"]`)) return;
+        const tag = document.createElement('div');
+        tag.className = 'mention-tag';
+        tag.dataset.userId = data.id;
+        tag.innerHTML = `<span>@${data.username}</span><i class="remove-tag">&times;</i>`;
+        tag.querySelector('.remove-tag').onclick = () => tag.remove();
+        container.appendChild(tag);
     }
 
     findComment(id) {
@@ -772,12 +604,25 @@ class CommentSystem {
         const search = (list) => {
             for (const c of list) {
                 if (c.id == id) { found = c; return; }
-                if (c.replies) search(c.replies);
-                if (found) return;
+                if (c.replies && search(c.replies)) return;
             }
         };
         search(this.comments);
         return found;
+    }
+
+    updateCommentInCache(updatedComment) {
+        const searchAndReplace = (list) => {
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].id == updatedComment.id) {
+                    list[i] = { ...list[i], ...updatedComment };
+                    return true;
+                }
+                if (list[i].replies && searchAndReplace(list[i].replies)) return true;
+            }
+            return false;
+        };
+        searchAndReplace(this.comments);
     }
 }
 

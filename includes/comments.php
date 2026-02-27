@@ -13,15 +13,12 @@ class Comments {
     }
 
     /**
-     * Fetch comments for a specific target with pagination
-     */
-    /**
      * Fetch a single comment with full data
      */
     public function getComment($id, $user_id = null) {
         if (!$this->pdo) return null;
 
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username, ru.name as reply_to_name,
                 rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
@@ -53,7 +50,8 @@ class Comments {
         // Fetch mentioned users for this single comment
         $userMap = $this->loadMentionedUsers([$c]);
         $c['content_html'] = $this->parseMentions($c['content'], $userMap);
-        $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap);
+        $c['mentioned_users'] = $this->extractMentionedUsers($c['content'], $userMap);
+        $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap, true);
 
         $c['created_at_fa'] = jalali_date($c['created_at']);
         $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < 300);
@@ -74,7 +72,7 @@ class Comments {
         $offset = ($page - 1) * $per_page;
 
         // 1. Get top-level comments for the current page
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
@@ -125,10 +123,12 @@ class Comments {
         $userMap = $this->loadMentionedUsers($top_level_comments);
         foreach ($top_level_comments as &$c) {
             $c['content_html'] = $this->parseMentions($c['content'], $userMap);
-            $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap);
+            $c['mentioned_users'] = $this->extractMentionedUsers($c['content'], $userMap);
+            $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap, true);
             foreach ($c['replies'] as &$r) {
                 $r['content_html'] = $this->parseMentions($r['content'], $userMap);
-                $r['content_edit'] = $this->convertPlaceholdersToMentions($r['content'], $userMap);
+                $r['mentioned_users'] = $this->extractMentionedUsers($r['content'], $userMap);
+                $r['content_edit'] = $this->convertPlaceholdersToMentions($r['content'], $userMap, true);
             }
         }
 
@@ -146,7 +146,7 @@ class Comments {
     public function getReplies($parent_id, $offset = 0, $limit = 10, $user_id = null, $parse = true) {
         if (!$this->pdo) return [];
 
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username, ru.name as reply_to_name,
                 rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
@@ -182,7 +182,8 @@ class Comments {
             $userMap = $this->loadMentionedUsers($replies);
             foreach ($replies as &$r) {
                 $r['content_html'] = $this->parseMentions($r['content'], $userMap);
-                $r['content_edit'] = $this->convertPlaceholdersToMentions($r['content'], $userMap);
+                $r['mentioned_users'] = $this->extractMentionedUsers($r['content'], $userMap);
+                $r['content_edit'] = $this->convertPlaceholdersToMentions($r['content'], $userMap, true);
             }
         }
 
@@ -201,7 +202,7 @@ class Comments {
     public function getUserComments($user_id, $viewer_id = null, $limit = 50) {
         if (!$this->pdo) return [];
 
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.level as user_level, u.role as user_role,
+        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username, ru.name as reply_to_name,
                 rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
@@ -237,7 +238,8 @@ class Comments {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['replies'] = [];
             $c['content_html'] = $this->parseMentions($c['content'], $userMap);
-            $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap);
+            $c['mentioned_users'] = $this->extractMentionedUsers($c['content'], $userMap);
+            $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap, true);
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < 300);
             $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
@@ -277,7 +279,7 @@ class Comments {
     /**
      * Add a new comment
      */
-    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $reply_to_user_id = null, $reply_to_id = null) {
+    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $reply_to_user_id = null, $reply_to_id = null, $mentions = []) {
         if (!$this->pdo) return false;
 
         // Validation: Enforce depth limit 1 at application layer
@@ -300,7 +302,16 @@ class Comments {
             }
         }
 
-        // Convert @mentions to [user:ID] placeholders before storing
+        // Explicitly append mentions if provided
+        if (!empty($mentions) && is_array($mentions)) {
+            foreach ($mentions as $uid) {
+                if (is_numeric($uid) && !str_contains($content, "[user:$uid]")) {
+                    $content .= " [user:$uid]";
+                }
+            }
+        }
+
+        // Convert @mentions to [user:ID] placeholders before storing (legacy support for manual typing)
         $stored_content = $this->convertMentionsToPlaceholders($content);
 
         $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_id, reply_to_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -312,8 +323,8 @@ class Comments {
             // Reward user
             $this->rewardUser($user_id, 10); // 10 points for comment
 
-            // Check for mentions (uses original content to notify by username)
-            $this->handleMentions($content, $comment_id, $user_id);
+            // Check for mentions (uses placeholders to notify)
+            $this->handleMentions($stored_content, $comment_id, $user_id);
 
             // Notify parent author
             if ($parent_id) {
@@ -385,7 +396,7 @@ class Comments {
     /**
      * Update/Edit a comment (within 5 minutes)
      */
-    public function updateComment($user_id, $comment_id, $content) {
+    public function updateComment($user_id, $comment_id, $content, $mentions = []) {
         if (!$this->pdo) return false;
 
         $stmt = $this->pdo->prepare("SELECT created_at FROM comments WHERE id = ? AND user_id = ?");
@@ -393,6 +404,15 @@ class Comments {
         $created_at = $stmt->fetchColumn();
 
         if ($created_at && (time() - strtotime($created_at)) < 300) {
+            // Explicitly append mentions if provided
+            if (!empty($mentions) && is_array($mentions)) {
+                foreach ($mentions as $uid) {
+                    if (is_numeric($uid) && !str_contains($content, "[user:$uid]")) {
+                        $content .= " [user:$uid]";
+                    }
+                }
+            }
+
             $stored_content = $this->convertMentionsToPlaceholders($content);
             $stmt = $this->pdo->prepare("UPDATE comments SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
             return $stmt->execute([$stored_content, $comment_id]);
@@ -420,8 +440,9 @@ class Comments {
     /**
      * Convert [user:ID] placeholders back to @username (for editing)
      */
-    public function convertPlaceholdersToMentions($content, $userMap = []) {
-        return preg_replace_callback('/\[user:(\d+)\]/', function($matches) use ($userMap) {
+    public function convertPlaceholdersToMentions($content, $userMap = [], $strip = false) {
+        $content = preg_replace_callback('/\[user:(\d+)\]/', function($matches) use ($userMap, $strip) {
+            if ($strip) return '';
             $userId = $matches[1];
             if (isset($userMap[$userId])) {
                 return '@' . $userMap[$userId]['username'];
@@ -432,6 +453,26 @@ class Comments {
             $username = $stmt->fetchColumn();
             return $username ? '@' . $username : '[user:' . $userId . ']';
         }, $content);
+
+        if ($strip) {
+            $content = trim($content);
+        }
+        return $content;
+    }
+
+    /**
+     * Extract mentioned users from content
+     */
+    private function extractMentionedUsers($content, $userMap) {
+        preg_match_all('/\[user:(\d+)\]/', $content, $matches);
+        $userIds = array_unique($matches[1]);
+        $mentions = [];
+        foreach ($userIds as $uid) {
+            if (isset($userMap[$uid])) {
+                $mentions[] = $userMap[$uid];
+            }
+        }
+        return $mentions;
     }
 
     /**
@@ -515,9 +556,20 @@ class Comments {
     }
 
     /**
-     * Handle @mentions and queue notifications
+     * Handle mentions and queue notifications
      */
     private function handleMentions($content, $comment_id, $sender_id) {
+        // 1. Handle [user:ID] placeholders
+        preg_match_all('/\[user:(\d+)\]/', $content, $matches);
+        $userIds = array_unique($matches[1]);
+
+        foreach ($userIds as $uid) {
+            if ($uid != $sender_id) {
+                $this->sendNotificationEmail(['id' => $uid], 'mention', $comment_id, $sender_id);
+            }
+        }
+
+        // 2. Legacy Support: Handle @username mentions that weren't converted (just in case)
         preg_match_all('/@([a-zA-Z0-9_]+)/', $content, $matches);
         $usernames = array_unique($matches[1]);
 
@@ -526,7 +578,7 @@ class Comments {
             $stmt->execute([$username]);
             $user = $stmt->fetch();
 
-            if ($user && $user['id'] != $sender_id) {
+            if ($user && $user['id'] != $sender_id && !in_array($user['id'], $userIds)) {
                 $this->sendNotificationEmail($user, 'mention', $comment_id, $sender_id);
             }
         }
