@@ -25,6 +25,7 @@ class Mail {
      * Send an email using a template (Synchronous)
      */
     public static function send($to, $template_slug, $data = [], $options = []) {
+        if (empty($to)) return false;
         $mail_data = self::prepareTemplateData($template_slug, $data);
         if (!$mail_data) return false;
 
@@ -35,6 +36,7 @@ class Mail {
      * Queue an email for background sending
      */
     public static function queue($to, $template_slug, $data = [], $options = []) {
+        if (empty($to)) return false;
         $mail_data = self::prepareTemplateData($template_slug, $data);
         if (!$mail_data) return false;
 
@@ -50,11 +52,13 @@ class Mail {
         $sender_name = $options['sender_name'] ?? get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
         $type = $options['type'] ?? 'transactional';
 
+        if (empty($to)) return false;
+
         try {
             $stmt = $pdo->prepare("INSERT INTO email_queue (to_email, subject, body_html, sender_name, sender_email, metadata) VALUES (?, ?, ?, ?, ?, ?)");
             $metadata = json_encode(['type' => $type]);
             return $stmt->execute([$to, $subject, $body_html, $sender_name, $sender_email, $metadata]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             error_log("Queue Error: " . $e->getMessage());
             return false;
         }
@@ -209,6 +213,8 @@ class Mail {
      */
     public static function sendRaw($to, $subject, $body_html, $options = []) {
         self::$last_error = '';
+        if (empty($to)) return false;
+
         // Allow overriding global settings (useful for testing)
         $config = $options['config'] ?? [];
 

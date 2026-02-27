@@ -606,11 +606,11 @@ class Comments {
      */
     private function sendNotificationEmail($user, $type, $comment_id, $sender_id) {
         // Fetch full user data if only ID is provided
-        if (!isset($user['email'])) {
+        if (!isset($user['email']) || empty($user['email'])) {
             $stmt = $this->pdo->prepare("SELECT name, email FROM users WHERE id = ?");
             $stmt->execute([$user['id']]);
             $user = $stmt->fetch();
-            if (!$user) return;
+            if (!$user || empty($user['email'])) return;
         }
 
         $stmt = $this->pdo->prepare("SELECT name FROM users WHERE id = ?");
