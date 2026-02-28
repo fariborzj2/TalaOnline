@@ -25,7 +25,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
         <!-- Sidebar Navigation -->
         <div class="basis-250 grow-1">
             <!-- profile info -->
-            <div class="profile-card bg-block border radius-24 overflow-hidden shadow-sm">
+            <div class="profile-card p-1 bg-block border radius-16 overflow-hidden shadow-sm">
                 <div class="profile-header-gradient relative">
                     <div class="level-badge d-flex align-center gap-05">
                         <i data-lucide="crown" class="icon-size-4"></i>
@@ -48,20 +48,22 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                     </div>
                 </div>
 
-                <div class="profile-body pd-md pt-0">
-                    <div class="d-flex just-between align-end mt-1">
-                        <div class="membership-date text-gray font-size-0-9 pb-1">
-                            عضویت <?= jalali_date($user['created_at']) ?>
+                <div class="profile-body p-1 pt-0">
+                    <div class="d-flex just-between align-end mt-2 py-1 relative">
+                
+                        <div class="user-info text-right nowrap">
+                            <h1 class="font-size-4 font-bold text-title  mb-0"><?= htmlspecialchars($user['name']) ?></h1>
+                            <div class="text-gray font-size-1-2 d-inline-block ltr">@<?= htmlspecialchars($user['username']) ?></div>
                         </div>
-                        <div class="user-info text-right">
-                            <h1 class="font-size-5 font-black text-title mb-0"><?= htmlspecialchars($user['name']) ?></h1>
-                            <div class="text-gray font-size-1-2">@<?= htmlspecialchars($user['username']) ?></div>
+
+                        <div class="membership-date text-gray font-size-0-8">
+                            عضویت <?= jalali_date($user['created_at']) ?>
                         </div>
                     </div>
 
                     <div class="divider my-1-5" style="opacity: 0.3;"></div>
 
-                    <div class="profile-stats d-flex just-around text-center mb-1-5">
+                    <div class="profile-stats d-flex just-around text-center py-1">
                         <div class="stat-item">
                             <div class="stat-value font-size-3 font-black"><?= fa_num($comment_count) ?></div>
                             <div class="stat-label text-gray font-size-1">نظر</div>
@@ -268,12 +270,12 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 </div>
 
 <style>
-    .profile-card { max-width: 600px; margin: 0 auto 30px auto; border: 1px solid rgba(0,0,0,0.05); background: white; }
+    .profile-card { margin: 0 auto var(--pd-block) auto; }
     .profile-header-gradient {
-        height: 200px;
+        height: 100px;
         background: linear-gradient(110deg, #fefce8 0%, #dcfce7 40%, #e0f2fe 100%);
         padding: 20px;
-        border-radius: 23px 23px 0 0;
+        border-radius: 12px;
         opacity: 0.9;
     }
     .level-badge {
@@ -285,10 +287,10 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
         font-size: 1.1rem;
     }
     .profile-avatar-wrapper {
-        position: absolute; bottom: -50px; right: 40px;
+        position: absolute; bottom: -30px; right: 10px;
     }
     .profile-avatar-container {
-        width: 140px; height: 140px; border-radius: 50%;
+        width: 60px; height: 60px; border-radius: 50%;
         border: 6px solid white; background: #f3f4f6;
         overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
@@ -297,19 +299,33 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
         width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
     }
     .btn-avatar-upload {
-        position: absolute; bottom: 5px; left: 5px; background: var(--color-primary); color: white;
-        width: 32px; height: 32px; border-radius: 50%; border: 2px solid white;
+        position: absolute; bottom: -2px; left: -2px; background: var(--color-primary); color: white;
+        width: 24px; height: 24px; border-radius: 50%; border: 1px solid white;
         display: flex; align-items: center; justify-content: center; cursor: pointer;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 3px;
+    }
+    .membership-date {
+        position: absolute;
+        top: -28px;
+        left: 0
     }
     .btn-follow-large {
-        background: #249E94; color: white; border: none; padding: 18px;
-        border-radius: 18px; font-weight: 800; font-size: 1.3rem;
-        display: flex; align-items: center; justify-content: center; gap: 12px;
-        transition: all 0.2s; cursor: pointer;
+        background: #249E94; 
+        color: white; 
+        height: 40px;
+        padding: 5px 18px;
+        border-radius: 8px; 
+        font-weight: 600; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 12px;
+        transition: all 0.2s; 
+        cursor: pointer;
         box-shadow: 0 4px 12px rgba(36, 158, 148, 0.2);
     }
-    .btn-follow-large:hover { background: #1d827a; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(36, 158, 148, 0.3); }
+    .btn-follow-large:hover { background: #1d827a; box-shadow: 0 6px 15px rgba(36, 158, 148, 0.3); }
     .btn-follow-large.active { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; box-shadow: none; }
 
     .profile-tab-btn {
