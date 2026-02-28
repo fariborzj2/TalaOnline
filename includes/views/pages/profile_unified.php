@@ -19,77 +19,78 @@ $email_unverified = $is_owner && empty($_SESSION['is_verified']);
 $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') === '1' && empty($_SESSION['is_phone_verified']));
 ?>
 
-<div class="section">
-    <div class="profile-card bg-block border radius-24 overflow-hidden shadow-sm">
-        <div class="profile-header-gradient relative">
-            <div class="level-badge d-flex align-center gap-05">
-                <i data-lucide="crown" class="icon-size-4"></i>
-                <span class="font-bold">level <?= $user['level'] ?></span>
-            </div>
-            <div class="profile-avatar-wrapper">
-                <div class="profile-avatar-container">
-                    <?php if (!empty($user['avatar'])): ?>
-                        <img src="<?= htmlspecialchars($user['avatar']) ?>" alt="<?= htmlspecialchars($user['name']) ?>" class="profile-avatar" id="profile-avatar-img">
-                    <?php else: ?>
-                        <div class="profile-avatar-placeholder"><i data-lucide="user" class="icon-size-10 text-primary"></i></div>
-                    <?php endif; ?>
-                </div>
-                <?php if ($is_owner): ?>
-                    <button class="btn-avatar-upload" onclick="document.getElementById('avatar-input').click()" title="تغییر تصویر پروفایل">
-                        <i data-lucide="camera" class="icon-size-3"></i>
-                    </button>
-                    <input type="file" id="avatar-input" class="d-none" accept="image/jpeg,image/png,image/webp">
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="profile-body pd-md pt-0">
-            <div class="d-flex just-between align-end mt-1">
-                <div class="membership-date text-gray font-size-0-9 pb-1">
-                    عضویت <?= jalali_date($user['created_at']) ?>
-                </div>
-                <div class="user-info text-right">
-                    <h1 class="font-size-5 font-black text-title mb-0"><?= htmlspecialchars($user['name']) ?></h1>
-                    <div class="text-gray font-size-1-2">@<?= htmlspecialchars($user['username']) ?></div>
-                </div>
-            </div>
-
-            <div class="divider my-1-5" style="opacity: 0.3;"></div>
-
-            <div class="profile-stats d-flex just-around text-center mb-1-5">
-                <div class="stat-item">
-                    <div class="stat-value font-size-3 font-black"><?= fa_num($comment_count) ?></div>
-                    <div class="stat-label text-gray font-size-1">نظر</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value font-size-3 font-black"><?= fa_num($following_count) ?></div>
-                    <div class="stat-label text-gray font-size-1" id="following-trigger" style="cursor:pointer">دنبال شونده</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value font-size-3 font-black"><?= fa_num($follower_count) ?></div>
-                    <div class="stat-label text-gray font-size-1" id="followers-trigger" style="cursor:pointer">دنبال کننده</div>
-                </div>
-            </div>
-
-            <?php if (!$is_owner): ?>
-                <button id="follow-btn" class="btn-follow-large w-full <?= $is_following ? 'active' : '' ?>" data-user-id="<?= $user['id'] ?>">
-                    <span><?= $is_following ? 'لغو دنبال کردن' : 'دنبال کردن' ?></span>
-                    <i data-lucide="<?= $is_following ? 'user-minus' : 'user-plus' ?>" class="icon-size-6"></i>
-                </button>
-            <?php else: ?>
-                <button class="btn-follow-large w-full active" onclick="document.querySelector('[data-tab=edit]').click()">
-                    <span>ویرایش پروفایل</span>
-                    <i data-lucide="user-cog" class="icon-size-6"></i>
-                </button>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
 
 <div class="section">
     <div class="d-flex-wrap gap-md align-stretch">
         <!-- Sidebar Navigation -->
         <div class="basis-250 grow-1">
+            <!-- profile info -->
+            <div class="profile-card bg-block border radius-24 overflow-hidden shadow-sm">
+                <div class="profile-header-gradient relative">
+                    <div class="level-badge d-flex align-center gap-05">
+                        <i data-lucide="crown" class="icon-size-4"></i>
+                        <span class="font-bold">level <?= $user['level'] ?></span>
+                    </div>
+                    <div class="profile-avatar-wrapper">
+                        <div class="profile-avatar-container">
+                            <?php if (!empty($user['avatar'])): ?>
+                                <img src="<?= htmlspecialchars($user['avatar']) ?>" alt="<?= htmlspecialchars($user['name']) ?>" class="profile-avatar" id="profile-avatar-img">
+                            <?php else: ?>
+                                <div class="profile-avatar-placeholder"><i data-lucide="user" class="icon-size-10 text-primary"></i></div>
+                            <?php endif; ?>
+                        </div>
+                        <?php if ($is_owner): ?>
+                            <button class="btn-avatar-upload" onclick="document.getElementById('avatar-input').click()" title="تغییر تصویر پروفایل">
+                                <i data-lucide="camera" class="icon-size-3"></i>
+                            </button>
+                            <input type="file" id="avatar-input" class="d-none" accept="image/jpeg,image/png,image/webp">
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="profile-body pd-md pt-0">
+                    <div class="d-flex just-between align-end mt-1">
+                        <div class="membership-date text-gray font-size-0-9 pb-1">
+                            عضویت <?= jalali_date($user['created_at']) ?>
+                        </div>
+                        <div class="user-info text-right">
+                            <h1 class="font-size-5 font-black text-title mb-0"><?= htmlspecialchars($user['name']) ?></h1>
+                            <div class="text-gray font-size-1-2">@<?= htmlspecialchars($user['username']) ?></div>
+                        </div>
+                    </div>
+
+                    <div class="divider my-1-5" style="opacity: 0.3;"></div>
+
+                    <div class="profile-stats d-flex just-around text-center mb-1-5">
+                        <div class="stat-item">
+                            <div class="stat-value font-size-3 font-black"><?= fa_num($comment_count) ?></div>
+                            <div class="stat-label text-gray font-size-1">نظر</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value font-size-3 font-black"><?= fa_num($following_count) ?></div>
+                            <div class="stat-label text-gray font-size-1" id="following-trigger" style="cursor:pointer">دنبال شونده</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value font-size-3 font-black"><?= fa_num($follower_count) ?></div>
+                            <div class="stat-label text-gray font-size-1" id="followers-trigger" style="cursor:pointer">دنبال کننده</div>
+                        </div>
+                    </div>
+
+                    <?php if (!$is_owner): ?>
+                        <button id="follow-btn" class="btn-follow-large w-full <?= $is_following ? 'active' : '' ?>" data-user-id="<?= $user['id'] ?>">
+                            <span><?= $is_following ? 'لغو دنبال کردن' : 'دنبال کردن' ?></span>
+                            <i data-lucide="<?= $is_following ? 'user-minus' : 'user-plus' ?>" class="icon-size-6"></i>
+                        </button>
+                    <?php else: ?>
+                        <button class="btn-follow-large w-full active" onclick="document.querySelector('[data-tab=edit]').click()">
+                            <span>ویرایش پروفایل</span>
+                            <i data-lucide="user-cog" class="icon-size-6"></i>
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- settings tab -->
             <div class="bg-block pd-md border radius-16 is-sticky">
                 <div class="d-column gap-05" id="profile-tabs">
                     <button class="profile-tab-btn active" data-tab="activity">
