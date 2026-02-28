@@ -28,8 +28,8 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
             <div class="profile-card p-1 bg-block border radius-16 overflow-hidden shadow-sm">
                 <div class="profile-header-gradient relative">
                     <div class="level-badge d-flex align-center gap-05">
-                        <i data-lucide="crown" class="icon-size-4"></i>
                         <span class="font-bold">level <?= $user['level'] ?></span>
+                        <i data-lucide="crown" class="icon-size-2"></i>
                     </div>
                     <div class="profile-avatar-wrapper">
                         <div class="profile-avatar-container">
@@ -52,7 +52,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                     <div class="d-flex just-between align-end mt-2 py-1 relative">
                 
                         <div class="user-info text-right nowrap">
-                            <h1 class="font-size-4 font-bold text-title  mb-0"><?= htmlspecialchars($user['name']) ?></h1>
+                            <h1 class="font-size-3 font-bold text-title  mb-0"><?= htmlspecialchars($user['name']) ?></h1>
                             <div class="text-gray font-size-1-2 d-inline-block ltr">@<?= htmlspecialchars($user['username']) ?></div>
                         </div>
 
@@ -279,19 +279,19 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
         opacity: 0.9;
     }
     .level-badge {
-        position: absolute; top: 25px; left: 25px;
+        position: absolute; top: 10px; left: 10px;
         background: rgba(40, 40, 40, 0.9); color: white;
-        padding: 10px 22px; border-radius: 50px;
+        padding: 0 10px; 
+        border-radius: 6px;
         box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         z-index: 2;
-        font-size: 1.1rem;
     }
     .profile-avatar-wrapper {
         position: absolute; bottom: -30px; right: 10px;
     }
     .profile-avatar-container {
         width: 60px; height: 60px; border-radius: 50%;
-        border: 6px solid white; background: #f3f4f6;
+        border: 1px solid white; background: #f3f4f6;
         overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
     .profile-avatar { width: 100%; height: 100%; object-fit: cover; }
