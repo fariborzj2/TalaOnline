@@ -1,4 +1,4 @@
-<div class="bg-block border radius-24 overflow-hidden">
+<div class="bg-block border radius-16 overflow-hidden">
     <div class="pd-md border-bottom d-flex just-between align-center">
         <h2 class="font-size-4 font-black text-title">عملکرد بازار</h2>
         <div class="d-flex gap-1">

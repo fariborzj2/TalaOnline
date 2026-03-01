@@ -586,9 +586,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     container.innerHTML = data.users.map(u => `
                         <a href="/profile/${u.id}/${u.username}" class="user-row">
                             <img src="${u.avatar || '/assets/images/default-avatar.png'}" alt="${u.name}" onerror="this.src='/assets/images/default-avatar.png'">
-                            <div class="grow-1">
+                            <div class="grow-1 line-height-2">
                                 <div class="font-bold text-title">${u.name}</div>
-                                <div class="text-gray font-size-0-8">@${u.username}</div>
+                                <div class="text-gray font-size-0-8 d-inline-block ltr">@${u.username}</div>
                             </div>
                             <i data-lucide="chevron-left" class="text-gray icon-size-4"></i>
                         </a>

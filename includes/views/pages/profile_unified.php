@@ -61,9 +61,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                         </div>
                     </div>
 
-                    <div class="divider my-1-5" style="opacity: 0.3;"></div>
-
-                    <div class="profile-stats d-flex just-around text-center py-1">
+                    <div class="profile-stats border-top d-flex just-around text-center py-1">
                         <div class="stat-item">
                             <div class="stat-value font-size-3 font-black"><?= fa_num($comment_count) ?></div>
                             <div class="stat-label text-gray font-size-1">نظر</div>
@@ -80,13 +78,13 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
                     <?php if (!$is_owner): ?>
                         <button id="follow-btn" class="btn-follow-large w-full <?= $is_following ? 'active' : '' ?>" data-user-id="<?= $user['id'] ?>">
+                            <i data-lucide="<?= $is_following ? 'user-minus' : 'user-plus' ?>" class="icon-size-4"></i>    
                             <span><?= $is_following ? 'لغو دنبال کردن' : 'دنبال کردن' ?></span>
-                            <i data-lucide="<?= $is_following ? 'user-minus' : 'user-plus' ?>" class="icon-size-6"></i>
                         </button>
                     <?php else: ?>
                         <button class="btn-follow-large w-full active" onclick="document.querySelector('[data-tab=edit]').click()">
+                            <i data-lucide="user-cog" class="icon-size-4"></i>
                             <span>ویرایش پروفایل</span>
-                            <i data-lucide="user-cog" class="icon-size-6"></i>
                         </button>
                     <?php endif; ?>
                 </div>
@@ -116,10 +114,10 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
         </div>
 
         <!-- Main Content -->
-        <div class="basis-500 grow-9">
-            <div class="bg-block border radius-16 min-h-400">
+        <div class="basis-500 grow-9 overflow-hidden">
+            <div>
                 <!-- Activity Tab (User's Comments) -->
-                <div id="tab-activity" class="profile-tab-content pd-md">
+                <div id="tab-activity" class="min-h-400 profile-tab-content">
                     <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">آخرین دیدگاه‌ها</h2>
                     <div id="user-comments-list" class="mt-1">
                         <?php
@@ -134,7 +132,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
                 <?php if ($is_owner): ?>
                     <!-- Edit Profile Tab -->
-                    <div id="tab-edit" class="profile-tab-content d-none pd-md">
+                    <div id="tab-edit" class="bg-block border radius-16 min-h-400 profile-tab-content d-none pd-md">
                         <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">ویرایش اطلاعات کاربری</h2>
 
                         <?php if ($email_unverified): ?>
@@ -182,7 +180,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                     </div>
 
                     <!-- Security Tab -->
-                    <div id="tab-security" class="profile-tab-content d-none pd-md">
+                    <div id="tab-security" class="bg-block border radius-16 min-h-400 profile-tab-content d-none pd-md">
                         <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">امنیت و رمز عبور</h2>
 
                         <?php if ($phone_unverified): ?>
@@ -245,7 +243,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
 <!-- Followers Modal -->
 <div id="followers-modal" class="modal-overlay d-none">
-    <div class="modal-content bg-block radius-24 shadow-lg overflow-hidden basis-400">
+    <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-400">
         <div class="pd-md border-bottom d-flex just-between align-center">
             <h3 class="font-bold font-size-4">دنبال‌کنندگان</h3>
             <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
@@ -258,7 +256,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
 <!-- Following Modal -->
 <div id="following-modal" class="modal-overlay d-none">
-    <div class="modal-content bg-block radius-24 shadow-lg overflow-hidden basis-400">
+    <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-400">
         <div class="pd-md border-bottom d-flex just-between align-center">
             <h3 class="font-bold font-size-4">دنبال‌شوندگان</h3>
             <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
@@ -273,10 +271,11 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
     .profile-card { margin: 0 auto var(--pd-block) auto; }
     .profile-header-gradient {
         height: 100px;
-        background: linear-gradient(110deg, #fefce8 0%, #dcfce7 40%, #e0f2fe 100%);
+        background: linear-gradient(110deg, #fefce8 0%, #dcfce7 40%, #e0f2fe 100%) no-repeat;
         padding: 20px;
         border-radius: 12px;
-        opacity: 0.9;
+        opacity: 1;
+        border: 1px solid #def0e4;
     }
     .level-badge {
         position: absolute; top: 10px; left: 10px;
@@ -339,11 +338,11 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
     .max-h-400 { max-height: 400px; }
 
     .user-row {
-        display: flex; align-items: center; gap: 1rem; padding: 0.75rem; border-radius: 12px;
+        display: flex; align-items: center; gap: 0.5rem; padding: 4px 8px ; border-radius: 12px;
         transition: background 0.2s; text-decoration: none; color: inherit;
     }
     .user-row:hover { background: var(--color-secondary); }
-    .user-row img { width: 40px; height: 40px; border-radius: 50%; object-cover: cover; }
+    .user-row img { width: 38px; height: 38px; border-radius: 50%; object-cover: cover; }
 
     @media (max-width: 600px) {
         .profile-header-gradient { height: 140px; }

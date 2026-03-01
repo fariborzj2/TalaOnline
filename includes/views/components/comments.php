@@ -37,10 +37,6 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                             <?= htmlspecialchars($c['user_name']) ?>
                             <span class="user-level-badge level-<?= $c['user_level'] ?>">سطح <?= $c['user_level'] ?></span>
                         </a>
-                        <?php if (isset($c['target_info']) && $c['target_info']): ?>
-                            <span class="text-gray-400 font-size-0-8 mx-1">در</span>
-                            <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline d-inline-block ltr font-size-0-8"><?= htmlspecialchars($c['target_info']['title']) ?></a>
-                        <?php endif; ?>
                         <span class="comment-date"><?= jalali_date($c['created_at']) ?></span>
                     </div>
                 </div>
@@ -54,6 +50,13 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                     </div>
                 </div>
             </div>
+
+            <?php if (isset($c['target_info']) && $c['target_info']): ?>
+                <div class="d-flex font-bold font-size-3">
+                    <span class="text-gray-400 ml-05 mb-1">در </span>
+                    <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline"><?= htmlspecialchars($c['target_info']['title']) ?></a>
+                </div>
+            <?php endif; ?>
 
             <div class="comment-content">
                 <?php if (!empty($c['reply_to_content'])): ?>
