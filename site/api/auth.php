@@ -10,7 +10,8 @@ $action = $_GET['action'] ?? '';
 
 if ($action === 'logout') {
     session_destroy();
-    echo json_encode(['success' => true]);
+    session_start();
+    echo json_encode(['success' => true, 'csrfToken' => csrf_token()]);
     exit;
 }
 
@@ -153,6 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['is_phone_verified'] = 0;
 
             echo json_encode(['success' => true, 'message' => 'ثبت‌نام با موفقیت انجام شد. لطفاً ایمیل خود را جهت تایید حساب بررسی کنید.', 'user' => [
+                'id' => $userId,
                 'name' => $name,
                 'email' => $email,
                 'phone' => $phone,
@@ -204,6 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'success' => true,
                 'csrfToken' => csrf_token(),
                 'user' => [
+                    'id' => $user['id'],
                     'name' => $user['name'],
                     'email' => $user['email'],
                     'phone' => $user['phone'],
@@ -224,6 +227,7 @@ elseif ($action === 'get_user') {
         echo json_encode([
             'isLoggedIn' => true,
             'user' => [
+                'id' => $_SESSION['user_id'],
                 'name' => $_SESSION['user_name'],
                 'email' => $_SESSION['user_email'],
                 'phone' => $_SESSION['user_phone'] ?? '',

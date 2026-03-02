@@ -324,12 +324,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (profileEmail) profileEmail.textContent = authState.user.email;
 
             // Update profile links in modal
-            const profileLink = profileModal.querySelector('a[href*="/profile/"]');
-            if (profileLink && authState.user.id) {
+            const profileLinks = profileModal.querySelectorAll('.profile-link-dynamic');
+            const settingsLinks = profileModal.querySelectorAll('.settings-link-dynamic');
+
+            if (authState.user.id) {
                 const baseUrl = `/profile/${authState.user.id}/${encodeURIComponent(authState.user.username || 'user')}`;
-                profileLink.href = baseUrl;
-                const settingsLink = profileModal.querySelector('a[href*="?tab=edit"]');
-                if (settingsLink) settingsLink.href = baseUrl + '?tab=edit';
+                profileLinks.forEach(link => link.href = baseUrl);
+                settingsLinks.forEach(link => link.href = baseUrl + '?tab=edit');
             }
 
             if (profileAvatar && authState.user.avatar) {
@@ -339,6 +340,18 @@ document.addEventListener('DOMContentLoaded', function() {
             userTexts.forEach(text => text.textContent = 'ورود / عضویت');
             userIcons.forEach(icon => icon.classList.remove('d-none'));
             userAvatars.forEach(avatar => avatar.classList.add('d-none'));
+
+            // Clear profile links
+            const profileLinks = profileModal.querySelectorAll('.profile-link-dynamic');
+            const settingsLinks = profileModal.querySelectorAll('.settings-link-dynamic');
+            profileLinks.forEach(link => link.href = '#');
+            settingsLinks.forEach(link => link.href = '#');
+
+            const profileAvatar = profileModal.querySelector('.profile-modal-avatar');
+            if (profileAvatar) {
+                profileAvatar.innerHTML = `<i data-lucide="user" class="icon-size-6 text-primary"></i>`;
+                if (window.lucide) window.lucide.createIcons({ root: profileAvatar });
+            }
         }
     };
 
@@ -513,9 +526,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
             try {
-                await fetchWithCSRF(`${authState.apiBase}/auth.php?action=logout`, { method: 'POST' });
+                const response = await fetchWithCSRF(`${authState.apiBase}/auth.php?action=logout`, { method: 'POST' });
+                const data = await response.json();
+
                 authState.isLoggedIn = false;
                 authState.user = null;
+                if (data.csrfToken) authState.csrfToken = data.csrfToken;
+
                 updateUIForAuth();
                 document.dispatchEvent(new CustomEvent('auth:status-changed', { detail: authState }));
                 closeModal();
@@ -737,8 +754,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (profileLogoutBtn) {
         profileLogoutBtn.addEventListener('click', async () => {
              if (await showConfirm('آیا از خروج اطمینان دارید؟')) {
-                 await fetchWithCSRF(`${authState.apiBase}/auth.php?action=logout`, { method: 'POST' });
-                 location.href = '/';
+                const response = await fetchWithCSRF(`${authState.apiBase}/auth.php?action=logout`, { method: 'POST' });
+                const data = await response.json();
+                if (data.csrfToken) authState.csrfToken = data.csrfToken;
+                location.href = '/';
              }
         });
     }
