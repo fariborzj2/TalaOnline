@@ -79,7 +79,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                     </div>
                 <?php endif; ?>
 
-                <div class="footer-right">
+                <div class="footer-right mr-auto">
                     <div class="reaction-pill">
                         <?= render_reaction($c, 'like', '👍') ?>
                         <?= render_reaction($c, 'heart', '❤️') ?>
@@ -90,14 +90,15 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                         <i data-lucide="smile" class="icon-size-4"></i>
                         <span>واکنش</span>
                     </div>
+                    <div class="reactions-popover" id="popover-<?= $c['id'] ?>">
+                        <span class="emoji-btn" data-id="<?= $c['id'] ?>" data-type="like">👍</span>
+                        <span class="emoji-btn" data-id="<?= $c['id'] ?>" data-type="heart">❤️</span>
+                        <span class="emoji-btn" data-id="<?= $c['id'] ?>" data-type="fire">🔥</span>
+                        <span class="emoji-btn" data-id="<?= $c['id'] ?>" data-type="dislike">👎</span>
+                    </div>
                 </div>
 
-                <div class="reactions-popover" id="popover-<?= $c['id'] ?>">
-                    <span class="emoji-btn" data-id="<?= $c['id'] ?>" data-type="like">👍</span>
-                    <span class="emoji-btn" data-id="<?= $c['id'] ?>" data-type="heart">❤️</span>
-                    <span class="emoji-btn" data-id="<?= $c['id'] ?>" data-type="fire">🔥</span>
-                    <span class="emoji-btn" data-id="<?= $c['id'] ?>" data-type="dislike">👎</span>
-                </div>
+                
             </div>
         </div>
 
