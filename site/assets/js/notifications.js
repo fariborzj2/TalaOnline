@@ -109,8 +109,12 @@ document.addEventListener('DOMContentLoaded', function() {
             list.querySelectorAll('.notification-item').forEach(item => {
                 item.addEventListener('click', async (e) => {
                     const id = item.dataset.id;
+                    const url = item.getAttribute('href');
+
                     if (item.classList.contains('unread')) {
+                        e.preventDefault();
                         await markAsRead(id);
+                        window.location.href = url;
                     }
                 });
             });

@@ -30,6 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $n['created_at_fa'] = jalali_date($n['created_at']);
             if ($n['type'] === 'mention' || $n['type'] === 'reply') {
                 $n['target_info'] = $comments_manager->getTargetInfoByCommentId($n['target_id']);
+                if ($n['target_info'] && isset($n['target_info']['url'])) {
+                    $n['target_info']['url'] .= '#comment-' . $n['target_id'];
+                }
             } elseif ($n['type'] === 'follow') {
                 $n['target_info'] = ['url' => "/profile/{$n['sender_id']}/{$n['sender_username']}"];
             }
