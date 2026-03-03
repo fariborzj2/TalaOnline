@@ -4,6 +4,7 @@
  */
 
 require_once __DIR__ . '/mail.php';
+require_once __DIR__ . '/notifications.php';
 
 class Comments {
     private $pdo;
@@ -249,6 +250,20 @@ class Comments {
     }
 
     /**
+     * Get target info by comment ID
+     */
+    public function getTargetInfoByCommentId($comment_id) {
+        if (!$this->pdo) return null;
+        $stmt = $this->pdo->prepare("SELECT target_id, target_type FROM comments WHERE id = ?");
+        $stmt->execute([$comment_id]);
+        $c = $stmt->fetch();
+        if ($c) {
+            return $this->getTargetInfo($c['target_id'], $c['target_type']);
+        }
+        return null;
+    }
+
+    /**
      * Get target info (title and URL) for a comment
      */
     public function getTargetInfo($target_id, $target_type) {
@@ -333,6 +348,8 @@ class Comments {
             // Also notify if it's a direct reply to a user in a thread
             if ($reply_to_user_id && $reply_to_user_id != $user_id) {
                 $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $user_id);
+                $notif = new Notifications($this->pdo);
+                $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
             }
 
             return $comment_id;
@@ -559,6 +576,8 @@ class Comments {
      * Handle mentions and queue notifications
      */
     private function handleMentions($content, $comment_id, $sender_id) {
+        $notif = new Notifications($this->pdo);
+
         // 1. Handle [user:ID] placeholders
         preg_match_all('/\[user:(\d+)\]/', $content, $matches);
         $userIds = array_values(array_unique($matches[1]));
@@ -566,6 +585,7 @@ class Comments {
         foreach ($userIds as $uid) {
             if ($uid != $sender_id) {
                 $this->sendNotificationEmail(['id' => $uid], 'mention', $comment_id, $sender_id);
+                $notif->create($uid, $sender_id, 'mention', $comment_id);
             }
         }
 
@@ -580,6 +600,7 @@ class Comments {
 
             if ($user && $user['id'] != $sender_id && !in_array($user['id'], $userIds)) {
                 $this->sendNotificationEmail($user, 'mention', $comment_id, $sender_id);
+                $notif->create($user['id'], $sender_id, 'mention', $comment_id);
             }
         }
     }
@@ -598,6 +619,8 @@ class Comments {
 
         if ($user && $user['id'] != $user['sender_id']) {
             $this->sendNotificationEmail($user, 'reply', $comment_id, $user['sender_id']);
+            $notif = new Notifications($this->pdo);
+            $notif->create($user['id'], $user['sender_id'], 'reply', $comment_id);
         }
     }
 

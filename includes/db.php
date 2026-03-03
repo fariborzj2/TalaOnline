@@ -241,6 +241,20 @@ if (file_exists($config_file)) {
                 try {
                     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_follows_following ON follows(following_id)");
                 } catch (Exception $e) {}
+
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `notifications` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `user_id` INTEGER,
+                    `sender_id` INTEGER,
+                    `type` VARCHAR(50), -- 'mention', 'reply', 'follow'
+                    `target_id` VARCHAR(255),
+                    `is_read` TINYINT DEFAULT 0,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                )");
+                try {
+                    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, is_read)");
+                } catch (Exception $e) {}
             } else {
                 $pdo->exec("CREATE TABLE IF NOT EXISTS `roles` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -300,6 +314,20 @@ if (file_exists($config_file)) {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
                 try {
                     $pdo->exec("CREATE INDEX idx_follows_following ON follows(following_id)");
+                } catch (Exception $e) {}
+
+                $pdo->exec("CREATE TABLE IF NOT EXISTS `notifications` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `user_id` INT,
+                    `sender_id` INT,
+                    `type` VARCHAR(50),
+                    `target_id` VARCHAR(255),
+                    `is_read` TINYINT DEFAULT 0,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+                try {
+                    $pdo->exec("CREATE INDEX idx_notifications_user ON notifications(user_id, is_read)");
                 } catch (Exception $e) {}
             }
 

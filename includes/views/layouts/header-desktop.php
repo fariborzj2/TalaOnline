@@ -13,8 +13,22 @@
             </span>
         </div>
 
-        <div class="desktop-header-notifications">
+        <div class="desktop-header-notifications" id="notification-btn-desktop">
             <i data-lucide="bell" class="icon-size-3"></i>
+            <span class="notification-badge d-none" id="notification-badge-desktop">0</span>
+
+            <div class="notification-dropdown" id="notification-dropdown-desktop">
+                <div class="notification-header">
+                    <h3>اعلان‌ها</h3>
+                    <button class="text-primary font-size-0-8" id="mark-all-read-desktop">خواندن همه</button>
+                </div>
+                <div class="notification-list" id="notification-list-desktop">
+                    <div class="text-center py-4 text-gray">در حال بارگذاری...</div>
+                </div>
+                <div class="notification-footer">
+                    <!-- <a href="/notifications">مشاهده همه اعلان‌ها</a> -->
+                </div>
+            </div>
         </div>
 
         <div class="desktop-header-date">

@@ -1,572 +1,394 @@
-[Mon Mar  2 13:03:59 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Mon Mar  2 13:05:06 2026] [::1]:35880 Accepted
-[Mon Mar  2 13:05:07 2026] [::1]:35880 [200]: GET /
-[Mon Mar  2 13:05:07 2026] [::1]:35880 Closing
-[Mon Mar  2 13:05:07 2026] [::1]:35894 Accepted
-[Mon Mar  2 13:05:07 2026] [::1]:35902 Accepted
-[Mon Mar  2 13:05:07 2026] [::1]:35894 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772454504
-[Mon Mar  2 13:05:07 2026] [::1]:35902 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772454504
-[Mon Mar  2 13:05:07 2026] [::1]:35894 Closing
-[Mon Mar  2 13:05:07 2026] [::1]:35902 Closing
-[Mon Mar  2 13:05:07 2026] [::1]:35906 Accepted
-[Mon Mar  2 13:05:07 2026] [::1]:35918 Accepted
-[Mon Mar  2 13:05:07 2026] [::1]:35906 [200]: GET /assets/images/logo-larg.svg?v=1772454504
-[Mon Mar  2 13:05:07 2026] [::1]:35918 [200]: GET /assets/js/vendor/lucide.js?v=1772454504
-[Mon Mar  2 13:05:07 2026] [::1]:35906 Closing
-[Mon Mar  2 13:05:07 2026] [::1]:35918 Closing
-[Mon Mar  2 13:05:07 2026] [::1]:35922 Accepted
-[Mon Mar  2 13:05:07 2026] [::1]:35938 Accepted
-[Mon Mar  2 13:05:07 2026] [::1]:35954 Accepted
-[Mon Mar  2 13:05:07 2026] [::1]:35964 Accepted
-[Mon Mar  2 13:05:07 2026] [::1]:35922 [200]: GET /assets/js/charts.js?v=1772454504
-[Mon Mar  2 13:05:07 2026] [::1]:35938 [200]: GET /assets/js/app.js?v=1772456621
-[Mon Mar  2 13:05:07 2026] [::1]:35954 [200]: GET /assets/images/logo.svg?v=1772454504
-[Mon Mar  2 13:05:07 2026] [::1]:35964 [200]: GET /assets/images/gold/gold.webp?v=1772454504
-[Mon Mar  2 13:05:07 2026] [::1]:35922 Closing
-[Mon Mar  2 13:05:07 2026] [::1]:35938 Closing
-[Mon Mar  2 13:05:07 2026] [::1]:35954 Closing
-[Mon Mar  2 13:05:07 2026] [::1]:35964 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:35976 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:35980 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:35992 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:35994 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36004 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:35980 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772454504
-[Mon Mar  2 13:05:08 2026] [::1]:35980 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:35992 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772454504
-[Mon Mar  2 13:05:08 2026] [::1]:35976 [200]: GET /assets/images/gold/rob.webp?v=1772454504
-[Mon Mar  2 13:05:08 2026] [::1]:35992 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:35976 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:35994 [200]: GET /assets/images/platforms/gerami.webp?v=1772454504
-[Mon Mar  2 13:05:08 2026] [::1]:36004 [200]: GET /assets/images/platforms/milli.webp?v=1772454504
-[Mon Mar  2 13:05:08 2026] [::1]:35994 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36004 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36008 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36008 [200]: GET /api/prices.php?symbol=18ayar
-[Mon Mar  2 13:05:08 2026] [::1]:36008 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36010 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36010 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772454504
-[Mon Mar  2 13:05:08 2026] [::1]:36010 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36014 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36014 [200]: GET /sw.js
-[Mon Mar  2 13:05:08 2026] [::1]:36014 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36016 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36026 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36028 Accepted
-[Mon Mar  2 13:05:08 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
-[Mon Mar  2 13:05:08 2026] [::1]:36016 [200]: GET /offline.php
-[Mon Mar  2 13:05:08 2026] [::1]:36016 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36026 [200]: GET /
-[Mon Mar  2 13:05:08 2026] [::1]:36026 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36028 [200]: GET /assets/css/style.css
-[Mon Mar  2 13:05:08 2026] [::1]:36030 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36030 [200]: GET /assets/js/app.js
-[Mon Mar  2 13:05:08 2026] [::1]:36028 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36030 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36046 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36052 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36046 [200]: GET /assets/images/logo.png
-[Mon Mar  2 13:05:08 2026] [::1]:36054 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36052 [200]: GET /assets/images/logo.svg
-[Mon Mar  2 13:05:08 2026] [::1]:36054 [200]: GET /assets/images/favicon/favicon-32x32.png
-[Mon Mar  2 13:05:08 2026] [::1]:36046 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36052 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36054 Closing
-[Mon Mar  2 13:05:08 2026] [::1]:36064 Accepted
-[Mon Mar  2 13:05:08 2026] [::1]:36064 [200]: GET /assets/images/favicon/android-icon-192x192.png
-[Mon Mar  2 13:05:08 2026] [::1]:36064 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59540 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59540 [200]: GET /
-[Mon Mar  2 13:05:50 2026] [::1]:59540 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59556 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59572 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59578 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59586 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59556 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59556 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59572 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59572 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59578 [200]: GET /assets/images/logo-larg.svg?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59578 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59586 [200]: GET /assets/js/vendor/lucide.js?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59586 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59594 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59598 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59612 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59626 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59594 [200]: GET /assets/js/charts.js?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59598 [200]: GET /assets/js/app.js?v=1772456621
-[Mon Mar  2 13:05:50 2026] [::1]:59594 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59612 [200]: GET /assets/images/logo.svg?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59598 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59612 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59626 [200]: GET /assets/images/gold/gold.webp?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59626 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59638 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59642 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59654 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59658 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59670 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59638 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59642 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59654 [200]: GET /assets/images/gold/rob.webp?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59638 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59658 [200]: GET /assets/images/platforms/gerami.webp?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59642 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59654 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59658 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59670 [200]: GET /assets/images/platforms/milli.webp?v=1772454504
-[Mon Mar  2 13:05:50 2026] [::1]:59670 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59684 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59684 [200]: GET /api/prices.php?symbol=18ayar
-[Mon Mar  2 13:05:50 2026] [::1]:59684 Closing
-[Mon Mar  2 13:05:50 2026] [::1]:59690 Accepted
-[Mon Mar  2 13:05:50 2026] [::1]:59690 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772454504
-[Mon Mar  2 13:05:51 2026] [::1]:59690 Closing
-[Mon Mar  2 13:05:51 2026] [::1]:59706 Accepted
-[Mon Mar  2 13:05:51 2026] [::1]:59706 [200]: GET /sw.js
-[Mon Mar  2 13:05:51 2026] [::1]:59706 Closing
-[Mon Mar  2 13:05:51 2026] [::1]:59710 Accepted
-[Mon Mar  2 13:05:51 2026] [::1]:59722 Accepted
-[Mon Mar  2 13:05:51 2026] [::1]:59738 Accepted
-[Mon Mar  2 13:05:51 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
-[Mon Mar  2 13:05:51 2026] [::1]:59710 [200]: GET /offline.php
-[Mon Mar  2 13:05:51 2026] [::1]:59710 Closing
-[Mon Mar  2 13:05:51 2026] [::1]:59722 [200]: GET /
-[Mon Mar  2 13:05:51 2026] [::1]:59722 Closing
-[Mon Mar  2 13:05:51 2026] [::1]:59754 Accepted
-[Mon Mar  2 13:05:51 2026] [::1]:59738 [200]: GET /assets/css/style.css
-[Mon Mar  2 13:05:51 2026] [::1]:59754 [200]: GET /assets/js/app.js
-[Mon Mar  2 13:05:51 2026] [::1]:59738 Closing
-[Mon Mar  2 13:05:51 2026] [::1]:59754 Closing
-[Mon Mar  2 13:05:51 2026] [::1]:59758 Accepted
-[Mon Mar  2 13:05:51 2026] [::1]:59766 Accepted
-[Mon Mar  2 13:05:51 2026] [::1]:59774 Accepted
-[Mon Mar  2 13:05:51 2026] [::1]:59758 [200]: GET /assets/images/logo.png
-[Mon Mar  2 13:05:51 2026] [::1]:59758 Closing
-[Mon Mar  2 13:05:51 2026] [::1]:59766 [200]: GET /assets/images/logo.svg
-[Mon Mar  2 13:05:51 2026] [::1]:59774 [200]: GET /assets/images/favicon/favicon-32x32.png
-[Mon Mar  2 13:05:51 2026] [::1]:59766 Closing
-[Mon Mar  2 13:05:51 2026] [::1]:59774 Closing
-[Mon Mar  2 13:05:51 2026] [::1]:59776 Accepted
-[Mon Mar  2 13:05:51 2026] [::1]:59776 [200]: GET /assets/images/favicon/android-icon-192x192.png
-[Mon Mar  2 13:05:51 2026] [::1]:59776 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58102 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58102 [200]: GET /
-[Mon Mar  2 13:06:19 2026] [::1]:58102 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58114 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58126 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58132 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58142 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58114 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58114 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58126 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58126 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58132 [200]: GET /assets/images/logo-larg.svg?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58132 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58142 [200]: GET /assets/js/vendor/lucide.js?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58142 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58152 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58164 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58152 [200]: GET /assets/js/charts.js?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58174 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58164 [200]: GET /assets/js/app.js?v=1772456621
-[Mon Mar  2 13:06:19 2026] [::1]:58186 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58174 [200]: GET /assets/images/logo.svg?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58152 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58186 [200]: GET /assets/images/gold/gold.webp?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58164 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58174 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58186 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58202 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58216 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58232 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58202 [200]: GET /assets/images/gold/rob.webp?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58216 [200]: GET /assets/images/platforms/gerami.webp?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58202 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58216 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58232 [200]: GET /assets/images/platforms/milli.webp?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58232 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58244 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58254 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58244 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58254 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58244 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58254 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58270 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58270 [200]: GET /api/prices.php?symbol=18ayar
-[Mon Mar  2 13:06:19 2026] [::1]:58270 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58284 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58284 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772454504
-[Mon Mar  2 13:06:19 2026] [::1]:58284 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58298 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58298 [200]: GET /sw.js
-[Mon Mar  2 13:06:19 2026] [::1]:58298 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58308 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58318 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58334 Accepted
-[Mon Mar  2 13:06:19 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
-[Mon Mar  2 13:06:19 2026] [::1]:58308 [200]: GET /offline.php
-[Mon Mar  2 13:06:19 2026] [::1]:58308 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58318 [200]: GET /
-[Mon Mar  2 13:06:19 2026] [::1]:58318 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58334 [200]: GET /assets/css/style.css
-[Mon Mar  2 13:06:19 2026] [::1]:58348 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58348 [200]: GET /assets/js/app.js
-[Mon Mar  2 13:06:19 2026] [::1]:58334 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58348 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58354 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58366 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58354 [200]: GET /assets/images/logo.png
-[Mon Mar  2 13:06:19 2026] [::1]:58380 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58366 [200]: GET /assets/images/logo.svg
-[Mon Mar  2 13:06:19 2026] [::1]:58380 [200]: GET /assets/images/favicon/favicon-32x32.png
-[Mon Mar  2 13:06:19 2026] [::1]:58354 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58366 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58380 Closing
-[Mon Mar  2 13:06:19 2026] [::1]:58392 Accepted
-[Mon Mar  2 13:06:19 2026] [::1]:58392 [200]: GET /assets/images/favicon/android-icon-192x192.png
-[Mon Mar  2 13:06:19 2026] [::1]:58392 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38590 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38590 [200]: GET /
-[Mon Mar  2 13:07:10 2026] [::1]:38590 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38594 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38604 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38614 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38620 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38594 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38604 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38614 [200]: GET /assets/images/logo-larg.svg?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38620 [200]: GET /assets/js/vendor/lucide.js?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38594 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38604 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38614 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38620 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38628 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38638 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38644 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38650 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38628 [200]: GET /assets/js/charts.js?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38638 [200]: GET /assets/js/app.js?v=1772456818
-[Mon Mar  2 13:07:10 2026] [::1]:38644 [200]: GET /assets/images/logo.svg?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38650 [200]: GET /assets/images/gold/gold.webp?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38628 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38638 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38644 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38650 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38652 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38652 [200]: GET /assets/images/gold/rob.webp?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38652 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38656 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38658 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38662 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38668 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38656 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38658 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38662 [200]: GET /assets/images/platforms/gerami.webp?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38668 [200]: GET /assets/images/platforms/milli.webp?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38656 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38658 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38662 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38668 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38680 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38680 [200]: GET /api/prices.php?symbol=18ayar
-[Mon Mar  2 13:07:10 2026] [::1]:38680 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38684 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38684 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772454504
-[Mon Mar  2 13:07:10 2026] [::1]:38684 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38686 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38686 [200]: GET /sw.js
-[Mon Mar  2 13:07:10 2026] [::1]:38686 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38702 Accepted
-[Mon Mar  2 13:07:10 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
-[Mon Mar  2 13:07:10 2026] [::1]:38702 [200]: GET /offline.php
-[Mon Mar  2 13:07:10 2026] [::1]:38702 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38708 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38720 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38708 [200]: GET /
-[Mon Mar  2 13:07:10 2026] [::1]:38708 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38728 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38720 [200]: GET /assets/css/style.css
-[Mon Mar  2 13:07:10 2026] [::1]:38728 [200]: GET /assets/js/app.js
-[Mon Mar  2 13:07:10 2026] [::1]:38720 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38728 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38734 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38746 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38754 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38734 [200]: GET /assets/images/logo.png
-[Mon Mar  2 13:07:10 2026] [::1]:38746 [200]: GET /assets/images/logo.svg
-[Mon Mar  2 13:07:10 2026] [::1]:38754 [200]: GET /assets/images/favicon/favicon-32x32.png
-[Mon Mar  2 13:07:10 2026] [::1]:38734 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38746 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38754 Closing
-[Mon Mar  2 13:07:10 2026] [::1]:38770 Accepted
-[Mon Mar  2 13:07:10 2026] [::1]:38770 [200]: GET /assets/images/favicon/android-icon-192x192.png
-[Mon Mar  2 13:07:10 2026] [::1]:38770 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45006 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45006 [200]: GET /
-[Tue Mar  3 08:14:43 2026] [::1]:45006 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45022 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45026 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45028 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45042 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45022 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45026 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45028 [200]: GET /assets/images/logo-larg.svg?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45042 [200]: GET /assets/js/vendor/lucide.js?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45022 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45026 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45028 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45042 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45052 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45062 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45052 [200]: GET /assets/js/charts.js?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45078 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45052 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45090 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45062 [200]: GET /assets/js/app.js?v=1772456818
-[Tue Mar  3 08:14:43 2026] [::1]:45062 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45078 [200]: GET /assets/images/logo.svg?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45090 [200]: GET /assets/images/gold/gold.webp?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45078 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45090 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45104 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45114 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45104 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45114 [200]: GET /assets/images/gold/rob.webp?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45104 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45114 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45116 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45122 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45138 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45116 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45122 [200]: GET /assets/images/platforms/gerami.webp?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45138 [200]: GET /assets/images/platforms/milli.webp?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45116 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45122 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45138 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45152 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45152 [200]: GET /api/prices.php?symbol=18ayar
-[Tue Mar  3 08:14:43 2026] [::1]:45152 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45160 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45160 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772454504
-[Tue Mar  3 08:14:43 2026] [::1]:45160 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45162 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45162 [200]: GET /sw.js
-[Tue Mar  3 08:14:43 2026] [::1]:45162 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45164 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45180 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45190 Accepted
-[Tue Mar  3 08:14:43 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
-[Tue Mar  3 08:14:43 2026] [::1]:45164 [200]: GET /offline.php
-[Tue Mar  3 08:14:43 2026] [::1]:45164 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45180 [200]: GET /
-[Tue Mar  3 08:14:43 2026] [::1]:45180 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45190 [200]: GET /assets/css/style.css
-[Tue Mar  3 08:14:43 2026] [::1]:45190 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45200 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45200 [200]: GET /assets/js/app.js
-[Tue Mar  3 08:14:43 2026] [::1]:45200 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45214 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45224 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45214 [200]: GET /assets/images/logo.png
-[Tue Mar  3 08:14:43 2026] [::1]:45224 [200]: GET /assets/images/logo.svg
-[Tue Mar  3 08:14:43 2026] [::1]:45214 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45224 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45234 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45240 Accepted
-[Tue Mar  3 08:14:43 2026] [::1]:45234 [200]: GET /assets/images/favicon/favicon-32x32.png
-[Tue Mar  3 08:14:43 2026] [::1]:45240 [200]: GET /assets/images/favicon/android-icon-192x192.png
-[Tue Mar  3 08:14:43 2026] [::1]:45234 Closing
-[Tue Mar  3 08:14:43 2026] [::1]:45240 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40426 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40426 [200]: GET /
-[Tue Mar  3 08:15:45 2026] [::1]:40426 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40442 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40448 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40452 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40468 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40442 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40448 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40452 [200]: GET /assets/images/logo-larg.svg?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40442 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40448 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40452 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40468 [200]: GET /assets/js/vendor/lucide.js?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40468 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40480 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40486 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40498 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40504 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40480 [200]: GET /assets/js/charts.js?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40486 [200]: GET /assets/js/app.js?v=1772456818
-[Tue Mar  3 08:15:45 2026] [::1]:40498 [200]: GET /assets/images/logo.svg?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40504 [200]: GET /assets/images/gold/gold.webp?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40480 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40486 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40498 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40504 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40508 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40524 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40508 [200]: GET /assets/images/gold/rob.webp?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40540 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40508 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40548 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40550 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40524 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40540 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40524 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40540 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40548 [200]: GET /assets/images/platforms/gerami.webp?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40550 [200]: GET /assets/images/platforms/milli.webp?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40548 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40550 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40558 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40558 [200]: GET /api/prices.php?symbol=18ayar
-[Tue Mar  3 08:15:45 2026] [::1]:40558 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40566 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40566 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40566 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40568 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40568 [200]: GET /sw.js
-[Tue Mar  3 08:15:45 2026] [::1]:40568 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40584 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40584 [500]: GET /asset/gold
-[Tue Mar  3 08:15:45 2026] [::1]:40584 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40596 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40598 Accepted
-[Tue Mar  3 08:15:45 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
-[Tue Mar  3 08:15:45 2026] [::1]:40596 [200]: GET /offline.php
-[Tue Mar  3 08:15:45 2026] [::1]:40596 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40604 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40598 [200]: GET /
-[Tue Mar  3 08:15:45 2026] [::1]:40598 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40604 [200]: GET /assets/css/style.css
-[Tue Mar  3 08:15:45 2026] [::1]:40604 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40608 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40608 [200]: GET /assets/js/app.js
-[Tue Mar  3 08:15:45 2026] [::1]:40608 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40618 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40624 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40628 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40618 [200]: GET /assets/images/logo.png
-[Tue Mar  3 08:15:45 2026] [::1]:40624 [200]: GET /assets/images/logo.svg
-[Tue Mar  3 08:15:45 2026] [::1]:40618 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40624 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40628 [200]: GET /assets/images/favicon/favicon-32x32.png
-[Tue Mar  3 08:15:45 2026] [::1]:40628 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40632 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40632 [200]: GET /assets/images/favicon/android-icon-192x192.png
-[Tue Mar  3 08:15:45 2026] [::1]:40632 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40648 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40662 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40672 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40684 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40648 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40662 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40672 [200]: GET /assets/images/logo-larg.svg?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40648 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40662 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40672 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40684 [200]: GET /assets/js/vendor/lucide.js?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40684 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40686 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40700 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40686 [200]: GET /assets/js/app.js?v=1772456818
-[Tue Mar  3 08:15:45 2026] [::1]:40700 [200]: GET /assets/images/logo.svg?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40686 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40700 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40706 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40708 Accepted
-[Tue Mar  3 08:15:45 2026] [::1]:40706 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40708 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772454504
-[Tue Mar  3 08:15:45 2026] [::1]:40706 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40708 Closing
-[Tue Mar  3 08:15:45 2026] [::1]:40716 Accepted
-[Tue Mar  3 08:15:45 2026] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in /app/includes/navasan_service.php:89
+[Tue Mar  3 10:29:55 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
+[Tue Mar  3 10:30:22 2026] [::1]:47336 Accepted
+[Tue Mar  3 10:30:22 2026] [::1]:47336 [200]: GET /
+[Tue Mar  3 10:30:22 2026] [::1]:47336 Closing
+[Tue Mar  3 10:30:22 2026] [::1]:47350 Accepted
+[Tue Mar  3 10:30:22 2026] [::1]:47356 Accepted
+[Tue Mar  3 10:30:22 2026] [::1]:47350 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772533293
+[Tue Mar  3 10:30:22 2026] [::1]:47356 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772533293
+[Tue Mar  3 10:30:22 2026] [::1]:47350 Closing
+[Tue Mar  3 10:30:22 2026] [::1]:47356 Closing
+[Tue Mar  3 10:30:22 2026] [::1]:47362 Accepted
+[Tue Mar  3 10:30:22 2026] [::1]:47374 Accepted
+[Tue Mar  3 10:30:22 2026] [::1]:47362 [200]: GET /assets/images/logo-larg.svg?v=1772533293
+[Tue Mar  3 10:30:22 2026] [::1]:47374 [200]: GET /assets/js/vendor/lucide.js?v=1772533293
+[Tue Mar  3 10:30:22 2026] [::1]:47362 Closing
+[Tue Mar  3 10:30:22 2026] [::1]:47374 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47386 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47398 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47408 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47418 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47422 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47386 [200]: GET /assets/js/charts.js?v=1772533293
+[Tue Mar  3 10:30:23 2026] [::1]:47398 [200]: GET /assets/js/app.js?v=1772533293
+[Tue Mar  3 10:30:23 2026] [::1]:47408 [200]: GET /assets/js/notifications.js?v=1772533779
+[Tue Mar  3 10:30:23 2026] [::1]:47386 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47418 [200]: GET /assets/images/logo.svg?v=1772533293
+[Tue Mar  3 10:30:23 2026] [::1]:47398 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47408 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47418 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47422 [200]: GET /assets/images/gold/gold.webp?v=1772533293
+[Tue Mar  3 10:30:23 2026] [::1]:47422 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47432 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47440 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47454 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47432 [200]: GET /assets/images/gold/rob.webp?v=1772533293
+[Tue Mar  3 10:30:23 2026] [::1]:47440 [200]: GET /assets/images/platforms/gerami.webp?v=1772533293
+[Tue Mar  3 10:30:23 2026] [::1]:47454 [200]: GET /assets/images/platforms/milli.webp?v=1772533293
+[Tue Mar  3 10:30:23 2026] [::1]:47432 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47440 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47454 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47462 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47470 Accepted
+[Tue Mar  3 10:30:23 2026] [::1]:47462 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772533293
+[Tue Mar  3 10:30:23 2026] [::1]:47470 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772533293
+[Tue Mar  3 10:30:23 2026] [::1]:47462 Closing
+[Tue Mar  3 10:30:23 2026] [::1]:47470 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47482 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47482 [200]: GET /api/prices.php?symbol=18ayar
+[Tue Mar  3 10:30:24 2026] [::1]:47482 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47490 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47490 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772533293
+[Tue Mar  3 10:30:24 2026] [::1]:47490 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47494 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47494 [200]: GET /sw.js
+[Tue Mar  3 10:30:24 2026] [::1]:47494 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47502 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47504 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47506 Accepted
+[Tue Mar  3 10:30:24 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Tue Mar  3 10:30:24 2026] [::1]:47502 [200]: GET /offline.php
+[Tue Mar  3 10:30:24 2026] [::1]:47502 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47504 [200]: GET /
+[Tue Mar  3 10:30:24 2026] [::1]:47504 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47506 [200]: GET /assets/css/style.css
+[Tue Mar  3 10:30:24 2026] [::1]:47506 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47522 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47522 [200]: GET /assets/js/app.js
+[Tue Mar  3 10:30:24 2026] [::1]:47522 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47530 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47546 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47560 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47530 [200]: GET /assets/images/logo.png
+[Tue Mar  3 10:30:24 2026] [::1]:47530 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47546 [200]: GET /assets/images/logo.svg
+[Tue Mar  3 10:30:24 2026] [::1]:47546 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47560 [200]: GET /assets/images/favicon/favicon-32x32.png
+[Tue Mar  3 10:30:24 2026] [::1]:47560 Closing
+[Tue Mar  3 10:30:24 2026] [::1]:47564 Accepted
+[Tue Mar  3 10:30:24 2026] [::1]:47564 [200]: GET /assets/images/favicon/android-icon-192x192.png
+[Tue Mar  3 10:30:24 2026] [::1]:47564 Closing
+[Tue Mar  3 10:30:25 2026] [::1]:35032 Accepted
+[Tue Mar  3 10:30:25 2026] [::1]:35032 [200]: GET /api/prices.php?symbol=null
+[Tue Mar  3 10:30:25 2026] [::1]:35032 Closing
+[Tue Mar  3 10:30:25 2026] [::1]:35038 Accepted
+[Tue Mar  3 10:30:26 2026] PHP Fatal error:  Uncaught Error: Call to a member function prepare() on null in /app/site/api/auth.php:116
 Stack trace:
-#0 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
-#1 {main}
-  thrown in /app/includes/navasan_service.php on line 89
-[Tue Mar  3 08:15:45 2026] [::1]:40716 [500]: GET /api/dashboard.php - Uncaught Error: Call to a member function query() on null in /app/includes/navasan_service.php:89
+#0 {main}
+  thrown in /app/site/api/auth.php on line 116
+[Tue Mar  3 10:30:26 2026] [::1]:35038 [500]: POST /api/auth.php?action=register - Uncaught Error: Call to a member function prepare() on null in /app/site/api/auth.php:116
 Stack trace:
-#0 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
-#1 {main}
+#0 {main}
+  thrown in /app/site/api/auth.php on line 116
+[Tue Mar  3 10:30:26 2026] [::1]:35038 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57436 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57436 [200]: GET /
+[Tue Mar  3 10:31:11 2026] [::1]:57436 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57438 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57442 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57456 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57458 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57438 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57442 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57456 [200]: GET /assets/images/logo-larg.svg?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57458 [200]: GET /assets/js/vendor/lucide.js?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57438 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57442 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57456 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57458 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57460 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57466 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57482 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57496 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57512 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57460 [200]: GET /assets/js/charts.js?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57466 [200]: GET /assets/js/app.js?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57482 [200]: GET /assets/js/notifications.js?v=1772533779
+[Tue Mar  3 10:31:11 2026] [::1]:57460 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57466 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57482 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57496 [200]: GET /assets/images/logo.svg?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57512 [200]: GET /assets/images/gold/gold.webp?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57496 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57512 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57516 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57532 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57534 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57550 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57560 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57516 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57516 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57532 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57534 [200]: GET /assets/images/gold/rob.webp?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57550 [200]: GET /assets/images/platforms/gerami.webp?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57560 [200]: GET /assets/images/platforms/milli.webp?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57532 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57534 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57550 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57560 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57574 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57574 [200]: GET /api/prices.php?symbol=18ayar
+[Tue Mar  3 10:31:11 2026] [::1]:57574 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57576 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57576 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772533293
+[Tue Mar  3 10:31:11 2026] [::1]:57576 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57588 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57588 [200]: GET /sw.js
+[Tue Mar  3 10:31:11 2026] [::1]:57588 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57604 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57608 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57620 Accepted
+[Tue Mar  3 10:31:11 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Tue Mar  3 10:31:11 2026] [::1]:57604 [200]: GET /offline.php
+[Tue Mar  3 10:31:11 2026] [::1]:57604 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57608 [200]: GET /
+[Tue Mar  3 10:31:11 2026] [::1]:57608 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57620 [200]: GET /assets/css/style.css
+[Tue Mar  3 10:31:11 2026] [::1]:57620 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57624 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57624 [200]: GET /assets/js/app.js
+[Tue Mar  3 10:31:11 2026] [::1]:57624 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57626 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57628 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57644 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57626 [200]: GET /assets/images/logo.png
+[Tue Mar  3 10:31:11 2026] [::1]:57628 [200]: GET /assets/images/logo.svg
+[Tue Mar  3 10:31:11 2026] [::1]:57626 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57628 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57644 [200]: GET /assets/images/favicon/favicon-32x32.png
+[Tue Mar  3 10:31:11 2026] [::1]:57644 Closing
+[Tue Mar  3 10:31:11 2026] [::1]:57656 Accepted
+[Tue Mar  3 10:31:11 2026] [::1]:57656 [200]: GET /assets/images/favicon/android-icon-192x192.png
+[Tue Mar  3 10:31:11 2026] [::1]:57656 Closing
+[Tue Mar  3 10:31:12 2026] [::1]:57670 Accepted
+[Tue Mar  3 10:31:12 2026] [::1]:57670 [200]: GET /api/prices.php?symbol=null
+[Tue Mar  3 10:31:12 2026] [::1]:57670 Closing
+[Tue Mar  3 10:31:12 2026] [::1]:57686 Accepted
+[Tue Mar  3 10:31:12 2026] PHP Fatal error:  Uncaught Error: Call to a member function prepare() on null in /app/site/api/auth.php:116
+Stack trace:
+#0 {main}
+  thrown in /app/site/api/auth.php on line 116
+[Tue Mar  3 10:31:12 2026] [::1]:57686 [500]: POST /api/auth.php?action=register - Uncaught Error: Call to a member function prepare() on null in /app/site/api/auth.php:116
+Stack trace:
+#0 {main}
+  thrown in /app/site/api/auth.php on line 116
+[Tue Mar  3 10:31:12 2026] [::1]:57686 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37384 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37384 [500]: GET /
+[Tue Mar  3 10:32:06 2026] [::1]:37384 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37388 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37398 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37410 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37412 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37388 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772533293
+[Tue Mar  3 10:32:06 2026] [::1]:37398 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772533293
+[Tue Mar  3 10:32:06 2026] [::1]:37410 [200]: GET /assets/images/logo-larg.svg?v=1772533293
+[Tue Mar  3 10:32:06 2026] [::1]:37388 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37398 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37410 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37412 [200]: GET /assets/js/vendor/lucide.js?v=1772533293
+[Tue Mar  3 10:32:06 2026] [::1]:37412 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37426 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37442 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37454 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37426 [200]: GET /assets/js/app.js?v=1772533293
+[Tue Mar  3 10:32:06 2026] [::1]:37442 [200]: GET /assets/js/notifications.js?v=1772533779
+[Tue Mar  3 10:32:06 2026] [::1]:37426 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37454 [200]: GET /assets/images/logo.svg?v=1772533293
+[Tue Mar  3 10:32:06 2026] [::1]:37442 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37454 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37466 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37466 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772533293
+[Tue Mar  3 10:32:06 2026] [::1]:37466 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37468 Accepted
+[Tue Mar  3 10:32:06 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/includes/navasan_service.php:89
+Stack trace:
+#0 /app/includes/navasan_service.php(89): PDO->query()
+#1 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
+#2 {main}
   thrown in /app/includes/navasan_service.php on line 89
-[Tue Mar  3 08:15:45 2026] [::1]:40716 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36192 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36192 [200]: GET /
-[Tue Mar  3 08:16:53 2026] [::1]:36192 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36204 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36220 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36224 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36236 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36204 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36204 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36220 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36220 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36224 [200]: GET /assets/images/logo-larg.svg?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36224 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36236 [200]: GET /assets/js/vendor/lucide.js?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36236 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36242 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36246 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36258 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36264 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36242 [200]: GET /assets/js/charts.js?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36242 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36246 [200]: GET /assets/js/app.js?v=1772456818
-[Tue Mar  3 08:16:53 2026] [::1]:36246 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36258 [200]: GET /assets/images/logo.svg?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36258 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36264 [200]: GET /assets/images/gold/gold.webp?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36264 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36268 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36284 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36292 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36308 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36314 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36268 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36284 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36268 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36292 [200]: GET /assets/images/gold/rob.webp?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36284 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36292 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36308 [200]: GET /assets/images/platforms/gerami.webp?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36314 [200]: GET /assets/images/platforms/milli.webp?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36308 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36314 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36326 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36326 [200]: GET /api/prices.php?symbol=18ayar
-[Tue Mar  3 08:16:53 2026] [::1]:36326 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36342 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36342 [200]: GET /assets/js/vendor/apexcharts.min.js?v=1772454504
-[Tue Mar  3 08:16:53 2026] [::1]:36342 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36344 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36344 [200]: GET /sw.js
-[Tue Mar  3 08:16:53 2026] [::1]:36344 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36350 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36358 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36364 Accepted
-[Tue Mar  3 08:16:53 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
-[Tue Mar  3 08:16:53 2026] [::1]:36350 [200]: GET /offline.php
-[Tue Mar  3 08:16:53 2026] [::1]:36350 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36358 [200]: GET /
-[Tue Mar  3 08:16:53 2026] [::1]:36358 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36368 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36364 [200]: GET /assets/css/style.css
-[Tue Mar  3 08:16:53 2026] [::1]:36368 [200]: GET /assets/js/app.js
-[Tue Mar  3 08:16:53 2026] [::1]:36364 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36368 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36374 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36386 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36374 [200]: GET /assets/images/logo.png
-[Tue Mar  3 08:16:53 2026] [::1]:36374 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36388 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36386 [200]: GET /assets/images/logo.svg
-[Tue Mar  3 08:16:53 2026] [::1]:36386 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36388 [200]: GET /assets/images/favicon/favicon-32x32.png
-[Tue Mar  3 08:16:53 2026] [::1]:36388 Closing
-[Tue Mar  3 08:16:53 2026] [::1]:36400 Accepted
-[Tue Mar  3 08:16:53 2026] [::1]:36400 [200]: GET /assets/images/favicon/android-icon-192x192.png
-[Tue Mar  3 08:16:53 2026] [::1]:36400 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37468 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/includes/navasan_service.php:89
+Stack trace:
+#0 /app/includes/navasan_service.php(89): PDO->query()
+#1 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
+#2 {main}
+  thrown in /app/includes/navasan_service.php on line 89
+[Tue Mar  3 10:32:06 2026] [::1]:37468 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37472 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37472 [200]: GET /sw.js
+[Tue Mar  3 10:32:06 2026] [::1]:37472 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37474 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37476 Accepted
+[Tue Mar  3 10:32:06 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Tue Mar  3 10:32:06 2026] [::1]:37474 [200]: GET /offline.php
+[Tue Mar  3 10:32:06 2026] [::1]:37474 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37484 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37476 [500]: GET /
+[Tue Mar  3 10:32:06 2026] [::1]:37476 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37484 [200]: GET /assets/css/style.css
+[Tue Mar  3 10:32:06 2026] [::1]:37484 Closing
+[Tue Mar  3 10:32:06 2026] [::1]:37488 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37490 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37506 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37508 Accepted
+[Tue Mar  3 10:32:06 2026] [::1]:37516 Accepted
+[Tue Mar  3 10:32:07 2026] [::1]:37488 [200]: POST /api/auth.php?action=register
+[Tue Mar  3 10:32:07 2026] [::1]:37488 Closing
+[Tue Mar  3 10:32:07 2026] [::1]:37490 [200]: GET /api/notifications.php?action=list
+[Tue Mar  3 10:32:07 2026] [::1]:37490 Closing
+[Tue Mar  3 10:32:39 2026] [::1]:37506 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Mar  3 10:32:39 2026] [::1]:37506 Closing
+[Tue Mar  3 10:32:39 2026] [::1]:37508 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Mar  3 10:32:39 2026] [::1]:37508 Closing
+[Tue Mar  3 10:32:39 2026] [::1]:37516 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Mar  3 10:32:39 2026] [::1]:37516 Closing
+[Tue Mar  3 10:32:52 2026] [::1]:55700 Accepted
+[Tue Mar  3 10:32:52 2026] [::1]:55700 [500]: GET /
+[Tue Mar  3 10:32:52 2026] [::1]:55700 Closing
+[Tue Mar  3 10:32:52 2026] [::1]:55712 Accepted
+[Tue Mar  3 10:32:52 2026] [::1]:55726 Accepted
+[Tue Mar  3 10:32:52 2026] [::1]:55728 Accepted
+[Tue Mar  3 10:32:52 2026] [::1]:55740 Accepted
+[Tue Mar  3 10:32:52 2026] [::1]:55712 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772533293
+[Tue Mar  3 10:32:52 2026] [::1]:55726 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772533293
+[Tue Mar  3 10:32:52 2026] [::1]:55712 Closing
+[Tue Mar  3 10:32:52 2026] [::1]:55726 Closing
+[Tue Mar  3 10:32:52 2026] [::1]:55728 [200]: GET /assets/images/logo-larg.svg?v=1772533293
+[Tue Mar  3 10:32:52 2026] [::1]:55728 Closing
+[Tue Mar  3 10:32:52 2026] [::1]:55740 [200]: GET /assets/js/vendor/lucide.js?v=1772533293
+[Tue Mar  3 10:32:52 2026] [::1]:55740 Closing
+[Tue Mar  3 10:32:52 2026] [::1]:55752 Accepted
+[Tue Mar  3 10:32:52 2026] [::1]:55764 Accepted
+[Tue Mar  3 10:32:52 2026] [::1]:55766 Accepted
+[Tue Mar  3 10:32:52 2026] [::1]:55752 [200]: GET /assets/js/app.js?v=1772533293
+[Tue Mar  3 10:32:52 2026] [::1]:55764 [200]: GET /assets/js/notifications.js?v=1772533779
+[Tue Mar  3 10:32:52 2026] [::1]:55766 [200]: GET /assets/images/logo.svg?v=1772533293
+[Tue Mar  3 10:32:52 2026] [::1]:55752 Closing
+[Tue Mar  3 10:32:52 2026] [::1]:55764 Closing
+[Tue Mar  3 10:32:52 2026] [::1]:55766 Closing
+[Tue Mar  3 10:32:52 2026] [::1]:55768 Accepted
+[Tue Mar  3 10:32:52 2026] [::1]:55768 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772533293
+[Tue Mar  3 10:32:52 2026] [::1]:55768 Closing
+[Tue Mar  3 10:32:53 2026] [::1]:55778 Accepted
+[Tue Mar  3 10:32:53 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/includes/navasan_service.php:89
+Stack trace:
+#0 /app/includes/navasan_service.php(89): PDO->query()
+#1 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
+#2 {main}
+  thrown in /app/includes/navasan_service.php on line 89
+[Tue Mar  3 10:32:53 2026] [::1]:55778 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/includes/navasan_service.php:89
+Stack trace:
+#0 /app/includes/navasan_service.php(89): PDO->query()
+#1 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
+#2 {main}
+  thrown in /app/includes/navasan_service.php on line 89
+[Tue Mar  3 10:32:53 2026] [::1]:55778 Closing
+[Tue Mar  3 10:32:53 2026] [::1]:55786 Accepted
+[Tue Mar  3 10:32:53 2026] [::1]:55786 [200]: GET /sw.js
+[Tue Mar  3 10:32:53 2026] [::1]:55786 Closing
+[Tue Mar  3 10:32:53 2026] [::1]:55794 Accepted
+[Tue Mar  3 10:32:53 2026] [::1]:55796 Accepted
+[Tue Mar  3 10:32:53 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Tue Mar  3 10:32:53 2026] [::1]:55794 [200]: GET /offline.php
+[Tue Mar  3 10:32:53 2026] [::1]:55794 Closing
+[Tue Mar  3 10:32:53 2026] [::1]:55806 Accepted
+[Tue Mar  3 10:32:53 2026] [::1]:55796 [500]: GET /
+[Tue Mar  3 10:32:53 2026] [::1]:55796 Closing
+[Tue Mar  3 10:32:53 2026] [::1]:55812 Accepted
+[Tue Mar  3 10:32:53 2026] [::1]:55806 [200]: GET /assets/css/style.css
+[Tue Mar  3 10:32:53 2026] [::1]:55812 [200]: GET /assets/js/app.js
+[Tue Mar  3 10:32:53 2026] [::1]:55816 Accepted
+[Tue Mar  3 10:32:53 2026] [::1]:55818 Accepted
+[Tue Mar  3 10:32:53 2026] [::1]:55806 Closing
+[Tue Mar  3 10:32:53 2026] [::1]:55812 Closing
+[Tue Mar  3 10:32:53 2026] [::1]:55826 Accepted
+[Tue Mar  3 10:32:53 2026] [::1]:55842 Accepted
+[Tue Mar  3 10:32:53 2026] [::1]:55816 [200]: POST /api/auth.php?action=register
+[Tue Mar  3 10:32:53 2026] [::1]:55816 Closing
+[Tue Mar  3 10:32:53 2026] [::1]:55818 [200]: GET /api/notifications.php?action=list
+[Tue Mar  3 10:32:53 2026] [::1]:55818 Closing
+[Tue Mar  3 10:32:54 2026] PHPMailer Error: SMTP Error: Could not connect to SMTP host.
+[Tue Mar  3 10:32:54 2026] PHPMailer Error: SMTP Error: Could not connect to SMTP host.
+[Tue Mar  3 10:32:54 2026] [::1]:55826 [200]: GET /api/mail_worker.php
+[Tue Mar  3 10:32:54 2026] [::1]:55826 Closing
+[Tue Mar  3 10:32:54 2026] [::1]:55842 [500]: GET /profile
+[Tue Mar  3 10:32:54 2026] [::1]:55842 Closing
+[Tue Mar  3 10:32:54 2026] [::1]:55844 Accepted
+[Tue Mar  3 10:32:54 2026] [::1]:55848 Accepted
+[Tue Mar  3 10:32:54 2026] [::1]:55864 Accepted
+[Tue Mar  3 10:32:54 2026] [::1]:55866 Accepted
+[Tue Mar  3 10:32:54 2026] [::1]:55844 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772533293
+[Tue Mar  3 10:32:54 2026] [::1]:55848 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772533293
+[Tue Mar  3 10:32:54 2026] [::1]:55864 [200]: GET /assets/images/logo-larg.svg?v=1772533293
+[Tue Mar  3 10:32:54 2026] [::1]:55866 [200]: GET /assets/js/vendor/lucide.js?v=1772533293
+[Tue Mar  3 10:32:54 2026] [::1]:55844 Closing
+[Tue Mar  3 10:32:54 2026] [::1]:55848 Closing
+[Tue Mar  3 10:32:54 2026] [::1]:55864 Closing
+[Tue Mar  3 10:32:54 2026] [::1]:55866 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55874 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:55878 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:55874 [200]: GET /assets/js/app.js?v=1772533293
+[Tue Mar  3 10:32:55 2026] [::1]:55888 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:55878 [200]: GET /assets/js/notifications.js?v=1772533779
+[Tue Mar  3 10:32:55 2026] [::1]:55888 [200]: GET /assets/images/logo.svg?v=1772533293
+[Tue Mar  3 10:32:55 2026] [::1]:55874 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55878 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55888 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55902 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:55916 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:55902 [200]: GET /api/notifications.php?action=list
+[Tue Mar  3 10:32:55 2026] [::1]:55902 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55930 Accepted
+[Tue Mar  3 10:32:55 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/includes/navasan_service.php:89
+Stack trace:
+#0 /app/includes/navasan_service.php(89): PDO->query()
+#1 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
+#2 {main}
+  thrown in /app/includes/navasan_service.php on line 89
+[Tue Mar  3 10:32:55 2026] [::1]:55916 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: items in /app/includes/navasan_service.php:89
+Stack trace:
+#0 /app/includes/navasan_service.php(89): PDO->query()
+#1 /app/site/api/dashboard.php(21): NavasanService->getDashboardData()
+#2 {main}
+  thrown in /app/includes/navasan_service.php on line 89
+[Tue Mar  3 10:32:55 2026] [::1]:55916 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55930 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772533293
+[Tue Mar  3 10:32:55 2026] [::1]:55930 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55940 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:55940 [200]: GET /sw.js
+[Tue Mar  3 10:32:55 2026] [::1]:55940 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55954 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:55968 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:55974 Accepted
+[Tue Mar  3 10:32:55 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Tue Mar  3 10:32:55 2026] [::1]:55954 [200]: GET /offline.php
+[Tue Mar  3 10:32:55 2026] [::1]:55954 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55968 [500]: GET /
+[Tue Mar  3 10:32:55 2026] [::1]:55968 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55974 [200]: GET /assets/css/style.css
+[Tue Mar  3 10:32:55 2026] [::1]:55986 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:55986 [200]: GET /assets/js/app.js
+[Tue Mar  3 10:32:55 2026] [::1]:55974 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:55986 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:56000 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:56010 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:56020 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:56030 Accepted
+[Tue Mar  3 10:32:55 2026] [::1]:56000 [200]: GET /api/notifications.php?action=list
+[Tue Mar  3 10:32:55 2026] [::1]:56000 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:56010 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Mar  3 10:32:55 2026] [::1]:56010 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:56020 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Mar  3 10:32:55 2026] [::1]:56020 Closing
+[Tue Mar  3 10:32:55 2026] [::1]:56030 Closed without sending a request; it was probably just an unused speculative preconnection
+[Tue Mar  3 10:32:55 2026] [::1]:56030 Closing

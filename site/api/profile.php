@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/mail.php';
 require_once __DIR__ . '/../../includes/sms.php';
+require_once __DIR__ . '/../../includes/notifications.php';
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -373,6 +374,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare("INSERT INTO follows (follower_id, following_id) VALUES (?, ?)");
                 $stmt->execute([$user_id, $following_id]);
                 $following = true;
+
+                // Create notification
+                $notif = new Notifications($pdo);
+                $notif->create($following_id, $user_id, 'follow', $user_id);
             }
 
             // Get new count

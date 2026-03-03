@@ -459,5 +459,6 @@
     <script src="<?= versioned_asset('/assets/js/charts.js') ?>"></script>
     <?php endif; ?>
     <script src="<?= versioned_asset('/assets/js/app.js') ?>"></script>
+    <script src="<?= versioned_asset('/assets/js/notifications.js') ?>"></script>
 </body>
 </html>
