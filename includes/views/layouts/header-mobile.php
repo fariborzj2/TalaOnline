@@ -1,7 +1,18 @@
 <header class="mobile-header mobile-only">
     <div class="mobile-header-inner">
-        <div class="mobile-header-notifications">
+        <div class="mobile-header-notifications" id="notification-btn-mobile">
             <i data-lucide="bell" class="icon-size-6"></i>
+            <span class="notification-badge d-none" id="notification-badge-mobile">0</span>
+
+            <div class="notification-dropdown" id="notification-dropdown-mobile" style="right: 0; left: auto; width: 280px;">
+                <div class="notification-header">
+                    <h3>اعلان‌ها</h3>
+                    <button class="text-primary font-size-0-8" id="mark-all-read-mobile">خواندن همه</button>
+                </div>
+                <div class="notification-list" id="notification-list-mobile">
+                    <div class="text-center py-4 text-gray">در حال بارگذاری...</div>
+                </div>
+            </div>
         </div>
 
         <div class="mobile-header-logo">
