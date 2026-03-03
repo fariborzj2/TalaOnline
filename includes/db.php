@@ -566,6 +566,7 @@ if (file_exists($config_file)) {
                     'blog_categories' => ['view' => 'مشاهده دسته‌بندی‌های وبلاگ', 'create' => 'افزودن دسته‌بندی وبلاگ', 'edit' => 'ویرایش دسته‌بندی وبلاگ', 'delete' => 'حذف دسته‌بندی وبلاگ'],
                     'blog_tags' => ['view' => 'مشاهده برچسب‌ها', 'create' => 'افزودن برچسب', 'edit' => 'ویرایش برچسب', 'delete' => 'حذف برچسب'],
                     'rss' => ['view' => 'مشاهده فیدهای RSS', 'create' => 'افزودن فید RSS', 'edit' => 'ویرایش فید RSS', 'delete' => 'حذف فید RSS'],
+                    'comments' => ['view' => 'مشاهده نظرات', 'edit' => 'ویرایش/تایید نظر', 'delete' => 'حذف نظر'],
                     'feedbacks' => ['view' => 'مشاهده بازخوردها', 'delete' => 'حذف بازخورد'],
                     'settings' => ['view' => 'مشاهده تنظیمات', 'edit' => 'ویرایش تنظیمات'],
                     'users' => ['view' => 'مشاهده کاربران', 'create' => 'افزودن کاربر', 'edit' => 'ویرایش کاربر', 'delete' => 'حذف کاربر'],
@@ -585,7 +586,7 @@ if (file_exists($config_file)) {
                         $perm_stmt->execute([$super_admin_id, $perm_id]);
 
                         // Editor gets content modules
-                        if (in_array($module, ['dashboard', 'posts', 'blog_categories', 'blog_tags', 'rss'])) {
+                        if (in_array($module, ['dashboard', 'posts', 'blog_categories', 'blog_tags', 'rss', 'comments'])) {
                             $perm_stmt->execute([$editor_id, $perm_id]);
                         }
                     }

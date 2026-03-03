@@ -74,6 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_setting('rate_limit_ip_lock', $_POST['rate_limit_ip_lock']);
     set_setting('rate_limit_progressive', isset($_POST['rate_limit_progressive']) ? '1' : '0');
 
+    // Comment Settings
+    set_setting('comments_default_status', $_POST['comments_default_status']);
+    set_setting('comments_edit_time_limit', $_POST['comments_edit_time_limit']);
+    set_setting('comments_per_page', $_POST['comments_per_page']);
+    set_setting('comments_guest_view', isset($_POST['comments_guest_view']) ? '1' : '0');
+
     // LiteSpeed Cache Settings
     set_setting('lscache_enabled', isset($_POST['lscache_enabled']) ? '1' : '0');
     set_setting('lscache_ttl', $_POST['lscache_ttl']);
@@ -153,6 +159,10 @@ include __DIR__ . '/layout/header.php';
                     <button type="button" onclick="switchTab('backup', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
                         <i data-lucide="database" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
                         پشتیبان‌گیری
+                    </button>
+                    <button type="button" onclick="switchTab('comments', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
+                        <i data-lucide="message-square" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
+                        تنظیمات نظرات
                     </button>
                     <button type="button" onclick="switchTab('lscache', this)" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 group">
                         <i data-lucide="zap" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
@@ -520,6 +530,57 @@ include __DIR__ . '/layout/header.php';
         </div>
     </div>
 
+            </div>
+
+            <!-- Comment Settings -->
+            <div id="tab-comments" class="setting-section hidden transition-all duration-300">
+                <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
+                    <div class="px-6 py-5 md:px-8 md:py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-indigo-600 border border-indigo-50 shadow-sm">
+                            <i data-lucide="message-square" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base md:text-lg font-black text-slate-800">تنظیمات نظرات</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase ">Comment System Configuration</p>
+                        </div>
+                    </div>
+                    <div class="p-6 md:p-8 space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label>وضعیت پیش‌فرض نظرات جدید</label>
+                                <select name="comments_default_status" class="w-full">
+                                    <option value="approved" <?= get_setting('comments_default_status', 'approved') === 'approved' ? 'selected' : '' ?>>تایید شده (انتشار فوری)</option>
+                                    <option value="pending" <?= get_setting('comments_default_status', 'approved') === 'pending' ? 'selected' : '' ?>>در انتظار تایید (بررسی توسط مدیر)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>مهلت ویرایش توسط کاربر (ثانیه)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="clock" class="w-4 h-4"></i></span>
+                                    <input type="number" name="comments_edit_time_limit" value="<?= htmlspecialchars(get_setting('comments_edit_time_limit', '300')) ?>" min="0" class="ltr-input">
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-2 font-bold">زمان مجاز برای ویرایش نظر پس از ارسال (۳۰۰ برای ۵ دقیقه)</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label>تعداد نظرات در هر صفحه</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="list-ordered" class="w-4 h-4"></i></span>
+                                    <input type="number" name="comments_per_page" value="<?= htmlspecialchars(get_setting('comments_per_page', '20')) ?>" min="5" max="100" class="ltr-input">
+                                </div>
+                            </div>
+                            <div class="form-group flex items-center gap-4 pt-6">
+                                <label class="mb-0">نمایش نظرات به کاربران مهمان</label>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="comments_guest_view" value="1" class="sr-only peer" <?= get_setting('comments_guest_view', '1') === '1' ? 'checked' : '' ?>>
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Backup & Restore -->
