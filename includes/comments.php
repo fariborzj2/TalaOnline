@@ -337,7 +337,11 @@ class Comments {
         // Convert @mentions to [user:ID] placeholders before storing (legacy support for manual typing)
         $stored_content = $this->convertMentionsToPlaceholders($content);
 
-        $default_status = get_setting('comments_default_status', 'approved');
+        if ($user_id) {
+            $default_status = get_setting('comments_default_status', 'approved');
+        } else {
+            $default_status = get_setting('comments_guest_default_status', 'pending');
+        }
 
         $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_id, reply_to_user_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         $success = $stmt->execute([$user_id, $target_id, $target_type, $stored_content, $parent_id, $reply_to_id, $reply_to_user_id, $default_status]);
@@ -345,21 +349,23 @@ class Comments {
         if ($success) {
             $comment_id = $this->pdo->lastInsertId();
 
-            // Reward user
-            $this->rewardUser($user_id, 10); // 10 points for comment
+            if ($user_id) {
+                // Reward user
+                $this->rewardUser($user_id, 10); // 10 points for comment
 
-            // Check for mentions (uses placeholders to notify)
-            $this->handleMentions($stored_content, $comment_id, $user_id);
+                // Check for mentions (uses placeholders to notify)
+                $this->handleMentions($stored_content, $comment_id, $user_id);
 
-            // Notify parent author
-            if ($parent_id) {
-                $this->notifyReply($parent_id, $comment_id);
-            }
-            // Also notify if it's a direct reply to a user in a thread
-            if ($reply_to_user_id && $reply_to_user_id != $user_id) {
-                $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $user_id);
-                $notif = new Notifications($this->pdo);
-                $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
+                // Notify parent author
+                if ($parent_id) {
+                    $this->notifyReply($parent_id, $comment_id);
+                }
+                // Also notify if it's a direct reply to a user in a thread
+                if ($reply_to_user_id && $reply_to_user_id != $user_id) {
+                    $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $user_id);
+                    $notif = new Notifications($this->pdo);
+                    $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
+                }
             }
 
             return $comment_id;

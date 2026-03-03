@@ -12,6 +12,7 @@
 $is_logged_in = isset($_SESSION['user_id']);
 $read_only = $read_only ?? ($target_type === 'user_profile');
 $guest_view_enabled = get_setting('comments_guest_view', '1') === '1';
+$guest_comment_enabled = get_setting('comments_guest_comment_' . $target_type, '0') === '1';
 
 function render_comment_item($c, $read_only = false, $is_reply = false) {
     global $pdo;
@@ -153,10 +154,11 @@ function render_reaction($c, $type, $emoji) {
             <h3>نظرات کاربران <span class="comments-count-badge">(<?= fa_num($total_count ?? 0) ?>)</span></h3>
         </div>
 
-        <?php if ($is_logged_in): ?>
+        <?php if ($is_logged_in || $guest_comment_enabled): ?>
             <div class="comment-form" id="form-main">
                 <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-main"></textarea>
 
+                <?php if ($is_logged_in): ?>
                 <div class="mention-tag-area mb-2" id="mention-area-main">
                     <div class="mention-input-wrapper relative d-flex-wrap gap-05 align-center" id="mentions-container-main">
                         <input type="text"
@@ -166,13 +168,18 @@ function render_reaction($c, $type, $emoji) {
                         <div class="mention-suggestions d-none" id="suggestions-main"></div>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 <div class="comment-form-footer">
-                    <div></div>
+                    <div>
+                        <?php if (!$is_logged_in && $guest_comment_enabled): ?>
+                            <span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">در حال ارسال به عنوان مهمان</span>
+                        <?php endif; ?>
+                    </div>
                     <button class="btn btn-primary submit-comment radius-10" data-parent="">ارسال نظر</button>
                 </div>
             </div>
-        <?php else: ?>
+        <?php elseif (!$is_logged_in): ?>
             <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
                 <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
                 <div class="d-flex gap-1">

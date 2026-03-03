@@ -51,12 +51,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if (!$user_id) {
-        echo json_encode(['success' => false, 'message' => 'لطفا ابتدا وارد حساب خود شوید.']);
-        exit;
-    }
-
     if ($action === 'add') {
+        $target_id = $input['target_id'] ?? '';
+        $target_type = $input['target_type'] ?? '';
+
+        if (!$user_id) {
+            $guest_enabled = get_setting('comments_guest_comment_' . $target_type, '0') === '1';
+            if (!$guest_enabled) {
+                echo json_encode(['success' => false, 'message' => 'لطفا ابتدا وارد حساب خود شوید.']);
+                exit;
+            }
+        }
         // Rate Limiting
         $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         $ip_limit = check_rate_limit('comment', 'ip', $ip);
@@ -65,14 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $user_limit = check_rate_limit('comment', 'user', $user_id);
-        if ($user_limit !== true) {
-            echo json_encode(['success' => false, 'message' => 'شما به تازگی نظر ثبت کرده‌اید. لطفاً کمی صبر کنید.']);
-            exit;
+        if ($user_id) {
+            $user_limit = check_rate_limit('comment', 'user', $user_id);
+            if ($user_limit !== true) {
+                echo json_encode(['success' => false, 'message' => 'شما به تازگی نظر ثبت کرده‌اید. لطفاً کمی صبر کنید.']);
+                exit;
+            }
         }
-
-        $target_id = $input['target_id'] ?? '';
-        $target_type = $input['target_type'] ?? '';
         $content = $input['content'] ?? '';
         $parent_id = $input['parent_id'] ?? null;
         $reply_to_user_id = $input['reply_to_user_id'] ?? null;
@@ -87,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id, $reply_to_user_id, $reply_to_id, $mentions);
         if ($id) {
             record_rate_limit_attempt('comment', 'ip', $ip);
-            record_rate_limit_attempt('comment', 'user', $user_id);
+            if ($user_id) record_rate_limit_attempt('comment', 'user', $user_id);
 
             // Fetch the full comment data to return for AJAX insertion
             $new_comment = $comments_handler->getComment($id, $user_id);
@@ -95,16 +99,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $total_count->execute([$target_id, $target_type]);
             $count = $total_count->fetchColumn();
 
+            $msg = ($new_comment['status'] === 'pending')
+                   ? 'نظر شما ثبت شد و پس از تایید مدیر نمایش داده خواهد شد.'
+                   : 'نظر شما با موفقیت ثبت شد.';
+
             echo json_encode([
                 'success' => true,
                 'id' => $id,
                 'comment' => $new_comment,
                 'total_count' => $count,
-                'message' => 'نظر شما با موفقیت ثبت شد.'
+                'message' => $msg
             ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'خطا در ثبت نظر.']);
         }
+        exit;
+    }
+
+    if (!$user_id) {
+        echo json_encode(['success' => false, 'message' => 'لطفا ابتدا وارد حساب خود شوید.']);
         exit;
     }
 

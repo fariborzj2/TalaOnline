@@ -76,9 +76,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Comment Settings
     set_setting('comments_default_status', $_POST['comments_default_status']);
+    set_setting('comments_guest_default_status', $_POST['comments_guest_default_status']);
     set_setting('comments_edit_time_limit', $_POST['comments_edit_time_limit']);
     set_setting('comments_per_page', $_POST['comments_per_page']);
     set_setting('comments_guest_view', isset($_POST['comments_guest_view']) ? '1' : '0');
+
+    set_setting('comments_guest_comment_post', isset($_POST['comments_guest_comment_post']) ? '1' : '0');
+    set_setting('comments_guest_comment_item', isset($_POST['comments_guest_comment_item']) ? '1' : '0');
+    set_setting('comments_guest_comment_category', isset($_POST['comments_guest_comment_category']) ? '1' : '0');
 
     // LiteSpeed Cache Settings
     set_setting('lscache_enabled', isset($_POST['lscache_enabled']) ? '1' : '0');
@@ -547,10 +552,17 @@ include __DIR__ . '/layout/header.php';
                     <div class="p-6 md:p-8 space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="form-group">
-                                <label>وضعیت پیش‌فرض نظرات جدید</label>
+                                <label>وضعیت پیش‌فرض نظرات (کاربران عضو)</label>
                                 <select name="comments_default_status" class="w-full">
                                     <option value="approved" <?= get_setting('comments_default_status', 'approved') === 'approved' ? 'selected' : '' ?>>تایید شده (انتشار فوری)</option>
-                                    <option value="pending" <?= get_setting('comments_default_status', 'approved') === 'pending' ? 'selected' : '' ?>>در انتظار تایید (بررسی توسط مدیر)</option>
+                                    <option value="pending" <?= get_setting('comments_default_status', 'approved') === 'pending' ? 'selected' : '' ?>>در انتظار تایید</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>وضعیت پیش‌فرض نظرات (کاربران مهمان)</label>
+                                <select name="comments_guest_default_status" class="w-full">
+                                    <option value="approved" <?= get_setting('comments_guest_default_status', 'pending') === 'approved' ? 'selected' : '' ?>>تایید شده (انتشار فوری)</option>
+                                    <option value="pending" <?= get_setting('comments_guest_default_status', 'pending') === 'pending' ? 'selected' : '' ?>>در انتظار تایید</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -572,11 +584,41 @@ include __DIR__ . '/layout/header.php';
                                 </div>
                             </div>
                             <div class="form-group flex items-center gap-4 pt-6">
-                                <label class="mb-0">نمایش نظرات به کاربران مهمان</label>
+                                <label class="mb-0">نمایش نظرات به کاربران مهمان (کلی)</label>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" name="comments_guest_view" value="1" class="sr-only peer" <?= get_setting('comments_guest_view', '1') === '1' ? 'checked' : '' ?>>
                                     <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                                 </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 border-t border-slate-100">
+                            <h4 class="text-sm font-black text-slate-700 mb-4 flex items-center gap-2">
+                                <i data-lucide="user-plus" class="w-4 h-4 text-indigo-500"></i>
+                                فعال‌سازی ارسال نظر مهمان (به تفکیک بخش)
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="form-group flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                    <label class="mb-0 text-xs font-bold">مطالب وبلاگ</label>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="comments_guest_comment_post" value="1" class="sr-only peer" <?= get_setting('comments_guest_comment_post', '0') === '1' ? 'checked' : '' ?>>
+                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
+                                <div class="form-group flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                    <label class="mb-0 text-xs font-bold">صفحات دارایی‌ها (Asset)</label>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="comments_guest_comment_item" value="1" class="sr-only peer" <?= get_setting('comments_guest_comment_item', '0') === '1' ? 'checked' : '' ?>>
+                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
+                                <div class="form-group flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                    <label class="mb-0 text-xs font-bold">دسته‌بندی‌ها</label>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="comments_guest_comment_category" value="1" class="sr-only peer" <?= get_setting('comments_guest_comment_category', '0') === '1' ? 'checked' : '' ?>>
+                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
