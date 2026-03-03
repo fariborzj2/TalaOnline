@@ -11,6 +11,7 @@
 
 $is_logged_in = isset($_SESSION['user_id']);
 $read_only = $read_only ?? ($target_type === 'user_profile');
+$guest_view_enabled = get_setting('comments_guest_view', '1') === '1';
 
 function render_comment_item($c, $read_only = false, $is_reply = false) {
     global $pdo;
@@ -132,6 +133,20 @@ function render_reaction($c, $type, $emoji) {
 ?>
 
 <div class="comments-section <?= $read_only ? 'read-only' : '' ?>" id="comments-app" data-target-id="<?= $target_id ?>" data-target-type="<?= $target_type ?>">
+    <?php if (!$guest_view_enabled && !$is_logged_in): ?>
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
+            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100 mx-auto mb-4">
+                <i data-lucide="lock" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-slate-800 font-black mb-2">مشاهده نظرات محدود شده است</h3>
+            <p class="text-slate-500 font-bold text-sm mb-6">برای مشاهده نظرات کاربران و شرکت در گفتگوها، ابتدا باید وارد حساب کاربری خود شوید.</p>
+            <div class="flex items-center justify-center gap-3">
+                <button class="btn btn-primary radius-10 px-6" onclick="window.showAuthModal?.('login')">ورود به حساب</button>
+                <button class="btn btn-secondary radius-10 px-6" onclick="window.showAuthModal?.('register')">ثبت‌نام</button>
+            </div>
+        </div>
+    <?php return; endif; ?>
+
     <?php if (!$read_only): ?>
         <div class="comments-header">
             <i data-lucide="message-square" class="text-primary w-6 h-6"></i>

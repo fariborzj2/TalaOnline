@@ -55,13 +55,18 @@ class Comments {
         $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap, true);
 
         $c['created_at_fa'] = jalali_date($c['created_at']);
-        $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < 300);
+        $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
+        $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
 
         return $c;
     }
 
-    public function getComments($target_id, $target_type, $user_id = null, $page = 1, $per_page = 20) {
+    public function getComments($target_id, $target_type, $user_id = null, $page = 1, $per_page = null) {
         if (!$this->pdo) return ['comments' => [], 'total_pages' => 0, 'total_count' => 0];
+
+        if ($per_page === null) {
+            $per_page = (int)get_setting('comments_per_page', '20');
+        }
 
         // Only count top-level comments for pagination
         $count_sql = "SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND status = 'approved' AND parent_id IS NULL";
@@ -106,10 +111,11 @@ class Comments {
             }
         }
 
+        $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
         foreach ($top_level_comments as &$c) {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['created_at_fa'] = jalali_date($c['created_at']);
-            $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < 300);
+            $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
 
             // Fetch total reply count
             $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE parent_id = ? AND status = 'approved'");
@@ -188,10 +194,11 @@ class Comments {
             }
         }
 
+        $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
         foreach ($replies as &$r) {
             $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
             $r['created_at_fa'] = jalali_date($r['created_at']);
-            $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < 300);
+            $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < $edit_limit);
         }
 
         return $replies;
@@ -235,6 +242,7 @@ class Comments {
 
         // Bulk parse mentions for user profile feed
         $userMap = $this->loadMentionedUsers($comments);
+        $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
         foreach ($comments as &$c) {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['replies'] = [];
@@ -242,7 +250,7 @@ class Comments {
             $c['mentioned_users'] = $this->extractMentionedUsers($c['content'], $userMap);
             $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap, true);
             $c['created_at_fa'] = jalali_date($c['created_at']);
-            $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < 300);
+            $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < $edit_limit);
             $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
         }
 
@@ -329,8 +337,10 @@ class Comments {
         // Convert @mentions to [user:ID] placeholders before storing (legacy support for manual typing)
         $stored_content = $this->convertMentionsToPlaceholders($content);
 
-        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_id, reply_to_user_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $success = $stmt->execute([$user_id, $target_id, $target_type, $stored_content, $parent_id, $reply_to_id, $reply_to_user_id]);
+        $default_status = get_setting('comments_default_status', 'approved');
+
+        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_id, reply_to_user_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $success = $stmt->execute([$user_id, $target_id, $target_type, $stored_content, $parent_id, $reply_to_id, $reply_to_user_id, $default_status]);
 
         if ($success) {
             $comment_id = $this->pdo->lastInsertId();
@@ -420,7 +430,9 @@ class Comments {
         $stmt->execute([$comment_id, $user_id]);
         $created_at = $stmt->fetchColumn();
 
-        if ($created_at && (time() - strtotime($created_at)) < 300) {
+        $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
+
+        if ($created_at && (time() - strtotime($created_at)) < $edit_limit) {
             // Explicitly append mentions if provided
             if (!empty($mentions) && is_array($mentions)) {
                 foreach ($mentions as $uid) {
