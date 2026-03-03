@@ -18,6 +18,7 @@ class CommentSystem {
         this.comments = options.initialComments || initialData?.comments || [];
         this.totalCount = initialData?.total_count || 0;
         this.readOnly = options.readOnly || (this.targetType === 'user_profile');
+        this.guestCommentEnabled = this.container.dataset.guestComment === '1';
 
         if (options.initialComments) {
             this.render();
@@ -115,7 +116,7 @@ class CommentSystem {
     }
 
     renderCommentForm(parentId = null, initialContent = '') {
-        if (!this.isLoggedIn) {
+        if (!this.isLoggedIn && !this.guestCommentEnabled) {
             return `
                 <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
                     <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
@@ -130,8 +131,16 @@ class CommentSystem {
         const suffix = parentId || 'main';
         return `
             <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${suffix}">
+                ${!this.isLoggedIn ? `
+                    <div class="d-flex gap-1 mb-2">
+                        <input type="text" id="guest-name-${suffix}" class="form-control font-size-0-8" placeholder="نام شما (اختیاری)">
+                        <input type="email" id="guest-email-${suffix}" class="form-control font-size-0-8 ltr-input" placeholder="ایمیل شما (اختیاری)">
+                    </div>
+                ` : ''}
+
                 <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-${suffix}">${initialContent}</textarea>
 
+                ${this.isLoggedIn ? `
                 <div class="mention-tag-area mb-2" id="mention-area-${suffix}">
                     <div class="mention-input-wrapper relative d-flex-wrap gap-05 align-center" id="mentions-container-${suffix}">
                         <input type="text"
@@ -143,7 +152,9 @@ class CommentSystem {
                 </div>
 
                 <div class="comment-form-footer">
-                    <div></div>
+                    <div>
+                        ${!this.isLoggedIn ? '<span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">در حال ارسال به عنوان مهمان</span>' : ''}
+                    </div>
                     <button class="btn btn-primary submit-comment radius-10" data-parent="${parentId || ''}" data-edit="${initialContent ? 'true' : 'false'}">
                         ${initialContent ? 'بروزرسانی نظر' : 'ارسال نظر'}
                     </button>
@@ -189,10 +200,17 @@ class CommentSystem {
                                 <div class="online-dot"></div>
                             </div>
                             <div class="comment-meta">
-                                <a href="/profile/${c.user_id}/${c.user_username || 'user'}" class="comment-author">
-                                    ${c.user_name}
-                                    <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
-                                </a>
+                                ${c.user_id ? `
+                                    <a href="/profile/${c.user_id}/${c.user_username || 'user'}" class="comment-author">
+                                        ${c.user_name}
+                                        <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
+                                    </a>
+                                ` : `
+                                    <span class="comment-author">
+                                        ${c.guest_name || 'مهمان'}
+                                        <span class="user-level-badge !bg-slate-400">مهمان</span>
+                                    </span>
+                                `}
                                 ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline d-inline-block ltr font-size-0-8">${c.target_info.title}</a>` : ''}
                                 <span class="comment-date">${c.created_at_fa || c.created_at}</span>
                             </div>
@@ -299,6 +317,9 @@ class CommentSystem {
                 const suffix = parentId || 'main';
                 const textarea = document.getElementById(`textarea-${suffix}`);
                 const content = textarea.value;
+                const guestNameInput = document.getElementById(`guest-name-${suffix}`);
+                const guestEmailInput = document.getElementById(`guest-email-${suffix}`);
+
                 const mentionsContainer = document.getElementById(`mentions-container-${suffix}`);
                 const mentionIds = Array.from(mentionsContainer?.querySelectorAll('.mention-tag') || []).map(tag => tag.dataset.userId);
 
@@ -309,7 +330,12 @@ class CommentSystem {
 
                 try {
                     const action = isEdit ? 'edit' : 'add';
-                    const payload = { content, mentions: mentionIds };
+                    const payload = {
+                        content,
+                        mentions: mentionIds,
+                        guest_name: guestNameInput?.value || null,
+                        guest_email: guestEmailInput?.value || null
+                    };
                     if (isEdit) {
                         payload.comment_id = parentId;
                     } else {
@@ -431,7 +457,7 @@ class CommentSystem {
 
         this.container.querySelectorAll('.reply-btn').forEach(btn => {
             btn.onclick = () => {
-                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
+                if (!this.isLoggedIn && !this.guestCommentEnabled) { window.showAuthModal?.('login'); return; }
                 const id = btn.dataset.id;
                 const container = document.getElementById(`reply-form-container-${id}`);
                 if (container.innerHTML === '') {

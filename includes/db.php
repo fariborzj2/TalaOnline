@@ -422,6 +422,8 @@ if (file_exists($config_file)) {
                     `parent_id` INTEGER DEFAULT NULL,
                     `reply_to_id` INTEGER DEFAULT NULL,
                     `reply_to_user_id` INTEGER DEFAULT NULL,
+                    `guest_name` VARCHAR(100) DEFAULT NULL,
+                    `guest_email` VARCHAR(100) DEFAULT NULL,
                     `likes_count` INTEGER DEFAULT 0,
                     `status` VARCHAR(20) DEFAULT 'approved',
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -459,6 +461,8 @@ if (file_exists($config_file)) {
                     `parent_id` INT DEFAULT NULL,
                     `reply_to_id` INT DEFAULT NULL,
                     `reply_to_user_id` INT DEFAULT NULL,
+                    `guest_name` VARCHAR(100) DEFAULT NULL,
+                    `guest_email` VARCHAR(100) DEFAULT NULL,
                     `likes_count` INT DEFAULT 0,
                     `status` VARCHAR(20) DEFAULT 'approved',
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -516,6 +520,12 @@ if (file_exists($config_file)) {
                     if (!in_array('reply_to_user_id', $comment_cols)) {
                         $pdo->exec("ALTER TABLE comments ADD COLUMN reply_to_user_id INTEGER DEFAULT NULL");
                         try { $pdo->exec("CREATE INDEX idx_comments_reply_to_user ON comments(reply_to_user_id)"); } catch (Exception $e) {}
+                    }
+                    if (!in_array('guest_name', $comment_cols)) {
+                        $pdo->exec("ALTER TABLE comments ADD COLUMN guest_name VARCHAR(100) DEFAULT NULL");
+                    }
+                    if (!in_array('guest_email', $comment_cols)) {
+                        $pdo->exec("ALTER TABLE comments ADD COLUMN guest_email VARCHAR(100) DEFAULT NULL");
                     }
                     if (!in_array('likes_count', $comment_cols)) {
                         $pdo->exec("ALTER TABLE comments ADD COLUMN likes_count INTEGER DEFAULT 0");
