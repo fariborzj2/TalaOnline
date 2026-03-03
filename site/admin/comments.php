@@ -158,8 +158,14 @@ include __DIR__ . '/layout/header.php';
                                     <?php endif; ?>
                                 </div>
                                 <div>
-                                    <p class="font-black text-slate-900 text-xs"><?= htmlspecialchars($c['user_name'] ?: 'ناشناس') ?></p>
-                                    <p class="text-[10px] font-bold text-slate-400">@<?= htmlspecialchars($c['user_username'] ?: 'guest') ?></p>
+                                    <p class="font-black text-slate-900 text-xs"><?= htmlspecialchars($c['user_name'] ?: ($c['guest_name'] ?: 'ناشناس')) ?></p>
+                                    <p class="text-[10px] font-bold text-slate-400">
+                                        <?php if ($c['user_id']): ?>
+                                            @<?= htmlspecialchars($c['user_username']) ?>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($c['guest_email'] ?: 'مهمان') ?>
+                                        <?php endif; ?>
+                                    </p>
                                 </div>
                             </div>
                         </td>
@@ -347,8 +353,8 @@ include __DIR__ . '/layout/header.php';
     }
 
     function viewComment(c) {
-        document.getElementById('modal-name').innerText = c.user_name || 'ناشناس';
-        document.getElementById('modal-username').innerText = '@' + (c.user_username || 'guest');
+        document.getElementById('modal-name').innerText = c.user_name || (c.guest_name || 'ناشناس');
+        document.getElementById('modal-username').innerText = c.user_id ? '@' + c.user_username : (c.guest_email || 'مهمان');
         document.getElementById('modal-avatar').src = c.user_avatar ? '../' + c.user_avatar : '../assets/images/default-avatar.png';
         document.getElementById('modal-content').innerText = c.content;
         document.getElementById('modal-date').innerText = c.created_at; // You might want to format this

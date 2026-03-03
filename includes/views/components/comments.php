@@ -31,14 +31,21 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
             <div class="comment-header">
                 <div class="comment-user-info">
                     <div class="avatar-container">
-                        <img src="<?= htmlspecialchars($avatar) ?>" class="comment-avatar" alt="<?= htmlspecialchars($c['user_name']) ?>" onerror="this.src='<?= $default_avatar ?>'">
+                        <img src="<?= htmlspecialchars($avatar) ?>" class="comment-avatar" alt="<?= htmlspecialchars($c['user_name'] ?: ($c['guest_name'] ?: 'ناشناس')) ?>" onerror="this.src='<?= $default_avatar ?>'">
                         <div class="online-dot"></div>
                     </div>
                     <div class="comment-meta">
-                        <a href="/profile/<?= $c['user_id'] ?>/<?= urlencode($c['user_username'] ?? 'user') ?>" class="comment-author">
-                            <?= htmlspecialchars($c['user_name']) ?>
-                            <span class="user-level-badge level-<?= $c['user_level'] ?>">سطح <?= $c['user_level'] ?></span>
-                        </a>
+                        <?php if ($c['user_id']): ?>
+                            <a href="/profile/<?= $c['user_id'] ?>/<?= urlencode($c['user_username'] ?? 'user') ?>" class="comment-author">
+                                <?= htmlspecialchars($c['user_name']) ?>
+                                <span class="user-level-badge level-<?= $c['user_level'] ?>">سطح <?= $c['user_level'] ?></span>
+                            </a>
+                        <?php else: ?>
+                            <span class="comment-author">
+                                <?= htmlspecialchars($c['guest_name'] ?: 'مهمان') ?>
+                                <span class="user-level-badge !bg-slate-400">مهمان</span>
+                            </span>
+                        <?php endif; ?>
                         <span class="comment-date"><?= jalali_date($c['created_at']) ?></span>
                     </div>
                 </div>
@@ -133,7 +140,7 @@ function render_reaction($c, $type, $emoji) {
 }
 ?>
 
-<div class="comments-section <?= $read_only ? 'read-only' : '' ?>" id="comments-app" data-target-id="<?= $target_id ?>" data-target-type="<?= $target_type ?>">
+<div class="comments-section <?= $read_only ? 'read-only' : '' ?>" id="comments-app" data-target-id="<?= $target_id ?>" data-target-type="<?= $target_type ?>" data-guest-comment="<?= $guest_comment_enabled ? '1' : '0' ?>">
     <?php if (!$guest_view_enabled && !$is_logged_in): ?>
         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
             <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100 mx-auto mb-4">
@@ -156,6 +163,13 @@ function render_reaction($c, $type, $emoji) {
 
         <?php if ($is_logged_in || $guest_comment_enabled): ?>
             <div class="comment-form" id="form-main">
+                <?php if (!$is_logged_in && $guest_comment_enabled): ?>
+                    <div class="d-flex gap-1 mb-2">
+                        <input type="text" id="guest-name-main" class="form-control font-size-0-8" placeholder="نام شما (اختیاری)">
+                        <input type="email" id="guest-email-main" class="form-control font-size-0-8 ltr-input" placeholder="ایمیل شما (اختیاری)">
+                    </div>
+                <?php endif; ?>
+
                 <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-main"></textarea>
 
                 <?php if ($is_logged_in): ?>
