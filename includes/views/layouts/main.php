@@ -253,6 +253,7 @@
                     csrfToken: '<?= csrf_token() ?>',
                     isLoggedIn: <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>,
                     user: <?= isset($_SESSION['user_id']) ? json_encode([
+                        'id' => $_SESSION['user_id'],
                         'name' => $_SESSION['user_name'],
                         'email' => $_SESSION['user_email'],
                         'username' => $_SESSION['user_username'] ?? '',
@@ -416,11 +417,11 @@
                     $logged_username = $_SESSION['user_username'] ?? 'user';
                     $profile_url = "/profile/$logged_user_id/" . urlencode($logged_username);
                     ?>
-                    <a href="<?= $profile_url ?>" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
+                    <a href="<?= $profile_url ?>" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all profile-link-dynamic">
                         <i data-lucide="user" class="icon-size-4"></i>
                         <span class="font-bold">مشاهده پروفایل</span>
                     </a>
-                    <a href="<?= $profile_url ?>?tab=edit" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
+                    <a href="<?= $profile_url ?>?tab=edit" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all settings-link-dynamic">
                         <i data-lucide="settings" class="icon-size-4"></i>
                         <span class="font-bold">تنظیمات حساب</span>
                     </a>
