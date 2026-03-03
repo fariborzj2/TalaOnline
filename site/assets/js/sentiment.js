@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const currencyName = sentimentContainer.dataset.currencyName;
     const predictionMode = document.getElementById('sentiment-prediction-mode');
     const resultMode = document.getElementById('sentiment-result-mode');
-    const closeBtn = document.getElementById('sentiment-close-btn');
+    const closeBtns = document.querySelectorAll('.sentiment-close-trigger');
     const csrfToken = window.__AUTH_STATE__?.csrfToken;
 
     let isTriggered = false;
@@ -198,8 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Close handler
-    if (closeBtn) {
-        closeBtn.onclick = () => {
+    closeBtns.forEach(btn => {
+        btn.onclick = () => {
             // Save dismissal time
             localStorage.setItem(CLOSED_KEY, Date.now());
 
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 sentimentContainer.classList.remove('active', 'closing');
             }, 400);
         };
-    }
+    });
 
     // Button handlers
     sentimentContainer.querySelectorAll('.sentiment-btn').forEach(btn => {

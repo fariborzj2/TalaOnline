@@ -16,7 +16,7 @@
                         <h3 class="sentiment-title">پیش‌بینی بازار</h3>
                    </div>
                    
-                   <button class="sentiment-close-btn" id="sentiment-close-btn">
+                   <button class="sentiment-close-btn sentiment-close-trigger">
                         <i data-lucide="x" class="icon-size-4"></i>
                     </button>
 
@@ -46,7 +46,7 @@
                         <h3 class="sentiment-title">نتیجه پیش‌بینی</h3>
                     </div>
 
-                   <button class="sentiment-close-btn" id="sentiment-close-btn">
+                   <button class="sentiment-close-btn sentiment-close-trigger">
                         <i data-lucide="x" class="icon-size-4"></i>
                     </button>
                 </div>
