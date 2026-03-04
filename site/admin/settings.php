@@ -282,7 +282,7 @@ include __DIR__ . '/layout/header.php';
                 <label class="mb-0">فعال‌سازی تایید شماره موبایل</label>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="mobile_verification_enabled" value="1" class="sr-only peer" <?= get_setting('mobile_verification_enabled') === '1' ? 'checked' : '' ?>>
-                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
                 </label>
             </div>
 
@@ -325,7 +325,7 @@ include __DIR__ . '/layout/header.php';
                 <label class="mb-0">فعال‌سازی قفل تصاعدی (Progressive Locking)</label>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="rate_limit_progressive" value="1" class="sr-only peer" <?= get_setting('rate_limit_progressive') === '1' ? 'checked' : '' ?>>
-                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600"></div>
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600"></div>
                 </label>
             </div>
 
@@ -418,7 +418,7 @@ include __DIR__ . '/layout/header.php';
                 <label class="mb-0">فعال‌سازی ورود با گوگل</label>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" name="google_login_enabled" value="1" class="sr-only peer" <?= get_setting('google_login_enabled') === '1' ? 'checked' : '' ?>>
-                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                 </label>
             </div>
 
@@ -587,7 +587,7 @@ include __DIR__ . '/layout/header.php';
                                 <label class="mb-0">نمایش نظرات به کاربران مهمان (کلی)</label>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" name="comments_guest_view" value="1" class="sr-only peer" <?= get_setting('comments_guest_view', '1') === '1' ? 'checked' : '' ?>>
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                                 </label>
                             </div>
                         </div>
@@ -695,7 +695,7 @@ include __DIR__ . '/layout/header.php';
                                     <label class="mb-0">فعال‌سازی LiteSpeed Cache</label>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" name="lscache_enabled" value="1" class="sr-only peer" <?= get_setting('lscache_enabled') === '1' ? 'checked' : '' ?>>
-                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
                                     </label>
                                 </div>
 
@@ -712,7 +712,7 @@ include __DIR__ . '/layout/header.php';
                                     <label class="mb-0">پاکسازی خودکار هنگام بروزرسانی</label>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" name="lscache_purge_on_update" value="1" class="sr-only peer" <?= get_setting('lscache_purge_on_update', '1') === '1' ? 'checked' : '' ?>>
-                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[5px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                                     </label>
                                 </div>
 
