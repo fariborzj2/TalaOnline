@@ -185,7 +185,8 @@ include __DIR__ . '/layout/header.php';
         </aside>
 
         <!-- Settings Content -->
-        <div class="flex-1 space-y-8 min-w-0">
+        <div class="flex-1 w-full">
+
             <!-- General Settings -->
             <div id="tab-general" class="setting-section transition-all duration-300">
                 <div class="glass-card rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm">
@@ -199,69 +200,69 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </div>
                     <div class="p-6 md:p-8 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="form-group">
-                    <label>عنوان اصلی وب‌سایت</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="layout" class="w-4 h-4"></i></span>
-                        <input type="text" name="site_title" value="<?= htmlspecialchars($site_title) ?>" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>آدرس وب‌سایت (Site URL)</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="link" class="w-4 h-4"></i></span>
-                        <input type="text" name="site_url" value="<?= htmlspecialchars(get_setting('site_url', get_base_url())) ?>" placeholder="https://example.com" class="ltr-input" required>
-                    </div>
-                </div>
-            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label>عنوان اصلی وب‌سایت</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="layout" class="w-4 h-4"></i></span>
+                                    <input type="text" name="site_title" value="<?= htmlspecialchars($site_title) ?>" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>آدرس وب‌سایت (Site URL)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="link" class="w-4 h-4"></i></span>
+                                    <input type="text" name="site_url" value="<?= htmlspecialchars(get_setting('site_url', get_base_url())) ?>" placeholder="https://example.com" class="ltr-input" required>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-                <label>آدرس لوگو مخصوص ایمیل (توصیه شده PNG با عرض ۱۰۰ پیکسل)</label>
-                <div class="input-icon-wrapper">
-                    <span class="icon"><i data-lucide="image" class="w-4 h-4"></i></span>
-                    <input type="text" name="mail_logo_url" value="<?= htmlspecialchars(get_setting('mail_logo_url')) ?>" placeholder="https://example.com/logo.png" class="ltr-input">
-                </div>
-                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">اگر خالی باشد، از لوگوی اصلی سایت استفاده می‌شود. برای سازگاری حداکثری در ایمیل‌ها، از فرمت PNG استفاده کنید.</p>
-            </div>
+                        <div class="form-group">
+                            <label>آدرس لوگو مخصوص ایمیل (توصیه شده PNG با عرض ۱۰۰ پیکسل)</label>
+                            <div class="input-icon-wrapper">
+                                <span class="icon"><i data-lucide="image" class="w-4 h-4"></i></span>
+                                <input type="text" name="mail_logo_url" value="<?= htmlspecialchars(get_setting('mail_logo_url')) ?>" placeholder="https://example.com/logo.png" class="ltr-input">
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">اگر خالی باشد، از لوگوی اصلی سایت استفاده می‌شود. برای سازگاری حداکثری در ایمیل‌ها، از فرمت PNG استفاده کنید.</p>
+                        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="form-group">
-                    <label>کلید API نوسان (Navasan API Key)</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="key" class="w-4 h-4"></i></span>
-                        <input type="password" name="api_key" value="<?= htmlspecialchars($api_key) ?>" placeholder="api_key_..." class="ltr-input font-mono text-xs">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label>کلید API نوسان (Navasan API Key)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="key" class="w-4 h-4"></i></span>
+                                    <input type="password" name="api_key" value="<?= htmlspecialchars($api_key) ?>" placeholder="api_key_..." class="ltr-input font-mono text-xs">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>فاصله زمانی بروزرسانی (دقیقه)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="timer" class="w-4 h-4"></i></span>
+                                    <input type="number" name="api_sync_interval" value="<?= htmlspecialchars($api_sync_interval) ?>" min="1" required class="ltr-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label>تعداد دارایی‌ها در هر دسته‌بندی (صفحه اصلی)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="list-ordered" class="w-4 h-4"></i></span>
+                                    <input type="number" name="home_category_limit" value="<?= htmlspecialchars($home_category_limit) ?>" min="1" max="50" required class="ltr-input">
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">حداکثر تعداد آیتم‌هایی که در باکس‌های صفحه اصلی نمایش داده می‌شود</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>کلید API ویرایشگر (TinyMCE API Key)</label>
+                            <div class="input-icon-wrapper">
+                                <span class="icon"><i data-lucide="code" class="w-4 h-4"></i></span>
+                                    <input type="password" name="tinymce_api_key" value="<?= htmlspecialchars(get_setting('tinymce_api_key')) ?>" placeholder="no-api-key" class="ltr-input font-mono text-xs">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>فاصله زمانی بروزرسانی (دقیقه)</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="timer" class="w-4 h-4"></i></span>
-                        <input type="number" name="api_sync_interval" value="<?= htmlspecialchars($api_sync_interval) ?>" min="1" required class="ltr-input">
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="form-group">
-                    <label>تعداد دارایی‌ها در هر دسته‌بندی (صفحه اصلی)</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="list-ordered" class="w-4 h-4"></i></span>
-                        <input type="number" name="home_category_limit" value="<?= htmlspecialchars($home_category_limit) ?>" min="1" max="50" required class="ltr-input">
-                    </div>
-                    <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">حداکثر تعداد آیتم‌هایی که در باکس‌های صفحه اصلی نمایش داده می‌شود</p>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>کلید API ویرایشگر (TinyMCE API Key)</label>
-                <div class="input-icon-wrapper">
-                    <span class="icon"><i data-lucide="code" class="w-4 h-4"></i></span>
-                        <input type="password" name="tinymce_api_key" value="<?= htmlspecialchars(get_setting('tinymce_api_key')) ?>" placeholder="no-api-key" class="ltr-input font-mono text-xs">
-                </div>
-            </div>
-        </div>
-    </div>
 
             </div>
 
@@ -278,33 +279,33 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </div>
                     <div class="p-6 md:p-8 space-y-6">
-            <div class="form-group flex items-center gap-4">
-                <label class="mb-0">فعال‌سازی تایید شماره موبایل</label>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="mobile_verification_enabled" value="1" class="sr-only peer" <?= get_setting('mobile_verification_enabled') === '1' ? 'checked' : '' ?>>
-                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
-                </label>
-            </div>
+                        <div class="form-group flex items-center gap-4">
+                            <label class="mb-0">فعال‌سازی تایید شماره موبایل</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="mobile_verification_enabled" value="1" class="sr-only peer" <?= get_setting('mobile_verification_enabled') === '1' ? 'checked' : '' ?>>
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                            </label>
+                        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="form-group">
-                    <label>Kavenegar API Key</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="key" class="w-4 h-4"></i></span>
-                        <input type="password" name="kavenegar_api_key" value="<?= htmlspecialchars(get_setting('kavenegar_api_key')) ?>" class="ltr-input font-mono text-xs" placeholder="Kavenegar API Key">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label>Kavenegar API Key</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="key" class="w-4 h-4"></i></span>
+                                    <input type="password" name="kavenegar_api_key" value="<?= htmlspecialchars(get_setting('kavenegar_api_key')) ?>" class="ltr-input font-mono text-xs" placeholder="Kavenegar API Key">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Template Name (الگوی پیامک)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="file-text" class="w-4 h-4"></i></span>
+                                    <input type="text" name="kavenegar_template" value="<?= htmlspecialchars(get_setting('kavenegar_template')) ?>" class="ltr-input font-mono text-xs" placeholder="verify">
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase ">توجه: برای ارسال کد تایید از متد Lookup کاوه نگار استفاده می‌شود. مطمئن شوید الگوی تعریف شده در پنل کاوه نگار دارای متغیر {token} باشد.</p>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Template Name (الگوی پیامک)</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="file-text" class="w-4 h-4"></i></span>
-                        <input type="text" name="kavenegar_template" value="<?= htmlspecialchars(get_setting('kavenegar_template')) ?>" class="ltr-input font-mono text-xs" placeholder="verify">
-                    </div>
-                </div>
-            </div>
-            <p class="text-[10px] text-slate-400 font-bold uppercase ">توجه: برای ارسال کد تایید از متد Lookup کاوه نگار استفاده می‌شود. مطمئن شوید الگوی تعریف شده در پنل کاوه نگار دارای متغیر {token} باشد.</p>
-        </div>
-    </div>
 
             </div>
 
@@ -321,83 +322,83 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </div>
                     <div class="p-6 md:p-8 space-y-8">
-            <div class="form-group flex items-center gap-4">
-                <label class="mb-0">فعال‌سازی قفل تصاعدی (Progressive Locking)</label>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="rate_limit_progressive" value="1" class="sr-only peer" <?= get_setting('rate_limit_progressive') === '1' ? 'checked' : '' ?>>
-                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600"></div>
-                </label>
-            </div>
+                        <div class="form-group flex items-center gap-4">
+                            <label class="mb-0">فعال‌سازی قفل تصاعدی (Progressive Locking)</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="rate_limit_progressive" value="1" class="sr-only peer" <?= get_setting('rate_limit_progressive') === '1' ? 'checked' : '' ?>>
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600"></div>
+                            </label>
+                        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-50">
-                <div class="col-span-full mb-2">
-                    <h4 class="font-black text-slate-700 text-sm flex items-center gap-2">
-                        <i data-lucide="smartphone" class="w-4 h-4 text-orange-500"></i>
-                        محدودیت پیامک (SMS)
-                    </h4>
-                </div>
-                <div class="form-group">
-                    <label>تعداد مجاز درخواست</label>
-                    <input type="number" name="rate_limit_sms_max" value="<?= htmlspecialchars(get_setting('rate_limit_sms_max', '5')) ?>" min="1" class="ltr-input">
-                </div>
-                <div class="form-group">
-                    <label>بازه زمانی (دقیقه)</label>
-                    <input type="number" name="rate_limit_sms_window" value="<?= htmlspecialchars(get_setting('rate_limit_sms_window', '15')) ?>" min="1" class="ltr-input">
-                </div>
-                <div class="form-group">
-                    <label>مدت زمان قفل (دقیقه)</label>
-                    <input type="number" name="rate_limit_sms_lock" value="<?= htmlspecialchars(get_setting('rate_limit_sms_lock', '60')) ?>" min="1" class="ltr-input">
-                </div>
-            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-50">
+                            <div class="col-span-full mb-2">
+                                <h4 class="font-black text-slate-700 text-sm flex items-center gap-2">
+                                    <i data-lucide="smartphone" class="w-4 h-4 text-orange-500"></i>
+                                    محدودیت پیامک (SMS)
+                                </h4>
+                            </div>
+                            <div class="form-group">
+                                <label>تعداد مجاز درخواست</label>
+                                <input type="number" name="rate_limit_sms_max" value="<?= htmlspecialchars(get_setting('rate_limit_sms_max', '5')) ?>" min="1" class="ltr-input">
+                            </div>
+                            <div class="form-group">
+                                <label>بازه زمانی (دقیقه)</label>
+                                <input type="number" name="rate_limit_sms_window" value="<?= htmlspecialchars(get_setting('rate_limit_sms_window', '15')) ?>" min="1" class="ltr-input">
+                            </div>
+                            <div class="form-group">
+                                <label>مدت زمان قفل (دقیقه)</label>
+                                <input type="number" name="rate_limit_sms_lock" value="<?= htmlspecialchars(get_setting('rate_limit_sms_lock', '60')) ?>" min="1" class="ltr-input">
+                            </div>
+                        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-50">
-                <div class="col-span-full mb-2">
-                    <h4 class="font-black text-slate-700 text-sm flex items-center gap-2">
-                        <i data-lucide="mail" class="w-4 h-4 text-blue-500"></i>
-                        محدودیت ایمیل (Email)
-                    </h4>
-                </div>
-                <div class="form-group">
-                    <label>تعداد مجاز درخواست</label>
-                    <input type="number" name="rate_limit_email_max" value="<?= htmlspecialchars(get_setting('rate_limit_email_max', '5')) ?>" min="1" class="ltr-input">
-                </div>
-                <div class="form-group">
-                    <label>بازه زمانی (دقیقه)</label>
-                    <input type="number" name="rate_limit_email_window" value="<?= htmlspecialchars(get_setting('rate_limit_email_window', '15')) ?>" min="1" class="ltr-input">
-                </div>
-                <div class="form-group">
-                    <label>مدت زمان قفل (دقیقه)</label>
-                    <input type="number" name="rate_limit_email_lock" value="<?= htmlspecialchars(get_setting('rate_limit_email_lock', '60')) ?>" min="1" class="ltr-input">
-                </div>
-            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-50">
+                            <div class="col-span-full mb-2">
+                                <h4 class="font-black text-slate-700 text-sm flex items-center gap-2">
+                                    <i data-lucide="mail" class="w-4 h-4 text-blue-500"></i>
+                                    محدودیت ایمیل (Email)
+                                </h4>
+                            </div>
+                            <div class="form-group">
+                                <label>تعداد مجاز درخواست</label>
+                                <input type="number" name="rate_limit_email_max" value="<?= htmlspecialchars(get_setting('rate_limit_email_max', '5')) ?>" min="1" class="ltr-input">
+                            </div>
+                            <div class="form-group">
+                                <label>بازه زمانی (دقیقه)</label>
+                                <input type="number" name="rate_limit_email_window" value="<?= htmlspecialchars(get_setting('rate_limit_email_window', '15')) ?>" min="1" class="ltr-input">
+                            </div>
+                            <div class="form-group">
+                                <label>مدت زمان قفل (دقیقه)</label>
+                                <input type="number" name="rate_limit_email_lock" value="<?= htmlspecialchars(get_setting('rate_limit_email_lock', '60')) ?>" min="1" class="ltr-input">
+                            </div>
+                        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-50">
-                <div class="col-span-full mb-2">
-                    <h4 class="font-black text-slate-700 text-sm flex items-center gap-2">
-                        <i data-lucide="network" class="w-4 h-4 text-slate-500"></i>
-                        محدودیت بر اساس IP
-                    </h4>
-                </div>
-                <div class="form-group">
-                    <label>تعداد مجاز درخواست</label>
-                    <input type="number" name="rate_limit_ip_max" value="<?= htmlspecialchars(get_setting('rate_limit_ip_max', '10')) ?>" min="1" class="ltr-input">
-                </div>
-                <div class="form-group">
-                    <label>بازه زمانی (دقیقه)</label>
-                    <input type="number" name="rate_limit_ip_window" value="<?= htmlspecialchars(get_setting('rate_limit_ip_window', '15')) ?>" min="1" class="ltr-input">
-                </div>
-                <div class="form-group">
-                    <label>مدت زمان قفل (دقیقه)</label>
-                    <input type="number" name="rate_limit_ip_lock" value="<?= htmlspecialchars(get_setting('rate_limit_ip_lock', '120')) ?>" min="1" class="ltr-input">
-                </div>
-            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-50">
+                            <div class="col-span-full mb-2">
+                                <h4 class="font-black text-slate-700 text-sm flex items-center gap-2">
+                                    <i data-lucide="network" class="w-4 h-4 text-slate-500"></i>
+                                    محدودیت بر اساس IP
+                                </h4>
+                            </div>
+                            <div class="form-group">
+                                <label>تعداد مجاز درخواست</label>
+                                <input type="number" name="rate_limit_ip_max" value="<?= htmlspecialchars(get_setting('rate_limit_ip_max', '10')) ?>" min="1" class="ltr-input">
+                            </div>
+                            <div class="form-group">
+                                <label>بازه زمانی (دقیقه)</label>
+                                <input type="number" name="rate_limit_ip_window" value="<?= htmlspecialchars(get_setting('rate_limit_ip_window', '15')) ?>" min="1" class="ltr-input">
+                            </div>
+                            <div class="form-group">
+                                <label>مدت زمان قفل (دقیقه)</label>
+                                <input type="number" name="rate_limit_ip_lock" value="<?= htmlspecialchars(get_setting('rate_limit_ip_lock', '120')) ?>" min="1" class="ltr-input">
+                            </div>
+                        </div>
 
-            <p class="text-[10px] text-slate-400 font-bold uppercase mt-4">
-                <i data-lucide="info" class="w-3 h-3 inline-block align-middle me-1"></i>
-                این محدودیت‌ها برای جلوگیری از حملات SMS Bombing و Email Bombing اعمال می‌شوند. سیستم به صورت همزمان IP، ایمیل و شماره موبایل را کنترل می‌کند.
-            </p>
-        </div>
-    </div>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-4">
+                            <i data-lucide="info" class="w-3 h-3 inline-block align-middle me-1"></i>
+                            این محدودیت‌ها برای جلوگیری از حملات SMS Bombing و Email Bombing اعمال می‌شوند. سیستم به صورت همزمان IP، ایمیل و شماره موبایل را کنترل می‌کند.
+                        </p>
+                    </div>
+                </div>
 
             </div>
 
@@ -414,45 +415,45 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </div>
                     <div class="p-6 md:p-8 space-y-6">
-            <div class="form-group flex items-center gap-4">
-                <label class="mb-0">فعال‌سازی ورود با گوگل</label>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="google_login_enabled" value="1" class="sr-only peer" <?= get_setting('google_login_enabled') === '1' ? 'checked' : '' ?>>
-                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="form-group">
-                    <label>Client ID</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="user-check" class="w-4 h-4"></i></span>
-                        <input type="text" name="google_client_id" value="<?= htmlspecialchars(get_setting('google_client_id')) ?>" class="ltr-input font-mono text-xs" placeholder="123456789-abc.apps.googleusercontent.com">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Client Secret</label>
-                    <div class="relative">
-                        <div class="input-icon-wrapper">
-                            <span class="icon"><i data-lucide="key-round" class="w-4 h-4"></i></span>
-                            <input type="password" id="google_client_secret" name="google_client_secret" value="<?= htmlspecialchars(get_setting('google_client_secret')) ?>" class="ltr-input font-mono text-xs !pl-12" placeholder="GOCSPX-...">
+                        <div class="form-group flex items-center gap-4">
+                            <label class="mb-0">فعال‌سازی ورود با گوگل</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="google_login_enabled" value="1" class="sr-only peer" <?= get_setting('google_login_enabled') === '1' ? 'checked' : '' ?>>
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
                         </div>
-                        <button type="button" onclick="togglePassword('google_client_secret', this)" class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 hover:text-indigo-600 transition-colors">
-                            <i data-lucide="eye" class="w-4 h-4"></i>
-                        </button>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label>Client ID</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="user-check" class="w-4 h-4"></i></span>
+                                    <input type="text" name="google_client_id" value="<?= htmlspecialchars(get_setting('google_client_id')) ?>" class="ltr-input font-mono text-xs" placeholder="123456789-abc.apps.googleusercontent.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Client Secret</label>
+                                <div class="relative">
+                                    <div class="input-icon-wrapper">
+                                        <span class="icon"><i data-lucide="key-round" class="w-4 h-4"></i></span>
+                                        <input type="password" id="google_client_secret" name="google_client_secret" value="<?= htmlspecialchars(get_setting('google_client_secret')) ?>" class="ltr-input font-mono text-xs !pl-12" placeholder="GOCSPX-...">
+                                    </div>
+                                    <button type="button" onclick="togglePassword('google_client_secret', this)" class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 hover:text-indigo-600 transition-colors">
+                                        <i data-lucide="eye" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Redirect URI (برای تنظیم در کنسول گوگل)</label>
+                            <div class="input-icon-wrapper bg-slate-50">
+                                <span class="icon"><i data-lucide="link" class="w-4 h-4"></i></span>
+                                <input type="text" value="<?= get_base_url() ?>/api/google_auth.php" readonly class="ltr-input font-mono text-xs bg-transparent border-none">
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>Redirect URI (برای تنظیم در کنسول گوگل)</label>
-                <div class="input-icon-wrapper bg-slate-50">
-                    <span class="icon"><i data-lucide="link" class="w-4 h-4"></i></span>
-                    <input type="text" value="<?= get_base_url() ?>/api/google_auth.php" readonly class="ltr-input font-mono text-xs bg-transparent border-none">
-                </div>
-            </div>
-        </div>
-    </div>
 
             </div>
 
@@ -469,40 +470,40 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </div>
                     <div class="p-6 md:p-8 space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="form-group">
-                    <label>تلگرام (Telegram)</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="send" class="w-4 h-4"></i></span>
-                        <input type="text" name="social_telegram" value="<?= htmlspecialchars(get_setting('social_telegram')) ?>" placeholder="https://t.me/yourchannel" class="ltr-input">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label>تلگرام (Telegram)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="send" class="w-4 h-4"></i></span>
+                                    <input type="text" name="social_telegram" value="<?= htmlspecialchars(get_setting('social_telegram')) ?>" placeholder="https://t.me/yourchannel" class="ltr-input">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>اینستاگرام (Instagram)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="instagram" class="w-4 h-4"></i></span>
+                                    <input type="text" name="social_instagram" value="<?= htmlspecialchars(get_setting('social_instagram')) ?>" placeholder="https://instagram.com/yourpage" class="ltr-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label>توییتر / X (Twitter)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="twitter" class="w-4 h-4"></i></span>
+                                    <input type="text" name="social_twitter" value="<?= htmlspecialchars(get_setting('social_twitter')) ?>" placeholder="https://x.com/yourprofile" class="ltr-input">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>لینکدین (LinkedIn)</label>
+                                <div class="input-icon-wrapper">
+                                    <span class="icon"><i data-lucide="linkedin" class="w-4 h-4"></i></span>
+                                    <input type="text" name="social_linkedin" value="<?= htmlspecialchars(get_setting('social_linkedin')) ?>" placeholder="https://linkedin.com/in/yourprofile" class="ltr-input">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>اینستاگرام (Instagram)</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="instagram" class="w-4 h-4"></i></span>
-                        <input type="text" name="social_instagram" value="<?= htmlspecialchars(get_setting('social_instagram')) ?>" placeholder="https://instagram.com/yourpage" class="ltr-input">
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="form-group">
-                    <label>توییتر / X (Twitter)</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="twitter" class="w-4 h-4"></i></span>
-                        <input type="text" name="social_twitter" value="<?= htmlspecialchars(get_setting('social_twitter')) ?>" placeholder="https://x.com/yourprofile" class="ltr-input">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>لینکدین (LinkedIn)</label>
-                    <div class="input-icon-wrapper">
-                        <span class="icon"><i data-lucide="linkedin" class="w-4 h-4"></i></span>
-                        <input type="text" name="social_linkedin" value="<?= htmlspecialchars(get_setting('social_linkedin')) ?>" placeholder="https://linkedin.com/in/yourprofile" class="ltr-input">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
             </div>
 
@@ -519,21 +520,21 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </div>
                     <div class="p-6 md:p-8 space-y-6">
-            <div class="form-group">
-                <label>توضیحات متا (Meta Description)</label>
-                <textarea name="site_description" rows="4" class="resize-none"><?= htmlspecialchars($site_description) ?></textarea>
-                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">توصیه شده: بین ۱۵۰ تا ۱۶۰ کاراکتر</p>
-            </div>
-            <div class="form-group">
-                <label>کلمات کلیدی (Keywords)</label>
-                <div class="input-icon-wrapper">
-                    <span class="icon"><i data-lucide="hash" class="w-4 h-4"></i></span>
-                    <input type="text" name="site_keywords" value="<?= htmlspecialchars($site_keywords) ?>" placeholder="طلا, سکه, ارز...">
+                        <div class="form-group">
+                            <label>توضیحات متا (Meta Description)</label>
+                            <textarea name="site_description" rows="4" class="resize-none"><?= htmlspecialchars($site_description) ?></textarea>
+                            <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">توصیه شده: بین ۱۵۰ تا ۱۶۰ کاراکتر</p>
+                        </div>
+                        <div class="form-group">
+                            <label>کلمات کلیدی (Keywords)</label>
+                            <div class="input-icon-wrapper">
+                                <span class="icon"><i data-lucide="hash" class="w-4 h-4"></i></span>
+                                <input type="text" name="site_keywords" value="<?= htmlspecialchars($site_keywords) ?>" placeholder="طلا, سکه, ارز...">
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">کلمات را با کاما (,) از هم جدا کنید</p>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-2 font-bold uppercase ">کلمات را با کاما (,) از هم جدا کنید</p>
-            </div>
-        </div>
-    </div>
 
             </div>
 
@@ -638,43 +639,43 @@ include __DIR__ . '/layout/header.php';
                         </div>
                     </div>
                     <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="space-y-4">
-                <h4 class="font-black text-slate-700 text-sm">دریافت فایل پشتیبان</h4>
-                <p class="text-xs text-slate-400 leading-relaxed">یک نسخه کامل از دیتابیس شامل تمامی ارزها، پلتفرم‌ها و تنظیمات را بصورت فایل SQL دانلود کنید.</p>
-                <a href="backup_handler.php?action=export" class="btn-v3 btn-v3-outline w-full !justify-start gap-3">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                    دانلود فایل پشتیبان (Export)
-                </a>
-            </div>
-            <div class="space-y-4 border-t md:border-t-0 md:border-r border-slate-100 pt-8 md:pt-0 md:pr-8">
-                <h4 class="font-black text-slate-700 text-sm">بازگردانی دیتابیس</h4>
-                <p class="text-xs text-slate-400 leading-relaxed">فایل پشتیبان قبلی خود را انتخاب کرده و دیتابیس را به حالت قبل بازگردانید. <span class="text-rose-500 font-bold">(تمامی داده‌های فعلی جایگزین خواهند شد)</span></p>
+                        <div class="space-y-4">
+                            <h4 class="font-black text-slate-700 text-sm">دریافت فایل پشتیبان</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">یک نسخه کامل از دیتابیس شامل تمامی ارزها، پلتفرم‌ها و تنظیمات را بصورت فایل SQL دانلود کنید.</p>
+                            <a href="backup_handler.php?action=export" class="btn-v3 btn-v3-outline w-full !justify-start gap-3">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                دانلود فایل پشتیبان (Export)
+                            </a>
+                        </div>
+                        <div class="space-y-4 border-t md:border-t-0 md:border-r border-slate-100 pt-8 md:pt-0 md:pr-8">
+                            <h4 class="font-black text-slate-700 text-sm">بازگردانی دیتابیس</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">فایل پشتیبان قبلی خود را انتخاب کرده و دیتابیس را به حالت قبل بازگردانید. <span class="text-rose-500 font-bold">(تمامی داده‌های فعلی جایگزین خواهند شد)</span></p>
 
-                <div id="importInitial">
-                    <div onclick="document.getElementById('importFile').click()" class="file-input-custom !bg-slate-50 border-dashed border-2 hover:border-indigo-500 group mb-4">
-                        <span id="fileNameDisplay" class="text-xs font-bold text-slate-400 group-hover:text-indigo-600">انتخاب فایل SQL...</span>
-                        <i data-lucide="file-up" class="w-4 h-4 text-slate-400 group-hover:text-indigo-600"></i>
-                    </div>
-                    <button type="button" onclick="startImport()" id="importBtn" class="btn-v3 btn-v3-primary w-full gap-3">
-                        <i data-lucide="upload" class="w-4 h-4"></i>
-                        شروع بازگردانی (Import)
-                    </button>
-                </div>
+                            <div id="importInitial">
+                                <div onclick="document.getElementById('importFile').click()" class="file-input-custom !bg-slate-50 border-dashed border-2 hover:border-indigo-500 group mb-4">
+                                    <span id="fileNameDisplay" class="text-xs font-bold text-slate-400 group-hover:text-indigo-600">انتخاب فایل SQL...</span>
+                                    <i data-lucide="file-up" class="w-4 h-4 text-slate-400 group-hover:text-indigo-600"></i>
+                                </div>
+                                <button type="button" onclick="startImport()" id="importBtn" class="btn-v3 btn-v3-primary w-full gap-3">
+                                    <i data-lucide="upload" class="w-4 h-4"></i>
+                                    شروع بازگردانی (Import)
+                                </button>
+                            </div>
 
-                <div id="importProgress" class="hidden space-y-3">
-                    <div class="flex items-center justify-between text-[10px] font-black uppercase">
-                        <span class="text-slate-400">در حال بازگردانی داده‌ها...</span>
-                        <span id="progressPercent" class="text-indigo-600">0%</span>
+                            <div id="importProgress" class="hidden space-y-3">
+                                <div class="flex items-center justify-between text-[10px] font-black uppercase">
+                                    <span class="text-slate-400">در حال بازگردانی داده‌ها...</span>
+                                    <span id="progressPercent" class="text-indigo-600">0%</span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                    <div id="progressBar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                                <p id="progressStatus" class="text-[9px] text-slate-400 font-bold">آماده‌سازی برای پردازش...</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div id="progressBar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                    <p id="progressStatus" class="text-[9px] text-slate-400 font-bold">آماده‌سازی برای پردازش...</p>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
             <!-- LiteSpeed Cache Settings -->
             <div id="tab-lscache" class="setting-section hidden transition-all duration-300">
@@ -764,7 +765,9 @@ include __DIR__ . '/layout/header.php';
                     </div>
                 </div>
             </div>
+
         </div>
+
     </div>
 </form>
 
