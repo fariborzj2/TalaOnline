@@ -397,7 +397,7 @@
 .mention-tag-area {
     background: #f8fafc;
     padding: 8px 12px;
-    border-radius: 12px;
+    border-radius: 8px;
     border: 1px solid #e2e8f0;
     cursor: text;
 }

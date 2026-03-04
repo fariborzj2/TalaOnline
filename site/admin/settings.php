@@ -602,21 +602,21 @@ include __DIR__ . '/layout/header.php';
                                     <label class="mb-0 text-xs font-bold">مطالب وبلاگ</label>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" name="comments_guest_comment_post" value="1" class="sr-only peer" <?= get_setting('comments_guest_comment_post', '0') === '1' ? 'checked' : '' ?>>
-                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
                                     </label>
                                 </div>
                                 <div class="form-group flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
                                     <label class="mb-0 text-xs font-bold">صفحات دارایی‌ها (Asset)</label>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" name="comments_guest_comment_item" value="1" class="sr-only peer" <?= get_setting('comments_guest_comment_item', '0') === '1' ? 'checked' : '' ?>>
-                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
                                     </label>
                                 </div>
                                 <div class="form-group flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
                                     <label class="mb-0 text-xs font-bold">دسته‌بندی‌ها</label>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" name="comments_guest_comment_category" value="1" class="sr-only peer" <?= get_setting('comments_guest_comment_category', '0') === '1' ? 'checked' : '' ?>>
-                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[6px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
                                     </label>
                                 </div>
                             </div>

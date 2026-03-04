@@ -167,16 +167,18 @@ function render_reaction($c, $type, $emoji) {
                     <div class="d-flex-wrap gap-1 mb-1">
                         <div class="input-item grow-1">
                             <i data-lucide="user" class="text-gray icon-size-3"></i>
-                            <input type="text" id="guest-name-main" placeholder="نام شما (اجباری)">
+                            <input type="text" id="guest-name-main" placeholder="نام شما">
                         </div>
                         <div class="input-item grow-1">
                             <i data-lucide="mail" class="text-gray icon-size-3"></i>
-                            <input type="email" id="guest-email-main" placeholder="ایمیل شما (اجباری)" dir="ltr" class="text-left">
+                            <input type="email" id="guest-email-main" placeholder="ایمیل شما" dir="ltr" class="text-left">
                         </div>
                     </div>
                 <?php endif; ?>
 
-                <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-main"></textarea>
+                <div class="mb-1">
+                    <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-main"></textarea>
+                </div>
 
                 <?php if ($is_logged_in): ?>
                 <div class="mention-tag-area mb-2" id="mention-area-main">
@@ -191,12 +193,7 @@ function render_reaction($c, $type, $emoji) {
                 <?php endif; ?>
 
                 <div class="comment-form-footer">
-                    <div>
-                        <?php if (!$is_logged_in && $guest_comment_enabled): ?>
-                            <span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">در حال ارسال به عنوان مهمان</span>
-                        <?php endif; ?>
-                    </div>
-                    <button class="btn btn-primary submit-comment radius-10" data-parent="">ارسال نظر</button>
+                    <button class="btn btn-primary submit-comment radius-10 mr-auto" data-parent="">ارسال نظر</button>
                 </div>
             </div>
         <?php elseif (!$is_logged_in): ?>

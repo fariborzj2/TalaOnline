@@ -162,11 +162,11 @@ class CommentSystem {
                     <div class="d-flex-wrap gap-1 mb-1">
                         <div class="input-item grow-1">
                             <i data-lucide="user" class="text-gray icon-size-3"></i>
-                            <input type="text" id="guest-name-${suffix}" placeholder="نام شما (اجباری)">
+                            <input type="text" id="guest-name-${suffix}" placeholder="نام شما">
                         </div>
                         <div class="input-item grow-1">
                             <i data-lucide="mail" class="text-gray icon-size-3"></i>
-                            <input type="email" id="guest-email-${suffix}" placeholder="ایمیل شما (اجباری)" dir="ltr" class="text-left">
+                            <input type="email" id="guest-email-${suffix}" placeholder="ایمیل شما" dir="ltr" class="text-left">
                         </div>
                     </div>
                 ` : ''}
