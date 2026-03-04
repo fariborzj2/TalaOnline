@@ -460,5 +460,7 @@
     <?php endif; ?>
     <script src="<?= versioned_asset('/assets/js/app.js') ?>"></script>
     <script src="<?= versioned_asset('/assets/js/notifications.js') ?>"></script>
+    <link rel="stylesheet" href="<?= versioned_asset('/assets/css/editor.css') ?>">
+    <script src="<?= versioned_asset('/assets/js/editor.js') ?>"></script>
 </body>
 </html>
