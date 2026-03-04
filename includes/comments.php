@@ -465,7 +465,7 @@ class Comments {
     public function sanitizeHTML($html) {
         if (empty($html)) return '';
 
-        $allowed_tags = '<p><strong><em><blockquote><ul><ol><li><br>';
+        $allowed_tags = '<p><strong><em><b><i><blockquote><ul><ol><li><br>';
         $html = strip_tags($html, $allowed_tags);
 
         // Remove attributes and inline styles using regex for performance/simplicity in this context

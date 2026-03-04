@@ -342,7 +342,7 @@ class BaseEditor {
         const temp = document.createElement('div');
         temp.innerHTML = html;
 
-        const allowedTags = ['p', 'strong', 'em', 'blockquote', 'ul', 'ol', 'li', 'br'];
+        const allowedTags = ['p', 'strong', 'em', 'b', 'i', 'blockquote', 'ul', 'ol', 'li', 'br'];
 
         const sanitizeNode = (node) => {
             const children = Array.from(node.childNodes);

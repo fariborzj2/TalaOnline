@@ -183,7 +183,39 @@
     font-size: 0.95rem;
     line-height: 1.8;
     color: #334155;
-    margin-bottom: 20px;
+}
+
+.comment-body-text p {
+    margin-bottom: 12px;
+}
+
+.comment-body-text blockquote {
+    border-right: 4px solid #249E94;
+    padding: 8px 16px;
+    margin: 16px 0;
+    background: #f0fdfa;
+    color: #475569;
+    border-radius: 4px 0 0 4px;
+}
+
+.comment-body-text ul,
+.comment-body-text ol {
+    padding-right: 28px;
+    margin-bottom: 16px;
+    list-style: inherit;
+}
+
+.comment-body-text li {
+    margin-bottom: 4px;
+}
+
+.comment-body-text b, .comment-body-text strong {
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.comment-body-text i, .comment-body-text em {
+    font-style: italic;
 }
 
 .comment-content a.mention {
