@@ -100,20 +100,25 @@ class CommentSystem {
 
         this.container.innerHTML = html;
         if (window.lucide) lucide.createIcons();
-        this.initRichEditors();
         this.bindEvents();
     }
 
     initRichEditors() {
-        if (this.readOnly) return;
+        if (this.readOnly || typeof BaseEditor === 'undefined') return;
         this.editors = this.editors || {};
 
         const textareas = this.container.querySelectorAll('textarea[id^="textarea-"]');
         textareas.forEach(textarea => {
             const id = textarea.id;
+            // Only initialize if not already initialized and still in DOM
+            if (this.editors[id] && document.body.contains(this.editors[id].container)) {
+                return;
+            }
+
             if (this.editors[id]) {
                 this.editors[id].destroy();
             }
+
             this.editors[id] = new BaseEditor({
                 el: textarea,
                 toolbar: ['bold', 'italic', 'blockquote', 'ul', 'ol', 'clear'],
@@ -167,6 +172,7 @@ class CommentSystem {
                 ` : ''}
 
                 <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-${suffix}">${initialContent}</textarea>
+                <input type="text" id="hp-${suffix}" class="d-none" tabindex="-1" autocomplete="off">
 
                 ${this.isLoggedIn ? `
                 <div class="mention-tag-area mb-2" id="mention-area-${suffix}">
@@ -339,12 +345,15 @@ class CommentSystem {
     }
 
     bindEvents() {
+        this.initRichEditors();
         this.container.querySelectorAll('.submit-comment').forEach(btn => {
             btn.onclick = async () => {
                 const parentId = btn.dataset.parent || null;
                 const isEdit = btn.dataset.edit === 'true';
                 const suffix = parentId || 'main';
                 const textarea = document.getElementById(`textarea-${suffix}`);
+                const hp = document.getElementById(`hp-${suffix}`)?.value;
+                if (hp) return; // Honeypot filled
 
                 // Get content from Rich Editor if available
                 const editor = this.editors?.[`textarea-${suffix}`];
@@ -376,6 +385,7 @@ class CommentSystem {
                     const payload = {
                         content,
                         mentions: mentionIds,
+                        hp: document.getElementById(`hp-${suffix}`)?.value || '',
                         guest_name: guestNameInput?.value || null,
                         guest_email: guestEmailInput?.value || null
                     };
@@ -397,7 +407,9 @@ class CommentSystem {
                     if (data.success) {
                         if (editor) editor.clear();
                         textarea.value = '';
-                        if (mentionsContainer) mentionsContainer.innerHTML = '';
+                        if (mentionsContainer) {
+                            mentionsContainer.querySelectorAll('.mention-tag').forEach(tag => tag.remove());
+                        }
                         if (isEdit) {
                             const commentItem = document.getElementById(`comment-${parentId}`);
                             if (commentItem) {
@@ -508,7 +520,6 @@ class CommentSystem {
                     this.container.querySelectorAll('[id^="reply-form-container-"]').forEach(c => c.innerHTML = '');
                     container.innerHTML = this.renderCommentForm(id);
                     if (window.lucide) lucide.createIcons();
-                    this.initRichEditors();
                     this.bindEvents();
                     container.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
@@ -546,7 +557,6 @@ class CommentSystem {
                     comment.mentioned_users.forEach(u => this.addMentionTag(container, u));
                 }
                 if (window.lucide) lucide.createIcons();
-                this.initRichEditors();
                 this.bindEvents();
             };
         });

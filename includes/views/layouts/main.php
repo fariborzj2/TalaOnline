@@ -29,6 +29,8 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
     <link rel="manifest" href="/assets/images/favicon/manifest.json">
+    <link rel="stylesheet" href="<?= versioned_asset('/assets/css/editor.css') ?>">
+    <script src="<?= versioned_asset('/assets/js/editor.js') ?>"></script>
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/assets/images/favicon/android-icon-192x192.png">
     <meta name="theme-color" content="#ffffff">
@@ -460,7 +462,5 @@
     <?php endif; ?>
     <script src="<?= versioned_asset('/assets/js/app.js') ?>"></script>
     <script src="<?= versioned_asset('/assets/js/notifications.js') ?>"></script>
-    <link rel="stylesheet" href="<?= versioned_asset('/assets/css/editor.css') ?>">
-    <script src="<?= versioned_asset('/assets/js/editor.js') ?>"></script>
 </body>
 </html>
