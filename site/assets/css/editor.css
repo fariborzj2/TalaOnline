@@ -91,6 +91,7 @@
 /* Base styles for contenteditable area */
 .base-editor-content p {
     margin-bottom: 12px;
+    min-height: 1.2em; /* Ensure empty paragraphs are clickable */
 }
 
 .base-editor-content blockquote {
