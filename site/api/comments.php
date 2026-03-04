@@ -86,6 +86,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $guest_name = $input['guest_name'] ?? null;
         $guest_email = $input['guest_email'] ?? null;
 
+        if (!$user_id) {
+            if (empty($guest_name)) {
+                echo json_encode(['success' => false, 'message' => 'وارد کردن نام برای ارسال نظر به صورت مهمان اجباری است.']);
+                exit;
+            }
+            if (empty($guest_email) || !filter_var($guest_email, FILTER_VALIDATE_EMAIL)) {
+                echo json_encode(['success' => false, 'message' => 'وارد کردن ایمیل معتبر برای ارسال نظر به صورت مهمان اجباری است.']);
+                exit;
+            }
+        }
+
         if (empty($content)) {
             echo json_encode(['success' => false, 'message' => 'متن نظر نمی‌تواند خالی باشد.']);
             exit;

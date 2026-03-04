@@ -135,11 +135,11 @@ class CommentSystem {
                     <div class="d-flex-wrap gap-1 mb-1">
                         <div class="input-item grow-1">
                             <i data-lucide="user" class="text-gray icon-size-3"></i>
-                            <input type="text" id="guest-name-${suffix}" placeholder="نام شما (اختیاری)">
+                            <input type="text" id="guest-name-${suffix}" placeholder="نام شما (اجباری)">
                         </div>
                         <div class="input-item grow-1">
                             <i data-lucide="mail" class="text-gray icon-size-3"></i>
-                            <input type="email" id="guest-email-${suffix}" placeholder="ایمیل شما (اختیاری)" dir="ltr" class="text-left">
+                            <input type="email" id="guest-email-${suffix}" placeholder="ایمیل شما (اجباری)" dir="ltr" class="text-left">
                         </div>
                     </div>
                 ` : ''}
@@ -331,6 +331,17 @@ class CommentSystem {
                 const mentionIds = Array.from(mentionsContainer?.querySelectorAll('.mention-tag') || []).map(tag => tag.dataset.userId);
 
                 if (!content.trim()) return;
+
+                if (!this.isLoggedIn && this.guestCommentEnabled) {
+                    if (!guestNameInput?.value.trim()) {
+                        window.showAlert?.('لطفا نام خود را وارد کنید.', 'warning') || alert('لطفا نام خود را وارد کنید.');
+                        return;
+                    }
+                    if (!guestEmailInput?.value.trim() || !guestEmailInput.value.includes('@')) {
+                        window.showAlert?.('لطفا یک ایمیل معتبر وارد کنید.', 'warning') || alert('لطفا یک ایمیل معتبر وارد کنید.');
+                        return;
+                    }
+                }
                 btn.disabled = true;
                 const originalText = btn.innerText;
                 btn.innerText = 'در حال ارسال...';
