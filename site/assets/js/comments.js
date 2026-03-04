@@ -100,7 +100,29 @@ class CommentSystem {
 
         this.container.innerHTML = html;
         if (window.lucide) lucide.createIcons();
+        this.initRichEditors();
         this.bindEvents();
+    }
+
+    initRichEditors() {
+        if (this.readOnly) return;
+        this.editors = this.editors || {};
+
+        const textareas = this.container.querySelectorAll('textarea[id^="textarea-"]');
+        textareas.forEach(textarea => {
+            const id = textarea.id;
+            if (this.editors[id]) {
+                this.editors[id].destroy();
+            }
+            this.editors[id] = new BaseEditor({
+                el: textarea,
+                toolbar: ['bold', 'italic', 'blockquote', 'ul', 'ol', 'clear'],
+                placeholder: 'دیدگاه تخصصی خود را اینجا بنویسید...',
+                autosave: id === 'textarea-main',
+                autosaveKey: `comment-draft-${this.targetType}-${this.targetId}`,
+                preview: true
+            });
+        });
     }
 
     getTotalCommentCount() {
@@ -323,7 +345,10 @@ class CommentSystem {
                 const isEdit = btn.dataset.edit === 'true';
                 const suffix = parentId || 'main';
                 const textarea = document.getElementById(`textarea-${suffix}`);
-                const content = textarea.value;
+
+                // Get content from Rich Editor if available
+                const editor = this.editors?.[`textarea-${suffix}`];
+                const content = editor ? editor.getContent() : textarea.value;
                 const guestNameInput = document.getElementById(`guest-name-${suffix}`);
                 const guestEmailInput = document.getElementById(`guest-email-${suffix}`);
 
@@ -370,6 +395,7 @@ class CommentSystem {
                     });
                     const data = await res.json();
                     if (data.success) {
+                        if (editor) editor.clear();
                         textarea.value = '';
                         if (mentionsContainer) mentionsContainer.innerHTML = '';
                         if (isEdit) {
@@ -482,6 +508,7 @@ class CommentSystem {
                     this.container.querySelectorAll('[id^="reply-form-container-"]').forEach(c => c.innerHTML = '');
                     container.innerHTML = this.renderCommentForm(id);
                     if (window.lucide) lucide.createIcons();
+                    this.initRichEditors();
                     this.bindEvents();
                     container.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
@@ -519,6 +546,7 @@ class CommentSystem {
                     comment.mentioned_users.forEach(u => this.addMentionTag(container, u));
                 }
                 if (window.lucide) lucide.createIcons();
+                this.initRichEditors();
                 this.bindEvents();
             };
         });
