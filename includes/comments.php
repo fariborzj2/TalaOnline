@@ -468,9 +468,18 @@ class Comments {
         $allowed_tags = '<p><strong><em><b><i><blockquote><ul><ol><li><br>';
         $html = strip_tags($html, $allowed_tags);
 
-        // Remove attributes and inline styles using regex for performance/simplicity in this context
-        // This is a second layer of defense
+        // Remove attributes and inline styles using regex
         $html = preg_replace('/<([a-z1-6]+)\s+[^>]*>/i', '<$1>', $html);
+
+        // Ensure illegal nesting like <ul> inside <p> is fixed server-side
+        // We look for <ul>, <ol>, <blockquote> inside <p> and close the <p> before them
+        // Using a negative lookahead to ensure we don't match across existing </p> tags
+        $html = preg_replace('/<p>((?:(?!<\/p>).)*?)<(ul|ol|blockquote)>/is', '<p>$1</p><$2>', $html);
+        // And re-open <p> after them if needed
+        $html = preg_replace('/<\/(ul|ol|blockquote)>((?:(?!<p>).)*?)<\/p>/is', '</$1><p>$2</p>', $html);
+
+        // Final cleanup of empty paragraphs
+        $html = preg_replace('/<p>\s*<\/p>/i', '', $html);
 
         return trim($html);
     }

@@ -62,6 +62,12 @@ class BaseEditor {
         this.bindEvents();
         this.updateCharCount();
 
+        // Force paragraphs on Enter
+        document.execCommand('defaultParagraphSeparator', false, 'p');
+
+        // Ensure initial structure is paragraph-based
+        this.ensureParagraphStructure();
+
         // Initialize icons if lucide is available
         if (window.lucide) {
             window.lucide.createIcons({ root: this.container });
@@ -152,6 +158,7 @@ class BaseEditor {
         this.editor.className = 'base-editor-content';
         this.editor.contentEditable = true;
         this.editor.setAttribute('placeholder', this.config.placeholder);
+        this.editor.setAttribute('spellcheck', 'false');
 
         this.previewArea = document.createElement('div');
         this.previewArea.className = 'base-editor-preview';
@@ -207,6 +214,107 @@ class BaseEditor {
         }
     }
 
+    ensureParagraphStructure() {
+        if (!this.editor.innerHTML.trim() || this.editor.innerHTML === '<br>') {
+            this.editor.innerHTML = '<p><br></p>';
+            return;
+        }
+
+        let changed = false;
+
+        // 1. Convert DIVs to Ps
+        this.editor.querySelectorAll('div').forEach(div => {
+            const p = document.createElement('p');
+            while (div.firstChild) p.appendChild(div.firstChild);
+            div.parentNode.replaceChild(p, div);
+            changed = true;
+        });
+
+        // 2. Wrap orphans
+        const blockTags = ['P', 'BLOCKQUOTE', 'UL', 'OL'];
+        let nodes = Array.from(this.editor.childNodes);
+        let hasOrphans = nodes.some(n => n.nodeType === 3 && n.textContent.trim() || (n.nodeType === 1 && !blockTags.includes(n.tagName)));
+
+        if (hasOrphans) {
+            const fragment = document.createDocumentFragment();
+            let currentP = null;
+
+            nodes.forEach(node => {
+                const isBlock = node.nodeType === 1 && blockTags.includes(node.tagName);
+                if (isBlock) {
+                    fragment.appendChild(node);
+                    currentP = null;
+                } else {
+                    if (!currentP) {
+                        currentP = document.createElement('p');
+                        fragment.appendChild(currentP);
+                    }
+                    currentP.appendChild(node);
+                }
+            });
+            this.editor.innerHTML = '';
+            this.editor.appendChild(fragment);
+            changed = true;
+        }
+
+        // 3. Fix nesting
+        this.editor.querySelectorAll('p ul, p ol, p blockquote').forEach(nested => {
+            const p = nested.closest('p');
+            if (p && p.contains(nested)) {
+                const parent = p.parentNode;
+                const nextSibling = p.nextSibling;
+
+                // Split p at nested
+                const range = document.createRange();
+                range.setStartAfter(nested);
+                range.setEndAfter(p.lastChild);
+                const afterContent = range.extractContents();
+
+                parent.insertBefore(nested, nextSibling);
+
+                if (afterContent.textContent.trim() || afterContent.querySelector('br')) {
+                    const nextP = document.createElement('p');
+                    nextP.appendChild(afterContent);
+                    parent.insertBefore(nextP, nested.nextSibling);
+                }
+
+                if (!p.textContent.trim() && !p.querySelector('br')) {
+                    p.remove();
+                }
+                changed = true;
+            }
+        });
+
+        // 4. Ensure blockquote children are paragraphs
+        this.editor.querySelectorAll('blockquote').forEach(bq => {
+            let bqNodes = Array.from(bq.childNodes);
+            let needsWrap = bqNodes.some(n => n.nodeType === 3 && n.textContent.trim() || (n.nodeType === 1 && !['P', 'UL', 'OL'].includes(n.tagName)));
+            if (needsWrap) {
+                const frag = document.createDocumentFragment();
+                let curP = null;
+                bqNodes.forEach(node => {
+                    if (node.nodeType === 1 && ['P', 'UL', 'OL'].includes(node.tagName)) {
+                        frag.appendChild(node);
+                        curP = null;
+                    } else {
+                        if (!curP) {
+                            curP = document.createElement('p');
+                            frag.appendChild(curP);
+                        }
+                        curP.appendChild(node);
+                    }
+                });
+                bq.innerHTML = '';
+                bq.appendChild(frag);
+                changed = true;
+            }
+        });
+
+        if (changed) {
+            this.updateActiveState();
+        }
+    }
+
     handleKeydown(e) {
         if (e.key === 'Enter') {
             const selection = window.getSelection();
@@ -216,25 +324,49 @@ class BaseEditor {
                 const blockquote = container.nodeType === 1 ? container.closest('blockquote') : container.parentElement.closest('blockquote');
 
                 if (blockquote) {
-                    const text = blockquote.innerText.trim();
-                    if (text === '' || (range.startOffset === 0 && range.endOffset === 0 && blockquote.lastChild === range.startContainer)) {
+                    // Find the paragraph we are currently in
+                    let p = range.startContainer;
+                    while (p && p !== blockquote && p.tagName !== 'P') {
+                        p = p.parentNode;
+                    }
+
+                    if (p && p.tagName === 'P' && p.innerText.trim() === '') {
                         // Pressed Enter on empty line in blockquote -> Break out
                         e.preventDefault();
 
-                        // Remove current empty line if any
-                        if (blockquote.innerHTML === '<br>') blockquote.innerHTML = '';
+                        const nextP = document.createElement('p');
+                        nextP.innerHTML = '<br>';
 
-                        const p = document.createElement('p');
-                        p.innerHTML = '<br>';
-                        blockquote.parentNode.insertBefore(p, blockquote.nextSibling);
+                        // Split blockquote
+                        const parent = blockquote.parentNode;
+                        const brange = document.createRange();
+                        brange.setStartAfter(p);
+                        brange.setEndAfter(blockquote.lastChild);
+                        const afterContent = brange.extractContents();
+
+                        parent.insertBefore(nextP, blockquote.nextSibling);
+
+                        // If there was content after the empty P, put it in a new blockquote
+                        if (afterContent.textContent.trim() || afterContent.querySelector('p')) {
+                            const nextBQ = document.createElement('blockquote');
+                            nextBQ.appendChild(afterContent);
+                            parent.insertBefore(nextBQ, nextP.nextSibling);
+                        }
+
+                        // Remove the empty P from original blockquote
+                        p.remove();
+
+                        // If blockquote is now empty, remove it
+                        if (!blockquote.textContent.trim() && !blockquote.querySelector('p')) {
+                            blockquote.remove();
+                        }
 
                         // Move cursor to new paragraph
                         const newRange = document.createRange();
-                        const newSel = window.getSelection();
-                        newRange.setStart(p, 0);
+                        newRange.setStart(nextP, 0);
                         newRange.collapse(true);
-                        newSel.removeAllRanges();
-                        newSel.addRange(newRange);
+                        selection.removeAllRanges();
+                        selection.addRange(newRange);
 
                         this.handleInput();
                         return;
@@ -328,6 +460,7 @@ class BaseEditor {
 
     // Public API Implementation
     getContent() {
+        this.ensureParagraphStructure();
         return this.sanitize(this.editor.innerHTML);
     }
 
