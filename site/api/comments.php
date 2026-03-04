@@ -52,6 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'add') {
+        $hp = $input['hp'] ?? '';
+        if ($hp !== '') {
+            echo json_encode(['success' => false, 'message' => 'بوت شناسایی شد.']);
+            exit;
+        }
+
         $target_id = $input['target_id'] ?? '';
         $target_type = $input['target_type'] ?? '';
 

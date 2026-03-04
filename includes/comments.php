@@ -334,6 +334,9 @@ class Comments {
             }
         }
 
+        // Sanitize content
+        $content = $this->sanitizeHTML($content);
+
         // Convert @mentions to [user:ID] placeholders before storing (legacy support for manual typing)
         $stored_content = $this->convertMentionsToPlaceholders($content);
 
@@ -448,6 +451,7 @@ class Comments {
                 }
             }
 
+            $content = $this->sanitizeHTML($content);
             $stored_content = $this->convertMentionsToPlaceholders($content);
             $stmt = $this->pdo->prepare("UPDATE comments SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
             return $stmt->execute([$stored_content, $comment_id]);
@@ -456,10 +460,26 @@ class Comments {
     }
 
     /**
+     * Sanitize HTML content to prevent XSS while allowing specific tags
+     */
+    public function sanitizeHTML($html) {
+        if (empty($html)) return '';
+
+        $allowed_tags = '<p><strong><em><blockquote><ul><ol><li><br>';
+        $html = strip_tags($html, $allowed_tags);
+
+        // Remove attributes and inline styles using regex for performance/simplicity in this context
+        // This is a second layer of defense
+        $html = preg_replace('/<([a-z1-6]+)\s+[^>]*>/i', '<$1>', $html);
+
+        return trim($html);
+    }
+
+    /**
      * Parse [user:ID] placeholders in content and convert to links
      */
     public function parseMentions($content, $userMap = []) {
-        $content = htmlspecialchars($content);
+        // Content is already sanitized before being stored in DB
         return preg_replace_callback('/\[user:(\d+)\]/', function($matches) use ($userMap) {
             $userId = $matches[1];
             if (isset($userMap[$userId])) {
