@@ -124,6 +124,20 @@ class BaseEditor {
             this.editor.focus();
             if (btnConfig.value) {
                 document.execCommand(btnConfig.command, false, btnConfig.value);
+
+                // If we applied blockquote, ensure there's a paragraph after it if it's the last element
+                if (btnConfig.value === 'blockquote') {
+                    const selection = window.getSelection();
+                    if (selection.rangeCount > 0) {
+                        const container = selection.getRangeAt(0).commonAncestorContainer;
+                        const blockquote = container.nodeType === 1 ? container.closest('blockquote') : container.parentElement.closest('blockquote');
+                        if (blockquote && !blockquote.nextSibling) {
+                            const p = document.createElement('p');
+                            p.innerHTML = '<br>';
+                            blockquote.parentNode.appendChild(p);
+                        }
+                    }
+                }
             } else {
                 document.execCommand(btnConfig.command, false, null);
             }
@@ -194,6 +208,41 @@ class BaseEditor {
     }
 
     handleKeydown(e) {
+        if (e.key === 'Enter') {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const container = range.commonAncestorContainer;
+                const blockquote = container.nodeType === 1 ? container.closest('blockquote') : container.parentElement.closest('blockquote');
+
+                if (blockquote) {
+                    const text = blockquote.innerText.trim();
+                    if (text === '' || (range.startOffset === 0 && range.endOffset === 0 && blockquote.lastChild === range.startContainer)) {
+                        // Pressed Enter on empty line in blockquote -> Break out
+                        e.preventDefault();
+
+                        // Remove current empty line if any
+                        if (blockquote.innerHTML === '<br>') blockquote.innerHTML = '';
+
+                        const p = document.createElement('p');
+                        p.innerHTML = '<br>';
+                        blockquote.parentNode.insertBefore(p, blockquote.nextSibling);
+
+                        // Move cursor to new paragraph
+                        const newRange = document.createRange();
+                        const newSel = window.getSelection();
+                        newRange.setStart(p, 0);
+                        newRange.collapse(true);
+                        newSel.removeAllRanges();
+                        newSel.addRange(newRange);
+
+                        this.handleInput();
+                        return;
+                    }
+                }
+            }
+        }
+
         if (e.ctrlKey || e.metaKey) {
             if (e.key === 'b' || e.key === 'B') {
                 e.preventDefault();
