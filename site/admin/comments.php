@@ -47,8 +47,10 @@ if ($status_filter) {
 }
 
 if ($search) {
-    $where_clauses[] = "(c.content LIKE ? OR u.name LIKE ? OR u.username LIKE ?)";
+    $where_clauses[] = "(c.content LIKE ? OR u.name LIKE ? OR u.username LIKE ? OR c.guest_name LIKE ? OR c.guest_email LIKE ?)";
     $search_param = "%$search%";
+    $params[] = $search_param;
+    $params[] = $search_param;
     $params[] = $search_param;
     $params[] = $search_param;
     $params[] = $search_param;
@@ -136,7 +138,7 @@ include __DIR__ . '/layout/header.php';
                 <thead>
                     <tr>
                         <th>کاربر</th>
-                        <th>محتوای نظر</th>
+                        <th>نوع نظر</th>
                         <th>مربوط به</th>
                         <th class="text-center">وضعیت</th>
                         <th>تاریخ</th>
@@ -169,14 +171,16 @@ include __DIR__ . '/layout/header.php';
                                 </div>
                             </div>
                         </td>
-                        <td class="max-w-md">
-                            <div class="text-xs font-bold text-slate-600 line-clamp-2 leading-relaxed">
-                                <?= htmlspecialchars($c['content']) ?>
-                            </div>
+                        <td>
                             <?php if ($c['parent_id']): ?>
-                                <span class="inline-flex items-center gap-1 text-[9px] font-black text-indigo-500 mt-1">
+                                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-[10px] font-black border border-indigo-100/50">
                                     <i data-lucide="corner-down-right" class="w-3 h-3"></i>
-                                    پاسخ به نظر #<?= $c['parent_id'] ?>
+                                    پاسخ به #<?= $c['parent_id'] ?>
+                                </span>
+                            <?php else: ?>
+                                <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-100 text-slate-500 text-[10px] font-black border border-slate-200/50">
+                                    <i data-lucide="message-square" class="w-3 h-3"></i>
+                                    نظر اصلی
                                 </span>
                             <?php endif; ?>
                         </td>
