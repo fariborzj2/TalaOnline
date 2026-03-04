@@ -218,6 +218,13 @@
     font-style: italic;
 }
 
+.comment-body-text p:last-child,
+.comment-body-text ul:last-child,
+.comment-body-text ol:last-child,
+.comment-body-text blockquote:last-child {
+    margin-bottom: 0;
+}
+
 .comment-content a.mention {
     color: #249E94;
     font-weight: 700;
