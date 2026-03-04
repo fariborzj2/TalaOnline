@@ -150,6 +150,7 @@ class CommentSystem {
                         <div class="mention-suggestions d-none" id="suggestions-${suffix}"></div>
                     </div>
                 </div>
+                ` : ''}
 
                 <div class="comment-form-footer">
                     <div>
