@@ -327,13 +327,13 @@ include __DIR__ . '/layout/header.php';
                     </div>
                 </div>
                 <div id="modal-target" class="text-left">
-                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Target</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase mb-1">بخش مربوطه</p>
                     <a id="modal-target-link" href="#" target="_blank" class="text-xs font-black text-indigo-600 hover:underline"></a>
                 </div>
             </div>
 
             <div>
-                <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block">Content</label>
+                <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block">متن نظر</label>
                 <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 text-slate-700 font-bold leading-relaxed whitespace-pre-wrap min-h-[120px]" id="modal-content"></div>
             </div>
 

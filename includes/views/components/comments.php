@@ -164,9 +164,15 @@ function render_reaction($c, $type, $emoji) {
         <?php if ($is_logged_in || $guest_comment_enabled): ?>
             <div class="comment-form" id="form-main">
                 <?php if (!$is_logged_in && $guest_comment_enabled): ?>
-                    <div class="d-flex gap-1 mb-2">
-                        <input type="text" id="guest-name-main" class="form-control font-size-0-8" placeholder="نام شما (اختیاری)">
-                        <input type="email" id="guest-email-main" class="form-control font-size-0-8 ltr-input" placeholder="ایمیل شما (اختیاری)">
+                    <div class="d-flex-wrap gap-1 mb-1">
+                        <div class="input-item grow-1">
+                            <i data-lucide="user" class="text-gray icon-size-3"></i>
+                            <input type="text" id="guest-name-main" placeholder="نام شما (اختیاری)">
+                        </div>
+                        <div class="input-item grow-1">
+                            <i data-lucide="mail" class="text-gray icon-size-3"></i>
+                            <input type="email" id="guest-email-main" placeholder="ایمیل شما (اختیاری)" dir="ltr" class="text-left">
+                        </div>
                     </div>
                 <?php endif; ?>
 
