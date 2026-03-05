@@ -540,7 +540,12 @@
     border: 2px dashed #e2e8f0;
 }
 
-.upload-zone:hover {
+.upload-zone:hover, .upload-zone.drag-over {
     border-color: #249E94;
     background-color: #f0fdfa;
+    transform: scale(1.01);
+}
+
+.upload-zone {
+    transition: all 0.2s ease;
 }

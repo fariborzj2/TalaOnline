@@ -685,16 +685,44 @@ class CommentSystem {
             };
         });
 
+        this.container.querySelectorAll('.upload-zone').forEach(zone => {
+            zone.ondragover = (e) => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            };
+            zone.ondragleave = () => {
+                zone.classList.remove('drag-over');
+            };
+            zone.ondrop = (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                const suffix = zone.querySelector('input').dataset.suffix;
+                const input = document.getElementById(`comment-image-${suffix}`);
+                if (file && input) {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    input.files = dataTransfer.files;
+                    input.dispatchEvent(new Event('change'));
+                }
+            };
+        });
+
         this.container.querySelectorAll('.comment-image-input').forEach(input => {
             input.onchange = (e) => {
                 const suffix = input.dataset.suffix;
                 const form = input.closest('.comment-form');
-                const file = e.target.files[0];
+                const file = e.target.files[0] || e.dataTransfer?.files[0];
                 const previewContainer = form ? form.querySelector('.image-preview') : null;
                 if (!previewContainer) return;
                 const previewImg = previewContainer.querySelector('img');
 
                 if (file) {
+                    if (!file.type.startsWith('image/')) {
+                        window.showAlert?.('لطفا فقط فایل تصویری انتخاب کنید.', 'warning');
+                        input.value = '';
+                        return;
+                    }
                     const reader = new FileReader();
                     reader.onload = (re) => {
                         previewImg.src = re.target.result;
