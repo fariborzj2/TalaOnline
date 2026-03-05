@@ -97,21 +97,25 @@ class CommentSystem {
                 ${this.renderCommentForm()}
                 ` : ''}
 
-                <div class="comments-filters d-flex-wrap just-between align-center gap-1 mb-2 mt-4">
-                    <div class="d-flex gap-05">
-                        <button class="btn btn-sm btn-secondary filter-btn ${this.filterType === 'all' ? 'active' : ''}" data-filter="all">همه</button>
-                        <button class="btn btn-sm btn-secondary filter-btn ${this.filterType === 'comment' ? 'active' : ''}" data-filter="comment">نظرات</button>
-                        ${this.targetType !== 'post' ? `
-                            <button class="btn btn-sm btn-secondary filter-btn ${this.filterType === 'analysis' ? 'active' : ''}" data-filter="analysis">تحلیل‌ها</button>
-                        ` : ''}
-                    </div>
-                    <div class="d-flex align-center gap-05">
-                        <span class="text-gray-400 font-size-1">ترتیب:</span>
-                        <select class="form-select select-sm sort-select radius-8 font-size-1">
-                            <option value="newest" ${this.sort === 'newest' ? 'selected' : ''}>جدیدترین</option>
-                            <option value="popular" ${this.sort === 'popular' ? 'selected' : ''}>محبوب‌ترین</option>
-                            <option value="most_replies" ${this.sort === 'most_replies' ? 'selected' : ''}>بیشترین پاسخ</option>
-                        </select>
+                <div class="comments-filters d-flex-wrap just-between align-center gap-2 mb-4 mt-8">
+                    ${this.targetType !== 'post' ? `
+                        <div class="filter-group d-flex gap-1-5">
+                            <span class="filter-item filter-btn ${this.filterType === 'all' ? 'active' : ''}" data-filter="all">همه</span>
+                            <span class="filter-item filter-btn ${this.filterType === 'comment' ? 'active' : ''}" data-filter="comment">نظرات</span>
+                            <span class="filter-item filter-btn ${this.filterType === 'analysis' ? 'active' : ''}" data-filter="analysis">تحلیل‌ها</span>
+                        </div>
+                    ` : '<div></div>'}
+
+                    <div class="sort-group d-flex align-center gap-1">
+                        <div class="d-flex align-center gap-05 text-gray-500">
+                            <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
+                            <span class="font-bold font-size-0-9">مرتب‌سازی:</span>
+                        </div>
+                        <div class="d-flex gap-1-5">
+                            <span class="sort-item sort-btn ${this.sort === 'newest' ? 'active' : ''}" data-sort="newest">جدیدترین</span>
+                            <span class="sort-item sort-btn ${this.sort === 'most_replies' ? 'active' : ''}" data-sort="most_replies">دیدگاه خریداران</span>
+                            <span class="sort-item sort-btn ${this.sort === 'popular' ? 'active' : ''}" data-sort="popular">مفیدترین</span>
+                        </div>
                     </div>
                 </div>
 
@@ -836,14 +840,14 @@ class CommentSystem {
             };
         });
 
-        const sortSelect = this.container.querySelector('.sort-select');
-        if (sortSelect) {
-            sortSelect.onchange = () => {
-                this.sort = sortSelect.value;
+        this.container.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.onclick = () => {
+                if (btn.classList.contains('active')) return;
+                this.sort = btn.dataset.sort;
                 this.currentPage = 1;
                 this.loadAndRender();
             };
-        }
+        });
 
         this.container.querySelectorAll('.page-btn').forEach(btn => {
             btn.onclick = () => {

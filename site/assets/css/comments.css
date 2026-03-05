@@ -562,3 +562,44 @@
 .upload-zone {
     transition: all 0.2s ease;
 }
+
+/* Comments Filters & Sorting */
+.filter-item, .sort-item {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.filter-item:hover, .sort-item:hover {
+    color: #1e293b;
+}
+
+.filter-item.active, .sort-item.active {
+    color: #249E94;
+    position: relative;
+}
+
+.filter-item.active::after, .sort-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #249E94;
+    border-radius: 2px;
+}
+
+.comments-filters .icon-size-4 {
+    color: #94a3b8;
+}
+
+@media (max-width: 600px) {
+    .comments-filters {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+}
