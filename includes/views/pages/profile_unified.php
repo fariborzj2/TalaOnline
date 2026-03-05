@@ -21,11 +21,11 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
 
 <div class="section">
-    <div class="d-flex-wrap gap-md align-stretch">
+    <div class="d-flex-wrap gap-md align-stretch profile-container">
         <!-- Sidebar Navigation -->
-        <div class="basis-250 grow-1">
+        <div class="basis-250 grow-1 ">
             <!-- profile info -->
-            <div class="profile-card p-1 bg-block border radius-16 overflow-hidden shadow-sm">
+            <div class="profile-card p-1 bg-block border radius-16 overflow-hidden shadow-sm sticky-card-2">
                 <div class="profile-header-gradient relative">
                     <div class="level-badge d-flex align-center gap-05">
                         <span class="font-bold">level <?= $user['level'] ?></span>
@@ -91,7 +91,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
             </div>
 
             <!-- settings tab -->
-            <div class="bg-block pd-md border radius-16 is-sticky">
+            <div class="bg-block pd-md border radius-16 sticky-card-2">
                 <div class="d-column gap-05" id="profile-tabs">
                     <button class="profile-tab-btn active" data-tab="activity">
                         <i data-lucide="activity"></i> فعالیت‌ها
@@ -112,6 +112,15 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                 </div>
             </div>
         </div>
+
+        <script>
+            const stickyManagerTwo = initMultipleSticky('.sticky-card-2', {
+                offset: 20,
+                minContainerWidth: 760,
+                container: '.profile-container',
+                gap: 20
+            });
+        </script>
 
         <!-- Main Content -->
         <div class="basis-500 grow-9 overflow-hidden">

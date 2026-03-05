@@ -54,7 +54,9 @@
     margin-bottom: var(--pd-block);
     position: relative;
 }
-
+.comment-wrapper:last-child .comment-item {
+    margin-bottom: 0;
+}
 /* Threading line */
 .comment-item::before {
     content: '';

@@ -69,7 +69,7 @@ if ($pdo) {
      <?= View::renderComponent('news_card', ['news' => $news]) ?>
 
     <?php if (!empty($popular_posts)): ?>
-    <div class="bg-block radius-16 pd-md border d-column gap-1">
+    <div class="bg-block radius-16 pd-md border d-column gap-1 sticky-card">
         <div class="d-flex align-center gap-05 mb-05">
             <i data-lucide="flame" class="icon-size-4 text-error"></i>
             <h2 class="font-size-2 font-bold">داغ‌ترین مطالب</h2>
@@ -121,6 +121,15 @@ if ($pdo) {
     .sidebar {
         width: 350px;
         flex-shrink: 0;
-        overflow: hidden;
+        align-self: stretch;
     }
 </style>
+
+<script>
+    const stickyManager = initMultipleSticky('.sticky-card', {
+        offset: 20,
+        minContainerWidth: 950,
+        container: '.main-layout',
+        gap: 20
+    });
+</script>

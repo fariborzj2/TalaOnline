@@ -169,6 +169,10 @@
         .btn-dialog-primary { background: var(--color-primary); color: white; }
         .btn-dialog-outline { background: var(--color-secondary); color: var(--color-text); border: 1px solid var(--color-border); }
         .btn-dialog-primary:hover { opacity: 0.9; }
+
+        .main-content {
+            max-width: 100%;
+        }
     </style>
 
     <!-- Open Graph / Facebook -->
@@ -223,6 +227,9 @@
     }
     </script>
     <?php endif; ?>
+
+    <script src="<?= versioned_asset('/assets/js/sticky-vanilla.js') ?>"></script>
+
 </head>
 <body class="<?= $body_class ?? '' ?>">
     <?php
@@ -267,8 +274,9 @@
                     apexChartsUrl: '<?= versioned_asset("/assets/js/vendor/apexcharts.min.js") ?>'
                 };
             </script>
+
             <div class="center d-flex-wrap gap-md align-stretch main-layout">
-                <div class="main-content d-column gap-md grow-8 overflow-hidden basis-700" >
+                <div class="main-content d-column gap-md grow-8 basis-700" >
                     <?php include __DIR__ . '/header-desktop.php'; ?>
                     <?php include __DIR__ . '/header-mobile.php'; ?>
 
