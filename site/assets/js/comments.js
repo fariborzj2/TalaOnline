@@ -158,6 +158,15 @@ class CommentSystem {
         const suffix = parentId || 'main';
         return `
             <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${suffix}">
+                <div class="comment-type-toggle d-flex gap-05 mb-1">
+                    <button type="button" class="btn btn-sm btn-secondary active flex-1 radius-10 py-2 comment-type-btn" data-type="comment" data-suffix="${suffix}">
+                        <i data-lucide="message-square" class="icon-size-3"></i> نظر
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary flex-1 radius-10 py-2 comment-type-btn" data-type="analysis" data-suffix="${suffix}">
+                        <i data-lucide="line-chart" class="icon-size-3"></i> تحلیل
+                    </button>
+                </div>
+
                 ${!this.isLoggedIn ? `
                     <div class="d-flex-wrap gap-1 mb-1">
                         <div class="input-item grow-1">
@@ -185,6 +194,23 @@ class CommentSystem {
                     </div>
                 </div>
                 ` : ''}
+
+                <div class="comment-image-upload d-none mb-2" id="image-upload-container-${suffix}">
+                    <label for="comment-image-${suffix}" class="upload-zone d-flex align-center just-center gap-1 pd-md radius-12 border-dashed cursor-pointer hover-bg-slate-50 transition-all">
+                        <i data-lucide="image" class="text-gray icon-size-5"></i>
+                        <div class="text-right">
+                            <div class="font-bold text-sm text-slate-700">آپلود تصویر تحلیل</div>
+                            <div class="text-xs text-gray-400">فرمت‌های مجاز: PNG, JPG, WebP</div>
+                        </div>
+                        <input type="file" id="comment-image-${suffix}" class="d-none comment-image-input" accept="image/*" data-suffix="${suffix}">
+                    </label>
+                    <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border">
+                        <img src="" class="w-full h-48 object-cover">
+                        <button type="button" class="remove-preview position-absolute top-0 left-0 m-2 btn btn-sm btn-danger radius-50 p-1" data-suffix="${suffix}">
+                            <i data-lucide="x" class="icon-size-3"></i>
+                        </button>
+                    </div>
+                </div>
 
                 <div class="comment-form-footer">
                     <div>
@@ -319,9 +345,21 @@ class CommentSystem {
             </div>
         ` : '';
 
+        let imageHtml = '';
+        if (c.type === 'analysis' && c.image_url) {
+            imageHtml = `
+                <div class="comment-attachment mt-2">
+                    <a href="/${c.image_url}" target="_blank" class="d-block radius-12 overflow-hidden border border-slate-100 shadow-sm hover-shadow-md transition-all">
+                        <img src="/${c.image_url}" alt="تحلیل کاربر" class="w-full max-h-96 object-contain bg-slate-50">
+                    </a>
+                </div>
+            `;
+        }
+
         return `
             ${replyPreview}
             <div class="comment-body-text">${c.content_html}</div>
+            ${imageHtml}
             ${isExpert ? `<div class="attachment-btn"><i data-lucide="file-text" class="icon-size-4"></i> مشاهده پیوست</div>` : ''}
         `;
     }
@@ -354,6 +392,8 @@ class CommentSystem {
                 const parentId = btn.dataset.parent || null;
                 const isEdit = btn.dataset.edit === 'true';
                 const suffix = parentId || 'main';
+                const form = document.getElementById(`form-${suffix}`);
+                const type = form.querySelector('.comment-type-btn.active')?.dataset.type || 'comment';
                 const textarea = document.getElementById(`textarea-${suffix}`);
                 const hp = document.getElementById(`hp-${suffix}`)?.value;
                 if (hp) return; // Honeypot filled
@@ -363,11 +403,19 @@ class CommentSystem {
                 const content = editor ? editor.getContent() : textarea.value;
                 const guestNameInput = document.getElementById(`guest-name-${suffix}`);
                 const guestEmailInput = document.getElementById(`guest-email-${suffix}`);
+                const imageInput = document.getElementById(`comment-image-${suffix}`);
 
                 const mentionsContainer = document.getElementById(`mentions-container-${suffix}`);
                 const mentionIds = Array.from(mentionsContainer?.querySelectorAll('.mention-tag') || []).map(tag => tag.dataset.userId);
 
                 if (!content.trim()) return;
+
+                if (!this.isLoggedIn) {
+                    if (type === 'analysis') {
+                        window.showAuthModal?.('login');
+                        return;
+                    }
+                }
 
                 if (!this.isLoggedIn && this.guestCommentEnabled) {
                     if (!guestNameInput?.value.trim()) {
@@ -385,33 +433,55 @@ class CommentSystem {
 
                 try {
                     const action = isEdit ? 'edit' : 'add';
-                    const payload = {
-                        content,
-                        mentions: mentionIds,
-                        hp: document.getElementById(`hp-${suffix}`)?.value || '',
-                        guest_name: guestNameInput?.value || null,
-                        guest_email: guestEmailInput?.value || null
-                    };
-                    if (isEdit) {
-                        payload.comment_id = parentId;
-                    } else {
-                        payload.target_id = this.targetId;
-                        payload.target_type = this.targetType;
-                        payload.parent_id = parentId;
-                        if (parentId) payload.reply_to_id = parentId;
-                    }
+                    let res;
 
-                    const res = await fetch(`/api/comments.php?action=${action}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
-                        body: JSON.stringify(payload)
-                    });
+                    if (action === 'add' && !isEdit) {
+                        const formData = new FormData();
+                        formData.append('content', content);
+                        formData.append('type', type);
+                        formData.append('mentions', JSON.stringify(mentionIds));
+                        formData.append('hp', document.getElementById(`hp-${suffix}`)?.value || '');
+                        formData.append('guest_name', guestNameInput?.value || '');
+                        formData.append('guest_email', guestEmailInput?.value || '');
+                        formData.append('target_id', this.targetId);
+                        formData.append('target_type', this.targetType);
+                        formData.append('parent_id', parentId || '');
+                        if (parentId) formData.append('reply_to_id', parentId);
+
+                        if (imageInput && imageInput.files[0]) {
+                            formData.append('image', imageInput.files[0]);
+                        }
+
+                        res = await fetch(`/api/comments.php?action=add`, {
+                            method: 'POST',
+                            headers: { 'X-CSRF-Token': this.csrfToken },
+                            body: formData
+                        });
+                    } else {
+                        const payload = {
+                            content,
+                            mentions: mentionIds,
+                            hp: document.getElementById(`hp-${suffix}`)?.value || '',
+                            comment_id: parentId
+                        };
+                        res = await fetch(`/api/comments.php?action=edit`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
+                            body: JSON.stringify(payload)
+                        });
+                    }
                     const data = await res.json();
                     if (data.success) {
                         if (editor) editor.clear();
                         textarea.value = '';
                         if (mentionsContainer) {
                             mentionsContainer.querySelectorAll('.mention-tag').forEach(tag => tag.remove());
+                        }
+                        if (imageInput) imageInput.value = '';
+                        const previewContainer = document.querySelector(`#form-${suffix} .image-preview`);
+                        if (previewContainer) {
+                            previewContainer.classList.add('d-none');
+                            previewContainer.querySelector('img').src = '';
                         }
                         if (isEdit) {
                             const commentItem = document.getElementById(`comment-${parentId}`);
@@ -585,6 +655,65 @@ class CommentSystem {
                     const data = await res.json();
                     window.showAlert?.(data.message, data.success ? 'success' : 'error') || alert(data.message);
                 } catch (error) { console.error(error); }
+            };
+        });
+
+        this.container.querySelectorAll('.comment-type-btn').forEach(btn => {
+            btn.onclick = () => {
+                const type = btn.dataset.type;
+                const suffix = btn.dataset.suffix;
+                const container = btn.closest('.comment-type-toggle');
+
+                if (!this.isLoggedIn && type === 'analysis') {
+                    window.showAuthModal?.('login');
+                    return;
+                }
+
+                container.querySelectorAll('.comment-type-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const uploadContainer = document.getElementById(`image-upload-container-${suffix}`);
+                if (uploadContainer) {
+                    if (type === 'analysis') {
+                        uploadContainer.classList.remove('d-none');
+                    } else {
+                        uploadContainer.classList.add('d-none');
+                    }
+                }
+            };
+        });
+
+        this.container.querySelectorAll('.comment-image-input').forEach(input => {
+            input.onchange = (e) => {
+                const suffix = input.dataset.suffix;
+                const file = e.target.files[0];
+                const previewContainer = document.querySelector(`#form-${suffix} .image-preview`);
+                const previewImg = previewContainer.querySelector('img');
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (re) => {
+                        previewImg.src = re.target.result;
+                        previewContainer.classList.remove('d-none');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    previewContainer.classList.add('d-none');
+                    previewImg.src = '';
+                }
+            };
+        });
+
+        this.container.querySelectorAll('.remove-preview').forEach(btn => {
+            btn.onclick = () => {
+                const suffix = btn.dataset.suffix;
+                const input = document.getElementById(`comment-image-${suffix}`);
+                const previewContainer = document.querySelector(`#form-${suffix} .image-preview`);
+                if (input) input.value = '';
+                if (previewContainer) {
+                    previewContainer.classList.add('d-none');
+                    previewContainer.querySelector('img').src = '';
+                }
             };
         });
 

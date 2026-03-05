@@ -52,16 +52,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'add') {
-        $hp = $input['hp'] ?? '';
+        // Support both JSON and multipart/form-data
+        if (str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'multipart/form-data')) {
+            $data = $_POST;
+            $mentions = isset($data['mentions']) ? json_decode($data['mentions'], true) : [];
+        } else {
+            $data = $input;
+            $mentions = $data['mentions'] ?? [];
+        }
+
+        $hp = $data['hp'] ?? '';
         if ($hp !== '') {
             echo json_encode(['success' => false, 'message' => 'بوت شناسایی شد.']);
             exit;
         }
 
-        $target_id = $input['target_id'] ?? '';
-        $target_type = $input['target_type'] ?? '';
+        $target_id = $data['target_id'] ?? '';
+        $target_type = $data['target_type'] ?? '';
+        $type = $data['type'] ?? 'comment';
 
         if (!$user_id) {
+            if ($type === 'analysis') {
+                echo json_encode(['success' => false, 'message' => 'برای ثبت تحلیل باید ابتدا وارد حساب خود شوید.', 'require_auth' => true]);
+                exit;
+            }
+
             $guest_enabled = get_setting('comments_guest_comment_' . $target_type, '0') === '1';
             if (!$guest_enabled) {
                 echo json_encode(['success' => false, 'message' => 'لطفا ابتدا وارد حساب خود شوید.']);
@@ -83,14 +98,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
         }
-        $content = $input['content'] ?? '';
-        $parent_id = $input['parent_id'] ?? null;
-        $reply_to_user_id = $input['reply_to_user_id'] ?? null;
-        $reply_to_id = $input['reply_to_id'] ?? null;
-        $mentions = $input['mentions'] ?? [];
+        $content = $data['content'] ?? '';
+        $parent_id = !empty($data['parent_id']) ? $data['parent_id'] : null;
+        $reply_to_user_id = !empty($data['reply_to_user_id']) ? $data['reply_to_user_id'] : null;
+        $reply_to_id = !empty($data['reply_to_id']) ? $data['reply_to_id'] : null;
 
-        $guest_name = $input['guest_name'] ?? null;
-        $guest_email = $input['guest_email'] ?? null;
+        $guest_name = !empty($data['guest_name']) ? $data['guest_name'] : null;
+        $guest_email = !empty($data['guest_email']) ? $data['guest_email'] : null;
 
         if (!$user_id) {
             if (empty($guest_name)) {
@@ -108,7 +122,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id, $reply_to_user_id, $reply_to_id, $mentions, $guest_name, $guest_email);
+        $image_url = null;
+        if ($type === 'analysis' && isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $allowed_exts = ['png', 'webp', 'avif', 'jpg', 'jpeg'];
+            $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, $allowed_exts)) {
+                echo json_encode(['success' => false, 'message' => 'فرمت تصویر معتبر نیست. فرمت‌های مجاز: png, webp, avif, jpg, jpeg']);
+                exit;
+            }
+            $image_url = handle_upload($_FILES['image'], 'uploads/comments/');
+        }
+
+        $id = $comments_handler->addComment($user_id, $target_id, $target_type, $content, $parent_id, $reply_to_user_id, $reply_to_id, $mentions, $guest_name, $guest_email, $type, $image_url);
         if ($id) {
             record_rate_limit_attempt('comment', 'ip', $ip);
             if ($user_id) record_rate_limit_attempt('comment', 'user', $user_id);

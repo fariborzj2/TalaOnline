@@ -424,6 +424,8 @@ if (file_exists($config_file)) {
                     `reply_to_user_id` INTEGER DEFAULT NULL,
                     `guest_name` VARCHAR(100) DEFAULT NULL,
                     `guest_email` VARCHAR(100) DEFAULT NULL,
+                    `type` VARCHAR(20) DEFAULT 'comment',
+                    `image_url` VARCHAR(255) DEFAULT NULL,
                     `likes_count` INTEGER DEFAULT 0,
                     `status` VARCHAR(20) DEFAULT 'approved',
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -463,6 +465,8 @@ if (file_exists($config_file)) {
                     `reply_to_user_id` INT DEFAULT NULL,
                     `guest_name` VARCHAR(100) DEFAULT NULL,
                     `guest_email` VARCHAR(100) DEFAULT NULL,
+                    `type` VARCHAR(20) DEFAULT 'comment',
+                    `image_url` VARCHAR(255) DEFAULT NULL,
                     `likes_count` INT DEFAULT 0,
                     `status` VARCHAR(20) DEFAULT 'approved',
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -533,6 +537,12 @@ if (file_exists($config_file)) {
                         try {
                             $pdo->exec("UPDATE comments SET likes_count = (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = comments.id AND reaction_type = 'like')");
                         } catch (Exception $e) {}
+                    }
+                    if (!in_array('type', $comment_cols)) {
+                        $pdo->exec("ALTER TABLE comments ADD COLUMN type VARCHAR(20) DEFAULT 'comment'");
+                    }
+                    if (!in_array('image_url', $comment_cols)) {
+                        $pdo->exec("ALTER TABLE comments ADD COLUMN image_url VARCHAR(255) DEFAULT NULL");
                     }
                     // Ensure target_id/parent_id composite index
                     try { $pdo->exec("CREATE INDEX idx_comments_target_parent ON comments(target_id, parent_id)"); } catch (Exception $e) {}
