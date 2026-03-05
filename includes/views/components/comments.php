@@ -252,19 +252,17 @@ function render_reaction($c, $type, $emoji) {
                 <span class="filter-item filter-btn" data-filter="comment">نظرات</span>
                 <span class="filter-item filter-btn" data-filter="analysis">تحلیل‌ها</span>
             </div>
-        <?php else: ?>
-            <div></div>
         <?php endif; ?>
 
-        <div class="sort-group d-flex align-center gap-1">
+        <div class="sort-group d-flex align-center gap-1 <?= $target_type === 'post' ? 'w-full' : '' ?>">
             <div class="d-flex align-center gap-05 text-gray-500">
                 <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
                 <span class="font-bold font-size-0-9">مرتب‌سازی:</span>
             </div>
             <div class="d-flex gap-1-5">
                 <span class="sort-item sort-btn active" data-sort="newest">جدیدترین</span>
-                <span class="sort-item sort-btn" data-sort="most_replies">دیدگاه خریداران</span>
-                <span class="sort-item sort-btn" data-sort="popular">مفیدترین</span>
+                <span class="sort-item sort-btn" data-sort="popular">محبوب‌ترین</span>
+                <span class="sort-item sort-btn" data-sort="most_replies">بیشترین پاسخ</span>
             </div>
         </div>
     </div>

@@ -599,7 +599,67 @@
 @media (max-width: 600px) {
     .comments-filters {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 1.5rem;
+        align-items: stretch;
+        gap: 1rem;
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        margin-top: 2.5rem;
+    }
+
+    .filter-group {
+        display: flex;
+        gap: 0;
+        justify-content: space-between;
+        background: #fff;
+        padding: 4px;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .filter-item {
+        flex: 1;
+        text-align: center;
+        padding: 8px 4px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+    }
+
+    .filter-item.active {
+        background-color: #f0fdfa;
+    }
+
+    .filter-item.active::after {
+        display: none;
+    }
+
+    .sort-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .sort-group > .d-flex:first-child {
+        padding-right: 0.5rem;
+    }
+
+    .sort-group .d-flex.gap-1-5 {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        background: #fff;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .sort-item {
+        font-size: 0.8rem;
+        padding: 2px 0;
+    }
+
+    .sort-item.active::after {
+        bottom: -10px;
     }
 }
