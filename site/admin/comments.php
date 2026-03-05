@@ -84,8 +84,14 @@ $stmt->bindValue($i++, $offset, PDO::PARAM_INT);
 $stmt->execute();
 $comments = $stmt->fetchAll();
 
-foreach ($comments as &$c) {
-    $c['target_info'] = $comments_logic->getTargetInfo($c['target_id'], $c['target_type']);
+// Pre-process for mentions and dates
+if (!empty($comments)) {
+    $userMap = $comments_logic->loadMentionedUsers($comments);
+    foreach ($comments as &$c) {
+        $c['target_info'] = $comments_logic->getTargetInfo($c['target_id'], $c['target_type']);
+        $c['content_html'] = $comments_logic->parseMentions($c['content'], $userMap);
+        $c['created_at_fa'] = jalali_date($c['created_at']);
+    }
 }
 
 $page_title = 'مدیریت نظرات';
@@ -334,7 +340,14 @@ include __DIR__ . '/layout/header.php';
 
             <div>
                 <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block">متن نظر</label>
-                <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 text-slate-700 font-bold leading-relaxed whitespace-pre-wrap min-h-[120px]" id="modal-content"></div>
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-100 text-slate-700 font-bold leading-relaxed min-h-[120px]" id="modal-content"></div>
+            </div>
+
+            <div id="modal-image-container" class="hidden">
+                <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block">تصویر تحلیل</label>
+                <div class="rounded-xl overflow-hidden border border-slate-100">
+                    <img id="modal-analysis-image" src="" alt="تحلیل" class="w-full object-contain max-h-[400px] bg-slate-50">
+                </div>
             </div>
 
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-50">
@@ -360,8 +373,17 @@ include __DIR__ . '/layout/header.php';
         document.getElementById('modal-name').innerText = c.user_name || (c.guest_name || 'ناشناس');
         document.getElementById('modal-username').innerText = c.user_id ? '@' + c.user_username : (c.guest_email || 'مهمان');
         document.getElementById('modal-avatar').src = c.user_avatar ? '../' + c.user_avatar : '../assets/images/default-avatar.png';
-        document.getElementById('modal-content').innerText = c.content;
-        document.getElementById('modal-date').innerText = c.created_at; // You might want to format this
+        document.getElementById('modal-content').innerHTML = c.content_html || c.content;
+        document.getElementById('modal-date').innerText = c.created_at_fa || c.created_at;
+
+        const imageContainer = document.getElementById('modal-image-container');
+        const analysisImage = document.getElementById('modal-analysis-image');
+        if (c.type === 'analysis' && c.image_url) {
+            analysisImage.src = '../' + c.image_url;
+            imageContainer.classList.remove('hidden');
+        } else {
+            imageContainer.classList.add('hidden');
+        }
 
         const targetLink = document.getElementById('modal-target-link');
         if (c.target_info) {
