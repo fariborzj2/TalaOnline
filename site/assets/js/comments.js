@@ -158,13 +158,15 @@ class CommentSystem {
         const suffix = parentId || 'main';
         return `
             <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${suffix}">
-                <div class="comment-type-toggle d-flex gap-05 mb-1">
-                    <button type="button" class="btn btn-sm btn-secondary active flex-1 radius-10 py-2 comment-type-btn" data-type="comment" data-suffix="${suffix}">
-                        <i data-lucide="message-square" class="icon-size-3"></i> نظر
-                    </button>
-                    <button type="button" class="btn btn-sm btn-secondary flex-1 radius-10 py-2 comment-type-btn" data-type="analysis" data-suffix="${suffix}">
-                        <i data-lucide="line-chart" class="icon-size-3"></i> تحلیل
-                    </button>
+                <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1">
+                    <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
+                        <input type="radio" name="comment_type_${suffix}" value="comment" class="comment-type-radio" data-suffix="${suffix}" checked>
+                        <span>نظر</span>
+                    </label>
+                    <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
+                        <input type="radio" name="comment_type_${suffix}" value="analysis" class="comment-type-radio" data-suffix="${suffix}">
+                        <span>تحلیل</span>
+                    </label>
                 </div>
 
                 ${!this.isLoggedIn ? `
@@ -393,7 +395,8 @@ class CommentSystem {
                 const isEdit = btn.dataset.edit === 'true';
                 const suffix = parentId || 'main';
                 const form = document.getElementById(`form-${suffix}`);
-                const type = form.querySelector('.comment-type-btn.active')?.dataset.type || 'comment';
+                const typeInput = form.querySelector('input.comment-type-radio:checked');
+                const type = typeInput ? typeInput.value : 'comment';
                 const textarea = document.getElementById(`textarea-${suffix}`);
                 const hp = document.getElementById(`hp-${suffix}`)?.value;
                 if (hp) return; // Honeypot filled
@@ -658,19 +661,18 @@ class CommentSystem {
             };
         });
 
-        this.container.querySelectorAll('.comment-type-btn').forEach(btn => {
-            btn.onclick = () => {
-                const type = btn.dataset.type;
-                const suffix = btn.dataset.suffix;
-                const container = btn.closest('.comment-type-toggle');
+        this.container.querySelectorAll('.comment-type-radio').forEach(radio => {
+            radio.onchange = () => {
+                const type = radio.value;
+                const suffix = radio.dataset.suffix;
 
                 if (!this.isLoggedIn && type === 'analysis') {
                     window.showAuthModal?.('login');
+                    radio.checked = false;
+                    const commentRadio = radio.closest('.comment-type-selector').querySelector('input[value="comment"]');
+                    if (commentRadio) commentRadio.checked = true;
                     return;
                 }
-
-                container.querySelectorAll('.comment-type-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
 
                 const uploadContainer = document.getElementById(`image-upload-container-${suffix}`);
                 if (uploadContainer) {
@@ -686,8 +688,10 @@ class CommentSystem {
         this.container.querySelectorAll('.comment-image-input').forEach(input => {
             input.onchange = (e) => {
                 const suffix = input.dataset.suffix;
+                const form = input.closest('.comment-form');
                 const file = e.target.files[0];
-                const previewContainer = document.querySelector(`#form-${suffix} .image-preview`);
+                const previewContainer = form ? form.querySelector('.image-preview') : null;
+                if (!previewContainer) return;
                 const previewImg = previewContainer.querySelector('img');
 
                 if (file) {
@@ -707,8 +711,9 @@ class CommentSystem {
         this.container.querySelectorAll('.remove-preview').forEach(btn => {
             btn.onclick = () => {
                 const suffix = btn.dataset.suffix;
+                const form = btn.closest('.comment-form');
                 const input = document.getElementById(`comment-image-${suffix}`);
-                const previewContainer = document.querySelector(`#form-${suffix} .image-preview`);
+                const previewContainer = form ? form.querySelector('.image-preview') : null;
                 if (input) input.value = '';
                 if (previewContainer) {
                     previewContainer.classList.add('d-none');
