@@ -222,10 +222,10 @@ function render_reaction($c, $type, $emoji) {
                         </div>
                         <input type="file" id="comment-image-main" class="d-none comment-image-input" accept="image/*" data-suffix="main">
                     </label>
-                    <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border">
-                        <img src="" class="w-full h-48 object-cover">
-                        <button type="button" class="remove-preview position-absolute top-0 left-0 m-2 btn btn-sm btn-danger radius-50 p-1" data-suffix="main">
-                            <i data-lucide="x" class="icon-size-3"></i>
+                    <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border" style="width: 100px; height: 100px;">
+                        <img src="" class="w-full h-full object-cover">
+                        <button type="button" class="remove-preview position-absolute top-0 left-0 m-1 btn btn-sm btn-danger radius-50 p-1" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;" data-suffix="main">
+                            <i data-lucide="x" style="width: 12px; height: 12px;"></i>
                         </button>
                     </div>
                 </div>
