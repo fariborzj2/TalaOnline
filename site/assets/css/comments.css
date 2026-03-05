@@ -78,6 +78,22 @@
     background-color: #f0fdfa;
 }
 
+.remove-preview {
+    background-color: #ef4444;
+    color: #fff;
+    border: none;
+    z-index: 10;
+}
+
+.remove-preview:hover {
+    background-color: #dc2626;
+}
+
+.position-absolute { position: absolute; }
+.top-0 { top: 0; }
+.left-0 { left: 0; }
+.m-1 { margin: 0.25rem; }
+
 .comment-header {
     display: flex;
     justify-content: space-between;
