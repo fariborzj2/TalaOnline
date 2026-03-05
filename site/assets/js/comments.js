@@ -198,18 +198,18 @@ class CommentSystem {
                 ` : ''}
 
                 <div class="comment-image-upload d-none mb-2" id="image-upload-container-${suffix}">
-                    <label for="comment-image-${suffix}" class="upload-zone d-flex align-center just-center gap-1 pd-md radius-12 border-dashed cursor-pointer hover-bg-slate-50 transition-all">
+                    <label for="comment-image-${suffix}" class="upload-zone d-flex align-center just-center gap-1 pd-md radius-12 border-dashed pointer transition-all">
                         <i data-lucide="image" class="text-gray icon-size-5"></i>
                         <div class="text-right">
-                            <div class="font-bold text-sm text-slate-700">آپلود تصویر تحلیل</div>
-                            <div class="text-xs text-gray-400">فرمت‌های مجاز: PNG, JPG, WebP</div>
+                            <div class="font-bold font-size-2 text-title">آپلود تصویر تحلیل</div>
+                            <div class="font-size-1 text-gray">فرمت‌های مجاز: PNG, JPG, WebP, AVIF</div>
                         </div>
                         <input type="file" id="comment-image-${suffix}" class="d-none comment-image-input" accept="image/*" data-suffix="${suffix}">
                     </label>
                     <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border" style="width: 100px; height: 100px;">
                         <img src="" class="w-full h-full object-cover">
-                        <button type="button" class="remove-preview position-absolute top-0 left-0 m-1 btn btn-sm btn-danger radius-50 p-1" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;" data-suffix="${suffix}">
-                            <i data-lucide="x" style="width: 12px; height: 12px;"></i>
+                        <button type="button" class="remove-preview absolute top-0 left-0 m-05 radius-50 p-05" data-suffix="${suffix}">
+                            <i data-lucide="x" class="icon-size-1"></i>
                         </button>
                     </div>
                 </div>
@@ -351,8 +351,8 @@ class CommentSystem {
         if (c.type === 'analysis' && c.image_url) {
             imageHtml = `
                 <div class="comment-attachment mt-2">
-                    <a href="/${c.image_url}" target="_blank" class="d-block radius-12 overflow-hidden border border-slate-100 shadow-sm hover-shadow-md transition-all">
-                        <img src="/${c.image_url}" alt="تحلیل کاربر" class="w-full max-h-96 object-contain bg-slate-50">
+                    <a href="/${c.image_url}" target="_blank" class="radius-12 overflow-hidden transition-all">
+                        <img src="/${c.image_url}" alt="تحلیل کاربر" class="w-full object-contain bg-secondary">
                     </a>
                 </div>
             `;
