@@ -75,6 +75,13 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                     </div>
                 <?php endif; ?>
                 <div class="comment-body-text"><?= $c['content_html'] ?></div>
+                <?php if ($c['type'] === 'analysis' && $c['image_url']): ?>
+                    <div class="comment-attachment mt-2">
+                        <a href="/<?= htmlspecialchars($c['image_url']) ?>" target="_blank" class="d-block radius-12 overflow-hidden border border-slate-100 shadow-sm hover-shadow-md transition-all">
+                            <img src="/<?= htmlspecialchars($c['image_url']) ?>" alt="تحلیل کاربر" class="w-full max-h-96 object-contain bg-slate-50">
+                        </a>
+                    </div>
+                <?php endif; ?>
                 <?php if ($is_expert): ?>
                     <div class="attachment-btn"><i data-lucide="file-text" class="icon-size-4"></i> مشاهده پیوست</div>
                 <?php endif; ?>
@@ -166,6 +173,15 @@ function render_reaction($c, $type, $emoji) {
 
         <?php if ($is_logged_in || $guest_comment_enabled): ?>
             <div class="comment-form" id="form-main">
+                <div class="comment-type-toggle d-flex gap-05 mb-1">
+                    <button type="button" class="btn btn-sm btn-secondary active flex-1 radius-10 py-2 comment-type-btn" data-type="comment" data-suffix="main">
+                        <i data-lucide="message-square" class="icon-size-3"></i> نظر
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary flex-1 radius-10 py-2 comment-type-btn" data-type="analysis" data-suffix="main">
+                        <i data-lucide="line-chart" class="icon-size-3"></i> تحلیل
+                    </button>
+                </div>
+
                 <?php if (!$is_logged_in && $guest_comment_enabled): ?>
                     <div class="d-flex-wrap gap-1 mb-1">
                         <div class="input-item grow-1">
@@ -194,6 +210,23 @@ function render_reaction($c, $type, $emoji) {
                     </div>
                 </div>
                 <?php endif; ?>
+
+                <div class="comment-image-upload d-none mb-2" id="image-upload-container-main">
+                    <label for="comment-image-main" class="upload-zone d-flex align-center just-center gap-1 pd-md radius-12 border-dashed cursor-pointer hover-bg-slate-50 transition-all">
+                        <i data-lucide="image" class="text-gray icon-size-5"></i>
+                        <div class="text-right">
+                            <div class="font-bold text-sm text-slate-700">آپلود تصویر تحلیل</div>
+                            <div class="text-xs text-gray-400">فرمت‌های مجاز: PNG, JPG, WebP</div>
+                        </div>
+                        <input type="file" id="comment-image-main" class="d-none comment-image-input" accept="image/*">
+                    </label>
+                    <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border">
+                        <img src="" class="w-full h-48 object-cover">
+                        <button type="button" class="remove-preview position-absolute top-0 left-0 m-2 btn btn-sm btn-danger radius-50 p-1">
+                            <i data-lucide="x" class="icon-size-3"></i>
+                        </button>
+                    </div>
+                </div>
 
                 <div class="comment-form-footer">
                     <button class="btn btn-primary submit-comment radius-10 mr-auto" data-parent="">ارسال نظر</button>

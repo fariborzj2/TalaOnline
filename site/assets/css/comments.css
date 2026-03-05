@@ -512,3 +512,18 @@
         border-color: #e2e8f0;
     }
 }
+
+.comment-type-btn.active {
+    background-color: #249E94 !important;
+    color: #fff !important;
+    border-color: #249E94 !important;
+}
+
+.upload-zone {
+    border: 2px dashed #e2e8f0;
+}
+
+.upload-zone:hover {
+    border-color: #249E94;
+    background-color: #f0fdfa;
+}

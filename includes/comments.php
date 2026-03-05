@@ -302,7 +302,7 @@ class Comments {
     /**
      * Add a new comment
      */
-    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $reply_to_user_id = null, $reply_to_id = null, $mentions = [], $guest_name = null, $guest_email = null) {
+    public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $reply_to_user_id = null, $reply_to_id = null, $mentions = [], $guest_name = null, $guest_email = null, $type = 'comment', $image_url = null) {
         if (!$this->pdo) return false;
 
         // Validation: Enforce depth limit 1 at application layer
@@ -346,8 +346,8 @@ class Comments {
             $default_status = get_setting('comments_guest_default_status', 'pending');
         }
 
-        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_id, reply_to_user_id, status, guest_name, guest_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $success = $stmt->execute([$user_id, $target_id, $target_type, $stored_content, $parent_id, $reply_to_id, $reply_to_user_id, $default_status, $guest_name, $guest_email]);
+        $stmt = $this->pdo->prepare("INSERT INTO comments (user_id, target_id, target_type, content, parent_id, reply_to_id, reply_to_user_id, status, guest_name, guest_email, type, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $success = $stmt->execute([$user_id, $target_id, $target_type, $stored_content, $parent_id, $reply_to_id, $reply_to_user_id, $default_status, $guest_name, $guest_email, $type, $image_url]);
 
         if ($success) {
             $comment_id = $this->pdo->lastInsertId();
