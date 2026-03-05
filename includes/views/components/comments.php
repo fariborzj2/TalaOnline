@@ -173,7 +173,7 @@ function render_reaction($c, $type, $emoji) {
 
         <?php if ($is_logged_in || $guest_comment_enabled): ?>
             <div class="comment-form" id="form-main">
-                <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1">
+                <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1 <?= $target_type === 'post' ? 'd-none' : '' ?>">
                     <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
                         <input type="radio" name="comment_type_main" value="comment" class="comment-type-radio" data-suffix="main" checked>
                         <span>نظر</span>
@@ -245,7 +245,25 @@ function render_reaction($c, $type, $emoji) {
         <?php endif; ?>
     <?php endif; ?>
 
-    <div class="comment-list <?= $read_only ? 'mt-0' : 'mt-8' ?>">
+    <div class="comments-filters d-flex-wrap just-between align-center gap-1 mb-2 mt-4">
+        <div class="d-flex gap-05">
+            <button class="btn btn-sm btn-secondary filter-btn active" data-filter="all">همه</button>
+            <button class="btn btn-sm btn-secondary filter-btn" data-filter="comment">نظرات</button>
+            <?php if ($target_type !== 'post'): ?>
+                <button class="btn btn-sm btn-secondary filter-btn" data-filter="analysis">تحلیل‌ها</button>
+            <?php endif; ?>
+        </div>
+        <div class="d-flex align-center gap-05">
+            <span class="text-gray-400 font-size-1">ترتیب:</span>
+            <select class="form-select select-sm sort-select radius-8 font-size-1">
+                <option value="newest">جدیدترین</option>
+                <option value="popular">محبوب‌ترین</option>
+                <option value="most_replies">بیشترین پاسخ</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="comment-list <?= $read_only ? 'mt-0' : 'mt-2' ?>">
         <?php if (empty($comments)): ?>
             <div class="bg-block text-center pd-md radius-16 border d-column just-center align-center">
                 <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
@@ -274,7 +292,9 @@ function render_reaction($c, $type, $emoji) {
         window.__COMMENTS_INITIAL_DATA__ = window.__COMMENTS_INITIAL_DATA__ || {};
         window.__COMMENTS_INITIAL_DATA__['<?= $target_type . '_' . $target_id ?>'] = {
             comments: <?= json_encode($comments, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
-            total_count: <?= (int)($total_count ?? 0) ?>
+            total_count: <?= (int)($total_count ?? 0) ?>,
+            total_pages: <?= (int)($total_pages ?? 1) ?>,
+            current_page: <?= (int)($current_page ?? 1) ?>
         };
     </script>
 </div>

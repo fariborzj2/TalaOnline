@@ -19,6 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $target_id = $_GET['target_id'] ?? '';
         $target_type = $_GET['target_type'] ?? '';
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $filter_type = $_GET['filter_type'] ?? 'all';
+        $sort = $_GET['sort'] ?? 'newest';
         $per_page = 20;
 
         if (empty($target_id) || empty($target_type)) {
@@ -26,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             exit;
         }
 
-        $data = $comments_handler->getComments($target_id, $target_type, $user_id, $page, $per_page);
+        $data = $comments_handler->getComments($target_id, $target_type, $user_id, $page, $per_page, $filter_type, $sort);
         echo json_encode(array_merge(['success' => true], $data));
         exit;
     }
@@ -69,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $target_id = $data['target_id'] ?? '';
         $target_type = $data['target_type'] ?? '';
-        $type = $data['type'] ?? 'comment';
+        $type = ($target_type === 'post') ? 'comment' : ($data['type'] ?? 'comment');
 
         if (!$user_id) {
             if ($type === 'analysis') {

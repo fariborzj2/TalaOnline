@@ -61,39 +61,57 @@ class Comments {
         return $c;
     }
 
-    public function getComments($target_id, $target_type, $user_id = null, $page = 1, $per_page = null) {
+    public function getComments($target_id, $target_type, $user_id = null, $page = 1, $per_page = null, $filter_type = 'all', $sort = 'newest') {
         if (!$this->pdo) return ['comments' => [], 'total_pages' => 0, 'total_count' => 0];
 
         if ($per_page === null) {
             $per_page = (int)get_setting('comments_per_page', '20');
         }
 
+        $where = "c.target_id = ? AND c.target_type = ? AND c.status = 'approved' AND c.parent_id IS NULL";
+        $params = [(string)$target_id, (string)$target_type];
+
+        if ($filter_type !== 'all') {
+            $where .= " AND c.type = ?";
+            $params[] = $filter_type;
+        }
+
         // Only count top-level comments for pagination
-        $count_sql = "SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND status = 'approved' AND parent_id IS NULL";
+        $count_sql = "SELECT COUNT(*) FROM comments c WHERE $where";
         $stmt = $this->pdo->prepare($count_sql);
-        $stmt->execute([$target_id, $target_type]);
+        $stmt->execute($params);
         $total_top_level = $stmt->fetchColumn();
         $total_pages = ceil($total_top_level / $per_page);
 
         $offset = ($page - 1) * $per_page;
+
+        $order_by = "c.created_at DESC";
+        if ($sort === 'popular') {
+            $order_by = "c.likes_count DESC, c.created_at DESC";
+        } elseif ($sort === 'most_replies') {
+            $order_by = "total_replies DESC, c.created_at DESC";
+        }
 
         // 1. Get top-level comments for the current page
         $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
+                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires,
+                (SELECT COUNT(*) FROM comments WHERE parent_id = c.id AND status = 'approved') as total_replies
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
-                WHERE c.target_id = ? AND c.target_type = ? AND c.status = 'approved' AND c.parent_id IS NULL
-                ORDER BY c.created_at DESC
+                WHERE $where
+                ORDER BY $order_by
                 LIMIT ? OFFSET ?";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(1, (string)$target_id);
-        $stmt->bindValue(2, (string)$target_type);
-        $stmt->bindValue(3, (int)$per_page, PDO::PARAM_INT);
-        $stmt->bindValue(4, (int)$offset, PDO::PARAM_INT);
+        $idx = 1;
+        foreach ($params as $p) {
+            $stmt->bindValue($idx++, $p);
+        }
+        $stmt->bindValue($idx++, (int)$per_page, PDO::PARAM_INT);
+        $stmt->bindValue($idx++, (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
         $top_level_comments = $stmt->fetchAll();
 
@@ -117,10 +135,7 @@ class Comments {
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
 
-            // Fetch total reply count
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE parent_id = ? AND status = 'approved'");
-            $stmt->execute([$c['id']]);
-            $c['total_replies'] = (int)$stmt->fetchColumn();
+            // total_replies is now fetched in the main query
 
             // Fetch first 3 replies (don't parse mentions yet, we will do it in bulk)
             $c['replies'] = $this->getReplies($c['id'], 0, 3, $user_id, false);
@@ -304,6 +319,11 @@ class Comments {
      */
     public function addComment($user_id, $target_id, $target_type, $content, $parent_id = null, $reply_to_user_id = null, $reply_to_id = null, $mentions = [], $guest_name = null, $guest_email = null, $type = 'comment', $image_url = null) {
         if (!$this->pdo) return false;
+
+        if ($target_type === 'post') {
+            $type = 'comment';
+            $image_url = null;
+        }
 
         // Validation: Enforce depth limit 1 at application layer
         if ($parent_id) {

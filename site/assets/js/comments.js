@@ -17,8 +17,12 @@ class CommentSystem {
         const initialData = window.__COMMENTS_INITIAL_DATA__?.[`${this.targetType}_${this.targetId}`];
         this.comments = options.initialComments || initialData?.comments || [];
         this.totalCount = initialData?.total_count || 0;
+        this.totalPages = initialData?.total_pages || 1;
         this.readOnly = options.readOnly || (this.targetType === 'user_profile');
         this.guestCommentEnabled = this.container.dataset.guestComment === '1';
+        this.filterType = 'all';
+        this.sort = 'newest';
+        this.currentPage = initialData?.current_page || 1;
 
         if (options.initialComments) {
             this.render();
@@ -67,11 +71,12 @@ class CommentSystem {
 
     async loadComments() {
         try {
-            const response = await fetch(`/api/comments.php?action=list&target_id=${this.targetId}&target_type=${this.targetType}`);
+            const response = await fetch(`/api/comments.php?action=list&target_id=${this.targetId}&target_type=${this.targetType}&filter_type=${this.filterType}&sort=${this.sort}&page=${this.currentPage}`);
             const data = await response.json();
             if (data.success) {
                 this.comments = data.comments;
                 this.totalCount = data.total_count;
+                this.totalPages = data.total_pages;
             }
         } catch (error) {
             console.error('Failed to load comments:', error);
@@ -92,9 +97,29 @@ class CommentSystem {
                 ${this.renderCommentForm()}
                 ` : ''}
 
-                <div class="comment-list ${this.readOnly ? 'mt-0' : 'mt-8'}">
+                <div class="comments-filters d-flex-wrap just-between align-center gap-1 mb-2 mt-4">
+                    <div class="d-flex gap-05">
+                        <button class="btn btn-sm btn-secondary filter-btn ${this.filterType === 'all' ? 'active' : ''}" data-filter="all">همه</button>
+                        <button class="btn btn-sm btn-secondary filter-btn ${this.filterType === 'comment' ? 'active' : ''}" data-filter="comment">نظرات</button>
+                        ${this.targetType !== 'post' ? `
+                            <button class="btn btn-sm btn-secondary filter-btn ${this.filterType === 'analysis' ? 'active' : ''}" data-filter="analysis">تحلیل‌ها</button>
+                        ` : ''}
+                    </div>
+                    <div class="d-flex align-center gap-05">
+                        <span class="text-gray-400 font-size-1">ترتیب:</span>
+                        <select class="form-select select-sm sort-select radius-8 font-size-1">
+                            <option value="newest" ${this.sort === 'newest' ? 'selected' : ''}>جدیدترین</option>
+                            <option value="popular" ${this.sort === 'popular' ? 'selected' : ''}>محبوب‌ترین</option>
+                            <option value="most_replies" ${this.sort === 'most_replies' ? 'selected' : ''}>بیشترین پاسخ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="comment-list ${this.readOnly ? 'mt-0' : 'mt-2'}">
                     ${this.renderComments(this.comments)}
                 </div>
+
+                ${this.renderPagination()}
             </div>
         `;
 
@@ -158,7 +183,7 @@ class CommentSystem {
         const suffix = parentId || 'main';
         return `
             <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${suffix}">
-                <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1">
+                <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1 ${this.targetType === 'post' ? 'd-none' : ''}">
                     <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
                         <input type="radio" name="comment_type_${suffix}" value="comment" class="comment-type-radio" data-suffix="${suffix}" checked>
                         <span>نظر</span>
@@ -374,6 +399,16 @@ class CommentSystem {
                 <span>${this.toPersianDigits(count)}</span> ${emoji}
             </div>
         `;
+    }
+
+    renderPagination() {
+        if (!this.totalPages || this.totalPages <= 1) return '';
+        let html = '<div class="pagination mt-3 d-flex just-center gap-05">';
+        for (let i = 1; i <= this.totalPages; i++) {
+            html += `<button class="btn ${i === this.currentPage ? 'btn-primary' : 'btn-secondary'} btn-sm radius-8 page-btn" data-page="${i}">${this.toPersianDigits(i)}</button>`;
+        }
+        html += '</div>';
+        return html;
     }
 
     toPersianDigits(num) {
@@ -790,6 +825,35 @@ class CommentSystem {
         });
 
         this.initTagMentions();
+
+        // Filter and Sort Events
+        this.container.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = () => {
+                if (btn.classList.contains('active')) return;
+                this.filterType = btn.dataset.filter;
+                this.currentPage = 1;
+                this.loadAndRender();
+            };
+        });
+
+        const sortSelect = this.container.querySelector('.sort-select');
+        if (sortSelect) {
+            sortSelect.onchange = () => {
+                this.sort = sortSelect.value;
+                this.currentPage = 1;
+                this.loadAndRender();
+            };
+        }
+
+        this.container.querySelectorAll('.page-btn').forEach(btn => {
+            btn.onclick = () => {
+                const page = parseInt(btn.dataset.page);
+                if (page === this.currentPage) return;
+                this.currentPage = page;
+                this.loadAndRender();
+                this.container.scrollIntoView({ behavior: 'smooth' });
+            };
+        });
     }
 
     initTagMentions() {
