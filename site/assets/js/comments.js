@@ -271,12 +271,15 @@ class CommentSystem {
                         </div>
                         ` : ''}
                         <div class="footer-right">
-                            <div class="reaction-pill">
-                                ${this.renderReaction(c, 'like', '👍')}
-                                ${this.renderReaction(c, 'heart', '❤️')}
-                                ${this.renderReaction(c, 'fire', '🔥')}
-                                ${this.renderReaction(c, 'dislike', '👎')}
-                            </div>
+                            ${(() => {
+                                const reactionsHtml = (
+                                    this.renderReaction(c, 'like', '👍') +
+                                    this.renderReaction(c, 'heart', '❤️') +
+                                    this.renderReaction(c, 'fire', '🔥') +
+                                    this.renderReaction(c, 'dislike', '👎')
+                                ).trim();
+                                return `<div class="reaction-pill ${reactionsHtml ? '' : 'd-none'}">${reactionsHtml}</div>`;
+                            })()}
                             <div class="comment-footer-btn btn-react-trigger" data-id="${c.id}">
                                 <i data-lucide="smile" class="icon-size-4"></i>
                                 <span>واکنش</span>
@@ -496,12 +499,18 @@ class CommentSystem {
                         }
                         const pill = document.querySelector(`#comment-${id} .reaction-pill`);
                         if (pill) {
-                            pill.innerHTML = `
+                            const reactionsHtml = `
                                 ${this.renderReaction({id, likes: counts.likes, user_reaction: userReaction}, 'like', '👍')}
                                 ${this.renderReaction({id, hearts: counts.hearts, user_reaction: userReaction}, 'heart', '❤️')}
                                 ${this.renderReaction({id, fires: counts.fires, user_reaction: userReaction}, 'fire', '🔥')}
                                 ${this.renderReaction({id, dislikes: counts.dislikes, user_reaction: userReaction}, 'dislike', '👎')}
-                            `;
+                            `.trim();
+                            pill.innerHTML = reactionsHtml;
+                            if (reactionsHtml) {
+                                pill.classList.remove('d-none');
+                            } else {
+                                pill.classList.add('d-none');
+                            }
                             this.bindEvents();
                         }
                     } else if (data.message) {

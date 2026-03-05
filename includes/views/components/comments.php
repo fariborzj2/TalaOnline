@@ -89,11 +89,14 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                 <?php endif; ?>
 
                 <div class="footer-right mr-auto">
-                    <div class="reaction-pill">
-                        <?= render_reaction($c, 'like', '👍') ?>
-                        <?= render_reaction($c, 'heart', '❤️') ?>
-                        <?= render_reaction($c, 'fire', '🔥') ?>
-                        <?= render_reaction($c, 'dislike', '👎') ?>
+                    <?php
+                    $reactions_html = render_reaction($c, 'like', '👍') .
+                                     render_reaction($c, 'heart', '❤️') .
+                                     render_reaction($c, 'fire', '🔥') .
+                                     render_reaction($c, 'dislike', '👎');
+                    ?>
+                    <div class="reaction-pill <?= empty($reactions_html) ? 'd-none' : '' ?>">
+                        <?= $reactions_html ?>
                     </div>
                     <div class="comment-footer-btn btn-react-trigger" data-id="<?= $c['id'] ?>">
                         <i data-lucide="smile" class="icon-size-4"></i>
