@@ -561,7 +561,7 @@ class Comments {
     /**
      * Bulk load users mentioned in a list of comments
      */
-    private function loadMentionedUsers($comments) {
+    public function loadMentionedUsers($comments) {
         $userIds = [];
         foreach ($comments as $c) {
             preg_match_all('/\[user:(\d+)\]/', $c['content'], $matches);
