@@ -70,18 +70,10 @@ $sql = "SELECT c.*, u.name as user_name, u.username as user_username, u.avatar a
         LEFT JOIN users u ON c.user_id = u.id
         $where_sql
         ORDER BY c.created_at DESC
-        LIMIT ? OFFSET ?";
+        LIMIT " . (int)$per_page . " OFFSET " . (int)$offset;
 
 $stmt = $pdo->prepare($sql);
-
-// Bind values manually to ensure proper types for LIMIT/OFFSET in some drivers
-$i = 1;
-foreach ($params as $p) {
-    $stmt->bindValue($i++, $p);
-}
-$stmt->bindValue($i++, $per_page, PDO::PARAM_INT);
-$stmt->bindValue($i++, $offset, PDO::PARAM_INT);
-$stmt->execute();
+$stmt->execute($params);
 $comments = $stmt->fetchAll();
 
 // Pre-process for mentions and dates
