@@ -245,21 +245,27 @@ function render_reaction($c, $type, $emoji) {
         <?php endif; ?>
     <?php endif; ?>
 
-    <div class="comments-filters d-flex-wrap just-between align-center gap-1 mb-2 mt-4">
-        <div class="d-flex gap-05">
-            <button class="btn btn-sm btn-secondary filter-btn active" data-filter="all">همه</button>
-            <button class="btn btn-sm btn-secondary filter-btn" data-filter="comment">نظرات</button>
-            <?php if ($target_type !== 'post'): ?>
-                <button class="btn btn-sm btn-secondary filter-btn" data-filter="analysis">تحلیل‌ها</button>
-            <?php endif; ?>
-        </div>
-        <div class="d-flex align-center gap-05">
-            <span class="text-gray-400 font-size-1">ترتیب:</span>
-            <select class="form-select select-sm sort-select radius-8 font-size-1">
-                <option value="newest">جدیدترین</option>
-                <option value="popular">محبوب‌ترین</option>
-                <option value="most_replies">بیشترین پاسخ</option>
-            </select>
+    <div class="comments-filters d-flex-wrap just-between align-center gap-2 mb-4 mt-8">
+        <?php if ($target_type !== 'post'): ?>
+            <div class="filter-group d-flex gap-1-5">
+                <span class="filter-item filter-btn active" data-filter="all">همه</span>
+                <span class="filter-item filter-btn" data-filter="comment">نظرات</span>
+                <span class="filter-item filter-btn" data-filter="analysis">تحلیل‌ها</span>
+            </div>
+        <?php else: ?>
+            <div></div>
+        <?php endif; ?>
+
+        <div class="sort-group d-flex align-center gap-1">
+            <div class="d-flex align-center gap-05 text-gray-500">
+                <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
+                <span class="font-bold font-size-0-9">مرتب‌سازی:</span>
+            </div>
+            <div class="d-flex gap-1-5">
+                <span class="sort-item sort-btn active" data-sort="newest">جدیدترین</span>
+                <span class="sort-item sort-btn" data-sort="most_replies">دیدگاه خریداران</span>
+                <span class="sort-item sort-btn" data-sort="popular">مفیدترین</span>
+            </div>
         </div>
     </div>
 
