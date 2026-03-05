@@ -513,10 +513,11 @@
     }
 }
 
-.comment-type-btn.active {
-    background-color: #249E94 !important;
-    color: #fff !important;
-    border-color: #249E94 !important;
+.comment-type-radio {
+    width: 18px;
+    height: 18px;
+    accent-color: #249E94;
+    cursor: pointer;
 }
 
 .upload-zone {

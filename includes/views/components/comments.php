@@ -173,13 +173,15 @@ function render_reaction($c, $type, $emoji) {
 
         <?php if ($is_logged_in || $guest_comment_enabled): ?>
             <div class="comment-form" id="form-main">
-                <div class="comment-type-toggle d-flex gap-05 mb-1">
-                    <button type="button" class="btn btn-sm btn-secondary active flex-1 radius-10 py-2 comment-type-btn" data-type="comment" data-suffix="main">
-                        <i data-lucide="message-square" class="icon-size-3"></i> نظر
-                    </button>
-                    <button type="button" class="btn btn-sm btn-secondary flex-1 radius-10 py-2 comment-type-btn" data-type="analysis" data-suffix="main">
-                        <i data-lucide="line-chart" class="icon-size-3"></i> تحلیل
-                    </button>
+                <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1">
+                    <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
+                        <input type="radio" name="comment_type_main" value="comment" class="comment-type-radio" data-suffix="main" checked>
+                        <span>نظر</span>
+                    </label>
+                    <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
+                        <input type="radio" name="comment_type_main" value="analysis" class="comment-type-radio" data-suffix="main">
+                        <span>تحلیل</span>
+                    </label>
                 </div>
 
                 <?php if (!$is_logged_in && $guest_comment_enabled): ?>
@@ -218,11 +220,11 @@ function render_reaction($c, $type, $emoji) {
                             <div class="font-bold text-sm text-slate-700">آپلود تصویر تحلیل</div>
                             <div class="text-xs text-gray-400">فرمت‌های مجاز: PNG, JPG, WebP</div>
                         </div>
-                        <input type="file" id="comment-image-main" class="d-none comment-image-input" accept="image/*">
+                        <input type="file" id="comment-image-main" class="d-none comment-image-input" accept="image/*" data-suffix="main">
                     </label>
                     <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border">
                         <img src="" class="w-full h-48 object-cover">
-                        <button type="button" class="remove-preview position-absolute top-0 left-0 m-2 btn btn-sm btn-danger radius-50 p-1">
+                        <button type="button" class="remove-preview position-absolute top-0 left-0 m-2 btn btn-sm btn-danger radius-50 p-1" data-suffix="main">
                             <i data-lucide="x" class="icon-size-3"></i>
                         </button>
                     </div>
