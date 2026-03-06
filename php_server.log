@@ -1,89 +1,479 @@
-[Fri Mar  6 09:16:45 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Fri Mar  6 09:16:48 2026] [::1]:58354 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58354 [200]: GET /profile/1/testuser
-[Fri Mar  6 09:16:48 2026] [::1]:58354 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58364 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58374 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58380 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58388 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58402 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58406 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58364 [200]: GET /assets/css/editor.css?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58374 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58364 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58380 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58374 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58380 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58388 [200]: GET /assets/js/editor.js?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58402 [200]: GET /assets/js/sticky-vanilla.js?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58406 [200]: GET /assets/images/logo-larg.svg?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58418 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58388 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58402 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58406 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58418 [200]: GET /assets/images/default-avatar.png
-[Fri Mar  6 09:16:48 2026] [::1]:58418 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58428 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58428 [200]: GET /assets/css/comments.css?v=1772788602
-[Fri Mar  6 09:16:48 2026] [::1]:58428 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58432 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58442 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58432 [200]: GET /assets/js/comments.js?v=1772788335
-[Fri Mar  6 09:16:48 2026] [::1]:58442 [200]: GET /assets/js/vendor/lucide.js?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58432 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58442 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58454 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58462 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58476 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58454 [200]: GET /assets/js/app.js?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58462 [200]: GET /assets/js/notifications.js?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58476 [200]: GET /assets/images/logo.svg?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58454 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58462 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58476 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58478 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58482 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58478 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58482 [200]: GET /assets/fonts/estedad/Estedad-FD-ExtraBold.woff2?v=1772722400
-[Fri Mar  6 09:16:48 2026] [::1]:58478 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58482 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58486 Accepted
-[Fri Mar  6 09:16:48 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+[Fri Mar  6 09:48:46 2026] PHP 8.3.6 Development Server (http://localhost:8080) started
+[Fri Mar  6 09:48:49 2026] [::1]:56778 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56778 [404]: GET /blog/news/1
+[Fri Mar  6 09:48:49 2026] [::1]:56778 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56790 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56802 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56804 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56812 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56828 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56840 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56790 [200]: GET /assets/css/editor.css?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56802 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56804 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56812 [200]: GET /assets/js/editor.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56790 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56802 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56804 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56812 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56828 [200]: GET /assets/js/sticky-vanilla.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56840 [200]: GET /assets/images/logo-larg.svg?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56842 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56828 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56840 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56842 [200]: GET /assets/js/vendor/lucide.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56842 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56846 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56846 [200]: GET /assets/js/app.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56846 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56862 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56862 [200]: GET /assets/js/notifications.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56862 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56874 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56874 [200]: GET /assets/images/logo.svg?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56874 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56880 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56888 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56880 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56888 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56880 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56888 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56894 Accepted
+[Fri Mar  6 09:48:49 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
 Stack trace:
 #0 /app/site/api/dashboard.php(82): PDO->query()
 #1 {main}
   thrown in /app/site/api/dashboard.php on line 82
-[Fri Mar  6 09:16:48 2026] [::1]:58486 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+[Fri Mar  6 09:48:49 2026] [::1]:56894 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
 Stack trace:
 #0 /app/site/api/dashboard.php(82): PDO->query()
 #1 {main}
   thrown in /app/site/api/dashboard.php on line 82
-[Fri Mar  6 09:16:48 2026] [::1]:58486 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58494 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58494 [200]: GET /sw.js
-[Fri Mar  6 09:16:48 2026] [::1]:58494 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58502 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58512 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58522 Accepted
-[Fri Mar  6 09:16:48 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
-[Fri Mar  6 09:16:48 2026] [::1]:58502 [200]: GET /offline.php
-[Fri Mar  6 09:16:48 2026] [::1]:58502 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58512 [200]: GET /
-[Fri Mar  6 09:16:48 2026] [::1]:58512 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58522 [200]: GET /assets/css/style.css
-[Fri Mar  6 09:16:48 2026] [::1]:58524 Accepted
-[Fri Mar  6 09:16:48 2026] [::1]:58524 [200]: GET /assets/js/app.js
-[Fri Mar  6 09:16:48 2026] [::1]:58522 Closing
-[Fri Mar  6 09:16:48 2026] [::1]:58524 Closing
-[Fri Mar  6 09:16:49 2026] [::1]:58538 Accepted
-[Fri Mar  6 09:16:49 2026] [::1]:58544 Accepted
-[Fri Mar  6 09:16:49 2026] [::1]:58552 Accepted
-[Fri Mar  6 09:16:49 2026] [::1]:58538 [200]: GET /assets/images/logo.png
-[Fri Mar  6 09:16:49 2026] [::1]:58538 Closing
-[Fri Mar  6 09:16:49 2026] [::1]:58544 [200]: GET /assets/images/logo.svg
-[Fri Mar  6 09:16:49 2026] [::1]:58544 Closing
-[Fri Mar  6 09:16:49 2026] [::1]:58552 [200]: GET /assets/images/favicon/favicon-32x32.png
-[Fri Mar  6 09:16:49 2026] [::1]:58552 Closing
-[Fri Mar  6 09:16:49 2026] [::1]:58556 Accepted
-[Fri Mar  6 09:16:49 2026] [::1]:58556 [200]: GET /assets/images/favicon/android-icon-192x192.png
-[Fri Mar  6 09:16:49 2026] [::1]:58556 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56894 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56898 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56898 [200]: GET /sw.js
+[Fri Mar  6 09:48:49 2026] [::1]:56898 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56906 Accepted
+[Fri Mar  6 09:48:49 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Fri Mar  6 09:48:49 2026] [::1]:56906 [200]: GET /offline.php
+[Fri Mar  6 09:48:49 2026] [::1]:56906 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56916 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56920 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56916 [200]: GET /
+[Fri Mar  6 09:48:49 2026] [::1]:56916 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56934 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56920 [200]: GET /assets/css/style.css
+[Fri Mar  6 09:48:49 2026] [::1]:56934 [200]: GET /assets/js/app.js
+[Fri Mar  6 09:48:49 2026] [::1]:56920 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56934 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56936 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56946 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56936 [200]: GET /assets/images/logo.png
+[Fri Mar  6 09:48:49 2026] [::1]:56956 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56946 [200]: GET /assets/images/logo.svg
+[Fri Mar  6 09:48:49 2026] [::1]:56956 [200]: GET /assets/images/favicon/favicon-32x32.png
+[Fri Mar  6 09:48:49 2026] [::1]:56936 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56946 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56956 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56968 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56968 [200]: GET /assets/images/favicon/android-icon-192x192.png
+[Fri Mar  6 09:48:49 2026] [::1]:56968 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56982 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56982 [404]: GET /gold/18ayar
+[Fri Mar  6 09:48:49 2026] [::1]:56982 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:56984 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56988 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56984 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56990 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56988 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57000 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56990 [200]: GET /assets/css/editor.css?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57008 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56984 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57000 [200]: GET /assets/js/editor.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57018 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:56988 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57008 [200]: GET /assets/js/sticky-vanilla.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57018 [200]: GET /assets/images/logo-larg.svg?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:56990 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57000 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57008 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57018 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57020 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:57020 [200]: GET /assets/js/vendor/lucide.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57020 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57022 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:57022 [200]: GET /assets/js/app.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57022 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57030 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:57030 [200]: GET /assets/js/notifications.js?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57030 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57038 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:57038 [200]: GET /assets/images/logo.svg?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57038 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57048 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:57048 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57048 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57054 Accepted
+[Fri Mar  6 09:48:49 2026] [::1]:57054 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772722400
+[Fri Mar  6 09:48:49 2026] [::1]:57054 Closing
+[Fri Mar  6 09:48:49 2026] [::1]:57070 Accepted
+[Fri Mar  6 09:48:49 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:48:49 2026] [::1]:57070 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:48:49 2026] [::1]:57070 Closing
+[Fri Mar  6 09:48:51 2026] [::1]:57084 Accepted
+[Fri Mar  6 09:48:51 2026] [::1]:57084 [200]: GET /sw.js
+[Fri Mar  6 09:48:51 2026] [::1]:57084 Closing
+[Fri Mar  6 09:49:47 2026] [::1]:45480 Accepted
+[Fri Mar  6 09:49:47 2026] [::1]:45480 [200]: GET /profile/1/testuser
+[Fri Mar  6 09:49:47 2026] [::1]:45480 Closing
+[Fri Mar  6 09:49:47 2026] [::1]:45494 Accepted
+[Fri Mar  6 09:49:47 2026] [::1]:45502 Accepted
+[Fri Mar  6 09:49:47 2026] [::1]:45514 Accepted
+[Fri Mar  6 09:49:47 2026] [::1]:45522 Accepted
+[Fri Mar  6 09:49:47 2026] [::1]:45524 Accepted
+[Fri Mar  6 09:49:47 2026] [::1]:45540 Accepted
+[Fri Mar  6 09:49:47 2026] [::1]:45494 [200]: GET /assets/css/editor.css?v=1772722400
+[Fri Mar  6 09:49:47 2026] [::1]:45494 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45502 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45502 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45514 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45522 [200]: GET /assets/js/editor.js?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45524 [200]: GET /assets/js/sticky-vanilla.js?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45514 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45522 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45524 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45540 [200]: GET /assets/images/logo-larg.svg?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45540 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45546 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45546 [200]: GET /assets/images/default-avatar.png
+[Fri Mar  6 09:49:48 2026] [::1]:45546 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45552 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45552 [200]: GET /assets/css/comments.css?v=1772789829
+[Fri Mar  6 09:49:48 2026] [::1]:45552 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45558 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45558 [200]: GET /assets/js/comments.js?v=1772789864
+[Fri Mar  6 09:49:48 2026] [::1]:45558 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45566 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45566 [200]: GET /assets/js/vendor/lucide.js?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45566 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45576 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45592 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45604 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45576 [200]: GET /assets/js/app.js?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45576 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45592 [200]: GET /assets/js/notifications.js?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45604 [200]: GET /assets/images/logo.svg?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45592 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45604 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45616 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45620 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45616 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45620 [200]: GET /assets/fonts/estedad/Estedad-FD-ExtraBold.woff2?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45616 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45620 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45634 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45634 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772722400
+[Fri Mar  6 09:49:48 2026] [::1]:45634 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45646 Accepted
+[Fri Mar  6 09:49:48 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:49:48 2026] [::1]:45646 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:49:48 2026] [::1]:45646 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45656 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45656 [200]: GET /sw.js
+[Fri Mar  6 09:49:48 2026] [::1]:45656 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45658 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45668 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45672 Accepted
+[Fri Mar  6 09:49:48 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Fri Mar  6 09:49:48 2026] [::1]:45658 [200]: GET /offline.php
+[Fri Mar  6 09:49:48 2026] [::1]:45658 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45668 [200]: GET /
+[Fri Mar  6 09:49:48 2026] [::1]:45668 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45672 [200]: GET /assets/css/style.css
+[Fri Mar  6 09:49:48 2026] [::1]:45672 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45680 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45680 [200]: GET /assets/js/app.js
+[Fri Mar  6 09:49:48 2026] [::1]:45680 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45692 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45702 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45692 [200]: GET /assets/images/logo.png
+[Fri Mar  6 09:49:48 2026] [::1]:45692 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45714 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45702 [200]: GET /assets/images/logo.svg
+[Fri Mar  6 09:49:48 2026] [::1]:45702 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45714 [200]: GET /assets/images/favicon/favicon-32x32.png
+[Fri Mar  6 09:49:48 2026] [::1]:45714 Closing
+[Fri Mar  6 09:49:48 2026] [::1]:45730 Accepted
+[Fri Mar  6 09:49:48 2026] [::1]:45730 [200]: GET /assets/images/favicon/android-icon-192x192.png
+[Fri Mar  6 09:49:48 2026] [::1]:45730 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46622 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46622 [200]: GET /profile/1/testuser
+[Fri Mar  6 09:50:25 2026] [::1]:46622 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46632 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46646 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46660 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46672 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46674 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46678 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46632 [200]: GET /assets/css/editor.css?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46646 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46632 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46660 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46646 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46660 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46694 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46672 [200]: GET /assets/js/editor.js?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46674 [200]: GET /assets/js/sticky-vanilla.js?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46678 [200]: GET /assets/images/logo-larg.svg?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46694 [200]: GET /assets/images/default-avatar.png
+[Fri Mar  6 09:50:25 2026] [::1]:46672 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46674 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46678 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46694 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46702 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46702 [200]: GET /assets/css/comments.css?v=1772789829
+[Fri Mar  6 09:50:25 2026] [::1]:46702 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46714 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46714 [200]: GET /assets/js/comments.js?v=1772789864
+[Fri Mar  6 09:50:25 2026] [::1]:46714 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46724 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46724 [200]: GET /assets/js/vendor/lucide.js?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46724 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46736 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46746 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46754 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46736 [200]: GET /assets/js/app.js?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46746 [200]: GET /assets/js/notifications.js?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46754 [200]: GET /assets/images/logo.svg?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46736 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46746 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46754 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46760 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46764 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46778 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46760 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46760 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46764 [200]: GET /assets/fonts/estedad/Estedad-FD-ExtraBold.woff2?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46764 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46778 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772722400
+[Fri Mar  6 09:50:25 2026] [::1]:46778 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46786 Accepted
+[Fri Mar  6 09:50:25 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:50:25 2026] [::1]:46786 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:50:25 2026] [::1]:46786 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46790 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46790 [200]: GET /sw.js
+[Fri Mar  6 09:50:25 2026] [::1]:46790 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46798 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46808 Accepted
+[Fri Mar  6 09:50:25 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Fri Mar  6 09:50:25 2026] [::1]:46798 [200]: GET /offline.php
+[Fri Mar  6 09:50:25 2026] [::1]:46798 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46810 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46808 [200]: GET /
+[Fri Mar  6 09:50:25 2026] [::1]:46808 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46826 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46810 [200]: GET /assets/css/style.css
+[Fri Mar  6 09:50:25 2026] [::1]:46826 [200]: GET /assets/js/app.js
+[Fri Mar  6 09:50:25 2026] [::1]:46810 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46826 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46836 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46842 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46836 [200]: GET /assets/images/logo.png
+[Fri Mar  6 09:50:25 2026] [::1]:46848 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46842 [200]: GET /assets/images/logo.svg
+[Fri Mar  6 09:50:25 2026] [::1]:46848 [200]: GET /assets/images/favicon/favicon-32x32.png
+[Fri Mar  6 09:50:25 2026] [::1]:46836 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46842 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46848 Closing
+[Fri Mar  6 09:50:25 2026] [::1]:46850 Accepted
+[Fri Mar  6 09:50:25 2026] [::1]:46850 [200]: GET /assets/images/favicon/android-icon-192x192.png
+[Fri Mar  6 09:50:25 2026] [::1]:46850 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60676 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60676 [200]: GET /profile/1/testuser
+[Fri Mar  6 09:52:13 2026] [::1]:60676 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60678 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60690 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60692 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60706 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60714 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60722 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60678 [200]: GET /assets/css/editor.css?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60678 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60690 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60690 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60692 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60692 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60724 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60706 [200]: GET /assets/js/editor.js?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60714 [200]: GET /assets/js/sticky-vanilla.js?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60722 [200]: GET /assets/images/logo-larg.svg?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60724 [200]: GET /assets/images/default-avatar.png
+[Fri Mar  6 09:52:13 2026] [::1]:60706 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60714 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60722 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60724 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60736 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60736 [200]: GET /assets/css/comments.css?v=1772789829
+[Fri Mar  6 09:52:13 2026] [::1]:60736 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60752 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60752 [200]: GET /assets/js/comments.js?v=1772790706
+[Fri Mar  6 09:52:13 2026] [::1]:60752 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60764 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60764 [200]: GET /assets/js/vendor/lucide.js?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60764 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60780 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60784 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60780 [200]: GET /assets/js/app.js?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60790 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60784 [200]: GET /assets/js/notifications.js?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60790 [200]: GET /assets/images/logo.svg?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60780 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60784 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60790 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60794 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60808 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60794 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60794 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60808 [200]: GET /assets/fonts/estedad/Estedad-FD-ExtraBold.woff2?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60808 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60820 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60820 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772722400
+[Fri Mar  6 09:52:13 2026] [::1]:60820 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60824 Accepted
+[Fri Mar  6 09:52:13 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:52:13 2026] [::1]:60824 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:52:13 2026] [::1]:60824 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60830 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60830 [200]: GET /sw.js
+[Fri Mar  6 09:52:13 2026] [::1]:60830 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60838 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60850 Accepted
+[Fri Mar  6 09:52:13 2026] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /app/includes/helpers.php on line 211
+[Fri Mar  6 09:52:13 2026] [::1]:60838 [200]: GET /offline.php
+[Fri Mar  6 09:52:13 2026] [::1]:60838 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60856 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60850 [200]: GET /
+[Fri Mar  6 09:52:13 2026] [::1]:60850 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60862 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60856 [200]: GET /assets/css/style.css
+[Fri Mar  6 09:52:13 2026] [::1]:60862 [200]: GET /assets/js/app.js
+[Fri Mar  6 09:52:13 2026] [::1]:60856 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60862 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60878 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60886 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60896 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60878 [200]: GET /assets/images/logo.png
+[Fri Mar  6 09:52:13 2026] [::1]:60886 [200]: GET /assets/images/logo.svg
+[Fri Mar  6 09:52:13 2026] [::1]:60878 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60896 [200]: GET /assets/images/favicon/favicon-32x32.png
+[Fri Mar  6 09:52:13 2026] [::1]:60886 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60896 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60910 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60910 [200]: GET /assets/images/favicon/android-icon-192x192.png
+[Fri Mar  6 09:52:13 2026] [::1]:60910 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60920 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60920 [200]: GET /api/comments.php?action=thread&comment_id=11
+[Fri Mar  6 09:52:13 2026] [::1]:60920 Closing
+[Fri Mar  6 09:52:13 2026] [::1]:60936 Accepted
+[Fri Mar  6 09:52:13 2026] [::1]:60936 [200]: GET /assets/images/default-avatar.png
+[Fri Mar  6 09:52:13 2026] [::1]:60936 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:60948 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:60948 [200]: GET /profile/1/testuser
+[Fri Mar  6 09:52:14 2026] [::1]:60948 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:60950 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:60962 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:60966 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:60982 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:60986 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:60994 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:60966 [200]: GET /assets/css/editor.css?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:60966 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:60950 [200]: GET /assets/fonts/estedad/Estedad-FD-Regular.woff2?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:60950 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:60962 [200]: GET /assets/fonts/estedad/Estedad-FD-Bold.woff2?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:60962 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:60982 [200]: GET /assets/js/editor.js?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:60986 [200]: GET /assets/js/sticky-vanilla.js?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:60994 [200]: GET /assets/images/logo-larg.svg?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:60982 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:60986 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:60994 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32770 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32770 [200]: GET /assets/images/default-avatar.png
+[Fri Mar  6 09:52:14 2026] [::1]:32770 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32772 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32788 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32772 [200]: GET /assets/css/comments.css?v=1772789829
+[Fri Mar  6 09:52:14 2026] [::1]:32772 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32788 [200]: GET /assets/js/comments.js?v=1772790706
+[Fri Mar  6 09:52:14 2026] [::1]:32788 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32798 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32808 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32818 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32834 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32798 [200]: GET /assets/js/vendor/lucide.js?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:32798 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32808 [200]: GET /assets/js/app.js?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:32818 [200]: GET /assets/js/notifications.js?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:32834 [200]: GET /assets/images/logo.svg?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:32808 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32818 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32834 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32850 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32866 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32874 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32850 [200]: GET /assets/fonts/estedad/Estedad-FD-SemiBold.woff2?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:32866 [200]: GET /assets/fonts/estedad/Estedad-FD-ExtraBold.woff2?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:32874 [200]: GET /assets/fonts/estedad/Estedad-FD-Medium.woff2?v=1772722400
+[Fri Mar  6 09:52:14 2026] [::1]:32850 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32866 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32874 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32888 Accepted
+[Fri Mar  6 09:52:14 2026] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:52:14 2026] [::1]:32888 [500]: GET /api/dashboard.php - Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such table: platforms in /app/site/api/dashboard.php:82
+Stack trace:
+#0 /app/site/api/dashboard.php(82): PDO->query()
+#1 {main}
+  thrown in /app/site/api/dashboard.php on line 82
+[Fri Mar  6 09:52:14 2026] [::1]:32888 Closing
+[Fri Mar  6 09:52:14 2026] [::1]:32902 Accepted
+[Fri Mar  6 09:52:14 2026] [::1]:32902 [200]: GET /api/comments.php?action=thread&comment_id=11
+[Fri Mar  6 09:52:14 2026] [::1]:32902 Closing
