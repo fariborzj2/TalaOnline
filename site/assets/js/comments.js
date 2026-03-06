@@ -1,5 +1,5 @@
 /**
- * Advanced Comment System Component - Refined with Tag-based Mentions
+ * Advanced Comment System Component - Refactored for Performance & Maintainability
  */
 
 class CommentSystem {
@@ -24,35 +24,34 @@ class CommentSystem {
         this.sort = 'newest';
         this.currentPage = initialData?.current_page || 1;
         this.threadModalId = 'comment-thread-modal';
+        this.editors = {};
 
-        if (options.initialComments) {
-            this.render();
-        } else {
-            if (this.container.querySelector('.comment-item')) {
-                this.bindEvents();
-                this.handleAnchorScroll();
-            } else {
-                this.init();
-            }
-        }
+        this.init();
 
         document.addEventListener('auth:status-changed', (e) => {
             const state = e.detail;
+            const wasLoggedIn = this.isLoggedIn;
             this.isLoggedIn = state.isLoggedIn;
             this.currentUsername = state.user?.username;
             this.csrfToken = state.csrfToken;
-            this.render();
+
+            if (wasLoggedIn !== this.isLoggedIn) {
+                this.updateFormUI();
+                this.loadAndRender();
+            }
         });
     }
 
-    async init() {
-        if (this.container.querySelector('.comment-item')) return;
+    init() {
         this.bindEvents();
+        this.initRichEditors();
+        this.initTagMentions();
+        this.handleAnchorScroll();
     }
 
     async loadAndRender() {
         await this.loadComments();
-        this.render();
+        this.updateUI();
         this.handleAnchorScroll();
     }
 
@@ -84,65 +83,106 @@ class CommentSystem {
         }
     }
 
-    render() {
-        if (!this.container) return;
+    updateUI() {
+        this.updateCommentList();
+        this.updatePagination();
+        this.updateStatsUI();
+        this.updateFiltersUI();
+        this.updateSortUI();
+        if (window.lucide) lucide.createIcons({ root: this.container });
+    }
 
-        let html = `
-            <div class="comments-section d-column gap-md ${this.readOnly ? 'read-only' : ''}">
-                ${!this.readOnly ? `
-                <div class="comments-header">
-                    <i data-lucide="message-square" class="text-primary icon-size-6"></i>
-                    <h3>نظرات کاربران <span class="comments-count-badge">(${this.toPersianDigits(this.totalCount || this.getTotalCommentCount())})</span></h3>
+    updateCommentList() {
+        const list = document.getElementById('comment-list');
+        if (!list) return;
+
+        if (this.comments.length === 0) {
+            list.innerHTML = `
+                <div class="bg-block text-center pd-md radius-16 border d-column just-center align-center">
+                    <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+                    <p class="text-gray-400">${this.readOnly ? 'هنوز نظری ثبت نشده است.' : 'هنوز نظری ثبت نشده است. اولین تحلیل‌گر باشید!'}</p>
                 </div>
+            `;
+        } else {
+            list.innerHTML = this.comments.map(c => this.renderCommentItem(c)).join('');
+        }
+        if (window.lucide) lucide.createIcons({ root: list });
+    }
 
-                ${this.renderCommentForm()}
-                ` : ''}
+    updatePagination() {
+        const pagination = document.getElementById('comments-pagination');
+        if (!pagination) {
+            if (this.totalPages > 1) {
+                const list = document.getElementById('comment-list');
+                const newPagination = document.createElement('div');
+                newPagination.id = 'comments-pagination';
+                newPagination.className = 'pagination mt-3 d-flex just-center gap-05';
+                list.after(newPagination);
+                this.renderPaginationUI(newPagination);
+            }
+            return;
+        }
 
-                <div class="bg-block border radius-16 pd-md d-column gap-1">
-                    ${this.targetType !== 'post' ? `
-                        <div class="filter-group-container">
-                            <div class="pill-toggle-group filter-toggle-group">
-                                <button class="pill-btn filter-btn ${this.filterType === 'all' ? 'active' : ''}" data-filter="all">همه</button>
-                                <button class="pill-btn filter-btn ${this.filterType === 'comment' ? 'active' : ''}" data-filter="comment">نظرات</button>
-                                <button class="pill-btn filter-btn ${this.filterType === 'analysis' ? 'active' : ''}" data-filter="analysis">تحلیل‌ها</button>
-                            </div>
-                        </div>
-                    ` : ''}
+        if (this.totalPages <= 1) {
+            pagination.remove();
+        } else {
+            this.renderPaginationUI(pagination);
+        }
+    }
 
-                    <div class="sort-group d-flex align-center just-between gap-1">
-                        <div class="d-flex align-center gap-05 text-title">
-                            <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
-                            <span class="font-bold">مرتب‌سازی:</span>
-                        </div>
-                        <div class="d-flex align-center gap-1-5">
-                            <span class="sort-item sort-btn ${this.sort === 'newest' ? 'active' : ''}" data-sort="newest">جدیدترین</span>
-                            <span class="sort-item sort-btn ${this.sort === 'popular' ? 'active' : ''}" data-sort="popular">محبوب‌ترین</span>
-                            <span class="sort-item sort-btn ${this.sort === 'most_replies' ? 'active' : ''}" data-sort="most_replies">بیشترین پاسخ</span>
-                        </div>
+    renderPaginationUI(container) {
+        let html = '';
+        for (let i = 1; i <= this.totalPages; i++) {
+            html += `<button class="btn ${i === this.currentPage ? 'btn-primary' : 'btn-secondary'} btn-sm radius-8 page-btn" data-page="${i}">${this.toPersianDigits(i)}</button>`;
+        }
+        container.innerHTML = html;
+    }
+
+    updateStatsUI() {
+        const countBadge = this.container.querySelector('.comments-count-badge');
+        if (countBadge) countBadge.innerText = `(${this.toPersianDigits(this.totalCount)})`;
+    }
+
+    updateFiltersUI() {
+        this.container.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === this.filterType);
+        });
+    }
+
+    updateSortUI() {
+        this.container.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.sort === this.sort);
+        });
+    }
+
+    updateFormUI() {
+        const formContainer = document.getElementById('main-form-container');
+        if (!formContainer || this.readOnly) return;
+
+        if (!this.isLoggedIn && !this.guestCommentEnabled) {
+            formContainer.innerHTML = `
+                <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
+                    <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-orange btn-sm" onclick="window.showAuthModal?.('login')">ورود به حساب</button>
+                        <button class="btn btn-secondary btn-sm bg-block" onclick="window.showAuthModal?.('register')">عضویت رایگان</button>
                     </div>
                 </div>
-
-                <div class="comment-list ${this.readOnly ? 'mt-0' : 'mt-2'}">
-                    ${this.renderComments(this.comments)}
-                </div>
-
-                ${this.renderPagination()}
-            </div>
-        `;
-
-        this.container.innerHTML = html;
-        if (window.lucide) lucide.createIcons();
-        this.bindEvents();
+            `;
+        } else {
+            formContainer.innerHTML = this.renderCommentForm();
+            if (window.lucide) lucide.createIcons({ root: formContainer });
+            this.initRichEditors();
+            this.initTagMentions();
+        }
     }
 
     initRichEditors() {
         if (this.readOnly || typeof BaseEditor === 'undefined') return;
-        this.editors = this.editors || {};
 
         const textareas = this.container.querySelectorAll('textarea[id^="textarea-"]');
         textareas.forEach(textarea => {
             const id = textarea.id;
-            // Only initialize if not already initialized and still in DOM
             if (this.editors[id] && document.body.contains(this.editors[id].container)) {
                 return;
             }
@@ -162,34 +202,11 @@ class CommentSystem {
         });
     }
 
-    getTotalCommentCount() {
-        let count = 0;
-        const countReplies = (list) => {
-            count += list.length;
-            list.forEach(c => {
-                if (c.replies) countReplies(c.replies);
-            });
-        };
-        countReplies(this.comments);
-        return count;
-    }
-
     renderCommentForm(parentId = null, initialContent = '') {
-        if (!this.isLoggedIn && !this.guestCommentEnabled) {
-            return `
-                <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
-                    <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
-                    <div class="d-flex gap-1">
-                        <button class="btn btn-orange btn-sm" onclick="window.showAuthModal?.('login')">ورود به حساب</button>
-                        <button class="btn btn-secondary btn-sm bg-block" onclick="window.showAuthModal?.('register')">عضویت رایگان</button>
-                    </div>
-                </div>
-            `;
-        }
-
         const suffix = parentId || 'main';
+        const isEdit = initialContent !== '';
         return `
-            <div class="comment-form ${parentId ? 'mt-3' : ''}" id="form-${suffix}">
+            <div class="comment-form ${parentId && !isEdit ? 'mt-3' : ''}" id="form-${suffix}">
                 <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1 ${this.targetType === 'post' ? 'd-none' : ''}">
                     <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
                         <input type="radio" name="comment_type_${suffix}" value="comment" class="comment-type-radio" data-suffix="${suffix}" checked>
@@ -214,7 +231,9 @@ class CommentSystem {
                     </div>
                 ` : ''}
 
-                <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-${suffix}">${initialContent}</textarea>
+                <div class="mb-1">
+                    <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-${suffix}">${initialContent}</textarea>
+                </div>
                 <input type="text" id="hp-${suffix}" class="d-none" tabindex="-1" autocomplete="off">
 
                 ${this.isLoggedIn ? `
@@ -234,10 +253,10 @@ class CommentSystem {
                         <i data-lucide="image" class="text-gray icon-size-5"></i>
                         <div class="text-right">
                             <div class="font-bold font-size-2 text-title">آپلود تصویر تحلیل</div>
-                            <div class="font-size-1 text-gray">فرمت‌های مجاز: PNG, JPG, WebP, AVIF</div>
                         </div>
                         <input type="file" id="comment-image-${suffix}" class="d-none comment-image-input" accept="image/*" data-suffix="${suffix}">
                     </label>
+                    <div class="font-size-1 text-gray">فرمت‌های مجاز: PNG, JPG, WebP, AVIF</div>
                     <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border" style="width: 100px; height: 100px;">
                         <img src="" class="w-full h-full object-cover">
                         <button type="button" class="remove-preview absolute top-0 left-0 m-05 radius-50 p-05" data-suffix="${suffix}">
@@ -247,27 +266,13 @@ class CommentSystem {
                 </div>
 
                 <div class="comment-form-footer">
-                    <div>
-                        ${!this.isLoggedIn ? '<span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">در حال ارسال به عنوان مهمان</span>' : ''}
-                    </div>
-                    <button class="btn btn-primary submit-comment radius-10" data-parent="${parentId || ''}" data-edit="${initialContent ? 'true' : 'false'}">
-                        ${initialContent ? 'بروزرسانی نظر' : 'ارسال نظر'}
+                    ${!this.isLoggedIn ? '<span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">در حال ارسال به عنوان مهمان</span>' : ''}
+                    <button class="btn btn-primary submit-comment radius-10 mr-auto" data-parent="${parentId || ''}" data-edit="${isEdit}">
+                        ${isEdit ? 'بروزرسانی نظر' : 'ارسال نظر'}
                     </button>
                 </div>
             </div>
         `;
-    }
-
-    renderComments(comments) {
-        if (comments.length === 0) {
-            return `
-                <div class="bg-block text-center pd-md radius-16 border d-column just-center align-center">
-                    <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
-                    <p class="text-gray-400">هنوز نظری ثبت نشده است. اولین تحلیل‌گر باشید!</p>
-                </div>
-            `;
-        }
-        return comments.map(c => this.renderCommentItem(c)).join('');
     }
 
     renderCommentItem(c, isReply = false) {
@@ -282,7 +287,7 @@ class CommentSystem {
 
         let avatarUrl = c.user_avatar;
         if (avatarUrl) {
-            if (!avatarUrl.startsWith('https')) {
+            if (!avatarUrl.startsWith('https') && !avatarUrl.startsWith('http')) {
                 const path = avatarUrl.startsWith('/') ? avatarUrl.substring(1) : avatarUrl;
                 avatarUrl = `${baseUrl}/${path}`;
             }
@@ -297,7 +302,7 @@ class CommentSystem {
                     <div class="comment-header">
                         <div class="comment-user-info">
                             <div class="avatar-container">
-                                <img src="${avatarUrl}" class="comment-avatar" alt="${c.user_name}" onerror="this.src='${defaultAvatar}'">
+                                <img src="${avatarUrl}" class="comment-avatar" alt="${c.user_name || c.guest_name || 'ناشناس'}" onerror="this.src='${defaultAvatar}'">
                                 <div class="online-dot"></div>
                             </div>
                             <div class="comment-meta">
@@ -348,7 +353,7 @@ class CommentSystem {
                             <span>${c.total_replies > 0 ? this.toPersianDigits(c.total_replies) + ' پاسخ' : 'مشاهده گفتگو'}</span>
                         </div>
                         ` : '')}
-                        <div class="footer-right">
+                        <div class="footer-right mr-auto">
                             ${(() => {
                                 const reactionsHtml = (
                                     this.renderReaction(c, 'like', '👍') +
@@ -362,12 +367,12 @@ class CommentSystem {
                                 <i data-lucide="smile" class="icon-size-4"></i>
                                 <span>واکنش</span>
                             </div>
-                        </div>
-                        <div class="reactions-popover" id="popover-${c.id}">
-                            <span class="emoji-btn" data-id="${c.id}" data-type="like">👍</span>
-                            <span class="emoji-btn" data-id="${c.id}" data-type="heart">❤️</span>
-                            <span class="emoji-btn" data-id="${c.id}" data-type="fire">🔥</span>
-                            <span class="emoji-btn" data-id="${c.id}" data-type="dislike">👎</span>
+                            <div class="reactions-popover" id="popover-${c.id}">
+                                <span class="emoji-btn" data-id="${c.id}" data-type="like">👍</span>
+                                <span class="emoji-btn" data-id="${c.id}" data-type="heart">❤️</span>
+                                <span class="emoji-btn" data-id="${c.id}" data-type="fire">🔥</span>
+                                <span class="emoji-btn" data-id="${c.id}" data-type="dislike">👎</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -475,477 +480,500 @@ class CommentSystem {
         `;
     }
 
-    renderPagination() {
-        if (!this.totalPages || this.totalPages <= 1) return '';
-        let html = '<div class="pagination mt-3 d-flex just-center gap-05">';
-        for (let i = 1; i <= this.totalPages; i++) {
-            html += `<button class="btn ${i === this.currentPage ? 'btn-primary' : 'btn-secondary'} btn-sm radius-8 page-btn" data-page="${i}">${this.toPersianDigits(i)}</button>`;
-        }
-        html += '</div>';
-        return html;
-    }
-
     toPersianDigits(num) {
         if (num === null || num === undefined) return '';
         const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
         return num.toString().replace(/\d/g, x => persian[x]);
     }
 
-    updateStatsUI() {
-        const countBadge = this.container.querySelector('.comments-count-badge');
-        if (countBadge) countBadge.innerText = `(${this.toPersianDigits(this.totalCount)})`;
-    }
-
     bindEvents() {
-        this.initRichEditors();
-        this.container.querySelectorAll('.submit-comment').forEach(btn => {
-            btn.onclick = async () => {
-                const parentId = btn.dataset.parent || null;
-                const isEdit = btn.dataset.edit === 'true';
-                const suffix = parentId || 'main';
-                const form = document.getElementById(`form-${suffix}`);
-                const typeInput = form.querySelector('input.comment-type-radio:checked');
-                const type = typeInput ? typeInput.value : 'comment';
-                const textarea = document.getElementById(`textarea-${suffix}`);
-                const hp = document.getElementById(`hp-${suffix}`)?.value;
-                if (hp) return; // Honeypot filled
+        // Use event delegation on this.container
+        this.container.onclick = async (e) => {
+            const target = e.target;
 
-                // Get content from Rich Editor if available
-                const editor = this.editors?.[`textarea-${suffix}`];
-                const content = editor ? editor.getContent() : textarea.value;
-                const guestNameInput = document.getElementById(`guest-name-${suffix}`);
-                const guestEmailInput = document.getElementById(`guest-email-${suffix}`);
-                const imageInput = document.getElementById(`comment-image-${suffix}`);
-
-                const mentionsContainer = document.getElementById(`mentions-container-${suffix}`);
-                const mentionIds = Array.from(mentionsContainer?.querySelectorAll('.mention-tag') || []).map(tag => tag.dataset.userId);
-
-                if (!content.trim()) return;
-
-                if (!this.isLoggedIn) {
-                    if (type === 'analysis') {
-                        window.showAuthModal?.('login');
-                        return;
-                    }
-                }
-
-                if (!this.isLoggedIn && this.guestCommentEnabled) {
-                    if (!guestNameInput?.value.trim()) {
-                        window.showAlert?.('لطفا نام خود را وارد کنید.', 'warning') || alert('لطفا نام خود را وارد کنید.');
-                        return;
-                    }
-                    if (!guestEmailInput?.value.trim() || !guestEmailInput.value.includes('@')) {
-                        window.showAlert?.('لطفا یک ایمیل معتبر وارد کنید.', 'warning') || alert('لطفا یک ایمیل معتبر وارد کنید.');
-                        return;
-                    }
-                }
-                btn.disabled = true;
-                const originalText = btn.innerText;
-                btn.innerText = 'در حال ارسال...';
-
-                try {
-                    const action = isEdit ? 'edit' : 'add';
-                    let res;
-
-                    if (action === 'add' && !isEdit) {
-                        const formData = new FormData();
-                        formData.append('content', content);
-                        formData.append('type', type);
-                        formData.append('mentions', JSON.stringify(mentionIds));
-                        formData.append('hp', document.getElementById(`hp-${suffix}`)?.value || '');
-                        formData.append('guest_name', guestNameInput?.value || '');
-                        formData.append('guest_email', guestEmailInput?.value || '');
-                        formData.append('target_id', this.targetId);
-                        formData.append('target_type', this.targetType);
-                        formData.append('parent_id', parentId || '');
-                        if (parentId) formData.append('reply_to_id', parentId);
-
-                        if (imageInput && imageInput.files[0]) {
-                            formData.append('image', imageInput.files[0]);
-                        }
-
-                        res = await fetch(`/api/comments.php?action=add`, {
-                            method: 'POST',
-                            headers: { 'X-CSRF-Token': this.csrfToken },
-                            body: formData
-                        });
-                    } else {
-                        const payload = {
-                            content,
-                            mentions: mentionIds,
-                            hp: document.getElementById(`hp-${suffix}`)?.value || '',
-                            comment_id: parentId
-                        };
-                        res = await fetch(`/api/comments.php?action=edit`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
-                            body: JSON.stringify(payload)
-                        });
-                    }
-                    const data = await res.json();
-                    if (data.success) {
-                        if (editor) editor.clear();
-                        textarea.value = '';
-                        if (mentionsContainer) {
-                            mentionsContainer.querySelectorAll('.mention-tag').forEach(tag => tag.remove());
-                        }
-                        if (imageInput) imageInput.value = '';
-                        const previewContainer = document.querySelector(`#form-${suffix} .image-preview`);
-                        if (previewContainer) {
-                            previewContainer.classList.add('d-none');
-                            previewContainer.querySelector('img').src = '';
-                        }
-                        if (isEdit) {
-                            const commentItem = document.getElementById(`comment-${parentId}`);
-                            if (commentItem) {
-                                const comment = data.comment || this.findComment(parentId);
-                                if (data.comment) this.updateCommentInCache(data.comment);
-                                commentItem.querySelector('.comment-content').innerHTML = this.renderCommentBody(data.comment || comment);
-                            }
-                        } else {
-                            const comment = data.comment;
-                            const commentHtml = this.renderCommentItem(comment, !!comment.parent_id);
-                            if (parentId) {
-                                document.getElementById(`reply-form-container-${parentId}`).innerHTML = '';
-                                const actualParentId = comment.parent_id;
-                                let repliesContainer = document.getElementById(`replies-container-${actualParentId}`);
-                                if (!repliesContainer) {
-                                    const wrapper = document.getElementById(`comment-wrapper-${actualParentId}`);
-                                    repliesContainer = document.createElement('div');
-                                    repliesContainer.className = 'replies-container';
-                                    repliesContainer.id = `replies-container-${actualParentId}`;
-                                    repliesContainer.innerHTML = '<div class="replies-list"></div>';
-                                    wrapper.appendChild(repliesContainer);
-                                    wrapper.classList.add('has-replies');
-                                }
-                                repliesContainer.querySelector('.replies-list').insertAdjacentHTML('beforeend', commentHtml);
-                            } else {
-                                const list = this.container.querySelector('.comment-list');
-                                if (list.querySelector('.text-gray-400')) list.innerHTML = '';
-                                list.insertAdjacentHTML('afterbegin', commentHtml);
-                            }
-                            this.totalCount = data.total_count;
-                            this.updateStatsUI();
-                        }
-                        if (window.lucide) lucide.createIcons();
-                        this.bindEvents();
-                    } else {
-                        window.showAlert?.(data.message, 'error') || alert(data.message);
-                    }
-                } catch (error) {
-                    console.error(error);
-                    window.showAlert?.('خطا در برقراری ارتباط با سرور', 'error') || alert('خطا در برقراری ارتباط با سرور');
-                } finally {
-                    btn.disabled = false;
-                    btn.innerText = originalText;
-                }
-            };
-        });
-
-        this.container.querySelectorAll('.btn-react-trigger').forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
-                const id = btn.dataset.id;
-                const popover = document.getElementById(`popover-${id}`);
-                const isShown = popover.classList.contains('show');
-                this.container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
-                if (!isShown) popover.classList.add('show');
-            };
-        });
-
-        this.container.querySelectorAll('.emoji-btn, .reaction-pill-item').forEach(btn => {
-            btn.onclick = async (e) => {
-                e.stopPropagation();
-                if (btn.classList.contains('loading')) return;
-                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
-                const id = btn.dataset.id;
-                const type = btn.dataset.type;
-                const comment = this.findComment(id);
-                const currentReaction = comment ? comment.user_reaction : null;
-                const newType = (currentReaction === type) ? null : type;
-                btn.classList.add('loading');
-                try {
-                    const res = await fetch('/api/comments.php?action=react', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
-                        body: JSON.stringify({ comment_id: id, reaction_type: newType })
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        const counts = data.counts;
-                        const userReaction = data.user_reaction;
-                        const comment = this.findComment(id);
-                        if (comment) {
-                            Object.assign(comment, { likes: counts.likes, dislikes: counts.dislikes, hearts: counts.hearts, fires: counts.fires, user_reaction: userReaction });
-                        }
-                        const pill = document.querySelector(`#comment-${id} .reaction-pill`);
-                        if (pill) {
-                            const reactionsHtml = `
-                                ${this.renderReaction({id, likes: counts.likes, user_reaction: userReaction}, 'like', '👍')}
-                                ${this.renderReaction({id, hearts: counts.hearts, user_reaction: userReaction}, 'heart', '❤️')}
-                                ${this.renderReaction({id, fires: counts.fires, user_reaction: userReaction}, 'fire', '🔥')}
-                                ${this.renderReaction({id, dislikes: counts.dislikes, user_reaction: userReaction}, 'dislike', '👎')}
-                            `.trim();
-                            pill.innerHTML = reactionsHtml;
-                            if (reactionsHtml) {
-                                pill.classList.remove('d-none');
-                            } else {
-                                pill.classList.add('d-none');
-                            }
-                            this.bindEvents();
-                        }
-                    } else if (data.message) {
-                        window.showAlert?.(data.message, 'warning') || alert(data.message);
-                    }
-                } catch (error) { console.error(error); } finally { btn.classList.remove('loading'); }
-            };
-        });
-
-        this.container.querySelectorAll('.reply-btn').forEach(btn => {
-            btn.onclick = () => {
-                if (!this.isLoggedIn && !this.guestCommentEnabled) { window.showAuthModal?.('login'); return; }
-                const id = btn.dataset.id;
-                const container = document.getElementById(`reply-form-container-${id}`);
-                if (container.innerHTML === '') {
-                    this.container.querySelectorAll('[id^="reply-form-container-"]').forEach(c => c.innerHTML = '');
-                    container.innerHTML = this.renderCommentForm(id);
-                    if (window.lucide) lucide.createIcons();
-                    this.bindEvents();
-                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    container.innerHTML = '';
-                }
-            };
-        });
-
-        this.container.querySelectorAll('.comment-share-btn').forEach(btn => {
-            btn.onclick = () => {
-                const id = btn.dataset.id;
-                const url = window.location.origin + window.location.pathname + '#comment-' + id;
-                navigator.clipboard.writeText(url).then(() => {
-                    const originalHtml = btn.innerHTML;
-                    btn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-success"></i>';
-                    if (window.lucide) lucide.createIcons();
-                    setTimeout(() => {
-                        btn.innerHTML = originalHtml;
-                        if (window.lucide) lucide.createIcons();
-                    }, 2000);
-                });
-            };
-        });
-
-        this.container.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.onclick = () => {
-                const id = btn.dataset.id;
-                const comment = this.findComment(id);
-                if (!comment) return;
-                const wrapper = document.getElementById(`comment-${id}`);
-                const body = wrapper.querySelector('.comment-content');
-                body.innerHTML = this.renderCommentForm(id, comment.content_edit || comment.content);
-                if (comment.mentioned_users) {
-                    const container = document.getElementById(`mentions-container-${id}`);
-                    comment.mentioned_users.forEach(u => this.addMentionTag(container, u));
-                }
-                if (window.lucide) lucide.createIcons();
-                this.bindEvents();
-            };
-        });
-
-        this.container.querySelectorAll('.report-btn').forEach(btn => {
-            btn.onclick = async () => {
-                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
-                const id = btn.dataset.id;
-                const reason = prompt('علت گزارش این نظر چیست؟');
-                if (!reason) return;
-                try {
-                    const res = await fetch('/api/comments.php?action=report', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
-                        body: JSON.stringify({ comment_id: id, reason: reason })
-                    });
-                    const data = await res.json();
-                    window.showAlert?.(data.message, data.success ? 'success' : 'error') || alert(data.message);
-                } catch (error) { console.error(error); }
-            };
-        });
-
-        this.container.querySelectorAll('.comment-type-radio').forEach(radio => {
-            radio.onchange = () => {
-                const type = radio.value;
-                const suffix = radio.dataset.suffix;
-
-                if (!this.isLoggedIn && type === 'analysis') {
-                    window.showAuthModal?.('login');
-                    radio.checked = false;
-                    const commentRadio = radio.closest('.comment-type-selector').querySelector('input[value="comment"]');
-                    if (commentRadio) commentRadio.checked = true;
-                    return;
-                }
-
-                const uploadContainer = document.getElementById(`image-upload-container-${suffix}`);
-                if (uploadContainer) {
-                    if (type === 'analysis') {
-                        uploadContainer.classList.remove('d-none');
-                    } else {
-                        uploadContainer.classList.add('d-none');
-                    }
-                }
-            };
-        });
-
-        this.container.querySelectorAll('.upload-zone').forEach(zone => {
-            zone.ondragover = (e) => {
-                e.preventDefault();
-                zone.classList.add('drag-over');
-            };
-            zone.ondragleave = () => {
-                zone.classList.remove('drag-over');
-            };
-            zone.ondrop = (e) => {
-                e.preventDefault();
-                zone.classList.remove('drag-over');
-                const file = e.dataTransfer.files[0];
-                const suffix = zone.querySelector('input').dataset.suffix;
-                const input = document.getElementById(`comment-image-${suffix}`);
-                if (file && input) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    input.files = dataTransfer.files;
-                    input.dispatchEvent(new Event('change'));
-                }
-            };
-        });
-
-        this.container.querySelectorAll('.comment-image-input').forEach(input => {
-            input.onchange = (e) => {
-                const suffix = input.dataset.suffix;
-                const form = input.closest('.comment-form');
-                const file = e.target.files[0] || e.dataTransfer?.files[0];
-                const previewContainer = form ? form.querySelector('.image-preview') : null;
-                if (!previewContainer) return;
-                const previewImg = previewContainer.querySelector('img');
-
-                if (file) {
-                    if (!file.type.startsWith('image/')) {
-                        window.showAlert?.('لطفا فقط فایل تصویری انتخاب کنید.', 'warning');
-                        input.value = '';
-                        return;
-                    }
-                    const reader = new FileReader();
-                    reader.onload = (re) => {
-                        previewImg.src = re.target.result;
-                        previewContainer.classList.remove('d-none');
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    previewContainer.classList.add('d-none');
-                    previewImg.src = '';
-                }
-            };
-        });
-
-        this.container.querySelectorAll('.remove-preview').forEach(btn => {
-            btn.onclick = () => {
-                const suffix = btn.dataset.suffix;
-                const form = btn.closest('.comment-form');
-                const input = document.getElementById(`comment-image-${suffix}`);
-                const previewContainer = form ? form.querySelector('.image-preview') : null;
-                if (input) input.value = '';
-                if (previewContainer) {
-                    previewContainer.classList.add('d-none');
-                    previewContainer.querySelector('img').src = '';
-                }
-            };
-        });
-
-        this.container.querySelectorAll('.view-more-replies').forEach(btn => {
-            btn.onclick = async () => {
-                const id = btn.dataset.id;
-                const total = parseInt(btn.dataset.total);
-                if (btn.classList.contains('showing-all')) {
-                    const list = document.querySelector(`#replies-container-${id} .replies-list`);
-                    const allReplies = list.querySelectorAll('.comment-item');
-                    for (let i = 3; i < allReplies.length; i++) allReplies[i].closest('.comment-wrapper')?.remove();
-                    btn.innerText = `مشاهده پاسخ‌های بیشتر (${this.toPersianDigits(total - 3)})`;
-                    btn.classList.remove('showing-all');
-                    return;
-                }
-                btn.disabled = true;
-                const originalText = btn.innerText;
-                btn.innerText = 'در حال دریافت...';
-                try {
-                    const res = await fetch(`/api/comments.php?action=replies&parent_id=${id}&offset=3&limit=100`);
-                    const data = await res.json();
-                    if (data.success) {
-                        const list = document.querySelector(`#replies-container-${id} .replies-list`);
-                        data.replies.forEach(r => list.insertAdjacentHTML('beforeend', this.renderCommentItem(r, true)));
-                        btn.innerText = 'پنهان کردن پاسخ‌ها';
-                        btn.classList.add('showing-all');
-                        if (window.lucide) lucide.createIcons();
-                        this.bindEvents();
-                    }
-                } catch (error) { console.error(error); } finally { btn.disabled = false; }
-            };
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.footer-right')) {
-                this.container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
+            // Submit Comment
+            const submitBtn = target.closest('.submit-comment');
+            if (submitBtn) {
+                this.handleSubmit(submitBtn);
+                return;
             }
-            if (!e.target.closest('.mention-input-wrapper')) {
-                this.container.querySelectorAll('.mention-suggestions').forEach(s => s.classList.add('d-none'));
+
+            // Reply Toggle
+            const replyBtn = target.closest('.reply-btn');
+            if (replyBtn) {
+                this.toggleReplyForm(replyBtn);
+                return;
             }
-        });
 
-        this.initTagMentions();
+            // Edit Toggle
+            const editBtn = target.closest('.edit-btn');
+            if (editBtn) {
+                this.toggleEditForm(editBtn);
+                return;
+            }
 
-        this.container.querySelectorAll('.view-thread-btn').forEach(btn => {
-            btn.onclick = () => this.openThreadModal(btn.dataset.id);
-        });
+            // Reactions Popover Toggle
+            const reactTrigger = target.closest('.btn-react-trigger');
+            if (reactTrigger) {
+                e.stopPropagation();
+                this.toggleReactionPopover(reactTrigger);
+                return;
+            }
 
-        // Filter and Sort Events
-        this.container.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.onclick = () => {
-                if (btn.classList.contains('active')) return;
-                this.filterType = btn.dataset.filter;
+            // Reaction Click
+            const reactionBtn = target.closest('.emoji-btn, .reaction-pill-item');
+            if (reactionBtn) {
+                e.stopPropagation();
+                this.handleReaction(reactionBtn);
+                return;
+            }
+
+            // Share Click
+            const shareBtn = target.closest('.comment-share-btn');
+            if (shareBtn) {
+                this.handleShare(shareBtn);
+                return;
+            }
+
+            // Report Click
+            const reportBtn = target.closest('.report-btn');
+            if (reportBtn) {
+                this.handleReport(reportBtn);
+                return;
+            }
+
+            // View More Replies
+            const viewMoreBtn = target.closest('.view-more-replies');
+            if (viewMoreBtn) {
+                this.handleViewMoreReplies(viewMoreBtn);
+                return;
+            }
+
+            // View Thread
+            const viewThreadBtn = target.closest('.view-thread-btn');
+            if (viewThreadBtn) {
+                this.openThreadModal(viewThreadBtn.dataset.id);
+                return;
+            }
+
+            // Filters
+            const filterBtn = target.closest('.filter-btn');
+            if (filterBtn) {
+                if (filterBtn.classList.contains('active')) return;
+                this.filterType = filterBtn.dataset.filter;
                 this.currentPage = 1;
                 this.loadAndRender();
-            };
-        });
+                return;
+            }
 
-        this.container.querySelectorAll('.sort-btn').forEach(btn => {
-            btn.onclick = () => {
-                if (btn.classList.contains('active')) return;
-                this.sort = btn.dataset.sort;
+            // Sort
+            const sortBtn = target.closest('.sort-btn');
+            if (sortBtn) {
+                if (sortBtn.classList.contains('active')) return;
+                this.sort = sortBtn.dataset.sort;
                 this.currentPage = 1;
                 this.loadAndRender();
-            };
-        });
+                return;
+            }
 
-        this.container.querySelectorAll('.page-btn').forEach(btn => {
-            btn.onclick = () => {
-                const page = parseInt(btn.dataset.page);
+            // Pagination
+            const pageBtn = target.closest('.page-btn');
+            if (pageBtn) {
+                const page = parseInt(pageBtn.dataset.page);
                 if (page === this.currentPage) return;
                 this.currentPage = page;
                 this.loadAndRender();
                 this.container.scrollIntoView({ behavior: 'smooth' });
-            };
+                return;
+            }
+
+            // Remove Image Preview
+            const removePreview = target.closest('.remove-preview');
+            if (removePreview) {
+                this.handleRemovePreview(removePreview);
+                return;
+            }
+
+            // Global Popover/Suggestion Close
+            if (!target.closest('.footer-right')) {
+                this.container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
+            }
+        };
+
+        this.container.onchange = (e) => {
+            const target = e.target;
+
+            // Comment Type Radio
+            if (target.classList.contains('comment-type-radio')) {
+                this.handleTypeChange(target);
+            }
+
+            // Image Input Change
+            if (target.classList.contains('comment-image-input')) {
+                this.handleImageChange(target);
+            }
+        };
+
+        // Drag & Drop
+        this.container.ondragover = (e) => {
+            const zone = e.target.closest('.upload-zone');
+            if (zone) {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            }
+        };
+
+        this.container.ondragleave = (e) => {
+            const zone = e.target.closest('.upload-zone');
+            if (zone) zone.classList.remove('drag-over');
+        };
+
+        this.container.ondrop = (e) => {
+            const zone = e.target.closest('.upload-zone');
+            if (zone) {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                const input = zone.querySelector('input');
+                if (file && input) {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    input.files = dataTransfer.files;
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+        };
+    }
+
+    async handleSubmit(btn) {
+        const parentId = btn.dataset.parent || null;
+        const isEdit = btn.dataset.edit === 'true';
+        const suffix = parentId || 'main';
+        const form = document.getElementById(`form-${suffix}`);
+        const typeInput = form.querySelector('input.comment-type-radio:checked');
+        const type = typeInput ? typeInput.value : 'comment';
+        const textarea = document.getElementById(`textarea-${suffix}`);
+        const hp = document.getElementById(`hp-${suffix}`)?.value;
+        if (hp) return;
+
+        const editor = this.editors?.[`textarea-${suffix}`];
+        const content = editor ? editor.getContent() : textarea.value;
+        const guestNameInput = document.getElementById(`guest-name-${suffix}`);
+        const guestEmailInput = document.getElementById(`guest-email-${suffix}`);
+        const imageInput = document.getElementById(`comment-image-${suffix}`);
+
+        const mentionsContainer = document.getElementById(`mentions-container-${suffix}`);
+        const mentionIds = Array.from(mentionsContainer?.querySelectorAll('.mention-tag') || []).map(tag => tag.dataset.userId);
+
+        if (!content.trim()) return;
+
+        if (!this.isLoggedIn) {
+            if (type === 'analysis') {
+                window.showAuthModal?.('login');
+                return;
+            }
+            if (this.guestCommentEnabled) {
+                if (!guestNameInput?.value.trim()) {
+                    window.showAlert?.('لطفا نام خود را وارد کنید.', 'warning');
+                    return;
+                }
+                if (!guestEmailInput?.value.trim() || !guestEmailInput.value.includes('@')) {
+                    window.showAlert?.('لطفا یک ایمیل معتبر وارد کنید.', 'warning');
+                    return;
+                }
+            } else {
+                window.showAuthModal?.('login');
+                return;
+            }
+        }
+
+        btn.disabled = true;
+        const originalText = btn.innerText;
+        btn.innerText = 'در حال ارسال...';
+
+        try {
+            let res;
+            if (!isEdit) {
+                const formData = new FormData();
+                formData.append('content', content);
+                formData.append('type', type);
+                formData.append('mentions', JSON.stringify(mentionIds));
+                formData.append('hp', hp || '');
+                formData.append('guest_name', guestNameInput?.value || '');
+                formData.append('guest_email', guestEmailInput?.value || '');
+                formData.append('target_id', this.targetId);
+                formData.append('target_type', this.targetType);
+                formData.append('parent_id', parentId || '');
+                if (parentId) formData.append('reply_to_id', parentId);
+                if (imageInput && imageInput.files[0]) formData.append('image', imageInput.files[0]);
+
+                res = await fetch(`/api/comments.php?action=add`, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-Token': this.csrfToken },
+                    body: formData
+                });
+            } else {
+                res = await fetch(`/api/comments.php?action=edit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
+                    body: JSON.stringify({ content, mentions: mentionIds, hp: hp || '', comment_id: parentId })
+                });
+            }
+
+            const data = await res.json();
+            if (data.success) {
+                if (editor) editor.clear();
+                textarea.value = '';
+                if (mentionsContainer) mentionsContainer.querySelectorAll('.mention-tag').forEach(tag => tag.remove());
+                this.handleRemovePreview({ dataset: { suffix } });
+
+                if (isEdit) {
+                    const commentItem = document.getElementById(`comment-${parentId}`);
+                    if (commentItem) {
+                        const comment = data.comment || this.findComment(parentId);
+                        if (data.comment) this.updateCommentInCache(data.comment);
+                        commentItem.querySelector('.comment-content').innerHTML = this.renderCommentBody(data.comment || comment);
+                    }
+                } else {
+                    const comment = data.comment;
+                    const commentHtml = this.renderCommentItem(comment, !!comment.parent_id);
+                    if (parentId) {
+                        document.getElementById(`reply-form-container-${parentId}`).innerHTML = '';
+                        const actualParentId = comment.parent_id;
+                        let repliesContainer = document.getElementById(`replies-container-${actualParentId}`);
+                        if (!repliesContainer) {
+                            const wrapper = document.getElementById(`comment-wrapper-${actualParentId}`);
+                            repliesContainer = document.createElement('div');
+                            repliesContainer.className = 'replies-container';
+                            repliesContainer.id = `replies-container-${actualParentId}`;
+                            repliesContainer.innerHTML = '<div class="replies-list"></div>';
+                            wrapper.appendChild(repliesContainer);
+                            wrapper.classList.add('has-replies');
+                        }
+                        repliesContainer.querySelector('.replies-list').insertAdjacentHTML('beforeend', commentHtml);
+                    } else {
+                        const list = document.getElementById('comment-list');
+                        if (list.querySelector('.text-gray-400')) list.innerHTML = '';
+                        list.insertAdjacentHTML('afterbegin', commentHtml);
+                    }
+                    this.totalCount = data.total_count;
+                    this.updateStatsUI();
+                }
+                if (window.lucide) lucide.createIcons({ root: this.container });
+            } else {
+                window.showAlert?.(data.message, 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            window.showAlert?.('خطا در برقراری ارتباط با سرور', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    }
+
+    toggleReplyForm(btn) {
+        if (!this.isLoggedIn && !this.guestCommentEnabled) { window.showAuthModal?.('login'); return; }
+        const id = btn.dataset.id;
+        const container = document.getElementById(`reply-form-container-${id}`);
+        if (container.innerHTML === '') {
+            this.container.querySelectorAll('[id^="reply-form-container-"]').forEach(c => c.innerHTML = '');
+            container.innerHTML = this.renderCommentForm(id);
+            if (window.lucide) lucide.createIcons({ root: container });
+            this.initRichEditors();
+            this.initTagMentions();
+            container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            container.innerHTML = '';
+        }
+    }
+
+    toggleEditForm(btn) {
+        const id = btn.dataset.id;
+        const comment = this.findComment(id);
+        if (!comment) return;
+        const wrapper = document.getElementById(`comment-${id}`);
+        const body = wrapper.querySelector('.comment-content');
+        body.innerHTML = this.renderCommentForm(id, comment.content_edit || comment.content);
+        if (comment.mentioned_users) {
+            const container = document.getElementById(`mentions-container-${id}`);
+            comment.mentioned_users.forEach(u => this.addMentionTag(container, u));
+        }
+        if (window.lucide) lucide.createIcons({ root: body });
+        this.initRichEditors();
+        this.initTagMentions();
+    }
+
+    toggleReactionPopover(btn) {
+        if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
+        const id = btn.dataset.id;
+        const popover = document.getElementById(`popover-${id}`);
+        const isShown = popover.classList.contains('show');
+        this.container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
+        if (!isShown) popover.classList.add('show');
+    }
+
+    async handleReaction(btn) {
+        if (btn.classList.contains('loading')) return;
+        if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
+        const id = btn.dataset.id;
+        const type = btn.dataset.type;
+        const comment = this.findComment(id);
+        const currentReaction = comment ? comment.user_reaction : null;
+        const newType = (currentReaction === type) ? null : type;
+        btn.classList.add('loading');
+        try {
+            const res = await fetch('/api/comments.php?action=react', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
+                body: JSON.stringify({ comment_id: id, reaction_type: newType })
+            });
+            const data = await res.json();
+            if (data.success) {
+                const counts = data.counts;
+                const userReaction = data.user_reaction;
+                if (comment) {
+                    Object.assign(comment, { likes: counts.likes, dislikes: counts.dislikes, hearts: counts.hearts, fires: counts.fires, user_reaction: userReaction });
+                }
+                const pill = document.querySelector(`#comment-${id} .reaction-pill`);
+                if (pill) {
+                    const reactionsHtml = `
+                        ${this.renderReaction({id, likes: counts.likes, user_reaction: userReaction}, 'like', '👍')}
+                        ${this.renderReaction({id, hearts: counts.hearts, user_reaction: userReaction}, 'heart', '❤️')}
+                        ${this.renderReaction({id, fires: counts.fires, user_reaction: userReaction}, 'fire', '🔥')}
+                        ${this.renderReaction({id, dislikes: counts.dislikes, user_reaction: userReaction}, 'dislike', '👎')}
+                    `.trim();
+                    pill.innerHTML = reactionsHtml;
+                    pill.classList.toggle('d-none', !reactionsHtml);
+                }
+            } else {
+                window.showAlert?.(data.message, 'warning');
+            }
+        } catch (error) { console.error(error); } finally { btn.classList.remove('loading'); }
+    }
+
+    handleShare(btn) {
+        const id = btn.dataset.id;
+        const url = window.location.origin + window.location.pathname + '#comment-' + id;
+        navigator.clipboard.writeText(url).then(() => {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="check" class="icon-size-4 text-success"></i>';
+            if (window.lucide) lucide.createIcons({ root: btn });
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                if (window.lucide) lucide.createIcons({ root: btn });
+            }, 2000);
         });
+    }
+
+    async handleReport(btn) {
+        if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
+        const id = btn.dataset.id;
+        const reason = prompt('علت گزارش این نظر چیست؟');
+        if (!reason) return;
+        try {
+            const res = await fetch('/api/comments.php?action=report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
+                body: JSON.stringify({ comment_id: id, reason })
+            });
+            const data = await res.json();
+            window.showAlert?.(data.message, data.success ? 'success' : 'error');
+        } catch (error) { console.error(error); }
+    }
+
+    async handleViewMoreReplies(btn) {
+        const id = btn.dataset.id;
+        const total = parseInt(btn.dataset.total);
+        const list = document.querySelector(`#replies-container-${id} .replies-list`);
+        if (btn.classList.contains('showing-all')) {
+            const allReplies = list.querySelectorAll('.comment-item');
+            for (let i = 3; i < allReplies.length; i++) allReplies[i].closest('.comment-wrapper')?.remove();
+            btn.innerText = `مشاهده پاسخ‌های بیشتر (${this.toPersianDigits(total - 3)})`;
+            btn.classList.remove('showing-all');
+            return;
+        }
+        btn.disabled = true;
+        btn.innerText = 'در حال دریافت...';
+        try {
+            const res = await fetch(`/api/comments.php?action=replies&parent_id=${id}&offset=3&limit=100`);
+            const data = await res.json();
+            if (data.success) {
+                data.replies.forEach(r => list.insertAdjacentHTML('beforeend', this.renderCommentItem(r, true)));
+                btn.innerText = 'پنهان کردن پاسخ‌ها';
+                btn.classList.add('showing-all');
+                if (window.lucide) lucide.createIcons({ root: list });
+            }
+        } catch (error) { console.error(error); } finally { btn.disabled = false; }
+    }
+
+    handleTypeChange(radio) {
+        const type = radio.value;
+        const suffix = radio.dataset.suffix;
+        if (!this.isLoggedIn && type === 'analysis') {
+            window.showAuthModal?.('login');
+            radio.checked = false;
+            const commentRadio = radio.closest('.comment-type-selector').querySelector('input[value="comment"]');
+            if (commentRadio) commentRadio.checked = true;
+            return;
+        }
+        const uploadContainer = document.getElementById(`image-upload-container-${suffix}`);
+        if (uploadContainer) uploadContainer.classList.toggle('d-none', type !== 'analysis');
+    }
+
+    handleImageChange(input) {
+        const suffix = input.dataset.suffix;
+        const form = input.closest('.comment-form');
+        const file = input.files[0];
+        const previewContainer = form ? form.querySelector('.image-preview') : null;
+        if (!previewContainer) return;
+        const previewImg = previewContainer.querySelector('img');
+
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                window.showAlert?.('لطفا فقط فایل تصویری انتخاب کنید.', 'warning');
+                input.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (re) => {
+                previewImg.src = re.target.result;
+                previewContainer.classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewContainer.classList.add('d-none');
+            previewImg.src = '';
+        }
+    }
+
+    handleRemovePreview(btn) {
+        const suffix = btn.dataset.suffix;
+        const form = document.getElementById(`form-${suffix}`);
+        const input = document.getElementById(`comment-image-${suffix}`);
+        const previewContainer = form ? form.querySelector('.image-preview') : null;
+        if (input) input.value = '';
+        if (previewContainer) {
+            previewContainer.classList.add('d-none');
+            previewContainer.querySelector('img').src = '';
+        }
     }
 
     initTagMentions() {
         this.container.querySelectorAll('.mention-tag-input').forEach(input => {
+            if (input.dataset.mentionsInitialized) return;
+            input.dataset.mentionsInitialized = 'true';
+
             const suffix = input.id.replace('mention-input-', '');
             const suggestionsEl = document.getElementById(`suggestions-${suffix}`);
             const containerEl = document.getElementById(`mentions-container-${suffix}`);
-            const areaEl = document.getElementById(`mention-area-${suffix}`);
-            if (!suggestionsEl || !containerEl) return;
 
             input.oninput = async () => {
                 const q = input.value.trim();
                 if (q.length < 1) { suggestionsEl.classList.add('d-none'); return; }
-                const users = await this.searchUsers(q);
+                const res = await fetch(`/api/users.php?action=search&q=${encodeURIComponent(q)}`);
+                const data = await res.json();
+                const users = data.success ? data.users : [];
                 if (users.length > 0) {
                     this.renderSuggestions(suggestionsEl, users, containerEl, input);
                 } else {
@@ -956,23 +984,10 @@ class CommentSystem {
             input.onkeydown = (e) => {
                 if (e.key === 'Backspace' && input.value === '') {
                     const tags = containerEl.querySelectorAll('.mention-tag');
-                    if (tags.length > 0) {
-                        tags[tags.length - 1].remove();
-                    }
+                    if (tags.length > 0) tags[tags.length - 1].remove();
                 }
             };
-            if (areaEl) {
-                areaEl.onclick = () => input.focus();
-            }
         });
-    }
-
-    async searchUsers(q) {
-        try {
-            const res = await fetch(`/api/users.php?action=search&q=${encodeURIComponent(q)}`);
-            const data = await res.json();
-            return data.success ? data.users : [];
-        } catch (e) { return []; }
     }
 
     renderSuggestions(el, users, container, input) {
@@ -987,7 +1002,8 @@ class CommentSystem {
         `).join('');
         el.classList.remove('d-none');
         el.querySelectorAll('.suggestion-item').forEach(item => {
-            item.onclick = () => {
+            item.onclick = (e) => {
+                e.stopPropagation();
                 this.addMentionTag(container, item.dataset);
                 input.value = '';
                 el.classList.add('d-none');
@@ -1001,18 +1017,8 @@ class CommentSystem {
         tag.className = 'mention-tag';
         tag.dataset.userId = data.id;
         tag.innerHTML = `<span>@${data.username}</span><i class="remove-tag">&times;</i>`;
-        tag.querySelector('.remove-tag').onclick = (e) => {
-            e.stopPropagation();
-            tag.remove();
-        };
-
-        // Insert before the input field
-        const input = container.querySelector('.mention-tag-input');
-        if (input) {
-            container.insertBefore(tag, input);
-        } else {
-            container.appendChild(tag);
-        }
+        tag.querySelector('.remove-tag').onclick = (e) => { e.stopPropagation(); tag.remove(); };
+        container.insertBefore(tag, container.querySelector('.mention-tag-input'));
     }
 
     findComment(id) {
@@ -1045,18 +1051,12 @@ class CommentSystem {
         this.isInsideModal = true;
         let modal = document.getElementById(this.threadModalId);
         if (!modal) return;
-
         modal.classList.remove('d-none');
         document.body.style.overflow = 'hidden';
         const contentArea = modal.querySelector('.thread-content');
         const loader = modal.querySelector('.thread-loader');
-
-        this.modalContentArea = contentArea;
-        this.modalLoader = loader;
-
-        this.modalContentArea.classList.add('d-none');
-        this.modalLoader.classList.remove('d-none');
-
+        contentArea.classList.add('d-none');
+        loader.classList.remove('d-none');
         const targetInfoArea = modal.querySelector('#modal-thread-target-info');
         if (targetInfoArea) targetInfoArea.classList.add('d-none');
 
@@ -1065,30 +1065,15 @@ class CommentSystem {
             const data = await res.json();
             if (data.success) {
                 const thread = data.thread;
-
                 if (targetInfoArea && thread.target_info) {
-                    targetInfoArea.innerHTML = `
-                        <div class="d-flex align-center just-between w-full">
-                            <div class="d-flex align-center gap-1">
-                                <i data-lucide="external-link" class="text-gray icon-size-4"></i>
-                                <div class="font-bold font-size-0-9">در <a href="${thread.target_info.url}" class="text-primary hover-underline">${thread.target_info.title}</a></div>
-                            </div>
-                        </div>
-                    `;
+                    targetInfoArea.innerHTML = `<div class="d-flex align-center just-between w-full"><div class="d-flex align-center gap-1"><i data-lucide="external-link" class="text-gray icon-size-4"></i><div class="font-bold font-size-0-9">در <a href="${thread.target_info.url}" class="text-primary hover-underline">${thread.target_info.title}</a></div></div></div>`;
                     targetInfoArea.classList.remove('d-none');
                 }
+                contentArea.innerHTML = `<div class="thread-list">${this.renderCommentItem(thread)}</div>`;
+                loader.classList.add('d-none');
+                contentArea.classList.remove('d-none');
+                if (window.lucide) lucide.createIcons({ root: contentArea });
 
-                contentArea.innerHTML = `
-                    <div class="thread-list">
-                        ${this.renderCommentItem(thread)}
-                    </div>
-                `;
-                this.modalLoader.classList.add('d-none');
-                this.modalContentArea.classList.remove('d-none');
-                if (window.lucide) lucide.createIcons();
-                this.bindEventsInModal(contentArea);
-
-                // Highlight the target comment in the thread
                 const targetEl = contentArea.querySelector(`#comment-${commentId}`);
                 if (targetEl) {
                     targetEl.classList.add('highlight-comment');
@@ -1104,62 +1089,8 @@ class CommentSystem {
         }
     }
 
-    bindEventsInModal(container) {
-        // Limited subset of events for modal view
-        container.querySelectorAll('.btn-react-trigger').forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
-                const id = btn.dataset.id;
-                const popover = container.querySelector(`#popover-${id}`);
-                const isShown = popover.classList.contains('show');
-                container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
-                if (!isShown) popover.classList.add('show');
-            };
-        });
-
-        container.querySelectorAll('.emoji-btn, .reaction-pill-item').forEach(btn => {
-            btn.onclick = async (e) => {
-                e.stopPropagation();
-                if (btn.classList.contains('loading')) return;
-                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
-                const id = btn.dataset.id;
-                const type = btn.dataset.type;
-                const res = await fetch('/api/comments.php?action=react', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
-                    body: JSON.stringify({ comment_id: id, reaction_type: type })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    // Update UI in modal (minimal sync)
-                    this.loadAndRender(); // Update main list in background
-                }
-            };
-        });
-
-        container.querySelectorAll('.reply-btn').forEach(btn => {
-            btn.onclick = () => {
-                const modal = document.getElementById(this.threadModalId);
-                this.closeModal(modal);
-                // In a real Instagram-like experience, we'd show the form in modal.
-                // For now, let's just close and let them reply if they are on the right page.
-            };
-        });
-    }
-
     closeModal(modal) {
-        if (window.closeModal) {
-            window.closeModal();
-        } else {
-            this.isInsideModal = false;
-            modal.querySelector('.modal-content').classList.add('closing');
-            setTimeout(() => {
-                modal.classList.add('d-none');
-                modal.querySelector('.modal-content').classList.remove('closing');
-                document.body.style.overflow = '';
-            }, 300);
-        }
+        if (window.closeModal) window.closeModal();
     }
 }
 
