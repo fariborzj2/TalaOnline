@@ -59,6 +59,7 @@ class CommentSystem {
     async loadAndRender(append = false) {
         if (this.isLoading) return;
         this.isLoading = true;
+        this.updateSentinelVisibility();
 
         const newComments = await this.loadComments();
         if (append) {
@@ -70,6 +71,7 @@ class CommentSystem {
         this.updateUI(append);
         this.handleAnchorScroll();
         this.isLoading = false;
+        this.updateSentinelVisibility();
     }
 
     handleAnchorScroll() {
@@ -1125,18 +1127,41 @@ class CommentSystem {
                 this.currentPage++;
                 this.loadAndRender(true);
             }
-        }, { threshold: 0.1 });
+        }, { threshold: 0.1, rootMargin: '200px' });
 
         // Create a sentinel element
         let sentinel = document.getElementById('comments-sentinel');
         if (!sentinel) {
             sentinel = document.createElement('div');
             sentinel.id = 'comments-sentinel';
-            sentinel.style.height = '20px';
+            sentinel.className = 'infinite-scroll-sentinel py-4 text-center d-column align-center gap-1';
+            sentinel.innerHTML = `
+                <div class="sentinel-loader d-none">
+                    <i data-lucide="loader-2" class="spin text-primary w-8 h-8"></i>
+                    <p class="text-gray-400 font-size-0-9">در حال بارگذاری نظرات بیشتر...</p>
+                </div>
+            `;
             list.after(sentinel);
+            if (window.lucide) lucide.createIcons({ root: sentinel });
         }
 
         observer.observe(sentinel);
+        this.updateSentinelVisibility();
+    }
+
+    updateSentinelVisibility() {
+        const sentinel = document.getElementById('comments-sentinel');
+        if (!sentinel) return;
+
+        if (this.currentPage >= this.totalPages || this.totalCount === 0) {
+            sentinel.classList.add('d-none');
+        } else {
+            sentinel.classList.remove('d-none');
+            const loader = sentinel.querySelector('.sentinel-loader');
+            if (loader) {
+                loader.classList.toggle('d-none', !this.isLoading);
+            }
+        }
     }
 }
 
