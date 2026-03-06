@@ -280,7 +280,7 @@ class CommentSystem {
         const showInlineReplies = hasReplies && (this.targetType !== 'user_profile' || this.isInsideModal);
 
         if (this.isInsideModal && isReply) {
-            return this.renderMinimalReply(c);
+            return this.renderModalReplyItem(c);
         }
         const baseUrl = window.location.origin;
         const defaultAvatar = `${baseUrl}/assets/images/default-avatar.png`;
@@ -409,7 +409,7 @@ class CommentSystem {
         `;
     }
 
-    renderMinimalReply(c) {
+    renderModalReplyItem(c) {
         const baseUrl = window.location.origin;
         const defaultAvatar = `${baseUrl}/assets/images/default-avatar.png`;
         let avatarUrl = c.user_avatar || defaultAvatar;
@@ -418,22 +418,22 @@ class CommentSystem {
         }
 
         return `
-            <div class="minimal-reply border-bottom py-1" id="comment-${c.id}">
+            <div class="thread-reply-item border-bottom py-1" id="comment-${c.id}">
                 <div class="d-flex gap-1">
                     <div class="shrink-0">
-                        <img src="${avatarUrl}" class="radius-50 w-8 h-8 object-cover border" alt="${c.user_name}" onerror="this.src='${defaultAvatar}'">
+                        <img src="${avatarUrl}" class="radius-50 w-8 h-8 object-cover border" alt="${c.user_name || c.guest_name || 'ناشناس'}" onerror="this.src='${defaultAvatar}'">
                     </div>
                     <div class="grow-1">
                         <div class="d-flex just-between align-center mb-1">
                             <div class="d-flex align-center gap-05">
-                                <span class="font-bold font-size-0-9">${c.user_name}</span>
+                                <span class="font-bold font-size-0-9">${c.user_name || c.guest_name || 'ناشناس'}</span>
                                 <span class="text-gray-400 font-size-0-8">${c.created_at_fa || c.created_at}</span>
                             </div>
-                            <div class="reaction-pill-mini">
+                            <div class="thread-reply-reactions">
                                 ${this.renderReaction(c, 'like', '👍')}
                             </div>
                         </div>
-                        <div class="comment-content font-size-0-9 text-gray-700">
+                        <div class="thread-reply-content font-size-0-9 text-gray-700">
                             ${this.renderCommentBody(c, true)}
                         </div>
                     </div>
