@@ -47,13 +47,6 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                             </span>
                         <?php endif; ?>
 
-                        <?php if (isset($c['target_info']) && $c['target_info']): ?>
-                            <div class="d-inline-flex font-bold font-size-0-8 mx-1">
-                                <span class="text-gray-400 ml-05">در </span>
-                                <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline"><?= htmlspecialchars($c['target_info']['title']) ?></a>
-                            </div>
-                        <?php endif; ?>
-
                         <span class="comment-date"><?= jalali_date($c['created_at']) ?></span>
                     </div>
                 </div>
@@ -68,6 +61,13 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                 </div>
             </div>
 
+            <?php if (isset($c['target_info']) && $c['target_info']): ?>
+                <div class="d-inline-flex font-bold font-size-2 mb-1">
+                    <span class="text-gray-400">در </span>
+                    <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline"><?= htmlspecialchars($c['target_info']['title']) ?></a>
+                </div>
+            <?php endif; ?>
+
             <div class="comment-content">
                 <?php if (!empty($c['reply_to_content'])): ?>
                     <div class="reply-preview-block">
@@ -77,7 +77,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                 <?php endif; ?>
                 <div class="comment-body-text"><?= $c['content_html'] ?></div>
                 <?php if ($c['type'] === 'analysis' && $c['image_url']): ?>
-                    <div class="comment-attachment mt-2">
+                    <div class="comment-attachment mb-2">
                         <a href="/<?= htmlspecialchars($c['image_url']) ?>" target="_blank" class="radius-12 overflow-hidden transition-all">
                             <img src="/<?= htmlspecialchars($c['image_url']) ?>" alt="تحلیل کاربر" class="w-full object-contain bg-secondary">
                         </a>
@@ -95,7 +95,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                         <span>پاسخ</span>
                     </div>
                 <?php elseif ($target_type === 'user_profile' && !$is_reply): ?>
-                    <div class="view-thread-btn" data-id="<?= $c['id'] ?>">
+                    <div class="view-thread-btn comment-footer-btn" data-id="<?= $c['id'] ?>">
                         <i data-lucide="message-circle" class="icon-size-3"></i>
                         <span><?= ($c['total_replies'] ?? 0) > 0 ? fa_num($c['total_replies']) . ' پاسخ' : 'مشاهده گفتگو' ?></span>
                     </div>

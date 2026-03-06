@@ -318,13 +318,6 @@ class CommentSystem {
                                     </span>
                                 `}
 
-                                ${c.target_info ? `
-                                    <div class="d-inline-flex font-bold font-size-0-8 mx-1">
-                                        <span class="text-gray-400 ml-05">در </span>
-                                        <a href="${c.target_info.url}" class="text-primary hover-underline">${c.target_info.title}</a>
-                                    </div>
-                                ` : ''}
-
                                 <span class="comment-date">${c.created_at_fa || c.created_at}</span>
                             </div>
                         </div>
@@ -337,6 +330,13 @@ class CommentSystem {
                         </div>
                     </div>
 
+                    ${c.target_info ? `
+                        <div class="d-inline-flex font-bold font-size-2 mb-1">
+                            <span class="text-gray-400">در </span>
+                            <a href="${c.target_info.url}" class="text-primary hover-underline">${c.target_info.title}</a>
+                        </div>
+                    ` : ''}
+
                     <div class="comment-content">
                         ${this.renderCommentBody(c)}
                     </div>
@@ -348,7 +348,7 @@ class CommentSystem {
                             <span>پاسخ</span>
                         </div>
                         ` : (this.targetType === 'user_profile' && !this.isInsideModal ? `
-                        <div class="view-thread-btn" data-id="${c.id}">
+                        <div class="view-thread-btn comment-footer-btn" data-id="${c.id}">
                             <i data-lucide="message-circle" class="icon-size-3"></i>
                             <span>${c.total_replies > 0 ? this.toPersianDigits(c.total_replies) + ' پاسخ' : 'مشاهده گفتگو'}</span>
                         </div>
@@ -379,7 +379,7 @@ class CommentSystem {
                 `}
                 <div id="reply-form-container-${c.id}"></div>
                 ${!isReply && showInlineReplies ? `
-                    <div class="replies-container" id="replies-container-${c.id}">
+                    <div id="replies-container-${c.id}">
                         <div class="replies-list">
                             ${c.replies ? c.replies.map(r => this.renderCommentItem(r, true)).join('') : ''}
                         </div>
@@ -402,7 +402,7 @@ class CommentSystem {
         return `
             <div class="thread-root-reference mb-1" id="comment-${c.id}">
                 <div class="reply-preview-block">
-                    <div class="mb-1">در پاسخ به <a href="/profile/${c.user_id}/${c.user_username || 'user'}" class="reply-preview-author">@${c.user_username || 'user'}</a></div>
+                    <div>در پاسخ به <a href="/profile/${c.user_id}/${c.user_username || 'user'}" class="reply-preview-author">@${c.user_username || 'user'}</a></div>
                     <div class="reply-preview-content font-size-0-9 text-gray-600">${plainText}${dots}</div>
                 </div>
             </div>
@@ -454,7 +454,7 @@ class CommentSystem {
         let imageHtml = '';
         if (c.type === 'analysis' && c.image_url) {
             imageHtml = `
-                <div class="comment-attachment mt-2">
+                <div class="comment-attachment mb-2">
                     <a href="/${c.image_url}" target="_blank" class="radius-12 overflow-hidden transition-all">
                         <img src="/${c.image_url}" alt="تحلیل کاربر" class="w-full object-contain bg-secondary">
                     </a>
@@ -1066,19 +1066,13 @@ class CommentSystem {
             if (data.success) {
                 const thread = data.thread;
                 if (targetInfoArea && thread.target_info) {
-                    targetInfoArea.innerHTML = `<div class="d-flex align-center just-between w-full"><div class="d-flex align-center gap-1"><i data-lucide="external-link" class="text-gray icon-size-4"></i><div class="font-bold font-size-0-9">در <a href="${thread.target_info.url}" class="text-primary hover-underline">${thread.target_info.title}</a></div></div></div>`;
+                    targetInfoArea.innerHTML = `<div class="d-flex align-center just-between w-full"><div class="d-flex align-center gap-1"><div class="font-bold font-size-0-9">در <a href="${thread.target_info.url}" class="text-primary hover-underline">${thread.target_info.title}</a></div></div></div>`;
                     targetInfoArea.classList.remove('d-none');
                 }
                 contentArea.innerHTML = `<div class="thread-list">${this.renderCommentItem(thread)}</div>`;
                 loader.classList.add('d-none');
                 contentArea.classList.remove('d-none');
                 if (window.lucide) lucide.createIcons({ root: contentArea });
-
-                const targetEl = contentArea.querySelector(`#comment-${commentId}`);
-                if (targetEl) {
-                    targetEl.classList.add('highlight-comment');
-                    setTimeout(() => targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-                }
             } else {
                 window.showAlert?.(data.message, 'error');
                 this.closeModal(modal);

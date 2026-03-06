@@ -8,7 +8,8 @@ function initMultipleSticky(elements, options = {}) {
         offset = 0,
         minContainerWidth = 768,
         container = null,
-        gap = 0
+        gap = 0,
+        zIndex = 1000
     } = options;
 
     let elementsArray = [];
@@ -65,7 +66,7 @@ function initMultipleSticky(elements, options = {}) {
                 if (el) {
                     el.style.position = 'sticky';
                     el.style.top = `${currentTop}px`;
-                    el.style.zIndex = (1000 + index).toString();
+                    el.style.zIndex = (zIndex + index).toString();
                     
                     // The margin-bottom trick ensures that the sticky element's "container constraint"
                     // includes space for all the sticky elements below it.

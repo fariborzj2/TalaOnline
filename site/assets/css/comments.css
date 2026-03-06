@@ -66,7 +66,9 @@
     background-color: #e2e8f0;
     display: none;
 }
-
+.replies-list .comment-wrapper .comment-item::before {
+    display: none !important;
+}
 .has-replies > .comment-item::before {
     display: block;
 }
@@ -213,7 +215,9 @@
     line-height: 1.8;
     color: #334155;
 }
-
+.comment-body-text {
+    margin-bottom: 12px;
+}
 .comment-body-text p {
     margin-bottom: 12px;
 }
@@ -679,28 +683,6 @@
     border: 1px solid #e2e8f0;
 }
 
-.view-thread-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #64748b;
-    margin-top: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #f8fafc;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-}
-
-.view-thread-btn:hover {
-    background: #f1f5f9;
-    color: #249E94;
-    border-color: #249E94;
-}
-
 .comment-wrapper.has-replies .comment-item::before {
     display: block;
 }
@@ -708,12 +690,14 @@
 /* Modal responsive full-height on mobile */
 @media (max-width: 600px) {
     .thread-modal-container {
-        height: 95vh !important;
+        /*! height: 95vh !important; */
         max-height: 95vh !important;
-        border-radius: 24px 24px 0 0 !important;
     }
 
     .thread-modal-body {
-        padding-bottom: 100px;
+        padding-bottom: 40px;
     }
+}
+.thread-reply-item:last-child {
+   border: none;
 }

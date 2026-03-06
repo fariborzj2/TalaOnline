@@ -474,7 +474,7 @@
                 <button class="close-modal pointer"><i data-lucide="x" class="icon-size-5"></i></button>
             </div>
 
-            <div id="modal-thread-target-info" class="sticky-info pd-md border-bottom d-none">
+            <div id="modal-thread-target-info" class="sticky-info py-1 px-2 border-bottom d-none">
                 <!-- Target Info Loaded via AJAX -->
             </div>
 

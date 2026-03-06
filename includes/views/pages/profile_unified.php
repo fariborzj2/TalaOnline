@@ -118,7 +118,8 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                 offset: 20,
                 minContainerWidth: 760,
                 container: '.profile-container',
-                gap: 20
+                gap: 20,
+                zIndex: 1
             });
         </script>
 
