@@ -88,7 +88,7 @@ class CommentSystem {
         if (!this.container) return;
 
         let html = `
-            <div class="comments-section ${this.readOnly ? 'read-only' : ''}">
+            <div class="comments-section d-column gap-md ${this.readOnly ? 'read-only' : ''}">
                 ${!this.readOnly ? `
                 <div class="comments-header">
                     <i data-lucide="message-square" class="text-primary icon-size-6"></i>
@@ -98,7 +98,7 @@ class CommentSystem {
                 ${this.renderCommentForm()}
                 ` : ''}
 
-                <div class="comments-filters d-column gap-1-5 mb-4 mt-8">
+                <div class="bg-block border radius-16 pd-md d-column gap-1">
                     ${this.targetType !== 'post' ? `
                         <div class="filter-group-container">
                             <div class="pill-toggle-group filter-toggle-group">
@@ -111,8 +111,8 @@ class CommentSystem {
 
                     <div class="sort-group d-flex align-center just-between gap-1">
                         <div class="d-flex align-center gap-05 text-title">
-                            <span class="font-bold font-size-0-9">مرتب‌سازی:</span>
                             <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
+                            <span class="font-bold">مرتب‌سازی:</span>
                         </div>
                         <div class="d-flex align-center gap-1-5">
                             <span class="sort-item sort-btn ${this.sort === 'newest' ? 'active' : ''}" data-sort="newest">جدیدترین</span>
@@ -395,7 +395,7 @@ class CommentSystem {
         const dots = contentSnippet.length > 150 ? '...' : '';
 
         return `
-            <div class="thread-root-reference mb-4" id="comment-${c.id}">
+            <div class="thread-root-reference mb-1" id="comment-${c.id}">
                 <div class="reply-preview-block">
                     <div class="mb-1">در پاسخ به <a href="/profile/${c.user_id}/${c.user_username || 'user'}" class="reply-preview-author">@${c.user_username || 'user'}</a></div>
                     <div class="reply-preview-content font-size-0-9 text-gray-600">${plainText}${dots}</div>
@@ -413,7 +413,7 @@ class CommentSystem {
         }
 
         return `
-            <div class="minimal-reply border-bottom py-3" id="comment-${c.id}">
+            <div class="minimal-reply border-bottom py-1" id="comment-${c.id}">
                 <div class="d-flex gap-1">
                     <div class="shrink-0">
                         <img src="${avatarUrl}" class="radius-50 w-8 h-8 object-cover border" alt="${c.user_name}" onerror="this.src='${defaultAvatar}'">

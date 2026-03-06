@@ -402,7 +402,7 @@ input:focus {
     display: flex;
     background-color: #f1f5f9;
     padding: 4px;
-    border-radius: 9999px;
+    border-radius: 10px;
     border: 1px solid #e2e8f0;
     max-width: 100%;
     overflow-x: auto;
@@ -414,7 +414,7 @@ input:focus {
 }
 .pill-btn {
     padding: 6px 16px;
-    border-radius: 9999px;
+    border-radius: 8px;
     font-size: 11px;
     font-weight: 700;
     color: var(--color-text);

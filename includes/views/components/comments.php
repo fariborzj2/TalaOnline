@@ -156,7 +156,7 @@ function render_reaction($c, $type, $emoji) {
 }
 ?>
 
-<div class="comments-section <?= $read_only ? 'read-only' : '' ?>" id="comments-app" data-target-id="<?= $target_id ?>" data-target-type="<?= $target_type ?>" data-guest-comment="<?= $guest_comment_enabled ? '1' : '0' ?>">
+<div class="comments-section d-column gap-md <?= $read_only ? 'read-only' : '' ?> " id="comments-app" data-target-id="<?= $target_id ?>" data-target-type="<?= $target_type ?>" data-guest-comment="<?= $guest_comment_enabled ? '1' : '0' ?>">
     <?php if (!$guest_view_enabled && !$is_logged_in): ?>
         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
             <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100 mx-auto mb-4">
@@ -251,7 +251,7 @@ function render_reaction($c, $type, $emoji) {
         <?php endif; ?>
     <?php endif; ?>
 
-    <div class="comments-filters d-column gap-1-5 mb-4 mt-8">
+    <div class="bg-block border radius-16 pd-md d-column gap-1">
         <?php if ($target_type !== 'post'): ?>
             <div class="filter-group-container">
                 <div class="pill-toggle-group filter-toggle-group">
@@ -264,8 +264,8 @@ function render_reaction($c, $type, $emoji) {
 
         <div class="sort-group d-flex align-center just-between gap-1">
             <div class="d-flex align-center gap-05 text-title">
-                <span class="font-bold font-size-0-9">مرتب‌سازی:</span>
                 <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
+                <span class="font-bold">مرتب‌سازی:</span>
             </div>
             <div class="d-flex align-center gap-1-5">
                 <span class="sort-item sort-btn active" data-sort="newest">جدیدترین</span>
