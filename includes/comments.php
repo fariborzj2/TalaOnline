@@ -87,7 +87,7 @@ class Comments {
 
         $order_by = "c.created_at DESC";
         if ($sort === 'popular') {
-            $order_by = "c.likes_count DESC, c.created_at DESC";
+            $order_by = "likes DESC, c.created_at DESC";
         } elseif ($sort === 'most_replies') {
             $order_by = "total_replies DESC, c.created_at DESC";
         }
@@ -180,7 +180,7 @@ class Comments {
                 LEFT JOIN users ru ON c.reply_to_user_id = ru.id
                 LEFT JOIN comments rc ON c.reply_to_id = rc.id
                 WHERE c.parent_id = ? AND c.status = 'approved'
-                ORDER BY c.likes_count DESC, c.created_at ASC
+                ORDER BY likes DESC, c.created_at ASC
                 LIMIT ? OFFSET ?";
 
         $stmt = $this->pdo->prepare($sql);

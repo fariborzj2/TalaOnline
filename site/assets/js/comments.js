@@ -104,17 +104,17 @@ class CommentSystem {
                             <span class="filter-item filter-btn ${this.filterType === 'comment' ? 'active' : ''}" data-filter="comment">نظرات</span>
                             <span class="filter-item filter-btn ${this.filterType === 'analysis' ? 'active' : ''}" data-filter="analysis">تحلیل‌ها</span>
                         </div>
-                    ` : '<div></div>'}
+                    ` : ''}
 
-                    <div class="sort-group d-flex align-center gap-1">
+                    <div class="sort-group d-flex align-center gap-1 ${this.targetType === 'post' ? 'w-full' : ''}">
                         <div class="d-flex align-center gap-05 text-gray-500">
                             <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
                             <span class="font-bold font-size-0-9">مرتب‌سازی:</span>
                         </div>
                         <div class="d-flex gap-1-5">
                             <span class="sort-item sort-btn ${this.sort === 'newest' ? 'active' : ''}" data-sort="newest">جدیدترین</span>
-                            <span class="sort-item sort-btn ${this.sort === 'most_replies' ? 'active' : ''}" data-sort="most_replies">دیدگاه خریداران</span>
-                            <span class="sort-item sort-btn ${this.sort === 'popular' ? 'active' : ''}" data-sort="popular">مفیدترین</span>
+                            <span class="sort-item sort-btn ${this.sort === 'popular' ? 'active' : ''}" data-sort="popular">محبوب‌ترین</span>
+                            <span class="sort-item sort-btn ${this.sort === 'most_replies' ? 'active' : ''}" data-sort="most_replies">بیشترین پاسخ</span>
                         </div>
                     </div>
                 </div>
