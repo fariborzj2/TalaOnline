@@ -77,7 +77,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                 <?php endif; ?>
                 <div class="comment-body-text"><?= $c['content_html'] ?></div>
                 <?php if ($c['type'] === 'analysis' && $c['image_url']): ?>
-                    <div class="comment-attachment my-2">
+                    <div class="comment-attachment mt-2">
                         <a href="/<?= htmlspecialchars($c['image_url']) ?>" target="_blank" class="radius-12 overflow-hidden transition-all">
                             <img src="/<?= htmlspecialchars($c['image_url']) ?>" alt="تحلیل کاربر" class="w-full object-contain bg-secondary">
                         </a>
@@ -122,8 +122,6 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                         <span class="emoji-btn" data-id="<?= $c['id'] ?>" data-type="dislike">👎</span>
                     </div>
                 </div>
-
-                
             </div>
         </div>
 
@@ -177,81 +175,83 @@ function render_reaction($c, $type, $emoji) {
             <h3>نظرات کاربران <span class="comments-count-badge">(<?= fa_num($total_count ?? 0) ?>)</span></h3>
         </div>
 
-        <?php if ($is_logged_in || $guest_comment_enabled): ?>
-            <div class="comment-form" id="form-main">
-                <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1 <?= $target_type === 'post' ? 'd-none' : '' ?>">
-                    <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
-                        <input type="radio" name="comment_type_main" value="comment" class="comment-type-radio" data-suffix="main" checked>
-                        <span>نظر</span>
-                    </label>
-                    <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
-                        <input type="radio" name="comment_type_main" value="analysis" class="comment-type-radio" data-suffix="main">
-                        <span>تحلیل</span>
-                    </label>
-                </div>
+        <div id="main-form-container">
+            <?php if ($is_logged_in || $guest_comment_enabled): ?>
+                <div class="comment-form" id="form-main">
+                    <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1 <?= $target_type === 'post' ? 'd-none' : '' ?>">
+                        <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
+                            <input type="radio" name="comment_type_main" value="comment" class="comment-type-radio" data-suffix="main" checked>
+                            <span>نظر</span>
+                        </label>
+                        <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
+                            <input type="radio" name="comment_type_main" value="analysis" class="comment-type-radio" data-suffix="main">
+                            <span>تحلیل</span>
+                        </label>
+                    </div>
 
-                <?php if (!$is_logged_in && $guest_comment_enabled): ?>
-                    <div class="d-flex-wrap gap-1 mb-1">
-                        <div class="input-item grow-1">
-                            <i data-lucide="user" class="text-gray icon-size-3"></i>
-                            <input type="text" id="guest-name-main" placeholder="نام شما">
+                    <?php if (!$is_logged_in && $guest_comment_enabled): ?>
+                        <div class="d-flex-wrap gap-1 mb-1">
+                            <div class="input-item grow-1">
+                                <i data-lucide="user" class="text-gray icon-size-3"></i>
+                                <input type="text" id="guest-name-main" placeholder="نام شما">
+                            </div>
+                            <div class="input-item grow-1">
+                                <i data-lucide="mail" class="text-gray icon-size-3"></i>
+                                <input type="email" id="guest-email-main" placeholder="ایمیل شما" dir="ltr" class="text-left">
+                            </div>
                         </div>
-                        <div class="input-item grow-1">
-                            <i data-lucide="mail" class="text-gray icon-size-3"></i>
-                            <input type="email" id="guest-email-main" placeholder="ایمیل شما" dir="ltr" class="text-left">
+                    <?php endif; ?>
+
+                    <div class="mb-1">
+                        <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-main"></textarea>
+                    </div>
+
+                    <?php if ($is_logged_in): ?>
+                    <div class="mention-tag-area mb-2" id="mention-area-main">
+                        <div class="mention-input-wrapper relative d-flex-wrap gap-05 align-center" id="mentions-container-main">
+                            <input type="text"
+                                   class="mention-tag-input font-size-0-8"
+                                   placeholder="منشن کردن کاربر..."
+                                   id="mention-input-main">
+                            <div class="mention-suggestions d-none" id="suggestions-main"></div>
                         </div>
                     </div>
-                <?php endif; ?>
+                    <?php endif; ?>
 
-                <div class="mb-1">
-                    <textarea placeholder="دیدگاه تخصصی خود را اینجا بنویسید..." id="textarea-main"></textarea>
-                </div>
-
-                <?php if ($is_logged_in): ?>
-                <div class="mention-tag-area mb-2" id="mention-area-main">
-                    <div class="mention-input-wrapper relative d-flex-wrap gap-05 align-center" id="mentions-container-main">
-                        <input type="text"
-                               class="mention-tag-input font-size-0-8"
-                               placeholder="منشن کردن کاربر..."
-                               id="mention-input-main">
-                        <div class="mention-suggestions d-none" id="suggestions-main"></div>
-                    </div>
-                </div>
-                <?php endif; ?>
-
-                <div class="comment-image-upload d-none mb-2" id="image-upload-container-main">
-                    <label for="comment-image-main" class="upload-zone d-flex align-center just-center gap-1 p-1 radius-12 border-dashed pointer transition-all">
-                        <i data-lucide="image" class="text-gray icon-size-5"></i>
-                        <div class="text-right">
-                            <div class="font-bold font-size-2 text-title">آپلود تصویر تحلیل</div>
+                    <div class="comment-image-upload d-none mb-2" id="image-upload-container-main">
+                    <label for="comment-image-main" class="upload-zone d-flex align-center just-center gap-1 pd-md radius-12 border-dashed pointer transition-all">
+                            <i data-lucide="image" class="text-gray icon-size-5"></i>
+                            <div class="text-right">
+                                <div class="font-bold font-size-2 text-title">آپلود تصویر تحلیل</div>
+                            </div>
+                            <input type="file" id="comment-image-main" class="d-none comment-image-input" accept="image/*" data-suffix="main">
+                        </label>
+                        <div class="font-size-1 text-gray">فرمت‌های مجاز: PNG, JPG, WebP, AVIF</div>
+                    <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border" style="width: 100px; height: 100px;">
+                            <img src="" class="w-full h-full object-cover">
+                            <button type="button" class="remove-preview absolute top-0 left-0 m-05 radius-50 p-05" data-suffix="main">
+                                <i data-lucide="x" class="icon-size-1"></i>
+                            </button>
                         </div>
-                        <input type="file" id="comment-image-main" class="d-none comment-image-input" accept="image/*" data-suffix="main">
-                    </label>
-                    <div class="font-size-1 text-gray">فرمت‌های مجاز: PNG, JPG, WebP, AVIF</div>
-                    <div class="image-preview d-none mt-1 relative radius-12 overflow-hidden border" style="width: 100px; height: 100px;">
-                        <img src="" class="w-full h-full object-cover">
-                        <button type="button" class="remove-preview absolute top-0 left-0 m-05 radius-50 p-05" data-suffix="main">
-                            <i data-lucide="x" class="icon-size-1"></i>
-                        </button>
+                    </div>
+
+                    <div class="comment-form-footer">
+                    <button class="btn btn-primary submit-comment radius-10 mr-auto" data-parent="" data-edit="false">ارسال نظر</button>
                     </div>
                 </div>
-
-                <div class="comment-form-footer">
-                    <button class="btn btn-primary submit-comment radius-10 mr-auto" data-parent="">ارسال نظر</button>
+            <?php elseif (!$is_logged_in): ?>
+                <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
+                    <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-orange btn-sm" onclick="window.showAuthModal?.('login')">ورود به حساب</button>
+                        <button class="btn btn-secondary btn-sm bg-block" onclick="window.showAuthModal?.('register')">عضویت رایگان</button>
+                    </div>
                 </div>
-            </div>
-        <?php elseif (!$is_logged_in): ?>
-            <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
-                <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
-                <div class="d-flex gap-1">
-                    <button class="btn btn-orange btn-sm" onclick="window.showAuthModal?.('login')">ورود به حساب</button>
-                    <button class="btn btn-secondary btn-sm bg-block" onclick="window.showAuthModal?.('register')">عضویت رایگان</button>
-                </div>
-            </div>
-        <?php endif; ?>
+            <?php endif; ?>
+        </div>
     <?php endif; ?>
 
-    <div class="bg-block border radius-16 pd-md d-column gap-1">
+    <div class="bg-block border radius-16 pd-md d-column gap-1" id="comments-controls">
         <?php if ($target_type !== 'post'): ?>
             <div class="filter-group-container">
                 <div class="pill-toggle-group filter-toggle-group">
@@ -275,7 +275,7 @@ function render_reaction($c, $type, $emoji) {
         </div>
     </div>
 
-    <div class="comment-list <?= $read_only ? 'mt-0' : 'mt-2' ?>">
+    <div class="comment-list <?= $read_only ? 'mt-0' : 'mt-2' ?>" id="comment-list">
         <?php if (empty($comments)): ?>
             <div class="bg-block text-center pd-md radius-16 border d-column just-center align-center">
                 <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
@@ -287,7 +287,7 @@ function render_reaction($c, $type, $emoji) {
     </div>
 
     <?php if (($total_pages ?? 1) > 1): ?>
-        <div class="pagination mt-3 d-flex just-center gap-05">
+        <div class="pagination mt-3 d-flex just-center gap-05" id="comments-pagination">
             <?php
             $current_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             $query = $_GET;
