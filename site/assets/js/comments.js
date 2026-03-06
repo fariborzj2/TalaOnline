@@ -25,6 +25,7 @@ class CommentSystem {
         this.currentPage = initialData?.current_page || 1;
         this.threadModalId = 'comment-thread-modal';
         this.isInsideModal = false;
+        this.isLoading = false;
         this.editors = {};
 
         window.commentSystem = this;
@@ -50,12 +51,25 @@ class CommentSystem {
         this.initRichEditors();
         this.initTagMentions();
         this.handleAnchorScroll();
+        if (this.targetType === 'user_profile') {
+            this.initInfiniteScroll();
+        }
     }
 
-    async loadAndRender() {
-        await this.loadComments();
-        this.updateUI();
+    async loadAndRender(append = false) {
+        if (this.isLoading) return;
+        this.isLoading = true;
+
+        const newComments = await this.loadComments();
+        if (append) {
+            this.comments = [...this.comments, ...newComments];
+        } else {
+            this.comments = newComments;
+        }
+
+        this.updateUI(append);
         this.handleAnchorScroll();
+        this.isLoading = false;
     }
 
     handleAnchorScroll() {
@@ -77,17 +91,18 @@ class CommentSystem {
             const response = await fetch(`/api/comments.php?action=list&target_id=${this.targetId}&target_type=${this.targetType}&filter_type=${this.filterType}&sort=${this.sort}&page=${this.currentPage}`);
             const data = await response.json();
             if (data.success) {
-                this.comments = data.comments;
                 this.totalCount = data.total_count;
                 this.totalPages = data.total_pages;
+                return data.comments;
             }
         } catch (error) {
             console.error('Failed to load comments:', error);
         }
+        return [];
     }
 
-    updateUI() {
-        this.updateCommentList();
+    updateUI(append = false) {
+        this.updateCommentList(append);
         this.updatePagination();
         this.updateStatsUI();
         this.updateFiltersUI();
@@ -95,7 +110,7 @@ class CommentSystem {
         if (window.lucide) lucide.createIcons({ root: this.container });
     }
 
-    updateCommentList() {
+    updateCommentList(append = false) {
         const list = document.getElementById('comment-list');
         if (!list) return;
 
@@ -107,13 +122,24 @@ class CommentSystem {
                 </div>
             `;
         } else {
-            list.innerHTML = this.comments.map(c => this.renderCommentItem(c)).join('');
+            if (append) {
+                const existingIds = Array.from(list.querySelectorAll('[id^="comment-wrapper-"]')).map(el => el.id.replace('comment-wrapper-', ''));
+                const newComments = this.comments.filter(c => !existingIds.includes(c.id.toString()));
+                list.insertAdjacentHTML('beforeend', newComments.map(c => this.renderCommentItem(c)).join(''));
+            } else {
+                list.innerHTML = this.comments.map(c => this.renderCommentItem(c)).join('');
+            }
         }
         if (window.lucide) lucide.createIcons({ root: list });
     }
 
     updatePagination() {
         const pagination = document.getElementById('comments-pagination');
+        if (this.targetType === 'user_profile') {
+            if (pagination) pagination.classList.add('d-none');
+            return;
+        }
+
         if (!pagination) {
             if (this.totalPages > 1) {
                 const list = document.getElementById('comment-list');
@@ -1088,6 +1114,29 @@ class CommentSystem {
 
     closeModal(modal) {
         if (window.closeModal) window.closeModal();
+    }
+
+    initInfiniteScroll() {
+        const list = document.getElementById('comment-list');
+        if (!list) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !this.isLoading && this.currentPage < this.totalPages) {
+                this.currentPage++;
+                this.loadAndRender(true);
+            }
+        }, { threshold: 0.1 });
+
+        // Create a sentinel element
+        let sentinel = document.getElementById('comments-sentinel');
+        if (!sentinel) {
+            sentinel = document.createElement('div');
+            sentinel.id = 'comments-sentinel';
+            sentinel.style.height = '20px';
+            list.after(sentinel);
+        }
+
+        observer.observe(sentinel);
     }
 }
 
