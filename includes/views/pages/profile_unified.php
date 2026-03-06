@@ -131,6 +131,9 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                     <div id="user-comments-list" class="mt-1">
                         <?php
                         $comments = $user_comments;
+                        $total_count = $user_comments_data['total_count'];
+                        $total_pages = $user_comments_data['total_pages'];
+                        $current_page = $user_comments_data['current_page'];
                         $target_id = $user['id'];
                         $target_type = 'user_profile';
                         $read_only = true;

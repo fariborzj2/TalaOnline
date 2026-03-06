@@ -68,8 +68,13 @@ class Comments {
             $per_page = (int)get_setting('comments_per_page', '20');
         }
 
-        $where = "c.target_id = ? AND c.target_type = ? AND c.status = 'approved' AND c.parent_id IS NULL";
-        $params = [(string)$target_id, (string)$target_type];
+        if ($target_type === 'user_profile') {
+            $where = "c.user_id = ? AND c.status = 'approved'";
+            $params = [(int)$target_id];
+        } else {
+            $where = "c.target_id = ? AND c.target_type = ? AND c.status = 'approved' AND c.parent_id IS NULL";
+            $params = [(string)$target_id, (string)$target_type];
+        }
 
         if ($filter_type !== 'all') {
             $where .= " AND c.type = ?";
@@ -94,6 +99,8 @@ class Comments {
 
         // 1. Get top-level comments for the current page
         $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
+                ru.username as reply_to_username, ru.name as reply_to_name,
+                rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
@@ -101,6 +108,8 @@ class Comments {
                 (SELECT COUNT(*) FROM comments WHERE parent_id = c.id AND status = 'approved') as total_replies
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
+                LEFT JOIN users ru ON c.reply_to_user_id = ru.id
+                LEFT JOIN comments rc ON c.reply_to_id = rc.id
                 WHERE $where
                 ORDER BY $order_by
                 LIMIT ? OFFSET ?";
@@ -134,6 +143,10 @@ class Comments {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
+
+            if ($target_type === 'user_profile') {
+                $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
+            }
 
             // total_replies is now fetched in the main query
 
