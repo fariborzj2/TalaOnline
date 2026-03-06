@@ -378,14 +378,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 modal.classList.add('closing');
                 if (content) content.classList.add('closing');
 
+                if (modal.id === 'comment-thread-modal' && window.commentSystem) {
+                    window.commentSystem.isInsideModal = false;
+                }
+
                 setTimeout(() => {
                     modal.classList.add('d-none');
                     modal.classList.remove('closing');
                     if (content) content.classList.remove('closing');
                     document.body.style.overflow = '';
-                    if (modal.id === 'comment-thread-modal' && window.commentSystem) {
-                        window.commentSystem.isInsideModal = false;
-                    }
                 }, 300);
             }
         });

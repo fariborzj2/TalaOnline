@@ -24,7 +24,10 @@ class CommentSystem {
         this.sort = 'newest';
         this.currentPage = initialData?.current_page || 1;
         this.threadModalId = 'comment-thread-modal';
+        this.isInsideModal = false;
         this.editors = {};
+
+        window.commentSystem = this;
 
         this.init();
 
