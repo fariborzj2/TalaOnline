@@ -463,6 +463,27 @@
         </div>
     </div>
 
+    <!-- Comment Thread Modal -->
+    <div id="comment-thread-modal" class="modal-overlay d-none comment-thread-modal">
+        <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-700">
+            <div class="pd-md border-bottom d-flex just-between align-center">
+                <div class="d-flex align-center gap-05">
+                    <i data-lucide="message-circle" class="text-primary icon-size-5"></i>
+                    <h3 class="font-bold font-size-4">مشاهده گفتگو</h3>
+                </div>
+                <button class="close-modal pointer"><i data-lucide="x" class="icon-size-5"></i></button>
+            </div>
+            <div class="modal-body overflow-y-auto pd-md" style="flex: 1;">
+                <div class="thread-loader d-flex just-center pd-xl">
+                    <div class="loader"></div>
+                </div>
+                <div class="thread-content d-none">
+                    <!-- Loaded via AJAX -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="<?= versioned_asset('/assets/js/vendor/lucide.js') ?>"></script>
     <?php if (!empty($load_charts)): ?>

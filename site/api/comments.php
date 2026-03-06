@@ -42,6 +42,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode(['success' => true, 'replies' => $replies]);
         exit;
     }
+
+    if ($action === 'thread') {
+        $comment_id = $_GET['comment_id'] ?? 0;
+        if (empty($comment_id)) {
+            echo json_encode(['success' => false, 'message' => 'شناسه نظر الزامی است']);
+            exit;
+        }
+
+        $thread = $comments_handler->getThread($comment_id, $user_id);
+        if ($thread) {
+            echo json_encode(['success' => true, 'thread' => $thread]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'گفتگو پیدا نشد']);
+        }
+        exit;
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

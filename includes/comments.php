@@ -92,7 +92,7 @@ class Comments {
 
         $order_by = "c.created_at DESC";
         if ($sort === 'popular') {
-            $order_by = "likes DESC, c.created_at DESC";
+            $order_by = "c.likes_count DESC, c.created_at DESC";
         } elseif ($sort === 'most_replies') {
             $order_by = "total_replies DESC, c.created_at DESC";
         }
@@ -325,6 +325,31 @@ class Comments {
         } catch (Exception $e) {}
 
         return null;
+    }
+
+    /**
+     * Fetch a full thread (parent + all replies) for a specific comment ID
+     */
+    public function getThread($comment_id, $user_id = null) {
+        if (!$this->pdo) return null;
+
+        // 1. Find the root parent ID
+        $stmt = $this->pdo->prepare("SELECT id, parent_id, target_id, target_type FROM comments WHERE id = ?");
+        $stmt->execute([$comment_id]);
+        $curr = $stmt->fetch();
+        if (!$curr) return null;
+
+        $root_id = $curr['parent_id'] ?: $curr['id'];
+
+        // 2. Fetch the root comment
+        $parent = $this->getComment($root_id, $user_id);
+        if (!$parent) return null;
+
+        // 3. Fetch all replies to this parent
+        $parent['replies'] = $this->getReplies($root_id, 0, 100, $user_id, true);
+        $parent['target_info'] = $this->getTargetInfo($parent['target_id'], $parent['target_type']);
+
+        return $parent;
     }
 
     /**

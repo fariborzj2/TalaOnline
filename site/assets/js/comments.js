@@ -23,6 +23,7 @@ class CommentSystem {
         this.filterType = 'all';
         this.sort = 'newest';
         this.currentPage = initialData?.current_page || 1;
+        this.threadModalId = 'comment-thread-modal';
 
         if (options.initialComments) {
             this.render();
@@ -271,6 +272,7 @@ class CommentSystem {
 
     renderCommentItem(c, isReply = false) {
         const hasReplies = !isReply && ((c.replies && c.replies.length > 0) || (c.total_replies > 0));
+        const showInlineReplies = hasReplies && (this.targetType !== 'user_profile' || this.isInsideModal);
         const baseUrl = window.location.origin;
         const defaultAvatar = `${baseUrl}/assets/images/default-avatar.png`;
 
@@ -328,7 +330,12 @@ class CommentSystem {
                             <i data-lucide="reply" class="icon-size-4"></i>
                             <span>پاسخ</span>
                         </div>
-                        ` : ''}
+                        ` : (this.targetType === 'user_profile' && !this.isInsideModal ? `
+                        <div class="view-thread-btn" data-id="${c.id}">
+                            <i data-lucide="message-circle" class="icon-size-3"></i>
+                            <span>مشاهده گفتگو</span>
+                        </div>
+                        ` : '')}
                         <div class="footer-right">
                             ${(() => {
                                 const reactionsHtml = (
@@ -353,7 +360,7 @@ class CommentSystem {
                     </div>
                 </div>
                 <div id="reply-form-container-${c.id}"></div>
-                ${!isReply ? `
+                ${!isReply && showInlineReplies ? `
                     <div class="replies-container" id="replies-container-${c.id}">
                         <div class="replies-list">
                             ${c.replies ? c.replies.map(r => this.renderCommentItem(r, true)).join('') : ''}
@@ -832,6 +839,10 @@ class CommentSystem {
 
         this.initTagMentions();
 
+        this.container.querySelectorAll('.view-thread-btn').forEach(btn => {
+            btn.onclick = () => this.openThreadModal(btn.dataset.id);
+        });
+
         // Filter and Sort Events
         this.container.querySelectorAll('.filter-btn').forEach(btn => {
             btn.onclick = () => {
@@ -967,6 +978,138 @@ class CommentSystem {
             return false;
         };
         searchAndReplace(this.comments);
+    }
+
+    async openThreadModal(commentId) {
+        this.isInsideModal = true;
+        let modal = document.getElementById(this.threadModalId);
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = this.threadModalId;
+            modal.className = 'modal-overlay d-none';
+            modal.innerHTML = `
+                <div class="modal-content bg-block radius-24 shadow-lg overflow-hidden basis-600 thread-modal-content">
+                    <div class="pd-md border-bottom d-flex just-between align-center sticky top-0 bg-block z-10">
+                        <div class="d-flex align-center gap-1">
+                            <i data-lucide="message-circle" class="text-primary icon-size-5"></i>
+                            <h3 class="font-bold font-size-4">مشاهده گفتگو</h3>
+                        </div>
+                        <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
+                    </div>
+                    <div class="thread-body pd-md overflow-y-auto" style="max-height: 80vh;">
+                        <div class="thread-loader text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>
+                        <div class="thread-content d-none"></div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.querySelector('.close-modal').onclick = () => this.closeModal(modal);
+        }
+
+        modal.classList.remove('d-none');
+        const contentArea = modal.querySelector('.thread-content');
+        const loader = modal.querySelector('.thread-loader');
+        if (!contentArea || !loader) {
+             // Fallback for when modal was pre-rendered in main.php
+             const existingModal = document.getElementById(this.threadModalId);
+             this.modalContentArea = existingModal.querySelector('.thread-content');
+             this.modalLoader = existingModal.querySelector('.thread-loader');
+        } else {
+             this.modalContentArea = contentArea;
+             this.modalLoader = loader;
+        }
+
+        this.modalContentArea.classList.add('d-none');
+        this.modalLoader.classList.remove('d-none');
+        contentArea.classList.add('d-none');
+        loader.classList.remove('d-none');
+
+        try {
+            const res = await fetch(`/api/comments.php?action=thread&comment_id=${commentId}`);
+            const data = await res.json();
+            if (data.success) {
+                const thread = data.thread;
+                contentArea.innerHTML = `
+                    <div class="thread-target-info bg-secondary pd-md radius-16 mb-4 d-flex align-center gap-1">
+                        <i data-lucide="external-link" class="text-gray icon-size-4"></i>
+                        <div class="font-bold font-size-0-9">در <a href="${thread.target_info.url}" class="text-primary hover-underline">${thread.target_info.title}</a></div>
+                    </div>
+                    <div class="thread-list">
+                        ${this.renderCommentItem(thread)}
+                    </div>
+                `;
+                this.modalLoader.classList.add('d-none');
+                this.modalContentArea.classList.remove('d-none');
+                if (window.lucide) lucide.createIcons();
+                this.bindEventsInModal(contentArea);
+
+                // Highlight the target comment in the thread
+                const targetEl = contentArea.querySelector(`#comment-${commentId}`);
+                if (targetEl) {
+                    targetEl.classList.add('highlight-comment');
+                    setTimeout(() => targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                }
+            } else {
+                window.showAlert?.(data.message, 'error');
+                this.closeModal(modal);
+            }
+        } catch (error) {
+            console.error(error);
+            this.closeModal(modal);
+        }
+    }
+
+    bindEventsInModal(container) {
+        // Limited subset of events for modal view
+        container.querySelectorAll('.btn-react-trigger').forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
+                const id = btn.dataset.id;
+                const popover = container.querySelector(`#popover-${id}`);
+                const isShown = popover.classList.contains('show');
+                container.querySelectorAll('.reactions-popover').forEach(p => p.classList.remove('show'));
+                if (!isShown) popover.classList.add('show');
+            };
+        });
+
+        container.querySelectorAll('.emoji-btn, .reaction-pill-item').forEach(btn => {
+            btn.onclick = async (e) => {
+                e.stopPropagation();
+                if (btn.classList.contains('loading')) return;
+                if (!this.isLoggedIn) { window.showAuthModal?.('login'); return; }
+                const id = btn.dataset.id;
+                const type = btn.dataset.type;
+                const res = await fetch('/api/comments.php?action=react', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
+                    body: JSON.stringify({ comment_id: id, reaction_type: type })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    // Update UI in modal (minimal sync)
+                    this.loadAndRender(); // Update main list in background
+                }
+            };
+        });
+
+        container.querySelectorAll('.reply-btn').forEach(btn => {
+            btn.onclick = () => {
+                const modal = document.getElementById(this.threadModalId);
+                this.closeModal(modal);
+                // In a real Instagram-like experience, we'd show the form in modal.
+                // For now, let's just close and let them reply if they are on the right page.
+            };
+        });
+    }
+
+    closeModal(modal) {
+        this.isInsideModal = false;
+        modal.querySelector('.modal-content').classList.add('closing');
+        setTimeout(() => {
+            modal.classList.add('d-none');
+            modal.querySelector('.modal-content').classList.remove('closing');
+        }, 300);
     }
 }
 

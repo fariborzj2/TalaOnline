@@ -14,7 +14,7 @@ $read_only = $read_only ?? ($target_type === 'user_profile');
 $guest_view_enabled = get_setting('comments_guest_view', '1') === '1';
 $guest_comment_enabled = get_setting('comments_guest_comment_' . $target_type, '0') === '1';
 
-function render_comment_item($c, $read_only = false, $is_reply = false) {
+function render_comment_item($c, $read_only = false, $is_reply = false, $target_type = '') {
     global $pdo;
     $has_replies = !$is_reply && (!empty($c['replies']) || ($c['total_replies'] ?? 0) > 0);
     $is_expert = in_array($c['user_role'], ['admin', 'editor']);
@@ -94,6 +94,11 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                         <i data-lucide="reply" class="icon-size-4"></i>
                         <span>پاسخ</span>
                     </div>
+                <?php elseif ($target_type === 'user_profile' && !$is_reply): ?>
+                    <div class="view-thread-btn" data-id="<?= $c['id'] ?>">
+                        <i data-lucide="message-circle" class="icon-size-3"></i>
+                        <span>مشاهده گفتگو</span>
+                    </div>
                 <?php endif; ?>
 
                 <div class="footer-right mr-auto">
@@ -124,10 +129,10 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
 
         <div id="reply-form-container-<?= $c['id'] ?>"></div>
 
-        <?php if ($has_replies): ?>
+        <?php if ($has_replies && ($target_type !== 'user_profile')): ?>
             <div class="replies-container" id="replies-container-<?= $c['id'] ?>">
                 <div class="replies-list">
-                    <?php if (!empty($c['replies'])) foreach ($c['replies'] as $reply) echo render_comment_item($reply, $read_only, true); ?>
+                    <?php if (!empty($c['replies'])) foreach ($c['replies'] as $reply) echo render_comment_item($reply, $read_only, true, $target_type); ?>
                 </div>
                 <?php if (($c['total_replies'] ?? 0) > 3): ?>
                     <button class="btn btn-sm btn-secondary w-full mt-2 view-more-replies"
@@ -259,8 +264,8 @@ function render_reaction($c, $type, $emoji) {
 
         <div class="sort-group d-flex align-center just-between gap-1">
             <div class="d-flex align-center gap-05 text-title">
-                <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
                 <span class="font-bold font-size-0-9">مرتب‌سازی:</span>
+                <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
             </div>
             <div class="d-flex align-center gap-1-5">
                 <span class="sort-item sort-btn active" data-sort="newest">جدیدترین</span>
@@ -277,7 +282,7 @@ function render_reaction($c, $type, $emoji) {
                 <p class="text-gray-400"><?= $read_only ? 'هنوز نظری ثبت نشده است.' : 'هنوز نظری ثبت نشده است. اولین تحلیل‌گر باشید!' ?></p>
             </div>
         <?php else: ?>
-            <?php foreach ($comments as $c) echo render_comment_item($c, $read_only, false); ?>
+            <?php foreach ($comments as $c) echo render_comment_item($c, $read_only, false, $target_type); ?>
         <?php endif; ?>
     </div>
 
