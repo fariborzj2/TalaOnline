@@ -154,7 +154,14 @@ function render_reaction($c, $type, $emoji) {
 }
 ?>
 
-<div class="comments-section d-column gap-md <?= $read_only ? 'read-only' : '' ?> " id="comments-app" data-target-id="<?= $target_id ?>" data-target-type="<?= $target_type ?>" data-guest-comment="<?= $guest_comment_enabled ? '1' : '0' ?>">
+<div class="comments-section d-column gap-md <?= $read_only ? 'read-only' : '' ?> "
+     id="comments-app"
+     data-target-id="<?= $target_id ?>"
+     data-target-type="<?= $target_type ?>"
+     data-guest-comment="<?= $guest_comment_enabled ? '1' : '0' ?>"
+     data-total-pages="<?= (int)($total_pages ?? 1) ?>"
+     data-total-count="<?= (int)($total_count ?? 0) ?>"
+     data-current-page="<?= (int)($current_page ?? 1) ?>">
     <?php if (!$guest_view_enabled && !$is_logged_in): ?>
         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
             <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100 mx-auto mb-4">

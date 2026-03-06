@@ -14,15 +14,37 @@ class CommentSystem {
         this.currentUsername = window.__AUTH_STATE__?.user?.username;
         this.csrfToken = window.__AUTH_STATE__?.csrfToken;
 
-        const initialData = window.__COMMENTS_INITIAL_DATA__?.[`${this.targetType}_${this.targetId}`];
+        // More robust initial data lookup
+        let initialData = null;
+        if (window.__COMMENTS_INITIAL_DATA__) {
+            const dataKey = `${this.targetType}_${this.targetId}`;
+            initialData = window.__COMMENTS_INITIAL_DATA__[dataKey];
+
+            if (!initialData) {
+                // Try numeric ID lookup
+                const numericId = parseInt(this.targetId);
+                if (!isNaN(numericId)) {
+                    const altKey = `${this.targetType}_${numericId}`;
+                    initialData = window.__COMMENTS_INITIAL_DATA__[altKey];
+                }
+            }
+
+            if (!initialData) {
+                // Fallback: fuzzy search for the key
+                const keys = Object.keys(window.__COMMENTS_INITIAL_DATA__);
+                const match = keys.find(k => k.endsWith('_' + this.targetId) || k.includes(this.targetType + '_'));
+                if (match) initialData = window.__COMMENTS_INITIAL_DATA__[match];
+            }
+        }
+
         this.comments = options.initialComments || initialData?.comments || [];
-        this.totalCount = initialData?.total_count || 0;
-        this.totalPages = initialData?.total_pages || 1;
+        this.totalCount = parseInt(initialData?.total_count || this.container.dataset.totalCount || 0);
+        this.totalPages = parseInt(initialData?.total_pages || this.container.dataset.totalPages || 1);
         this.readOnly = options.readOnly || (this.targetType === 'user_profile');
         this.guestCommentEnabled = this.container.dataset.guestComment === '1';
         this.filterType = 'all';
         this.sort = 'newest';
-        this.currentPage = initialData?.current_page || 1;
+        this.currentPage = parseInt(initialData?.current_page || this.container.dataset.currentPage || 1);
         this.threadModalId = 'comment-thread-modal';
         this.isInsideModal = false;
         this.isLoading = false;
@@ -58,6 +80,7 @@ class CommentSystem {
 
     async loadAndRender(append = false) {
         if (this.isLoading) return;
+        if (append && this.currentPage >= this.totalPages) return;
         this.isLoading = true;
         this.updateSentinelVisibility();
 
@@ -1146,7 +1169,16 @@ class CommentSystem {
         }
 
         observer.observe(sentinel);
-        this.updateSentinelVisibility();
+
+        // Immediate check if we need to load more (e.g., if viewport is larger than initial 10)
+        setTimeout(() => {
+            this.updateSentinelVisibility();
+            // If the sentinel is already intersecting (e.g. high resolution screen), trigger first load
+            if (sentinel.getBoundingClientRect().top < window.innerHeight && !this.isLoading && this.currentPage < this.totalPages) {
+                this.currentPage++;
+                this.loadAndRender(true);
+            }
+        }, 500);
     }
 
     updateSentinelVisibility() {
@@ -1154,9 +1186,9 @@ class CommentSystem {
         if (!sentinel) return;
 
         if (this.currentPage >= this.totalPages || this.totalCount === 0) {
-            sentinel.classList.add('d-none');
+            sentinel.style.display = 'none';
         } else {
-            sentinel.classList.remove('d-none');
+            sentinel.style.display = 'flex';
             const loader = sentinel.querySelector('.sentinel-loader');
             if (loader) {
                 loader.classList.toggle('d-none', !this.isLoading);
