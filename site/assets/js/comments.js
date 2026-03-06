@@ -292,7 +292,7 @@ class CommentSystem {
 
         return `
             <div class="comment-wrapper ${hasReplies ? 'has-replies' : ''}" id="comment-wrapper-${c.id}">
-                ${(this.isInsideModal && !isReply) ? this.renderMinimalReply(c) : `
+                ${(this.isInsideModal && !isReply) ? this.renderThreadRootReference(c) : `
                 <div class="comment-item ${c.user_role === 'admin' || c.user_role === 'editor' ? 'is-expert' : ''} ${isReply ? 'is-reply' : ''}" id="comment-${c.id}">
                     <div class="comment-header">
                         <div class="comment-user-info">
@@ -385,6 +385,21 @@ class CommentSystem {
                         ` : ''}
                     </div>
                 ` : ''}
+            </div>
+        `;
+    }
+
+    renderThreadRootReference(c) {
+        const contentSnippet = c.content_edit || c.content || '';
+        const plainText = contentSnippet.replace(/<[^>]*>?/gm, '').substring(0, 150);
+        const dots = contentSnippet.length > 150 ? '...' : '';
+
+        return `
+            <div class="thread-root-reference mb-4" id="comment-${c.id}">
+                <div class="reply-preview-block">
+                    <div class="mb-1">در پاسخ به <a href="/profile/${c.user_id}/${c.user_username || 'user'}" class="reply-preview-author">@${c.user_username || 'user'}</a></div>
+                    <div class="reply-preview-content font-size-0-9 text-gray-600">${plainText}${dots}</div>
+                </div>
             </div>
         `;
     }
@@ -1142,6 +1157,7 @@ class CommentSystem {
             setTimeout(() => {
                 modal.classList.add('d-none');
                 modal.querySelector('.modal-content').classList.remove('closing');
+                document.body.style.overflow = '';
             }, 300);
         }
     }
