@@ -291,6 +291,12 @@
     max-width: 100%;
 }
 
+.thread-root-reference .reply-preview-block {
+    margin-bottom: 0 !important;
+    border-radius: 12px !important;
+    border-right-width: 4px !important;
+}
+
 .comment-footer {
     display: flex;
     justify-content: space-between;
