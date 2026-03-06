@@ -273,6 +273,10 @@ class CommentSystem {
     renderCommentItem(c, isReply = false) {
         const hasReplies = !isReply && ((c.replies && c.replies.length > 0) || (c.total_replies > 0));
         const showInlineReplies = hasReplies && (this.targetType !== 'user_profile' || this.isInsideModal);
+
+        if (this.isInsideModal && isReply) {
+            return this.renderMinimalReply(c);
+        }
         const baseUrl = window.location.origin;
         const defaultAvatar = `${baseUrl}/assets/images/default-avatar.png`;
 
@@ -307,7 +311,14 @@ class CommentSystem {
                                         <span class="user-level-badge !bg-slate-400">مهمان</span>
                                     </span>
                                 `}
-                                ${c.target_info ? `<span class="text-gray-400 font-size-0-8 mx-1">در</span> <a href="${c.target_info.url}" class="text-primary hover-underline d-inline-block ltr font-size-0-8">${c.target_info.title}</a>` : ''}
+
+                                ${c.target_info ? `
+                                    <div class="d-inline-flex font-bold font-size-0-8 mx-1">
+                                        <span class="text-gray-400 ml-05">در </span>
+                                        <a href="${c.target_info.url}" class="text-primary hover-underline">${c.target_info.title}</a>
+                                    </div>
+                                ` : ''}
+
                                 <span class="comment-date">${c.created_at_fa || c.created_at}</span>
                             </div>
                         </div>
@@ -333,7 +344,7 @@ class CommentSystem {
                         ` : (this.targetType === 'user_profile' && !this.isInsideModal ? `
                         <div class="view-thread-btn" data-id="${c.id}">
                             <i data-lucide="message-circle" class="icon-size-3"></i>
-                            <span>مشاهده گفتگو</span>
+                            <span>${c.total_replies > 0 ? this.toPersianDigits(c.total_replies) + ' پاسخ' : 'مشاهده گفتگو'}</span>
                         </div>
                         ` : '')}
                         <div class="footer-right">
@@ -376,9 +387,42 @@ class CommentSystem {
         `;
     }
 
-    renderCommentBody(c) {
+    renderMinimalReply(c) {
+        const baseUrl = window.location.origin;
+        const defaultAvatar = `${baseUrl}/assets/images/default-avatar.png`;
+        let avatarUrl = c.user_avatar || defaultAvatar;
+        if (avatarUrl && !avatarUrl.startsWith('http')) {
+            avatarUrl = `${baseUrl}/${avatarUrl.startsWith('/') ? avatarUrl.substring(1) : avatarUrl}`;
+        }
+
+        return `
+            <div class="minimal-reply border-bottom py-3" id="comment-${c.id}">
+                <div class="d-flex gap-1">
+                    <div class="shrink-0">
+                        <img src="${avatarUrl}" class="radius-50 w-8 h-8 object-cover border" alt="${c.user_name}" onerror="this.src='${defaultAvatar}'">
+                    </div>
+                    <div class="grow-1">
+                        <div class="d-flex just-between align-center mb-1">
+                            <div class="d-flex align-center gap-05">
+                                <span class="font-bold font-size-0-9">${c.user_name}</span>
+                                <span class="text-gray-400 font-size-0-8">${c.created_at_fa || c.created_at}</span>
+                            </div>
+                            <div class="reaction-pill-mini">
+                                ${this.renderReaction(c, 'like', '👍')}
+                            </div>
+                        </div>
+                        <div class="comment-content font-size-0-9 text-gray-700">
+                            ${this.renderCommentBody(c, true)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderCommentBody(c, isMinimal = false) {
         const isExpert = c.user_role === 'admin' || c.user_role === 'editor';
-        const replyPreview = c.reply_to_content ? `
+        const replyPreview = !isMinimal && c.reply_to_content ? `
             <div class="reply-preview-block">
                 <div>در پاسخ به <a href="/profile/${c.reply_to_user_id}/${c.reply_to_username || 'user'}" class="reply-preview-author">@${c.reply_to_username || 'user'}</a></div>
                 <div class="reply-preview-content">${c.reply_to_content.substring(0, 100)}${c.reply_to_content.length > 100 ? '...' : ''}</div>
@@ -983,57 +1027,40 @@ class CommentSystem {
     async openThreadModal(commentId) {
         this.isInsideModal = true;
         let modal = document.getElementById(this.threadModalId);
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = this.threadModalId;
-            modal.className = 'modal-overlay d-none';
-            modal.innerHTML = `
-                <div class="modal-content bg-block radius-24 shadow-lg overflow-hidden basis-600 thread-modal-content">
-                    <div class="pd-md border-bottom d-flex just-between align-center sticky top-0 bg-block z-10">
-                        <div class="d-flex align-center gap-1">
-                            <i data-lucide="message-circle" class="text-primary icon-size-5"></i>
-                            <h3 class="font-bold font-size-4">مشاهده گفتگو</h3>
-                        </div>
-                        <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
-                    </div>
-                    <div class="thread-body pd-md overflow-y-auto" style="max-height: 80vh;">
-                        <div class="thread-loader text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>
-                        <div class="thread-content d-none"></div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            modal.querySelector('.close-modal').onclick = () => this.closeModal(modal);
-        }
+        if (!modal) return;
 
         modal.classList.remove('d-none');
         const contentArea = modal.querySelector('.thread-content');
         const loader = modal.querySelector('.thread-loader');
-        if (!contentArea || !loader) {
-             // Fallback for when modal was pre-rendered in main.php
-             const existingModal = document.getElementById(this.threadModalId);
-             this.modalContentArea = existingModal.querySelector('.thread-content');
-             this.modalLoader = existingModal.querySelector('.thread-loader');
-        } else {
-             this.modalContentArea = contentArea;
-             this.modalLoader = loader;
-        }
+
+        this.modalContentArea = contentArea;
+        this.modalLoader = loader;
 
         this.modalContentArea.classList.add('d-none');
         this.modalLoader.classList.remove('d-none');
-        contentArea.classList.add('d-none');
-        loader.classList.remove('d-none');
+
+        const targetInfoArea = modal.querySelector('#modal-thread-target-info');
+        if (targetInfoArea) targetInfoArea.classList.add('d-none');
 
         try {
             const res = await fetch(`/api/comments.php?action=thread&comment_id=${commentId}`);
             const data = await res.json();
             if (data.success) {
                 const thread = data.thread;
+
+                if (targetInfoArea && thread.target_info) {
+                    targetInfoArea.innerHTML = `
+                        <div class="d-flex align-center just-between w-full">
+                            <div class="d-flex align-center gap-1">
+                                <i data-lucide="external-link" class="text-gray icon-size-4"></i>
+                                <div class="font-bold font-size-0-9">در <a href="${thread.target_info.url}" class="text-primary hover-underline">${thread.target_info.title}</a></div>
+                            </div>
+                        </div>
+                    `;
+                    targetInfoArea.classList.remove('d-none');
+                }
+
                 contentArea.innerHTML = `
-                    <div class="thread-target-info bg-secondary pd-md radius-16 mb-4 d-flex align-center gap-1">
-                        <i data-lucide="external-link" class="text-gray icon-size-4"></i>
-                        <div class="font-bold font-size-0-9">در <a href="${thread.target_info.url}" class="text-primary hover-underline">${thread.target_info.title}</a></div>
-                    </div>
                     <div class="thread-list">
                         ${this.renderCommentItem(thread)}
                     </div>

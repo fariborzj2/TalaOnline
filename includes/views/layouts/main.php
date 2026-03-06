@@ -465,15 +465,20 @@
 
     <!-- Comment Thread Modal -->
     <div id="comment-thread-modal" class="modal-overlay d-none comment-thread-modal">
-        <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-700">
-            <div class="pd-md border-bottom d-flex just-between align-center">
+        <div class="modal-content bg-block radius-16 shadow-lg overflow-hidden basis-700 thread-modal-container">
+            <div class="thread-modal-header pd-md border-bottom d-flex just-between align-center">
                 <div class="d-flex align-center gap-05">
                     <i data-lucide="message-circle" class="text-primary icon-size-5"></i>
                     <h3 class="font-bold font-size-4">مشاهده گفتگو</h3>
                 </div>
                 <button class="close-modal pointer"><i data-lucide="x" class="icon-size-5"></i></button>
             </div>
-            <div class="modal-body overflow-y-auto pd-md" style="flex: 1;">
+
+            <div id="modal-thread-target-info" class="sticky-info pd-md border-bottom d-none">
+                <!-- Target Info Loaded via AJAX -->
+            </div>
+
+            <div class="modal-body overflow-y-auto pd-md thread-modal-body">
                 <div class="thread-loader d-flex just-center pd-xl">
                     <div class="loader"></div>
                 </div>
