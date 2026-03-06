@@ -97,7 +97,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                 <?php elseif ($target_type === 'user_profile' && !$is_reply): ?>
                     <div class="view-thread-btn" data-id="<?= $c['id'] ?>">
                         <i data-lucide="message-circle" class="icon-size-3"></i>
-                        <span>مشاهده گفتگو</span>
+                        <span><?= ($c['total_replies'] ?? 0) > 0 ? fa_num($c['total_replies']) . ' پاسخ' : 'مشاهده گفتگو' ?></span>
                     </div>
                 <?php endif; ?>
 
