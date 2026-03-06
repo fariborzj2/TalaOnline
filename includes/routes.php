@@ -230,7 +230,8 @@ $router->add('/profile/:identifier/:slug', function($params) {
     // Fetch User Comments
     require_once __DIR__ . '/comments.php';
     $comments_handler = new Comments($pdo);
-    $user_comments = $comments_handler->getUserComments($user['id'], $viewer_id);
+    $user_comments_data = $comments_handler->getComments($user['id'], 'user_profile', $viewer_id);
+    $user_comments = $user_comments_data['comments'];
 
     // Fetch total comment count for stats
     $comment_count = 0;

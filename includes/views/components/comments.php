@@ -46,6 +46,14 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                                 <span class="user-level-badge !bg-slate-400">مهمان</span>
                             </span>
                         <?php endif; ?>
+
+                        <?php if (isset($c['target_info']) && $c['target_info']): ?>
+                            <div class="d-inline-flex font-bold font-size-0-8 mx-1">
+                                <span class="text-gray-400 ml-05">در </span>
+                                <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline"><?= htmlspecialchars($c['target_info']['title']) ?></a>
+                            </div>
+                        <?php endif; ?>
+
                         <span class="comment-date"><?= jalali_date($c['created_at']) ?></span>
                     </div>
                 </div>
@@ -59,13 +67,6 @@ function render_comment_item($c, $read_only = false, $is_reply = false) {
                     </div>
                 </div>
             </div>
-
-            <?php if (isset($c['target_info']) && $c['target_info']): ?>
-                <div class="d-flex font-bold font-size-3">
-                    <span class="text-gray-400 ml-05 mb-1">در </span>
-                    <a href="<?= $c['target_info']['url'] ?>" class="text-primary hover-underline"><?= htmlspecialchars($c['target_info']['title']) ?></a>
-                </div>
-            <?php endif; ?>
 
             <div class="comment-content">
                 <?php if (!empty($c['reply_to_content'])): ?>
@@ -245,21 +246,23 @@ function render_reaction($c, $type, $emoji) {
         <?php endif; ?>
     <?php endif; ?>
 
-    <div class="comments-filters d-flex-wrap just-between align-center gap-2 mb-4 mt-8">
+    <div class="comments-filters d-column gap-1-5 mb-4 mt-8">
         <?php if ($target_type !== 'post'): ?>
-            <div class="filter-group d-flex gap-1-5">
-                <span class="filter-item filter-btn active" data-filter="all">همه</span>
-                <span class="filter-item filter-btn" data-filter="comment">نظرات</span>
-                <span class="filter-item filter-btn" data-filter="analysis">تحلیل‌ها</span>
+            <div class="filter-group-container">
+                <div class="pill-toggle-group filter-toggle-group">
+                    <button class="pill-btn filter-btn active" data-filter="all">همه</button>
+                    <button class="pill-btn filter-btn" data-filter="comment">نظرات</button>
+                    <button class="pill-btn filter-btn" data-filter="analysis">تحلیل‌ها</button>
+                </div>
             </div>
         <?php endif; ?>
 
-        <div class="sort-group d-flex align-center gap-1 <?= $target_type === 'post' ? 'w-full' : '' ?>">
-            <div class="d-flex align-center gap-05 text-gray-500">
+        <div class="sort-group d-flex align-center just-between gap-1">
+            <div class="d-flex align-center gap-05 text-title">
                 <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
                 <span class="font-bold font-size-0-9">مرتب‌سازی:</span>
             </div>
-            <div class="d-flex gap-1-5">
+            <div class="d-flex align-center gap-1-5">
                 <span class="sort-item sort-btn active" data-sort="newest">جدیدترین</span>
                 <span class="sort-item sort-btn" data-sort="popular">محبوب‌ترین</span>
                 <span class="sort-item sort-btn" data-sort="most_replies">بیشترین پاسخ</span>
@@ -287,7 +290,7 @@ function render_reaction($c, $type, $emoji) {
                 $query['page'] = $i;
                 $url = $current_url . '?' . http_build_query($query) . '#comments-app';
             ?>
-                <a href="<?= htmlspecialchars($url) ?>" class="btn <?= $i == ($current_page ?? 1) ? 'btn-primary' : 'btn-secondary' ?> btn-sm radius-8"><?= fa_num($i) ?></a>
+                <button class="btn <?= $i == ($current_page ?? 1) ? 'btn-primary' : 'btn-secondary' ?> btn-sm radius-8 page-btn" data-page="<?= $i ?>"><?= fa_num($i) ?></button>
             <?php endfor; ?>
         </div>
     <?php endif; ?>

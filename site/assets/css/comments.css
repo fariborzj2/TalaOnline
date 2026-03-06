@@ -564,27 +564,63 @@
 }
 
 /* Comments Filters & Sorting */
-.filter-item, .sort-item {
-    font-size: 0.9rem;
+.comments-filters {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 20px;
+    margin-top: 32px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.filter-group-container {
+    width: 100%;
+}
+
+.filter-toggle-group {
+    background-color: #f1f5f9 !important;
+    padding: 4px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    width: 100%;
+}
+
+.filter-toggle-group .pill-btn {
+    font-size: 14px;
+    color: #64748b;
+    padding: 8px 20px;
+    flex: 1;
+    text-align: center;
+}
+
+.filter-toggle-group .pill-btn.active {
+    background-color: #fff !important;
+    color: #000 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+}
+
+.sort-item {
+    font-size: 0.95rem;
     font-weight: 700;
     color: #64748b;
     cursor: pointer;
     transition: color 0.2s;
+    white-space: nowrap;
 }
 
-.filter-item:hover, .sort-item:hover {
+.sort-item:hover {
     color: #1e293b;
 }
 
-.filter-item.active, .sort-item.active {
+.sort-item.active {
     color: #249E94;
     position: relative;
 }
 
-.filter-item.active::after, .sort-item.active::after {
+.sort-item.active::after {
     content: '';
     position: absolute;
-    bottom: -4px;
+    bottom: -8px;
     left: 0;
     right: 0;
     height: 2px;
@@ -592,74 +628,37 @@
     border-radius: 2px;
 }
 
-.comments-filters .icon-size-4 {
-    color: #94a3b8;
+.sort-group .icon-size-4 {
+    color: #1e293b;
 }
 
 @media (max-width: 600px) {
     .comments-filters {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-        background: #f8fafc;
-        padding: 1rem;
-        border-radius: 20px;
-        border: 1px solid #e2e8f0;
-        margin-top: 2.5rem;
-    }
-
-    .filter-group {
-        display: flex;
-        gap: 0;
-        justify-content: space-between;
+        padding: 16px;
+        gap: 20px !important;
         background: #fff;
-        padding: 4px;
-        border-radius: 14px;
         border: 1px solid #e2e8f0;
+        border-radius: 20px;
     }
 
-    .filter-item {
-        flex: 1;
-        text-align: center;
-        padding: 8px 4px;
-        border-radius: 10px;
-        font-size: 0.8rem;
-    }
-
-    .filter-item.active {
-        background-color: #f0fdfa;
-    }
-
-    .filter-item.active::after {
-        display: none;
+    .filter-toggle-group .pill-btn {
+        font-size: 13px;
+        padding: 8px 10px;
     }
 
     .sort-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .sort-group > .d-flex:first-child {
-        padding-right: 0.5rem;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        gap: 0 !important;
+        margin-top: 4px;
     }
 
     .sort-group .d-flex.gap-1-5 {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        background: #fff;
-        padding: 10px 12px;
-        border-radius: 14px;
-        border: 1px solid #e2e8f0;
+        gap: 16px !important;
     }
 
     .sort-item {
-        font-size: 0.8rem;
-        padding: 2px 0;
-    }
-
-    .sort-item.active::after {
-        bottom: -10px;
+        font-size: 0.85rem;
     }
 }

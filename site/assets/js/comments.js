@@ -97,21 +97,23 @@ class CommentSystem {
                 ${this.renderCommentForm()}
                 ` : ''}
 
-                <div class="comments-filters d-flex-wrap just-between align-center gap-2 mb-4 mt-8">
+                <div class="comments-filters d-column gap-1-5 mb-4 mt-8">
                     ${this.targetType !== 'post' ? `
-                        <div class="filter-group d-flex gap-1-5">
-                            <span class="filter-item filter-btn ${this.filterType === 'all' ? 'active' : ''}" data-filter="all">همه</span>
-                            <span class="filter-item filter-btn ${this.filterType === 'comment' ? 'active' : ''}" data-filter="comment">نظرات</span>
-                            <span class="filter-item filter-btn ${this.filterType === 'analysis' ? 'active' : ''}" data-filter="analysis">تحلیل‌ها</span>
+                        <div class="filter-group-container">
+                            <div class="pill-toggle-group filter-toggle-group">
+                                <button class="pill-btn filter-btn ${this.filterType === 'all' ? 'active' : ''}" data-filter="all">همه</button>
+                                <button class="pill-btn filter-btn ${this.filterType === 'comment' ? 'active' : ''}" data-filter="comment">نظرات</button>
+                                <button class="pill-btn filter-btn ${this.filterType === 'analysis' ? 'active' : ''}" data-filter="analysis">تحلیل‌ها</button>
+                            </div>
                         </div>
                     ` : ''}
 
-                    <div class="sort-group d-flex align-center gap-1 ${this.targetType === 'post' ? 'w-full' : ''}">
-                        <div class="d-flex align-center gap-05 text-gray-500">
-                            <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
+                    <div class="sort-group d-flex align-center just-between gap-1">
+                        <div class="d-flex align-center gap-05 text-title">
                             <span class="font-bold font-size-0-9">مرتب‌سازی:</span>
+                            <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
                         </div>
-                        <div class="d-flex gap-1-5">
+                        <div class="d-flex align-center gap-1-5">
                             <span class="sort-item sort-btn ${this.sort === 'newest' ? 'active' : ''}" data-sort="newest">جدیدترین</span>
                             <span class="sort-item sort-btn ${this.sort === 'popular' ? 'active' : ''}" data-sort="popular">محبوب‌ترین</span>
                             <span class="sort-item sort-btn ${this.sort === 'most_replies' ? 'active' : ''}" data-sort="most_replies">بیشترین پاسخ</span>
