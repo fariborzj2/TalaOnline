@@ -272,6 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileModal = document.getElementById('profile-modal');
     const followersModal = document.getElementById('followers-modal');
     const followingModal = document.getElementById('following-modal');
+    const threadModal = document.getElementById('comment-thread-modal');
     const followersTrigger = document.getElementById('followers-trigger');
     const followingTrigger = document.getElementById('following-trigger');
     const closeButtons = document.querySelectorAll('.close-modal');
@@ -369,8 +370,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    const closeModal = () => {
-        const modals = [authModal, profileModal, followersModal, followingModal];
+    window.closeModal = () => {
+        const modals = [authModal, profileModal, followersModal, followingModal, threadModal];
         modals.forEach(modal => {
             if (modal && !modal.classList.contains('d-none')) {
                 const content = modal.querySelector('.modal-content');
@@ -382,6 +383,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     modal.classList.remove('closing');
                     if (content) content.classList.remove('closing');
                     document.body.style.overflow = '';
+                    if (modal.id === 'comment-thread-modal' && window.commentSystem) {
+                        window.commentSystem.isInsideModal = false;
+                    }
                 }, 300);
             }
         });
@@ -398,12 +402,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    closeButtons.forEach(btn => btn.addEventListener('click', closeModal));
+    closeButtons.forEach(btn => btn.addEventListener('click', window.closeModal));
 
-    [authModal, profileModal, followersModal, followingModal].forEach(modal => {
+    [authModal, profileModal, followersModal, followingModal, threadModal].forEach(modal => {
         if (modal) {
             modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeModal();
+                if (e.target === modal) window.closeModal();
             });
         }
     });

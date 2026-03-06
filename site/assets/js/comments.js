@@ -292,6 +292,7 @@ class CommentSystem {
 
         return `
             <div class="comment-wrapper ${hasReplies ? 'has-replies' : ''}" id="comment-wrapper-${c.id}">
+                ${(this.isInsideModal && !isReply) ? this.renderMinimalReply(c) : `
                 <div class="comment-item ${c.user_role === 'admin' || c.user_role === 'editor' ? 'is-expert' : ''} ${isReply ? 'is-reply' : ''}" id="comment-${c.id}">
                     <div class="comment-header">
                         <div class="comment-user-info">
@@ -370,6 +371,7 @@ class CommentSystem {
                         </div>
                     </div>
                 </div>
+                `}
                 <div id="reply-form-container-${c.id}"></div>
                 ${!isReply && showInlineReplies ? `
                     <div class="replies-container" id="replies-container-${c.id}">
@@ -1030,6 +1032,7 @@ class CommentSystem {
         if (!modal) return;
 
         modal.classList.remove('d-none');
+        document.body.style.overflow = 'hidden';
         const contentArea = modal.querySelector('.thread-content');
         const loader = modal.querySelector('.thread-loader');
 
@@ -1131,12 +1134,16 @@ class CommentSystem {
     }
 
     closeModal(modal) {
-        this.isInsideModal = false;
-        modal.querySelector('.modal-content').classList.add('closing');
-        setTimeout(() => {
-            modal.classList.add('d-none');
-            modal.querySelector('.modal-content').classList.remove('closing');
-        }, 300);
+        if (window.closeModal) {
+            window.closeModal();
+        } else {
+            this.isInsideModal = false;
+            modal.querySelector('.modal-content').classList.add('closing');
+            setTimeout(() => {
+                modal.classList.add('d-none');
+                modal.querySelector('.modal-content').classList.remove('closing');
+            }, 300);
+        }
     }
 }
 
