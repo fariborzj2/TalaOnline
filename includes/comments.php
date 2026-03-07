@@ -492,6 +492,25 @@ class Comments {
     }
 
     /**
+     * Delete a comment (within limit)
+     */
+    public function deleteComment($user_id, $comment_id) {
+        if (!$this->pdo) return false;
+
+        $stmt = $this->pdo->prepare("SELECT created_at FROM comments WHERE id = ? AND user_id = ?");
+        $stmt->execute([$comment_id, $user_id]);
+        $created_at = $stmt->fetchColumn();
+
+        $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
+
+        if ($created_at && (time() - strtotime($created_at)) < $edit_limit) {
+            $stmt = $this->pdo->prepare("UPDATE comments SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+            return $stmt->execute([$comment_id]);
+        }
+        return false;
+    }
+
+    /**
      * Update/Edit a comment (within 5 minutes)
      */
     public function updateComment($user_id, $comment_id, $content, $mentions = []) {

@@ -52,6 +52,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                 </div>
                 <div class="header-actions">
                     <?php if ($c['can_edit']): ?>
+                        <div class="comment-header-btn delete-btn" title="حذف" data-id="<?= $c['id'] ?>"><i data-lucide="trash-2" class="icon-size-4"></i></div>
                         <div class="comment-header-btn edit-btn" title="ویرایش" data-id="<?= $c['id'] ?>"><i data-lucide="edit-3" class="icon-size-4"></i></div>
                     <?php endif; ?>
                     <div class="comment-header-btn report-btn" title="گزارش تخلف" data-id="<?= $c['id'] ?>"><i data-lucide="flag" class="icon-size-4"></i></div>
