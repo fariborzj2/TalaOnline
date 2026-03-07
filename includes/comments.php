@@ -65,7 +65,11 @@ class Comments {
         if (!$this->pdo) return ['comments' => [], 'total_pages' => 0, 'total_count' => 0];
 
         if ($per_page === null) {
-            $per_page = (int)get_setting('comments_per_page', '20');
+            if ($target_type === 'user_profile') {
+                $per_page = 10;
+            } else {
+                $per_page = (int)get_setting('comments_per_page', '20');
+            }
         }
 
         if ($target_type === 'user_profile') {
