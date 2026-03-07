@@ -69,7 +69,7 @@
             <i data-lucide="text-quote" class="w-5 h-5 text-primary"></i>
             <h2 class="font-size-2 font-black">درباره این دارایی</h2>
         </div>
-        <div class="content-text font-size-0-9 line-height-1-8 text-justify">
+        <div class="content-text line-height-1-8 text-justify">
             <?= $item['description'] ?>
         </div>
     </div>
@@ -162,8 +162,8 @@
 
         <div class="faq-list d-column gap-1">
             <?php foreach ($faqs as $faq): ?>
-                <div class="faq-item border radius-12 overflow-hidden">
-                    <div class="faq-question pd-md bg-secondary cursor-pointer d-flex just-between align-center" onclick="toggleFaq(this)">
+                <div class="faq-item border radius-10 overflow-hidden">
+                    <div class="faq-question p-1 bg-secondary cursor-pointer d-flex just-between align-center" onclick="toggleFaq(this)">
                         <strong class="font-size-1 text-title"><?= htmlspecialchars($faq['question']) ?></strong>
                         <i data-lucide="chevron-down" class="w-4 h-4 transition-all"></i>
                     </div>
@@ -194,6 +194,11 @@
 </script>
 <?php endif; ?>
 
+<?= View::renderComponent('market_sentiment', [
+    'target_id' => $item['symbol'],
+    'target_name' => $item['name']
+]) ?>
+
 <script>
     window.__INITIAL_STATE__ = {
         item: <?= json_encode($item) ?>,
@@ -209,12 +214,6 @@
     };
 </script>
 
-<div class="section">
-    <?= View::renderComponent('market_sentiment', [
-        'target_id' => $item['symbol'],
-        'target_name' => $item['name']
-    ]) ?>
-</div>
 <script src="<?= versioned_asset('/assets/js/sentiment.js') ?>"></script>
 
 <div class="section">

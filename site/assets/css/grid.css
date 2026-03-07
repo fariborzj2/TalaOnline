@@ -800,6 +800,12 @@
 .ltr {
     direction: ltr;
 }
+
+@media (max-width: 600px) {
+    .sm-hide {
+        display: none;
+    }
+}
 /* ================= Table Container ================= */
 .table-box {
   position: relative;

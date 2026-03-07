@@ -1,7 +1,7 @@
 <div class="blog-container d-column gap-md">
 
     <?php if (!empty($featured_posts) && !isset($current_category)): ?>
-    <section class="featured-posts mb-2">
+    <section class="featured-posts">
         <div class="d-flex align-center gap-1 mb-1 pr-1">
             <h2 class="font-size-4 font-bold">مقالات برگزیده</h2>
         </div>

@@ -66,8 +66,8 @@
 
         <div class="faq-list d-column gap-1">
             <?php foreach ($faqs as $faq): ?>
-                <div class="faq-item border radius-12 overflow-hidden">
-                    <div class="faq-question pd-md bg-secondary cursor-pointer d-flex just-between align-center" onclick="toggleFaq(this)">
+                <div class="faq-item border radius-10 overflow-hidden">
+                    <div class="faq-question p-1 bg-secondary cursor-pointer d-flex just-between align-center" onclick="toggleFaq(this)">
                         <strong class="font-size-1 text-title"><?= htmlspecialchars($faq['question']) ?></strong>
                         <i data-lucide="chevron-down" class="w-4 h-4 transition-all"></i>
                     </div>

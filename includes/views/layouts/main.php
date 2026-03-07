@@ -15,6 +15,10 @@
     <link rel="preload" href="<?= $og_image ?>" as="image" fetchpriority="high">
     <?php endif; ?>
 
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
+    
     <link rel="apple-touch-icon" sizes="57x57" href="/assets/images/favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/assets/images/favicon/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/favicon/apple-icon-72x72.png">
@@ -24,10 +28,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="/assets/images/favicon/apple-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/favicon/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/favicon-16x16.png">
+
     <link rel="manifest" href="/assets/images/favicon/manifest.json">
     <link rel="stylesheet" href="<?= versioned_asset('/assets/css/editor.css') ?>">
     <script src="<?= versioned_asset('/assets/js/editor.js') ?>"></script>
@@ -338,7 +339,7 @@
                         <label class="font-size-1 font-bold pr-1">ایمیل یا شماره موبایل</label>
                         <div class="input-item">
                             <i data-lucide="mail" class="text-gray icon-size-3"></i>
-                            <input type="text" name="email" placeholder="مثلاً example@mail.com" dir="ltr" class="text-left" required>
+                            <input type="text" name="email" placeholder="example@mail.com" dir="ltr" class="text-left" required>
                         </div>
                     </div>
                     <div class="d-column gap-05">
@@ -469,7 +470,7 @@
             <div class="thread-modal-header pd-md border-bottom d-flex just-between align-center">
                 <div class="d-flex align-center gap-05">
                     <i data-lucide="message-circle" class="text-primary icon-size-5"></i>
-                    <h3 class="font-bold font-size-4">مشاهده گفتگو</h3>
+                    <h3 class="font-bold font-size-4">مشاهده پاسخ‌ها</h3>
                 </div>
                 <button class="close-modal pointer"><i data-lucide="x" class="icon-size-5"></i></button>
             </div>

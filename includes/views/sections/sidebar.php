@@ -129,7 +129,7 @@ if ($pdo) {
     const stickyManager = initMultipleSticky('.sticky-card', {
         offset: 20,
         minContainerWidth: 950,
-        container: '.main-layout',
-        gap: 20
+        gap: 20,
+        zIndex: 1
     });
 </script>

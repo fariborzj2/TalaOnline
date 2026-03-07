@@ -37,10 +37,13 @@
             <div class="pulse-container">
                 <span class="pulse-dot"></span>
             </div>
-            <span class="mobile-live-text">زنده</span>
-        </div>
-        <div class="mobile-date-wrapper">
             <span class="mobile-date-text">امروز <?= jalali_date('now', 'weekday') ?></span>
+        </div>
+        <div>
+            <div class="pointer d-flex align-center font-bold" onclick="window.history.length > 1 ? window.history.back() : window.location.href='/'">
+                <span>بازگشت</span>
+                <i data-lucide="chevron-left" class="icon-size-3"></i>
+            </div>
         </div>
     </div>
 </header>

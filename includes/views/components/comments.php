@@ -97,7 +97,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                 <?php elseif ($target_type === 'user_profile' && !$is_reply): ?>
                     <div class="view-thread-btn comment-footer-btn" data-id="<?= $c['id'] ?>">
                         <i data-lucide="message-circle" class="icon-size-3"></i>
-                        <span><?= ($c['total_replies'] ?? 0) > 0 ? fa_num($c['total_replies']) . ' پاسخ' : 'مشاهده گفتگو' ?></span>
+                        <span><?= ($c['total_replies'] ?? 0) > 0 ? fa_num($c['total_replies']) . ' پاسخ' : 'بدون پاسخ' ?></span>
                     </div>
                 <?php endif; ?>
 
@@ -248,7 +248,7 @@ function render_reaction($c, $type, $emoji) {
                     </div>
                 </div>
             <?php elseif (!$is_logged_in): ?>
-                <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
+                <div class="bg-orange-light pd-md radius-16 border border-orange d-flex-wrap just-between align-center gap-1">
                     <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
                     <div class="d-flex gap-1">
                         <button class="btn btn-orange btn-sm" onclick="window.showAuthModal?.('login')">ورود به حساب</button>
@@ -259,7 +259,7 @@ function render_reaction($c, $type, $emoji) {
         </div>
     <?php endif; ?>
 
-    <div class="bg-block border radius-16 pd-md d-column gap-1" id="comments-controls">
+    <div class="bg-block border radius-16 pd-md gap-1" id="comments-controls">
         <?php if ($target_type !== 'post'): ?>
             <div class="filter-group-container">
                 <div class="pill-toggle-group filter-toggle-group">
@@ -273,7 +273,7 @@ function render_reaction($c, $type, $emoji) {
         <div class="sort-group d-flex align-center just-between gap-1">
             <div class="d-flex align-center gap-05 text-title">
                 <i data-lucide="arrow-down-wide-narrow" class="icon-size-4"></i>
-                <span class="font-bold">مرتب‌سازی:</span>
+                <span class="font-bold sm-hide">مرتب‌سازی:</span>
             </div>
             <div class="d-flex align-center gap-1-5">
                 <span class="sort-item sort-btn active" data-sort="newest">جدیدترین</span>
@@ -283,7 +283,7 @@ function render_reaction($c, $type, $emoji) {
         </div>
     </div>
 
-    <div class="comment-list <?= $read_only ? 'mt-0' : 'mt-2' ?>" id="comment-list">
+    <div class="comment-list <?= $read_only ? 'mt-0' : 'mt-0' ?>" id="comment-list">
         <?php if (empty($comments)): ?>
             <div class="bg-block text-center pd-md radius-16 border d-column just-center align-center">
                 <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-1"></i>
@@ -295,7 +295,7 @@ function render_reaction($c, $type, $emoji) {
     </div>
 
     <?php if (($total_pages ?? 1) > 1): ?>
-        <div class="pagination mt-3 <?= ($target_type === 'user_profile') ? 'd-none' : '' ?>" id="comments-pagination">
+        <div class="pagination <?= ($target_type === 'user_profile') ? 'd-none' : '' ?>" id="comments-pagination">
             <?php
             $pagination_items = get_pagination_window($current_page, $total_pages);
 

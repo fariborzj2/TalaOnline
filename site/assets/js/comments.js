@@ -226,7 +226,7 @@ class CommentSystem {
                 const list = document.getElementById('comment-list');
                 const newPagination = document.createElement('div');
                 newPagination.id = 'comments-pagination';
-                newPagination.className = 'pagination mt-3 d-flex just-center gap-05';
+                newPagination.className = 'pagination d-flex just-center gap-05';
                 list.after(newPagination);
                 this.renderPaginationUI(newPagination);
             }
@@ -323,7 +323,7 @@ class CommentSystem {
 
         if (!this.isLoggedIn && !this.guestCommentEnabled) {
             formContainer.innerHTML = `
-                <div class="bg-orange-light pd-md radius-16 border mb-2 border-orange d-flex-wrap just-between align-center gap-1">
+                <div class="bg-orange-light pd-md radius-16 border border-orange d-flex-wrap just-between align-center gap-1">
                     <p class="font-bold text-orange">برای ثبت نظر و کسب امتیاز باید وارد حساب خود شوید</p>
                     <div class="d-flex gap-1">
                         <button class="btn btn-orange btn-sm" onclick="window.showAuthModal?.('login')">ورود به حساب</button>
@@ -368,7 +368,7 @@ class CommentSystem {
         const suffix = parentId || 'main';
         const isEdit = initialContent !== '';
         return `
-            <div class="comment-form ${parentId && !isEdit ? 'mt-3' : ''}" id="form-${suffix}">
+            <div class="comment-form ${parentId && !isEdit ? 'mt-2 mb-2' : ''}" id="form-${suffix}">
                 <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1 ${this.targetType === 'post' ? 'd-none' : ''}">
                     <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
                         <input type="radio" name="comment_type_${suffix}" value="comment" class="comment-type-radio" data-suffix="${suffix}" checked>
@@ -512,7 +512,7 @@ class CommentSystem {
                         ` : (this.targetType === 'user_profile' && !this.isInsideModal ? `
                         <div class="view-thread-btn comment-footer-btn" data-id="${c.id}">
                             <i data-lucide="message-circle" class="icon-size-3"></i>
-                            <span>${c.total_replies > 0 ? this.toPersianDigits(c.total_replies) + ' پاسخ' : 'مشاهده گفتگو'}</span>
+                            <span>${c.total_replies > 0 ? this.toPersianDigits(c.total_replies) + ' پاسخ' : 'بدون پاسخ'}</span>
                         </div>
                         ` : '')}
                         <div class="footer-right mr-auto">
