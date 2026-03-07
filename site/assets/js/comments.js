@@ -14,37 +14,37 @@ class CommentSystem {
         this.currentUsername = window.__AUTH_STATE__?.user?.username;
         this.csrfToken = window.__AUTH_STATE__?.csrfToken;
 
-        // More robust initial data lookup
+        // Highly resilient initial data lookup
         let initialData = null;
         if (window.__COMMENTS_INITIAL_DATA__) {
-            const dataKey = `${this.targetType}_${this.targetId}`;
-            initialData = window.__COMMENTS_INITIAL_DATA__[dataKey];
+            const tid = this.targetId.toString();
+            const keys = Object.keys(window.__COMMENTS_INITIAL_DATA__);
 
-            if (!initialData) {
-                // Try numeric ID lookup
-                const numericId = parseInt(this.targetId);
-                if (!isNaN(numericId)) {
-                    const altKey = `${this.targetType}_${numericId}`;
-                    initialData = window.__COMMENTS_INITIAL_DATA__[altKey];
-                }
+            // 1. Direct match
+            initialData = window.__COMMENTS_INITIAL_DATA__[`${this.targetType}_${tid}`];
+
+            // 2. Numeric match
+            if (!initialData && !isNaN(parseInt(tid))) {
+                initialData = window.__COMMENTS_INITIAL_DATA__[`${this.targetType}_${parseInt(tid)}`];
             }
 
+            // 3. Fuzzy match (any key that contains both type and ID)
             if (!initialData) {
-                // Fallback: fuzzy search for the key
-                const keys = Object.keys(window.__COMMENTS_INITIAL_DATA__);
-                const match = keys.find(k => k.endsWith('_' + this.targetId) || k.includes(this.targetType + '_'));
-                if (match) initialData = window.__COMMENTS_INITIAL_DATA__[match];
+                const fuzzyKey = keys.find(k => k.includes(this.targetType) && k.includes(tid));
+                if (fuzzyKey) initialData = window.__COMMENTS_INITIAL_DATA__[fuzzyKey];
             }
         }
 
+        const ds = this.container.dataset;
         this.comments = options.initialComments || initialData?.comments || [];
-        this.totalCount = parseInt(initialData?.total_count || this.container.dataset.totalCount || 0);
-        this.totalPages = parseInt(initialData?.total_pages || this.container.dataset.totalPages || 1);
+        this.totalCount = parseInt(initialData?.total_count || ds.totalCount || 0) || 0;
+        this.totalPages = parseInt(initialData?.total_pages || ds.totalPages || 0) || Math.ceil(this.totalCount / 10) || 1;
+        this.currentPage = parseInt(initialData?.current_page || ds.currentPage || 1) || 1;
+
         this.readOnly = options.readOnly || (this.targetType === 'user_profile');
-        this.guestCommentEnabled = this.container.dataset.guestComment === '1';
+        this.guestCommentEnabled = ds.guestComment === '1';
         this.filterType = 'all';
         this.sort = 'newest';
-        this.currentPage = parseInt(initialData?.current_page || this.container.dataset.currentPage || 1);
         this.threadModalId = 'comment-thread-modal';
         this.isInsideModal = false;
         this.isLoading = false;
@@ -80,7 +80,6 @@ class CommentSystem {
 
     async loadAndRender(append = false) {
         if (this.isLoading) return;
-        if (append && this.currentPage >= this.totalPages) return;
         this.isLoading = true;
         this.updateSentinelVisibility();
 
@@ -95,6 +94,29 @@ class CommentSystem {
         this.handleAnchorScroll();
         this.isLoading = false;
         this.updateSentinelVisibility();
+    }
+
+    async loadMore(page) {
+        if (this.isLoading || page > this.totalPages || page <= this.currentPage) return;
+        this.isLoading = true;
+        this.updateSentinelVisibility();
+
+        try {
+            const response = await fetch(`/api/comments.php?action=list&target_id=${this.targetId}&target_type=${this.targetType}&filter_type=${this.filterType}&sort=${this.sort}&page=${page}`);
+            const data = await response.json();
+            if (data.success) {
+                this.currentPage = page;
+                this.totalCount = data.total_count;
+                this.totalPages = data.total_pages;
+                this.comments = [...this.comments, ...data.comments];
+                this.updateCommentList(true);
+            }
+        } catch (error) {
+            console.error('Failed to load more comments:', error);
+        } finally {
+            this.isLoading = false;
+            this.updateSentinelVisibility();
+        }
     }
 
     handleAnchorScroll() {
@@ -138,6 +160,12 @@ class CommentSystem {
     updateCommentList(append = false) {
         const list = document.getElementById('comment-list');
         if (!list) return;
+
+        // Ensure sentinel is always AFTER the list
+        const sentinel = document.getElementById('comments-sentinel');
+        if (sentinel && list.nextSibling !== sentinel) {
+            list.after(sentinel);
+        }
 
         if (this.comments.length === 0) {
             list.innerHTML = `
@@ -1146,13 +1174,15 @@ class CommentSystem {
         if (!list) return;
 
         const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && !this.isLoading && this.currentPage < this.totalPages) {
-                this.currentPage++;
-                this.loadAndRender(true);
+            const entry = entries[0];
+            if (entry.isIntersecting && !this.isLoading) {
+                if (this.currentPage < this.totalPages) {
+                    this.loadMore(this.currentPage + 1);
+                }
             }
-        }, { threshold: 0.1, rootMargin: '200px' });
+        }, { threshold: 0.01, rootMargin: '600px' });
 
-        // Create a sentinel element
+        // Create or find sentinel element
         let sentinel = document.getElementById('comments-sentinel');
         if (!sentinel) {
             sentinel = document.createElement('div');
@@ -1170,15 +1200,17 @@ class CommentSystem {
 
         observer.observe(sentinel);
 
-        // Immediate check if we need to load more (e.g., if viewport is larger than initial 10)
-        setTimeout(() => {
+        // Immediate check with retry to handle initial positioning
+        const initialCheck = () => {
             this.updateSentinelVisibility();
-            // If the sentinel is already intersecting (e.g. high resolution screen), trigger first load
-            if (sentinel.getBoundingClientRect().top < window.innerHeight && !this.isLoading && this.currentPage < this.totalPages) {
-                this.currentPage++;
-                this.loadAndRender(true);
+            const rect = sentinel.getBoundingClientRect();
+            if (rect.top > 0 && rect.top < (window.innerHeight + 600) && !this.isLoading && this.currentPage < this.totalPages) {
+                this.loadMore(this.currentPage + 1);
             }
-        }, 500);
+        };
+
+        setTimeout(initialCheck, 500);
+        setTimeout(initialCheck, 2000); // Secondary check in case images loaded
     }
 
     updateSentinelVisibility() {
