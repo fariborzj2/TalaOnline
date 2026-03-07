@@ -153,8 +153,23 @@ function get_site_url() {
     return !empty($url) ? rtrim($url, '/') : get_base_url();
 }
 
-function get_current_url() {
-    return get_base_url() . $_SERVER['REQUEST_URI'];
+function get_current_url($strip_query = false) {
+    $protocol = (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? 'http' : 'https';
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '/';
+
+    if ($strip_query) {
+        $request_uri = explode('?', $request_uri)[0];
+    }
+
+    return $protocol . '://' . $host . $request_uri;
+}
+
+/**
+ * Returns the canonical version of the current URL (no query parameters)
+ */
+function get_canonical_url() {
+    return get_current_url(true);
 }
 
 /**

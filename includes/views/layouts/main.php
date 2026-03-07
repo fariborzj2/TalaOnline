@@ -6,7 +6,7 @@
     <title><?= htmlspecialchars($site_title ?? 'طلا آنلاین') ?> | قیمت لحظه‌ای طلا، سکه و ارز</title>
     <meta name="description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
     <meta name="keywords" content="<?= htmlspecialchars($meta_keywords ?? $site_keywords ?? '') ?>">
-    <link rel="canonical" href="<?= $canonical_url ?? get_current_url() ?>">
+    <link rel="canonical" href="<?= $canonical_url ?? get_canonical_url() ?>">
 
     <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Regular.woff2') ?>" as="font" type="font/woff2" crossorigin="anonymous">
     <link rel="preload" href="<?= versioned_asset('/assets/fonts/estedad/Estedad-FD-Bold.woff2') ?>" as="font" type="font/woff2" crossorigin="anonymous">
@@ -178,14 +178,14 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="طلا آنلاین">
-    <meta property="og:url" content="<?= get_current_url() ?>">
+    <meta property="og:url" content="<?= $canonical_url ?? get_canonical_url() ?>">
     <meta property="og:title" content="<?= htmlspecialchars($site_title ?? '') ?>">
     <meta property="og:description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
     <meta property="og:image" content="<?= $og_image ?? (get_base_url() . versioned_asset("/assets/images/logo.svg")) ?>">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="<?= get_current_url() ?>">
+    <meta name="twitter:url" content="<?= $canonical_url ?? get_canonical_url() ?>">
     <meta name="twitter:title" content="<?= htmlspecialchars($site_title ?? '') ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars($meta_description ?? $site_description ?? '') ?>">
     <meta name="twitter:image" content="<?= $og_image ?? (get_base_url() . versioned_asset("/assets/images/logo.svg")) ?>">

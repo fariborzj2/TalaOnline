@@ -67,13 +67,13 @@
                 <div class="d-flex align-center gap-1">
                     <span class="font-black text-subtitle font-size-1">اشتراک‌گذاری:</span>
                     <div class="d-flex gap-05">
-                        <a href="https://telegram.me/share/url?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn telegram">
+                        <a href="https://telegram.me/share/url?url=<?= urlencode($canonical_url ?? get_canonical_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn telegram">
                             <i data-lucide="send" class="icon-size-3"></i>
                         </a>
-                        <a href="https://twitter.com/intent/tweet?url=<?= urlencode(get_current_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn twitter">
+                        <a href="https://twitter.com/intent/tweet?url=<?= urlencode($canonical_url ?? get_canonical_url()) ?>&text=<?= urlencode($post['title']) ?>" target="_blank" class="share-btn twitter">
                             <i data-lucide="twitter" class="icon-size-3"></i>
                         </a>
-                        <a href="https://wa.me/?text=<?= urlencode($post['title'] . ' ' . get_current_url()) ?>" target="_blank" class="share-btn whatsapp">
+                        <a href="https://wa.me/?text=<?= urlencode($post['title'] . ' ' . ($canonical_url ?? get_canonical_url())) ?>" target="_blank" class="share-btn whatsapp">
                             <i data-lucide="message-circle" class="icon-size-3"></i>
                         </a>
                     </div>
