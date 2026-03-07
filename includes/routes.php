@@ -330,6 +330,7 @@ $router->add('/blog', function() {
     }
 
     return View::renderPage('blog', [
+        'canonical_url' => get_canonical_url(['page']),
         'page_title' => 'وبلاگ طلا آنلاین',
         'posts' => $posts,
         'categories' => $categories,
@@ -424,6 +425,7 @@ $router->add('/blog/tags/:tag_slug', function($params) {
     }
 
     return View::renderPage('blog', [
+        'canonical_url' => get_canonical_url(['page']),
         'page_title' => 'برچسب: ' . $tag['name'],
         'posts' => $posts,
         'categories' => $categories,
@@ -490,6 +492,7 @@ $router->add('/blog/:category_slug', function($params) {
     }
 
     return View::renderPage('blog', [
+        'canonical_url' => get_canonical_url(['page']),
         'page_title' => 'دسته‌بندی: ' . $category['name'],
         'posts' => $posts,
         'categories' => $categories,
@@ -761,6 +764,7 @@ $router->add('/:slug', function($params) {
             $og_image = !empty($category['logo']) ? (get_base_url() . '/' . ltrim($category['logo'], '/')) : null;
 
             return View::renderPage('category', [
+                'canonical_url' => get_canonical_url(['page']),
                 'category' => $category,
                 'load_charts' => true,
                 'items' => $items,

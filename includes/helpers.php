@@ -166,10 +166,38 @@ function get_current_url($strip_query = false) {
 }
 
 /**
- * Returns the canonical version of the current URL (no query parameters)
+ * Returns the canonical version of the current URL
+ * @param array $keep_params List of query parameters to keep (e.g. ['page'])
  */
-function get_canonical_url() {
-    return get_current_url(true);
+function get_canonical_url($keep_params = []) {
+    if (empty($keep_params)) {
+        return get_current_url(true);
+    }
+
+    $protocol = (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') ? 'http' : 'https';
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $request_uri = $_SERVER['REQUEST_URI'] ?? '/';
+
+    $parts = explode('?', $request_uri);
+    $path = $parts[0];
+
+    $query = '';
+    if (isset($parts[1])) {
+        parse_str($parts[1], $params);
+        $kept = [];
+        foreach ($keep_params as $p) {
+            if (isset($params[$p])) {
+                // Rule: If 'page' is 1, don't include it in canonical
+                if ($p === 'page' && (int)$params[$p] <= 1) continue;
+                $kept[$p] = $params[$p];
+            }
+        }
+        if (!empty($kept)) {
+            $query = '?' . http_build_query($kept);
+        }
+    }
+
+    return $protocol . '://' . $host . $path . $query;
 }
 
 /**
