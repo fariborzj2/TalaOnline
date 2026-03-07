@@ -803,10 +803,6 @@ input:focus {
 }
 
 /* Desktop Header Styles */
-.desktop-header {
-    margin-bottom: var(--pd-block);
-}
-
 .desktop-header-inner {
     display: flex;
     justify-content: space-between;
