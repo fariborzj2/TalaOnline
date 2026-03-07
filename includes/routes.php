@@ -248,6 +248,7 @@ $router->add('/profile/:identifier/:slug', function($params) {
         'following_count' => $following_count,
         'is_following' => $is_following,
         'user_comments' => $user_comments,
+        'user_comments_data' => $user_comments_data,
         'comment_count' => $comment_count,
         'page_title' => 'پروفایل ' . $user['name']
     ]);

@@ -17,28 +17,29 @@ class CommentSystem {
         // Highly resilient initial data lookup
         let initialData = null;
         if (window.__COMMENTS_INITIAL_DATA__) {
-            const tid = this.targetId.toString();
+            const tid = this.targetId ? this.targetId.toString() : '';
             const keys = Object.keys(window.__COMMENTS_INITIAL_DATA__);
 
             // 1. Direct match
             initialData = window.__COMMENTS_INITIAL_DATA__[`${this.targetType}_${tid}`];
 
             // 2. Numeric match
-            if (!initialData && !isNaN(parseInt(tid))) {
+            if (!initialData && tid && !isNaN(parseInt(tid))) {
                 initialData = window.__COMMENTS_INITIAL_DATA__[`${this.targetType}_${parseInt(tid)}`];
             }
 
             // 3. Fuzzy match (any key that contains both type and ID)
-            if (!initialData) {
+            if (!initialData && this.targetType && tid) {
                 const fuzzyKey = keys.find(k => k.includes(this.targetType) && k.includes(tid));
                 if (fuzzyKey) initialData = window.__COMMENTS_INITIAL_DATA__[fuzzyKey];
             }
         }
 
         const ds = this.container.dataset;
+        const perPage = (this.targetType === 'user_profile') ? 10 : 20;
         this.comments = options.initialComments || initialData?.comments || [];
         this.totalCount = parseInt(initialData?.total_count || ds.totalCount || 0) || 0;
-        this.totalPages = parseInt(initialData?.total_pages || ds.totalPages || 0) || Math.ceil(this.totalCount / 10) || 1;
+        this.totalPages = parseInt(initialData?.total_pages || ds.totalPages || 0) || Math.ceil(this.totalCount / perPage) || 1;
         this.currentPage = parseInt(initialData?.current_page || ds.currentPage || 1) || 1;
 
         this.readOnly = options.readOnly || (this.targetType === 'user_profile');
@@ -53,6 +54,14 @@ class CommentSystem {
         window.commentSystem = this;
 
         this.init();
+
+        // Final fallback trigger to ensure infinite scroll is initialized correctly
+        setTimeout(() => {
+            if (!this.isLoading && this.currentPage < this.totalPages) {
+                this.updateSentinelVisibility();
+                this.checkSentinelVisibility();
+            }
+        }, 1000);
 
         document.addEventListener('auth:status-changed', (e) => {
             const state = e.detail;
@@ -73,7 +82,10 @@ class CommentSystem {
         this.initRichEditors();
         this.initTagMentions();
         this.handleAnchorScroll();
-        if (this.targetType === 'user_profile') {
+
+        // Enable infinite scroll for profiles and analyses (items/categories)
+        // Or basically everywhere except maybe thread modal
+        if (!this.isInsideModal) {
             this.initInfiniteScroll();
         }
     }
@@ -188,7 +200,9 @@ class CommentSystem {
 
     updatePagination() {
         const pagination = document.getElementById('comments-pagination');
-        if (this.targetType === 'user_profile') {
+
+        // Hide traditional pagination when infinite scroll is active
+        if (!this.isInsideModal) {
             if (pagination) pagination.classList.add('d-none');
             return;
         }
@@ -1173,14 +1187,25 @@ class CommentSystem {
         const list = document.getElementById('comment-list');
         if (!list) return;
 
-        const observer = new IntersectionObserver((entries) => {
+        if (this.observer) this.observer.disconnect();
+
+        // The site uses a custom scroll container (.container) which might interfere with window-based IntersectionObserver
+        const scrollContainer = document.querySelector('.container');
+
+        const observerOptions = {
+            root: scrollContainer || null,
+            threshold: 0.01,
+            rootMargin: '1000px'
+        };
+
+        this.observer = new IntersectionObserver((entries) => {
             const entry = entries[0];
             if (entry.isIntersecting && !this.isLoading) {
                 if (this.currentPage < this.totalPages) {
                     this.loadMore(this.currentPage + 1);
                 }
             }
-        }, { threshold: 0.01, rootMargin: '600px' });
+        }, observerOptions);
 
         // Create or find sentinel element
         let sentinel = document.getElementById('comments-sentinel');
@@ -1198,19 +1223,39 @@ class CommentSystem {
             if (window.lucide) lucide.createIcons({ root: sentinel });
         }
 
-        observer.observe(sentinel);
+        this.observer.observe(sentinel);
 
-        // Immediate check with retry to handle initial positioning
-        const initialCheck = () => {
-            this.updateSentinelVisibility();
-            const rect = sentinel.getBoundingClientRect();
-            if (rect.top > 0 && rect.top < (window.innerHeight + 600) && !this.isLoading && this.currentPage < this.totalPages) {
-                this.loadMore(this.currentPage + 1);
-            }
-        };
+        // Immediate and delayed checks to handle initial positioning
+        setTimeout(() => this.checkSentinelVisibility(), 500);
+        setTimeout(() => this.checkSentinelVisibility(), 2000);
 
-        setTimeout(initialCheck, 500);
-        setTimeout(initialCheck, 2000); // Secondary check in case images loaded
+        window.addEventListener('resize', () => this.checkSentinelVisibility(), { passive: true });
+
+        // Manual scroll listener as fallback for custom containers
+        if (scrollContainer) {
+            scrollContainer.addEventListener('scroll', () => {
+                if (!this.isLoading && this.currentPage < this.totalPages) {
+                    this.checkSentinelVisibility();
+                }
+            }, { passive: true });
+        }
+    }
+
+    checkSentinelVisibility() {
+        if (this.isLoading || this.currentPage >= this.totalPages) return;
+
+        const sentinel = document.getElementById('comments-sentinel');
+        if (!sentinel) return;
+
+        const rect = sentinel.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        // Trigger if sentinel top is within 1000px of the bottom of the viewport
+        const isVisible = rect.top < (viewportHeight + 1000);
+
+        if (isVisible && rect.top !== 0) { // rect.top 0 might mean hidden
+            this.loadMore(this.currentPage + 1);
+        }
     }
 
     updateSentinelVisibility() {
