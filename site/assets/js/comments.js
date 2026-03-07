@@ -236,10 +236,62 @@ class CommentSystem {
 
     renderPaginationUI(container) {
         let html = '';
+        const pageWindow = 2;
+        const pages = [];
+
         for (let i = 1; i <= this.totalPages; i++) {
-            html += `<button class="btn ${i === this.currentPage ? 'btn-primary' : 'btn-secondary'} btn-sm radius-8 page-btn" data-page="${i}">${this.toPersianDigits(i)}</button>`;
+            if (
+                i === 1 ||
+                i === this.totalPages ||
+                (i >= this.currentPage - pageWindow && i <= this.currentPage + pageWindow)
+            ) {
+                pages.push(i);
+            } else if (
+                i === this.currentPage - (pageWindow + 1) ||
+                i === this.currentPage + (pageWindow + 1)
+            ) {
+                pages.push('...');
+            }
         }
+
+        const items = [];
+        let last = null;
+        pages.forEach(p => {
+            if (p === '...' && last === '...') return;
+            items.push(p);
+            last = p;
+        });
+
+        if (this.currentPage > 1) {
+            html += `
+                <button class="pagination-link page-btn" data-page="${this.currentPage - 1}" title="صفحه قبل">
+                    <i data-lucide="chevron-right" class="icon-size-4"></i>
+                </button>
+            `;
+        }
+
+        items.forEach(item => {
+            if (item === '...') {
+                html += `<span class="pagination-dots">...</span>`;
+            } else {
+                html += `
+                    <button class="pagination-link page-btn ${item === this.currentPage ? 'active' : ''}" data-page="${item}">
+                        ${this.toPersianDigits(item)}
+                    </button>
+                `;
+            }
+        });
+
+        if (this.currentPage < this.totalPages) {
+            html += `
+                <button class="pagination-link page-btn" data-page="${this.currentPage + 1}" title="صفحه بعد">
+                    <i data-lucide="chevron-left" class="icon-size-4"></i>
+                </button>
+            `;
+        }
+
         container.innerHTML = html;
+        if (window.lucide) lucide.createIcons({ root: container });
     }
 
     updateStatsUI() {

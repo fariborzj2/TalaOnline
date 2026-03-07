@@ -453,3 +453,40 @@ function record_verification_attempt($action_type, $email = null, $phone = null)
         record_rate_limit_attempt($action_type, 'phone', $phone);
     }
 }
+
+/**
+ * Generates a windowed pagination array
+ * @return array List of page numbers and '...' for dots
+ */
+function get_pagination_window($current_page, $total_pages, $window = 2) {
+    $pages = [];
+
+    if ($total_pages <= 1) return $pages;
+
+    for ($i = 1; $i <= $total_pages; $i++) {
+        // Always show first, last, current, and pages around current
+        if (
+            $i == 1 ||
+            $i == $total_pages ||
+            ($i >= $current_page - $window && $i <= $current_page + $window)
+        ) {
+            $pages[] = $i;
+        } elseif (
+            $i == $current_page - ($window + 1) ||
+            $i == $current_page + ($window + 1)
+        ) {
+            $pages[] = '...';
+        }
+    }
+
+    // Remove consecutive dots if any (though logic above should prevent it)
+    $result = [];
+    $last = null;
+    foreach ($pages as $p) {
+        if ($p === '...' && $last === '...') continue;
+        $result[] = $p;
+        $last = $p;
+    }
+
+    return $result;
+}

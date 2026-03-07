@@ -100,7 +100,7 @@
             </div>
 
             <?php if ($total_pages > 1): ?>
-            <div class="d-flex align-center just-center gap-05 mt-2 pagination">
+            <div class="pagination mt-2">
                 <?php
                 if (isset($current_category)) {
                     $base_url = '/blog/' . $current_category['slug'];
@@ -109,27 +109,28 @@
                 } else {
                     $base_url = '/blog';
                 }
+                $pagination_items = get_pagination_window($current_page, $total_pages);
                 ?>
 
                 <?php if ($current_page > 1): ?>
-                <a href="<?= $base_url ?>?page=<?= $current_page - 1 ?>" class="pagination-link">
-                    <i data-lucide="chevron-right" class="icon-size-2"></i>
+                <a href="<?= $base_url ?>?page=<?= $current_page - 1 ?>" class="pagination-link" title="صفحه قبل">
+                    <i data-lucide="chevron-right" class="icon-size-4"></i>
                 </a>
                 <?php endif; ?>
 
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <?php if ($i == 1 || $i == $total_pages || ($i >= $current_page - 2 && $i <= $current_page + 2)): ?>
-                        <a href="<?= $base_url ?>?page=<?= $i ?>" class="pagination-link <?= $i == $current_page ? 'active' : '' ?>">
-                            <?= $i ?>
-                        </a>
-                    <?php elseif ($i == $current_page - 3 || $i == $current_page + 3): ?>
+                <?php foreach ($pagination_items as $item): ?>
+                    <?php if ($item === '...'): ?>
                         <span class="pagination-dots">...</span>
+                    <?php else: ?>
+                        <a href="<?= $base_url ?>?page=<?= $item ?>" class="pagination-link <?= $item == $current_page ? 'active' : '' ?>">
+                            <?= fa_num($item) ?>
+                        </a>
                     <?php endif; ?>
-                <?php endfor; ?>
+                <?php endforeach; ?>
 
                 <?php if ($current_page < $total_pages): ?>
-                <a href="<?= $base_url ?>?page=<?= $current_page + 1 ?>" class="pagination-link">
-                    <i data-lucide="chevron-left" class="icon-size-2"></i>
+                <a href="<?= $base_url ?>?page=<?= $current_page + 1 ?>" class="pagination-link" title="صفحه بعد">
+                    <i data-lucide="chevron-left" class="icon-size-4"></i>
                 </a>
                 <?php endif; ?>
             </div>
@@ -176,35 +177,6 @@
     .cat-link.active { background: var(--color-primary-light); color: var(--color-primary); }
     .cat-link.active .cat-arrow { transform: translateX(-5px); }
     .cat-arrow { transition: transform 0.3s; }
-
-    /* Pagination Styles */
-    .pagination-link {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-        background: var(--bg-block);
-        border: 1px solid var(--color-border);
-        color: var(--color-text);
-        font-size: 14px;
-        transition: all 0.3s;
-    }
-    .pagination-link:hover {
-        border-color: var(--color-primary);
-        color: var(--color-primary);
-    }
-    .pagination-link.active {
-        background: var(--color-primary);
-        color: white;
-        border-color: var(--color-primary);
-    }
-    .pagination-dots {
-        color: var(--color-subtitle);
-        font-weight: 800;
-        padding: 0 5px;
-    }
 
     .popular-item { text-decoration: none; }
     .popular-number {
