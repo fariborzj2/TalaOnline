@@ -13,7 +13,7 @@
     "price": "<?= $item['price'] ?>",
     "priceCurrency": "IRR",
     "availability": "https://schema.org/InStock",
-    "url": "<?= get_current_url() ?>"
+    "url": "<?= get_canonical_url() ?>"
   }
 }
 </script>
