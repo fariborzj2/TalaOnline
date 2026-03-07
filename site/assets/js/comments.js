@@ -190,7 +190,14 @@ class CommentSystem {
             if (append) {
                 const existingIds = Array.from(list.querySelectorAll('[id^="comment-wrapper-"]')).map(el => el.id.replace('comment-wrapper-', ''));
                 const newComments = this.comments.filter(c => !existingIds.includes(c.id.toString()));
-                list.insertAdjacentHTML('beforeend', newComments.map(c => this.renderCommentItem(c)).join(''));
+
+                const html = newComments.map(c => {
+                    const itemHtml = this.renderCommentItem(c);
+                    // Add fade-in class to the wrapper
+                    return itemHtml.replace('class="comment-wrapper', 'class="comment-wrapper comment-fade-in');
+                }).join('');
+
+                list.insertAdjacentHTML('beforeend', html);
             } else {
                 list.innerHTML = this.comments.map(c => this.renderCommentItem(c)).join('');
             }
@@ -202,7 +209,8 @@ class CommentSystem {
         const pagination = document.getElementById('comments-pagination');
 
         // Hide traditional pagination when infinite scroll is active
-        if (!this.isInsideModal) {
+        // User Profiles and general list view (not inside thread modal) use lazy loading
+        if (this.targetType === 'user_profile' || !this.isInsideModal) {
             if (pagination) pagination.classList.add('d-none');
             return;
         }

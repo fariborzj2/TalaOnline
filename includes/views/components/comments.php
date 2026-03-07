@@ -294,7 +294,7 @@ function render_reaction($c, $type, $emoji) {
     </div>
 
     <?php if (($total_pages ?? 1) > 1): ?>
-        <div class="pagination mt-3 d-flex just-center gap-05" id="comments-pagination">
+        <div class="pagination mt-3 d-flex just-center gap-05 <?= ($target_type === 'user_profile') ? 'd-none' : '' ?>" id="comments-pagination">
             <?php
             $current_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             $query = $_GET;
