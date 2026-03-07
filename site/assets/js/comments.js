@@ -541,7 +541,7 @@ class CommentSystem {
                 `}
                 <div id="reply-form-container-${c.id}"></div>
                 ${!isReply && showInlineReplies ? `
-                    <div id="replies-container-${c.id}">
+                    <div class="replies-container" id="replies-container-${c.id}">
                         <div class="replies-list">
                             ${c.replies ? c.replies.map(r => this.renderCommentItem(r, true)).join('') : ''}
                         </div>
@@ -1016,7 +1016,8 @@ class CommentSystem {
 
     handleShare(btn) {
         const id = btn.dataset.id;
-        const url = window.location.origin + window.location.pathname + '#comment-' + id;
+        const pageParam = (this.currentPage > 1) ? `?page=${this.currentPage}` : '';
+        const url = window.location.origin + window.location.pathname + pageParam + '#comment-' + id;
         navigator.clipboard.writeText(url).then(() => {
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i data-lucide="check" class="icon-size-4 text-success"></i>';
