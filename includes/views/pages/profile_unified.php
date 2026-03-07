@@ -341,7 +341,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
     .btn-follow-large.active { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; box-shadow: none; }
 
     .profile-tab-btn {
-        display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: 12px;
+        display: flex; align-items: center; gap: 12px; padding: 10px 15px; border-radius: 10px;
         font-weight: 600; font-size: 14px; color: var(--color-gray); transition: all 0.2s;
         width: 100%; text-align: right; background: transparent; border: none; cursor: pointer;
     }

@@ -1248,7 +1248,7 @@ body.offline-page .sidebar {
     padding: var(--pd-block);
 }
 #market-sentiment-container.active {
-    pointer-events: auto;
+    pointer-events: none;
 }
 .sentiment-bottom-sheet {
     background: var(--color-block);
@@ -1259,6 +1259,8 @@ body.offline-page .sidebar {
     border: 1px solid var(--color-border);
     position: relative;
     animation: sentiment-slide-up 0.5s cubic-bezier(0.36, 1, 0.66, 1);
+    pointer-events: auto;
+
 }
 @keyframes sentiment-slide-up {
     from { transform: translateY(120%); }
