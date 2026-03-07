@@ -285,7 +285,7 @@ function render_reaction($c, $type, $emoji) {
     <div class="comment-list <?= $read_only ? 'mt-0' : 'mt-2' ?>" id="comment-list">
         <?php if (empty($comments)): ?>
             <div class="bg-block text-center pd-md radius-16 border d-column just-center align-center">
-                <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+                <i data-lucide="message-circle" class="w-12 h-12 text-gray-300 mx-auto mb-1"></i>
                 <p class="text-gray-400"><?= $read_only ? 'هنوز نظری ثبت نشده است.' : 'هنوز نظری ثبت نشده است. اولین تحلیل‌گر باشید!' ?></p>
             </div>
         <?php else: ?>
