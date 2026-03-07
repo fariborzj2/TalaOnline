@@ -459,7 +459,10 @@ class CommentSystem {
                             </div>
                         </div>
                         <div class="header-actions">
-                            ${c.can_edit ? `<div class="comment-header-btn edit-btn" title="ویرایش" data-id="${c.id}"><i data-lucide="edit-3" class="icon-size-4"></i></div>` : ''}
+                            ${c.can_edit ? `
+                                <div class="comment-header-btn delete-btn" title="حذف" data-id="${c.id}"><i data-lucide="trash-2" class="icon-size-4"></i></div>
+                                <div class="comment-header-btn edit-btn" title="ویرایش" data-id="${c.id}"><i data-lucide="edit-3" class="icon-size-4"></i></div>
+                            ` : ''}
                             <div class="comment-header-btn report-btn" title="گزارش تخلف" data-id="${c.id}"><i data-lucide="flag" class="icon-size-4"></i></div>
                             <div class="comment-header-btn comment-share-btn" title="کپی لینک مستقیم" data-id="${c.id}">
                                 <i data-lucide="share-2" class="icon-size-3"></i>
@@ -646,6 +649,13 @@ class CommentSystem {
             const editBtn = target.closest('.edit-btn');
             if (editBtn) {
                 this.toggleEditForm(editBtn);
+                return;
+            }
+
+            // Delete Comment
+            const deleteBtn = target.closest('.delete-btn');
+            if (deleteBtn) {
+                this.handleDelete(deleteBtn);
                 return;
             }
 
@@ -880,6 +890,7 @@ class CommentSystem {
                     }
                 } else {
                     const comment = data.comment;
+                    this.comments.push(comment);
                     const commentHtml = this.renderCommentItem(comment, !!comment.parent_id);
                     if (parentId) {
                         document.getElementById(`reply-form-container-${parentId}`).innerHTML = '';
@@ -1260,6 +1271,35 @@ class CommentSystem {
         if (this.editors[`textarea-${suffix}`]) {
             this.editors[`textarea-${suffix}`].destroy();
             delete this.editors[`textarea-${suffix}`];
+        }
+    }
+
+    async handleDelete(btn) {
+        const id = btn.dataset.id;
+        if (!confirm('آیا از حذف این نظر اطمینان دارید؟')) return;
+
+        try {
+            const res = await fetch('/api/comments.php?action=delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
+                body: JSON.stringify({ comment_id: id })
+            });
+            const data = await res.json();
+            if (data.success) {
+                const wrapper = document.getElementById(`comment-wrapper-${id}`);
+                const commentItem = document.getElementById(`comment-${id}`);
+                if (commentItem) {
+                    commentItem.querySelector('.comment-content').innerHTML = '<p class="text-gray-400 italic">این نظر توسط نویسنده حذف شده است.</p>';
+                    commentItem.querySelector('.header-actions').innerHTML = '';
+                    commentItem.querySelector('.comment-footer').remove();
+                }
+                window.showAlert?.(data.message, 'success');
+            } else {
+                window.showAlert?.(data.message, 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            window.showAlert?.('خطا در حذف نظر', 'error');
         }
     }
 
