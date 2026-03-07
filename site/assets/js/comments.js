@@ -83,9 +83,8 @@ class CommentSystem {
         this.initTagMentions();
         this.handleAnchorScroll();
 
-        // Enable infinite scroll for profiles and analyses (items/categories)
-        // Or basically everywhere except maybe thread modal
-        if (!this.isInsideModal) {
+        // Enable infinite scroll EXCLUSIVELY for user profiles
+        if (this.targetType === 'user_profile') {
             this.initInfiniteScroll();
         }
     }
@@ -109,7 +108,7 @@ class CommentSystem {
     }
 
     async loadMore(page) {
-        if (this.isLoading || page > this.totalPages || page <= this.currentPage) return;
+        if (this.targetType !== 'user_profile' || this.isLoading || page > this.totalPages || page <= this.currentPage) return;
         this.isLoading = true;
         this.updateSentinelVisibility();
 
@@ -208,11 +207,15 @@ class CommentSystem {
     updatePagination() {
         const pagination = document.getElementById('comments-pagination');
 
-        // Hide traditional pagination when infinite scroll is active
-        // User Profiles and general list view (not inside thread modal) use lazy loading
-        if (this.targetType === 'user_profile' || !this.isInsideModal) {
+        // Lazy loading is EXCLUSIVELY for user profiles.
+        // For all other types, we show the standard pagination.
+        if (this.targetType === 'user_profile') {
             if (pagination) pagination.classList.add('d-none');
             return;
+        }
+
+        if (pagination) {
+            pagination.classList.remove('d-none');
         }
 
         if (!pagination) {
@@ -1302,7 +1305,7 @@ class CommentSystem {
     }
 
     checkSentinelVisibility() {
-        if (this.isLoading || this.currentPage >= this.totalPages) return;
+        if (this.targetType !== 'user_profile' || this.isLoading || this.currentPage >= this.totalPages) return;
 
         const sentinel = document.getElementById('comments-sentinel');
         if (!sentinel) return;
@@ -1322,7 +1325,7 @@ class CommentSystem {
         const sentinel = document.getElementById('comments-sentinel');
         if (!sentinel) return;
 
-        if (this.currentPage >= this.totalPages || this.totalCount === 0) {
+        if (this.targetType !== 'user_profile' || this.currentPage >= this.totalPages || this.totalCount === 0) {
             sentinel.style.display = 'none';
         } else {
             sentinel.style.display = 'flex';
