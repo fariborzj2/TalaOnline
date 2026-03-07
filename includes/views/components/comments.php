@@ -187,7 +187,16 @@ function render_reaction($c, $type, $emoji) {
         <div id="main-form-container">
             <?php if ($is_logged_in || $guest_comment_enabled): ?>
                 <div class="comment-form" id="form-main">
-                    <input type="hidden" name="comment_type_main" value="comment" class="comment-type-radio" data-suffix="main">
+                    <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1 <?= $target_type === 'post' ? 'd-none' : '' ?>">
+                        <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
+                            <input type="radio" name="comment_type_main" value="comment" class="comment-type-radio" data-suffix="main" checked>
+                            <span>نظر</span>
+                        </label>
+                        <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
+                            <input type="radio" name="comment_type_main" value="analysis" class="comment-type-radio" data-suffix="main">
+                            <span>تحلیل</span>
+                        </label>
+                    </div>
 
                     <?php if (!$is_logged_in && $guest_comment_enabled): ?>
                         <div class="d-flex-wrap gap-1 mb-1">
@@ -217,6 +226,23 @@ function render_reaction($c, $type, $emoji) {
                         </div>
                     </div>
                     <?php endif; ?>
+
+                    <div class="comment-image-upload d-none mb-2" id="image-upload-container-main">
+                        <label for="comment-image-main" class="upload-zone d-flex align-center just-center gap-1 pd-md radius-12 border-dashed pointer transition-all">
+                            <i data-lucide="image" class="text-gray icon-size-5"></i>
+                            <div class="text-right">
+                                <div class="font-bold font-size-2 text-title">آپلود تصویر تحلیل</div>
+                            </div>
+                            <input type="file" id="comment-image-main" class="d-none comment-image-input" accept="image/*" data-suffix="main">
+                        </label>
+                        <div class="font-size-1 text-gray">فرمت‌های مجاز: PNG, JPG, WebP, AVIF</div>
+                        <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border" style="width: 100px; height: 100px;">
+                            <img src="" class="w-full h-full object-cover">
+                            <button type="button" class="remove-preview absolute top-0 left-0 m-05 radius-50 p-05" data-suffix="main">
+                                <i data-lucide="x" class="icon-size-1"></i>
+                            </button>
+                        </div>
+                    </div>
 
                     <div class="comment-form-footer">
                         <button class="btn btn-primary submit-comment radius-10" data-parent="" data-edit="false">ارسال نظر</button>
