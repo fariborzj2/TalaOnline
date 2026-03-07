@@ -60,13 +60,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit;
     }
 
+
+
     if ($action === 'delete') {
         $comment_id = $input['comment_id'] ?? 0;
         $success = $comments_handler->deleteComment($user_id, $comment_id);
         if ($success) {
             echo json_encode(['success' => true, 'message' => 'نظر حذف شد.']);
         } else {
-            echo json_encode(['success' => false, 'message' => 'امکان حذف این نظر وجود ندارد.']);
+            echo json_encode(['success' => false, 'message' => 'امکان حذف این نظر وجود ندارد (زمان سپری شده است یا نظر متعلق به شما نیست).']);
         }
         exit;
     }
