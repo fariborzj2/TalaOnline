@@ -159,6 +159,7 @@ function render_reaction($c, $type, $emoji) {
      data-target-id="<?= $target_id ?>"
      data-target-type="<?= $target_type ?>"
      data-guest-comment="<?= $guest_comment_enabled ? '1' : '0' ?>"
+     data-per-page="<?= (int)($target_type === 'user_profile' ? 10 : get_setting('comments_per_page', '20')) ?>"
      data-total-pages="<?= (int)($total_pages ?? 1) ?>"
      data-total-count="<?= (int)($total_count ?? 0) ?>"
      data-current-page="<?= (int)($current_page ?? 1) ?>">

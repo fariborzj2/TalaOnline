@@ -36,7 +36,7 @@ class CommentSystem {
         }
 
         const ds = this.container.dataset;
-        const perPage = (this.targetType === 'user_profile') ? 10 : 20;
+        const perPage = parseInt(ds.perPage) || (this.targetType === 'user_profile' ? 10 : 20);
         this.comments = options.initialComments || initialData?.comments || [];
         this.totalCount = parseInt(initialData?.total_count || ds.totalCount || 0) || 0;
         this.totalPages = parseInt(initialData?.total_pages || ds.totalPages || 0) || Math.ceil(this.totalCount / perPage) || 1;
