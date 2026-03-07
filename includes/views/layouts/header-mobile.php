@@ -39,11 +39,13 @@
             </div>
             <span class="mobile-date-text">امروز <?= jalali_date('now', 'weekday') ?></span>
         </div>
+        <?php if ($_SERVER['REQUEST_URI'] !== '/'): ?>
         <div>
             <div class="pointer d-flex align-center font-bold" onclick="window.history.length > 1 ? window.history.back() : window.location.href='/'">
                 <span>بازگشت</span>
                 <i data-lucide="chevron-left" class="icon-size-3"></i>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 </header>

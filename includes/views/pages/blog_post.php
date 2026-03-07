@@ -154,11 +154,13 @@
                 // Close all others in this list
                 const parent = el.closest('.faq-list');
                 parent.querySelectorAll('.faq-answer').forEach(a => a.classList.add('d-none'));
-                parent.querySelectorAll('.faq-question i').forEach(i => i.style.transform = 'rotate(0deg)');
+                parent.querySelectorAll('.faq-question i').forEach(i => {
+                    if (i) i.style.transform = 'rotate(0deg)';
+                });
 
                 if (!isOpen) {
                     answer.classList.remove('d-none');
-                    icon.style.transform = 'rotate(180deg)';
+                    if (icon) icon.style.transform = 'rotate(180deg)';
                 }
             }
         </script>

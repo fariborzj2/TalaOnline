@@ -369,16 +369,7 @@ class CommentSystem {
         const isEdit = initialContent !== '';
         return `
             <div class="comment-form ${parentId && !isEdit ? 'mt-2 mb-2' : ''}" id="form-${suffix}">
-                <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1 ${this.targetType === 'post' ? 'd-none' : ''}">
-                    <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
-                        <input type="radio" name="comment_type_${suffix}" value="comment" class="comment-type-radio" data-suffix="${suffix}" checked>
-                        <span>نظر</span>
-                    </label>
-                    <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
-                        <input type="radio" name="comment_type_${suffix}" value="analysis" class="comment-type-radio" data-suffix="${suffix}">
-                        <span>تحلیل</span>
-                    </label>
-                </div>
+                <input type="hidden" name="comment_type_${suffix}" value="comment" class="comment-type-radio" data-suffix="${suffix}">
 
                 ${!this.isLoggedIn ? `
                     <div class="d-flex-wrap gap-1 mb-1">
@@ -410,28 +401,12 @@ class CommentSystem {
                 </div>
                 ` : ''}
 
-                <div class="comment-image-upload d-none mb-2" id="image-upload-container-${suffix}">
-                    <label for="comment-image-${suffix}" class="upload-zone d-flex align-center just-center gap-1 pd-md radius-12 border-dashed pointer transition-all">
-                        <i data-lucide="image" class="text-gray icon-size-5"></i>
-                        <div class="text-right">
-                            <div class="font-bold font-size-2 text-title">آپلود تصویر تحلیل</div>
-                        </div>
-                        <input type="file" id="comment-image-${suffix}" class="d-none comment-image-input" accept="image/*" data-suffix="${suffix}">
-                    </label>
-                    <div class="font-size-1 text-gray">فرمت‌های مجاز: PNG, JPG, WebP, AVIF</div>
-                    <div class="image-preview d-none mt-2 relative radius-12 overflow-hidden border" style="width: 100px; height: 100px;">
-                        <img src="" class="w-full h-full object-cover">
-                        <button type="button" class="remove-preview absolute top-0 left-0 m-05 radius-50 p-05" data-suffix="${suffix}">
-                            <i data-lucide="x" class="icon-size-1"></i>
-                        </button>
-                    </div>
-                </div>
-
                 <div class="comment-form-footer">
                     ${!this.isLoggedIn ? '<span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">در حال ارسال به عنوان مهمان</span>' : ''}
-                    <button class="btn btn-primary submit-comment radius-10 mr-auto" data-parent="${parentId || ''}" data-edit="${isEdit}">
+                    <button class="btn btn-primary submit-comment radius-10" data-parent="${parentId || ''}" data-edit="${isEdit}">
                         ${isEdit ? 'بروزرسانی نظر' : 'ارسال نظر'}
                     </button>
+                    <button class="btn btn-secondary cancel-comment radius-10" data-suffix="${suffix}">انصراف</button>
                 </div>
             </div>
         `;
@@ -725,6 +700,13 @@ class CommentSystem {
                 this.filterType = filterBtn.dataset.filter;
                 this.currentPage = 1;
                 this.loadAndRender();
+                return;
+            }
+
+            // Cancel Comment
+            const cancelBtn = target.closest('.cancel-comment');
+            if (cancelBtn) {
+                this.handleCancel(cancelBtn);
                 return;
             }
 
@@ -1248,6 +1230,37 @@ class CommentSystem {
 
     closeModal(modal) {
         if (window.closeModal) window.closeModal();
+    }
+
+    handleCancel(btn) {
+        const suffix = btn.dataset.suffix;
+        if (suffix === 'main') {
+            const editor = this.editors['textarea-main'];
+            if (editor) editor.clear();
+            const textarea = document.getElementById('textarea-main');
+            if (textarea) textarea.value = '';
+            const mentionsContainer = document.getElementById('mentions-container-main');
+            if (mentionsContainer) mentionsContainer.querySelectorAll('.mention-tag').forEach(tag => tag.remove());
+            return;
+        }
+
+        const isEdit = document.querySelector(`#form-${suffix} .submit-comment`)?.dataset.edit === 'true';
+        if (isEdit) {
+            const comment = this.findComment(suffix);
+            const commentItem = document.getElementById(`comment-${suffix}`);
+            if (commentItem && comment) {
+                commentItem.querySelector('.comment-content').innerHTML = this.renderCommentBody(comment);
+                if (window.lucide) lucide.createIcons({ root: commentItem });
+            }
+        } else {
+            const container = document.getElementById(`reply-form-container-${suffix}`);
+            if (container) container.innerHTML = '';
+        }
+
+        if (this.editors[`textarea-${suffix}`]) {
+            this.editors[`textarea-${suffix}`].destroy();
+            delete this.editors[`textarea-${suffix}`];
+        }
     }
 
     initInfiniteScroll() {

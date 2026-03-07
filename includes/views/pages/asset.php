@@ -184,11 +184,13 @@
 
         // Close all others
         document.querySelectorAll('.faq-answer').forEach(a => a.classList.add('d-none'));
-        document.querySelectorAll('.faq-question i').forEach(i => i.style.transform = 'rotate(0deg)');
+        document.querySelectorAll('.faq-question i').forEach(i => {
+            if (i) i.style.transform = 'rotate(0deg)';
+        });
 
         if (!isOpen) {
             answer.classList.remove('d-none');
-            icon.style.transform = 'rotate(180deg)';
+            if (icon) icon.style.transform = 'rotate(180deg)';
         }
     }
 </script>
