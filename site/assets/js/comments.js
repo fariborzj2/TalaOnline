@@ -370,7 +370,7 @@ class CommentSystem {
         const showTypeSelector = suffix === 'main' || isEdit;
 
         return `
-            <div class="comment-form ${parentId && !isEdit ? 'mt-2 mb-2' : ''}" id="form-${suffix}">
+            <div class="comment-form ${parentId && !isEdit ? 'mt-2 mb-2' : 'mb-2'}" id="form-${suffix}">
                 ${showTypeSelector ? `
                 <div class="comment-type-selector d-flex gap-1-5 mb-1 pr-1 ${this.targetType === 'post' ? 'd-none' : ''}">
                     <label class="d-flex align-center gap-05 cursor-pointer font-bold text-sm">
@@ -434,11 +434,14 @@ class CommentSystem {
                 </div>
 
                 <div class="comment-form-footer">
-                    ${!this.isLoggedIn ? '<span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">در حال ارسال به عنوان مهمان</span>' : ''}
-                    <button class="btn btn-primary submit-comment radius-10" data-parent="${parentId || ''}" data-edit="${isEdit}">
-                        ${isEdit ? 'بروزرسانی نظر' : 'ارسال نظر'}
-                    </button>
-                    <button class="btn btn-secondary cancel-comment radius-10" data-suffix="${suffix}">انصراف</button>
+                    <div class="comment-form-footer-left mr-auto d-flex align-center gap-1">
+                        <button class="btn btn-secondary cancel-comment radius-10" data-suffix="${suffix}">انصراف</button>
+                        ${!this.isLoggedIn ? '<span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-100">در حال ارسال به عنوان مهمان</span>' : ''}
+                        <button class="btn btn-primary submit-comment radius-10" data-parent="${parentId || ''}" data-edit="${isEdit}">
+                            ${isEdit ? 'بروزرسانی نظر' : 'ارسال نظر'}
+                        </button>
+                        
+                    </div>
                 </div>
             </div>
         `;

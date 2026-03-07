@@ -245,8 +245,9 @@ function render_reaction($c, $type, $emoji) {
                     </div>
 
                     <div class="comment-form-footer">
-                        <button class="btn btn-primary submit-comment radius-10" data-parent="" data-edit="false">ارسال نظر</button>
-                        <button class="btn btn-secondary cancel-comment radius-10" data-suffix="main">انصراف</button>
+                        <div class="comment-form-footer-left mr-auto d-flex align-center gap-1">
+                            <button class="btn btn-primary submit-comment radius-10" data-parent="" data-edit="false">ارسال نظر</button>
+                        </div>
                     </div>
                 </div>
             <?php elseif (!$is_logged_in): ?>
