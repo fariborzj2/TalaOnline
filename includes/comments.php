@@ -513,12 +513,16 @@ class Comments {
     /**
      * Update/Edit a comment (within 5 minutes)
      */
-    public function updateComment($user_id, $comment_id, $content, $mentions = []) {
+    public function updateComment($user_id, $comment_id, $content, $mentions = [], $type = null) {
         if (!$this->pdo) return false;
 
-        $stmt = $this->pdo->prepare("SELECT created_at FROM comments WHERE id = ? AND user_id = ?");
+        $stmt = $this->pdo->prepare("SELECT created_at, target_type FROM comments WHERE id = ? AND user_id = ?");
         $stmt->execute([$comment_id, $user_id]);
-        $created_at = $stmt->fetchColumn();
+        $res = $stmt->fetch();
+        if (!$res) return false;
+
+        $created_at = $res['created_at'];
+        $target_type = $res['target_type'];
 
         $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
 
@@ -534,8 +538,14 @@ class Comments {
 
             $content = $this->sanitizeHTML($content);
             $stored_content = $this->convertMentionsToPlaceholders($content);
-            $stmt = $this->pdo->prepare("UPDATE comments SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-            return $stmt->execute([$stored_content, $comment_id]);
+
+            if ($type && $target_type !== 'post') {
+                $stmt = $this->pdo->prepare("UPDATE comments SET content = ?, type = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                return $stmt->execute([$stored_content, $type, $comment_id]);
+            } else {
+                $stmt = $this->pdo->prepare("UPDATE comments SET content = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                return $stmt->execute([$stored_content, $comment_id]);
+            }
         }
         return false;
     }
