@@ -417,7 +417,7 @@ class CommentSystem {
                 ` : ''}
 
                 <div class="comment-image-upload d-none mb-2" id="image-upload-container-${suffix}">
-                    <label for="comment-image-${suffix}" class="upload-zone d-flex align-center just-center gap-1 pd-md radius-12 border-dashed pointer transition-all">
+                    <label for="comment-image-${suffix}" class="upload-zone d-flex align-center just-center gap-1 p-1 radius-8 border-dashed pointer transition-all">
                         <i data-lucide="image" class="text-gray icon-size-5"></i>
                         <div class="text-right">
                             <div class="font-bold font-size-2 text-title">آپلود تصویر تحلیل</div>

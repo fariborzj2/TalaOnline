@@ -228,7 +228,7 @@ function render_reaction($c, $type, $emoji) {
                     <?php endif; ?>
 
                     <div class="comment-image-upload d-none mb-2" id="image-upload-container-main">
-                        <label for="comment-image-main" class="upload-zone d-flex align-center just-center gap-1 pd-md radius-12 border-dashed pointer transition-all">
+                        <label for="comment-image-main" class="upload-zone d-flex align-center just-center gap-1 p-1 radius-8 border-dashed pointer transition-all">
                             <i data-lucide="image" class="text-gray icon-size-5"></i>
                             <div class="text-right">
                                 <div class="font-bold font-size-2 text-title">آپلود تصویر تحلیل</div>
