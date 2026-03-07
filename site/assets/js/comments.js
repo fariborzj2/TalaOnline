@@ -39,6 +39,9 @@ class CommentSystem {
         const perPage = parseInt(ds.perPage) || (this.targetType === 'user_profile' ? 10 : 20);
         this.comments = options.initialComments || initialData?.comments || [];
         this.totalCount = parseInt(initialData?.total_count || ds.totalCount || 0) || 0;
+
+        // If it's the initial load from DOM dataset, we need to make sure we only use top-level count
+        // (Server-side already does this, but we're defensive here)
         this.totalPages = parseInt(initialData?.total_pages || ds.totalPages || 0) || Math.ceil(this.totalCount / perPage) || 1;
         this.currentPage = parseInt(initialData?.current_page || ds.currentPage || 1) || 1;
 

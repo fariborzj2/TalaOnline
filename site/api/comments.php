@@ -159,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Fetch the full comment data to return for AJAX insertion
             $new_comment = $comments_handler->getComment($id, $user_id);
-            $total_count = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND status = 'approved'");
+            $total_count = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND status = 'approved' AND parent_id IS NULL");
             $total_count->execute([$target_id, $target_type]);
             $count = $total_count->fetchColumn();
 
