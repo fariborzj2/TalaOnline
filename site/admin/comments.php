@@ -32,13 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 // Pagination & Filtering
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
-$per_page = 20;
+$per_page = (int)get_setting('comments_per_page', '20');
 $offset = ($page - 1) * $per_page;
 
 $status_filter = $_GET['status'] ?? '';
 $search = $_GET['search'] ?? '';
 
-$where_clauses = [];
+$where_clauses = ["c.parent_id IS NULL"];
 $params = [];
 
 if ($status_filter) {

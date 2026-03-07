@@ -73,7 +73,7 @@ class Comments {
         }
 
         if ($target_type === 'user_profile') {
-            $where = "c.user_id = ? AND c.status = 'approved'";
+            $where = "c.user_id = ? AND c.status = 'approved' AND c.parent_id IS NULL";
             $params = [(int)$target_id];
         } else {
             $where = "c.target_id = ? AND c.target_type = ? AND c.status = 'approved' AND c.parent_id IS NULL";
