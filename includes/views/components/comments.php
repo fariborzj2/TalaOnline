@@ -294,16 +294,31 @@ function render_reaction($c, $type, $emoji) {
     </div>
 
     <?php if (($total_pages ?? 1) > 1): ?>
-        <div class="pagination mt-3 d-flex just-center gap-05 <?= ($target_type === 'user_profile') ? 'd-none' : '' ?>" id="comments-pagination">
+        <div class="pagination mt-3 <?= ($target_type === 'user_profile') ? 'd-none' : '' ?>" id="comments-pagination">
             <?php
-            $current_url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-            $query = $_GET;
-            for ($i = 1; $i <= $total_pages; $i++):
-                $query['page'] = $i;
-                $url = $current_url . '?' . http_build_query($query) . '#comments-app';
-            ?>
-                <button class="btn <?= $i == ($current_page ?? 1) ? 'btn-primary' : 'btn-secondary' ?> btn-sm radius-8 page-btn" data-page="<?= $i ?>"><?= fa_num($i) ?></button>
-            <?php endfor; ?>
+            $pagination_items = get_pagination_window($current_page, $total_pages);
+
+            if ($current_page > 1): ?>
+                <button class="pagination-link page-btn" data-page="<?= $current_page - 1 ?>" title="صفحه قبل">
+                    <i data-lucide="chevron-right" class="icon-size-4"></i>
+                </button>
+            <?php endif; ?>
+
+            <?php foreach ($pagination_items as $item): ?>
+                <?php if ($item === '...'): ?>
+                    <span class="pagination-dots">...</span>
+                <?php else: ?>
+                    <button class="pagination-link page-btn <?= $item == ($current_page ?? 1) ? 'active' : '' ?>" data-page="<?= $item ?>">
+                        <?= fa_num($item) ?>
+                    </button>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
+            <?php if ($current_page < $total_pages): ?>
+                <button class="pagination-link page-btn" data-page="<?= $current_page + 1 ?>" title="صفحه بعد">
+                    <i data-lucide="chevron-left" class="icon-size-4"></i>
+                </button>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 
