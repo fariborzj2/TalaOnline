@@ -902,7 +902,7 @@ class CommentSystem {
                 res = await fetch(`/api/comments.php?action=edit`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': this.csrfToken },
-                    body: JSON.stringify({ content, mentions: mentionIds, hp: hp || '', comment_id: parentId })
+                    body: JSON.stringify({ content, mentions: mentionIds, hp: hp || '', comment_id: parentId, type: type })
                 });
             }
 

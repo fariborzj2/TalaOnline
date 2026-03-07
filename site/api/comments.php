@@ -233,13 +233,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $comment_id = $input['comment_id'] ?? 0;
         $content = $input['content'] ?? '';
         $mentions = $input['mentions'] ?? [];
-        $success = $comments_handler->updateComment($user_id, $comment_id, $content, $mentions);
+        $type = $input['type'] ?? null;
+        $success = $comments_handler->updateComment($user_id, $comment_id, $content, $mentions, $type);
         if ($success) {
             // Get the updated comment to have correctly parsed mentions
             $updated_comment = $comments_handler->getComment($comment_id, $user_id);
             echo json_encode([
                 'success' => true,
                 'message' => 'نظر ویرایش شد.',
+                'comment' => $updated_comment,
                 'content_html' => $updated_comment['content_html'],
                 'content' => $content
             ]);
