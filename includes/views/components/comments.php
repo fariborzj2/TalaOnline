@@ -37,12 +37,12 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                     <div class="comment-meta">
                         <?php if ($c['user_id']): ?>
                             <a href="/profile/<?= $c['user_id'] ?>/<?= urlencode($c['user_username'] ?? 'user') ?>" class="comment-author">
-                                <?= htmlspecialchars($c['user_name']) ?>
+                                <span class="d-inline-block ellipsis-x max-w100"><?= htmlspecialchars($c['user_name']) ?></span>
                                 <span class="user-level-badge level-<?= $c['user_level'] ?>">سطح <?= $c['user_level'] ?></span>
                             </a>
                         <?php else: ?>
                             <span class="comment-author">
-                                <?= htmlspecialchars($c['guest_name'] ?: 'مهمان') ?>
+                                <span class="d-inline-block ellipsis-x max-w100"><?= htmlspecialchars($c['guest_name'] ?: 'مهمان') ?></span>
                                 <span class="user-level-badge !bg-slate-400">مهمان</span>
                             </span>
                         <?php endif; ?>
@@ -218,6 +218,7 @@ function render_reaction($c, $type, $emoji) {
                     <?php if ($is_logged_in): ?>
                     <div class="mention-tag-area mb-2" id="mention-area-main">
                         <div class="mention-input-wrapper relative d-flex-wrap gap-05 align-center" id="mentions-container-main">
+                            <i data-lucide="user-search" class="text-gray icon-size-5"></i>
                             <input type="text"
                                    class="mention-tag-input font-size-0-8"
                                    placeholder="منشن کردن کاربر..."

@@ -407,6 +407,7 @@ class CommentSystem {
                 ${this.isLoggedIn ? `
                 <div class="mention-tag-area mb-2" id="mention-area-${suffix}">
                     <div class="mention-input-wrapper relative d-flex-wrap gap-05 align-center" id="mentions-container-${suffix}">
+                        <i data-lucide="user-search" class="text-gray icon-size-5"></i>
                         <input type="text"
                                class="mention-tag-input font-size-0-8"
                                placeholder="منشن کردن کاربر..."
@@ -480,12 +481,12 @@ class CommentSystem {
                             <div class="comment-meta">
                                 ${c.user_id ? `
                                     <a href="/profile/${c.user_id}/${c.user_username || 'user'}" class="comment-author">
-                                        ${c.user_name}
+                                        <span class="d-inline-block ellipsis-x max-w100">${c.user_name}</span>
                                         <span class="user-level-badge level-${c.user_level || 1}">سطح ${c.user_level || 1}</span>
                                     </a>
                                 ` : `
                                     <span class="comment-author">
-                                        ${c.guest_name || 'مهمان'}
+                                        <span class="d-inline-block ellipsis-x max-w100">${c.guest_name || 'مهمان'}</span>
                                         <span class="user-level-badge !bg-slate-400">مهمان</span>
                                     </span>
                                 `}

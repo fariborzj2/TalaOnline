@@ -128,7 +128,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
             <div>
                 <!-- Activity Tab (User's Comments) -->
                 <div id="tab-activity" class="min-h-400 profile-tab-content">
-                    <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">آخرین دیدگاه‌ها</h2>
+                    <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">آخرین ارسال‌ها</h2>
                     <div id="user-comments-list" class="mt-1">
                         <?php
                         $comments = $user_comments;
