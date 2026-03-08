@@ -232,6 +232,19 @@ class MigrationManager {
                     PRIMARY KEY (`role_id`, `permission_id`),
                     FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE,
                     FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `notifications` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `user_id` INT,
+                    `sender_id` INT,
+                    `type` VARCHAR(50),
+                    `target_id` VARCHAR(255),
+                    `is_read` TINYINT DEFAULT 0,
+                    `status` VARCHAR(20) DEFAULT 'unread',
+                    `read_at` TIMESTAMP NULL,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
             ];
         }
