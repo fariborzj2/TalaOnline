@@ -453,8 +453,7 @@ input:focus {
         padding: 2px;
     }
     .pill-btn {
-        padding: 6px 12px;
-        font-size: 10px;
+        font-size: 13px;
     }
 }
 

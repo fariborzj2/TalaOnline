@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="line-height-1-5 text-right" dir="ltr">
-       <strong class="font-size-6"><?= fa_price($price) ?></strong>
+       <strong class="font-size-4"><?= fa_price($price) ?></strong>
         <div class="d-flex just-end align-center gap-1">
             <?php if (isset($change_amount)): ?>
                 <span class="text-gray"><?= ($change >= 0 ? '+ ' : '- ') . fa_price(abs($change_amount)) ?></span>
