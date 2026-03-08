@@ -46,6 +46,7 @@ class MigrationManager {
 
             $this->createSchema();
             $this->selfHealColumns();
+            $this->ensurePerformanceIndexes();
             $this->migrateData();
             $this->seedDefaults();
 
@@ -344,6 +345,31 @@ class MigrationManager {
     /**
      * Seeds essential data like Roles and Permissions if they are missing.
      */
+    /**
+     * Enforces high-performance composite indexes for the comment system.
+     */
+    private function ensurePerformanceIndexes() {
+        $this->log("Ensuring performance indexes...");
+        if ($this->driver === 'sqlite') {
+            $this->exec("CREATE INDEX IF NOT EXISTS idx_comments_target_status ON comments(target_id, target_type, status, parent_id, created_at)");
+            $this->exec("CREATE INDEX IF NOT EXISTS idx_comments_parent_likes_created ON comments(parent_id, status, likes_count, created_at)");
+            $this->exec("CREATE INDEX IF NOT EXISTS idx_reactions_comment_type ON comment_reactions(comment_id, reaction_type)");
+        } else {
+            // MySQL logic with existence checks
+            $indexes = [
+                'idx_comments_target_status' => "comments(target_id, target_type, status, parent_id, created_at)",
+                'idx_comments_parent_likes_created' => "comments(parent_id, status, likes_count, created_at)",
+                'idx_reactions_comment_type' => "comment_reactions(comment_id, reaction_type)"
+            ];
+
+            foreach ($indexes as $name => $def) {
+                try {
+                    $this->exec("ALTER TABLE " . explode('(', $def)[0] . " ADD INDEX $name (" . explode('(', $def)[1]);
+                } catch (Exception $e) {}
+            }
+        }
+    }
+
     private function seedDefaults() {
         $this->log("Ensuring RBAC defaults are seeded...");
         $stmt = $this->pdo->query("SELECT COUNT(*) FROM roles");
