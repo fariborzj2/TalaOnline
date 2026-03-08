@@ -149,13 +149,28 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                 <?php if ($is_owner): ?>
                     <!-- Notifications Tab -->
                     <div id="tab-notifications" class="min-h-400 profile-tab-content d-none">
-                        <div class="d-flex just-between align-center mb-2 border-bottom pb-1">
+                        <div class="d-flex just-between align-center mb-1 border-bottom pb-1">
                             <h2 class="font-size-3 font-black">اعلان‌های حساب</h2>
-                            <button id="profile-mark-all-read" class="btn btn-secondary btn-sm radius-8 d-none">
-                                <i data-lucide="check-check" class="icon-size-3 ml-05"></i>
-                                خواندن همه
-                            </button>
+                            <div class="d-flex gap-05">
+                                <button id="profile-archive-all" class="btn btn-secondary btn-sm radius-8">
+                                    <i data-lucide="archive" class="icon-size-3 ml-05"></i>
+                                    آرشیو همه
+                                </button>
+                                <button id="profile-mark-all-read" class="btn btn-secondary btn-sm radius-8 d-none">
+                                    <i data-lucide="check-check" class="icon-size-3 ml-05"></i>
+                                    خواندن همه
+                                </button>
+                            </div>
                         </div>
+
+                        <!-- Notification Filters -->
+                        <div class="pill-toggle-group mb-2 mt-1" id="notification-type-filters">
+                            <button class="pill-btn active" data-type="">همه</button>
+                            <button class="pill-btn" data-type="mention">منشن‌ها</button>
+                            <button class="pill-btn" data-type="reply">پاسخ‌ها</button>
+                            <button class="pill-btn" data-type="follow">دنبال‌کننده‌ها</button>
+                        </div>
+
                         <div id="profile-notifications-list" class="mt-1 d-column gap-1">
                             <!-- Notifications will be loaded via JS -->
                             <div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>

@@ -686,10 +686,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Profile Notifications Logic
     const profileNotificationsList = document.getElementById('profile-notifications-list');
     const profileMarkAllRead = document.getElementById('profile-mark-all-read');
+    const profileArchiveAll = document.getElementById('profile-archive-all');
+    const notificationTypeFilters = document.getElementById('notification-type-filters');
     const loadMoreNotifBtn = document.getElementById('load-more-notifications');
     const notifPaginationContainer = document.getElementById('notifications-pagination');
 
     let notifPage = 1;
+    let notifType = '';
     let isLoadingNotif = false;
 
     const loadProfileNotifications = async (page = 1, append = false) => {
@@ -706,7 +709,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch(`${authState.apiBase}/notifications.php?action=list&page=${page}`);
+            const response = await fetch(`${authState.apiBase}/notifications.php?action=list&page=${page}&type=${notifType}`);
             const data = await response.json();
 
             if (data.success) {
@@ -727,19 +730,24 @@ document.addEventListener('DOMContentLoaded', function() {
                         const unreadClass = n.is_read == 0 ? 'unread border-primary-light bg-primary-light' : 'bg-block';
 
                         return `
-                            <a href="${url}" class="d-flex gap-1 pd-md radius-16 border transition-all hover-bg-secondary notification-profile-item ${unreadClass}" data-id="${n.id}">
-                                <div class="notification-item-avatar shrink-0">
-                                    ${n.sender_avatar ? `<img src="${n.sender_avatar}" class="w-full h-full object-cover radius-50" alt="${n.sender_name}">` : `<div class="w-full h-full d-flex align-center just-center bg-secondary radius-50"><i data-lucide="${icon}" class="icon-size-5 text-gray"></i></div>`}
-                                </div>
-                                <div class="grow-1">
-                                    <div class="text-title font-size-1-1 mb-05">${text}</div>
-                                    <div class="text-gray font-size-0-9 d-flex align-center gap-05">
-                                        <i data-lucide="clock" class="icon-size-3"></i>
-                                        ${n.created_at_fa}
+                            <div class="relative notification-profile-wrapper">
+                                <a href="${url}" class="d-flex gap-1 pd-md radius-16 border transition-all hover-bg-secondary notification-profile-item ${unreadClass}" data-id="${n.id}">
+                                    <div class="notification-item-avatar shrink-0">
+                                        ${n.sender_avatar ? `<img src="${n.sender_avatar}" class="w-full h-full object-cover radius-50" alt="${n.sender_name}">` : `<div class="w-full h-full d-flex align-center just-center bg-secondary radius-50"><i data-lucide="${icon}" class="icon-size-5 text-gray"></i></div>`}
                                     </div>
-                                </div>
-                                ${n.is_read == 0 ? '<div class="unread-dot bg-primary radius-50" style="width:8px; height:8px;"></div>' : ''}
-                            </a>
+                                    <div class="grow-1">
+                                        <div class="text-title font-size-1-1 mb-05">${text}</div>
+                                        <div class="text-gray font-size-0-9 d-flex align-center gap-05">
+                                            <i data-lucide="clock" class="icon-size-3"></i>
+                                            ${n.created_at_fa}
+                                        </div>
+                                    </div>
+                                    ${n.is_read == 0 ? '<div class="unread-dot bg-primary radius-50" style="width:8px; height:8px;"></div>' : ''}
+                                </a>
+                                <button class="absolute top-1 left-1 btn-archive-notif p-05 text-gray hover-text-error radius-50" data-id="${n.id}" title="آرشیو">
+                                    <i data-lucide="x" class="icon-size-3"></i>
+                                </button>
+                            </div>
                         `;
                     }).join('');
 
@@ -779,6 +787,35 @@ document.addEventListener('DOMContentLoaded', function() {
                             window.location.href = url;
                         });
                     });
+
+                    // Add individual archive
+                    profileNotificationsList.querySelectorAll('.btn-archive-notif').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            const id = btn.dataset.id;
+                            btn.disabled = true;
+                            try {
+                                const response = await fetchWithCSRF(`${authState.apiBase}/notifications.php?action=archive`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ id })
+                                });
+                                const res = await response.json();
+                                if (res.success) {
+                                    const wrapper = btn.closest('.notification-profile-wrapper');
+                                    wrapper.style.opacity = '0';
+                                    wrapper.style.transform = 'translateX(20px)';
+                                    setTimeout(() => {
+                                        wrapper.remove();
+                                        if (profileNotificationsList.children.length === 0) {
+                                            loadProfileNotifications(1, false);
+                                        }
+                                    }, 300);
+                                    document.dispatchEvent(new CustomEvent('notifications:marked-read'));
+                                }
+                            } catch (err) { console.error(err); btn.disabled = false; }
+                        });
+                    });
                 }
             }
         } catch (err) {
@@ -795,6 +832,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const btn = e.target.closest('.profile-tab-btn');
             if (btn && btn.dataset.tab === 'notifications') {
                 notifPage = 1;
+                notifType = '';
+                // Reset filter buttons
+                if (notificationTypeFilters) {
+                    notificationTypeFilters.querySelectorAll('.pill-btn').forEach(pb => pb.classList.remove('active'));
+                    notificationTypeFilters.querySelector('[data-type=""]').classList.add('active');
+                }
                 loadProfileNotifications(1, false);
             }
         });
@@ -804,6 +847,18 @@ document.addEventListener('DOMContentLoaded', function() {
         if (initialTab === 'notifications') {
             loadProfileNotifications(1, false);
         }
+    }
+
+    if (notificationTypeFilters) {
+        notificationTypeFilters.querySelectorAll('.pill-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                notificationTypeFilters.querySelectorAll('.pill-btn').forEach(pb => pb.classList.remove('active'));
+                btn.classList.add('active');
+                notifType = btn.dataset.type;
+                notifPage = 1;
+                loadProfileNotifications(1, false);
+            });
+        });
     }
 
     if (loadMoreNotifBtn) {
@@ -832,6 +887,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error(err);
             } finally {
                 profileMarkAllRead.disabled = false;
+            }
+        });
+    }
+
+    if (profileArchiveAll) {
+        profileArchiveAll.addEventListener('click', async () => {
+            if (!await showConfirm('آیا از آرشیو کردن تمامی اعلان‌ها اطمینان دارید؟')) return;
+            profileArchiveAll.disabled = true;
+            try {
+                const response = await fetchWithCSRF(`${authState.apiBase}/notifications.php?action=archive`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: null })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loadProfileNotifications(1, false);
+                    document.dispatchEvent(new CustomEvent('notifications:marked-read'));
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                profileArchiveAll.disabled = false;
             }
         });
     }
