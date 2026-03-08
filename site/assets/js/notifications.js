@@ -192,6 +192,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    document.addEventListener('notifications:marked-read', () => {
+        loadNotifications();
+    });
+
     // Initial load
     if (authState.isLoggedIn) {
         loadNotifications();
