@@ -19,8 +19,9 @@ class Comments {
     public function getComment($id, $user_id = null) {
         if (!$this->pdo) return null;
 
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
-                ru.username as reply_to_username, ru.name as reply_to_name,
+        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+                u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
+                ru.username as reply_to_username,
                 rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
@@ -58,6 +59,7 @@ class Comments {
         $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
         $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
 
+        unset($c['created_at']);
         return $c;
     }
 
@@ -102,8 +104,9 @@ class Comments {
         }
 
         // 1. Get top-level comments for the current page
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
-                ru.username as reply_to_username, ru.name as reply_to_name,
+        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+                u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
+                ru.username as reply_to_username,
                 rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
@@ -147,6 +150,7 @@ class Comments {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
+            unset($c['created_at']);
 
             if ($target_type === 'user_profile') {
                 $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
@@ -185,8 +189,9 @@ class Comments {
     public function getReplies($parent_id, $offset = 0, $limit = 10, $user_id = null, $parse = true) {
         if (!$this->pdo) return [];
 
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
-                ru.username as reply_to_username, ru.name as reply_to_name,
+        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+                u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
+                ru.username as reply_to_username,
                 rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
@@ -231,6 +236,7 @@ class Comments {
             $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
             $r['created_at_fa'] = jalali_date($r['created_at']);
             $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < $edit_limit);
+            unset($r['created_at']);
         }
 
         return $replies;
@@ -242,8 +248,9 @@ class Comments {
     public function getUserComments($user_id, $viewer_id = null, $limit = 50) {
         if (!$this->pdo) return [];
 
-        $sql = "SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.username, u.username as user_username, u.level as user_level, u.role as user_role,
-                ru.username as reply_to_username, ru.name as reply_to_name,
+        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+                u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
+                ru.username as reply_to_username,
                 rc.content as reply_to_content,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
                 (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
@@ -284,6 +291,7 @@ class Comments {
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < $edit_limit);
             $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
+            unset($c['created_at']);
         }
 
         return $comments;
