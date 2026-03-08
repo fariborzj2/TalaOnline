@@ -744,8 +744,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     </div>
                                     ${n.is_read == 0 ? '<div class="unread-dot bg-primary radius-50" style="width:8px; height:8px;"></div>' : ''}
                                 </a>
-                                <button class="absolute bottom-1 left-1 btn-archive-notif p-05 text-gray hover-text-error radius-50" data-id="${n.id}" title="حذف">
+                                <button class="absolute bottom-1 left-1 btn-archive-notif text-gray hover-text-error d-flex align-center gap-05" data-id="${n.id}">
                                     <i data-lucide="trash-2" class="icon-size-3"></i>
+                                    <span class="font-size-0-8 font-bold">حذف اعلان</span>
                                 </button>
                             </div>
                         `;
