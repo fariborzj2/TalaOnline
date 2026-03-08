@@ -124,7 +124,7 @@ define('DB_FUNCTIONS_LOADED', true);
 
 $config_file = __DIR__ . '/../config.php';
 if (!defined('APP_DB_VERSION')) {
-    define('APP_DB_VERSION', 5); // Increment this to trigger migrations
+    define('APP_DB_VERSION', 10); // Current Production Version
 }
 
 // Initialize $pdo as null to prevent "undefined variable" errors
@@ -147,16 +147,12 @@ if (file_exists($config_file)) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        // Just continue, we'll handle null $pdo in other places
+        // Log connection failure if needed
     }
 
-    // Performance-Optimized Migration Logic
+    // Perform highly optimized version check
     if ($pdo) {
-        $db_version = (int)get_setting($pdo, 'db_version', 0);
-        if ($db_version < APP_DB_VERSION) {
-            require_once __DIR__ . '/migrations.php';
-            run_migrations($pdo);
-            set_setting($pdo, 'db_version', APP_DB_VERSION);
-        }
+        require_once __DIR__ . '/migrations.php';
+        MigrationManager::runIfRequired($pdo, APP_DB_VERSION);
     }
 }
