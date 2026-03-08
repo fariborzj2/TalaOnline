@@ -949,7 +949,7 @@ input:focus {
 }
 
 .notification-list {
-    max-height: 400px;
+    max-height: 300px;
     overflow-y: auto;
 }
 

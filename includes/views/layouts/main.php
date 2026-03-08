@@ -436,10 +436,10 @@
                         <i data-lucide="settings" class="icon-size-4"></i>
                         <span class="font-bold">تنظیمات حساب</span>
                     </a>
-                    <a href="#" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
+                    <!-- <a href="#" class="d-flex align-center gap-1 p-1 radius-12 hover-bg-secondary text-title transition-all">
                         <i data-lucide="heart" class="icon-size-4"></i>
                         <span class="font-bold">علاقه‌مندی‌ها</span>
-                    </a>
+                    </a> -->
                     <button class="d-flex align-center gap-1 p-1 radius-12 hover-bg-error text-error w-full text-right transition-all pointer" id="logout-btn">
                         <i data-lucide="log-out" class="icon-size-4"></i>
                         <span class="font-bold">خروج از حساب</span>

@@ -90,30 +90,31 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                 </div>
             </div>
 
+            <?php if ($is_owner): ?>
             <!-- settings tab -->
             <div class="bg-block pd-md border radius-16 sticky-card-2">
                 <div class="d-column gap-05" id="profile-tabs">
                     <button class="profile-tab-btn active" data-tab="activity">
                         <i data-lucide="activity"></i> فعالیت‌ها
                     </button>
-                    <?php if ($is_owner): ?>
-                        <button class="profile-tab-btn" data-tab="notifications">
-                            <i data-lucide="bell"></i> اعلان‌های حساب
-                        </button>
-                        <div class="divider my-1"></div>
-                        <button class="profile-tab-btn" data-tab="edit">
-                            <i data-lucide="user-cog"></i> ویرایش پروفایل
-                        </button>
-                        <button class="profile-tab-btn" data-tab="security">
-                            <i data-lucide="shield-check"></i> امنیت و رمز عبور
-                        </button>
-                        <div class="divider my-1"></div>
-                        <button class="profile-tab-btn text-error" id="profile-logout-btn">
-                            <i data-lucide="log-out"></i> خروج از حساب
-                        </button>
-                    <?php endif; ?>
+                    
+                    <button class="profile-tab-btn" data-tab="notifications">
+                        <i data-lucide="bell"></i> اعلان‌های حساب
+                    </button>
+                    <div class="divider my-1"></div>
+                    <button class="profile-tab-btn" data-tab="edit">
+                        <i data-lucide="user-cog"></i> ویرایش پروفایل
+                    </button>
+                    <button class="profile-tab-btn" data-tab="security">
+                        <i data-lucide="shield-check"></i> امنیت و رمز عبور
+                    </button>
+                    <div class="divider my-1"></div>
+                    <button class="profile-tab-btn text-error" id="profile-logout-btn">
+                        <i data-lucide="log-out"></i> خروج از حساب
+                    </button>
                 </div>
             </div>
+            <?php endif; ?>
         </div>
 
         <script>
@@ -153,14 +154,14 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
                             <div class="bg-block pd-md border radius-16">
 
-                                <div class="d-flex-wrap just-between align-center mb-1 border-bottom pb-1">
+                                <div class="d-flex-wrap just-between align-center mb-1 gap-1 border-bottom pb-1">
                                     <h2 class="font-size-3 font-black">اعلان‌های حساب</h2>
-                                    <div class="d-flex gap-05">
-                                        <button id="profile-archive-all" class="btn btn-secondary btn-sm radius-8">
+                                    <div class="d-flex gap-05 sm-w-full">
+                                        <button id="profile-archive-all" class="btn btn-secondary btn-sm radius-8 sm-w-full">
                                             <i data-lucide="archive" class="icon-size-3 ml-05"></i>
                                             آرشیو همه
                                         </button>
-                                        <button id="profile-mark-all-read" class="btn btn-secondary btn-sm radius-8 d-none">
+                                        <button id="profile-mark-all-read" class="btn btn-secondary btn-sm radius-8 d-none sm-w-full">
                                             <i data-lucide="check-check" class="icon-size-3 ml-05"></i>
                                             خواندن همه
                                         </button>

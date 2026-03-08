@@ -12,6 +12,14 @@
                 <div class="notification-list" id="notification-list-mobile">
                     <div class="text-center py-4 text-gray">در حال بارگذاری...</div>
                 </div>
+                <div class="notification-footer">
+                    <?php
+                        $logged_user_id = $_SESSION['user_id'] ?? 0;
+                        $logged_username = $_SESSION['user_username'] ?? 'user';
+                        $profile_url = "/profile/$logged_user_id/" . urlencode($logged_username);
+                    ?>
+                    <a href="<?= $profile_url ?>?tab=notifications">مشاهده همه اعلان‌ها</a>
+                </div>
             </div>
         </div>
 

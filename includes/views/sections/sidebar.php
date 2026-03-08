@@ -42,7 +42,7 @@ if ($pdo) {
     </div>
 
     <?php if (!empty($blog_categories)): ?>
-    <div class="bg-block border radius-20 p-1-5 ">
+    <div class="bg-block border radius-16 p-1-5 ">
         <div class="d-flex align-center gap-05 mb-1 border-bottom pb-1">
             <i data-lucide="layers-3" class="icon-size-4 text-primary"></i>
             <h3 class="font-size-2 font-bold">دسته‌بندی‌های وبلاگ</h3>
