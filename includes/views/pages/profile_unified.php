@@ -63,15 +63,15 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
                     <div class="profile-stats border-top d-flex just-around text-center py-1">
                         <div class="stat-item basis-100">
-                            <div class="stat-value font-size-3 font-black"><?= fa_num($comment_count) ?></div>
+                            <div class="stat-value font-size-3 font-bold"><?= fa_num($comment_count) ?></div>
                             <div class="stat-label text-gray font-size-1">نظر</div>
                         </div>
                         <div class="stat-item basis-100">
-                            <div class="stat-value font-size-3 font-black"><?= fa_num($following_count) ?></div>
+                            <div class="stat-value font-size-3 font-bold"><?= fa_num($following_count) ?></div>
                             <div class="stat-label text-gray font-size-1" id="following-trigger" style="cursor:pointer">دنبال شونده</div>
                         </div>
                         <div class="stat-item basis-100">
-                            <div class="stat-value font-size-3 font-black"><?= fa_num($follower_count) ?></div>
+                            <div class="stat-value font-size-3 font-bold"><?= fa_num($follower_count) ?></div>
                             <div class="stat-label text-gray font-size-1" id="followers-trigger" style="cursor:pointer">دنبال کننده</div>
                         </div>
                     </div>
@@ -155,7 +155,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                             <div class="bg-block pd-md border radius-16">
 
                                 <div class="d-flex-wrap just-between align-center mb-1 gap-1 border-bottom pb-1">
-                                    <h2 class="font-size-3 font-black">اعلان‌های حساب</h2>
+                                    <h2 class="font-size-3 font-bold">اعلان‌های حساب</h2>
                                     <div class="d-flex gap-05 sm-w-full">
                                         <button id="profile-archive-all" class="btn btn-secondary btn-sm radius-8 sm-w-full">
                                             <i data-lucide="archive" class="icon-size-3 ml-05"></i>
@@ -194,7 +194,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
                     <!-- Edit Profile Tab -->
                     <div id="tab-edit" class="bg-block border radius-16 min-h-400 profile-tab-content d-none pd-md">
-                        <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">ویرایش اطلاعات کاربری</h2>
+                        <h2 class="font-size-3 font-bold mb-2 border-bottom pb-1">ویرایش اطلاعات کاربری</h2>
 
                         <?php if ($email_unverified): ?>
                             <div class="bg-error-light pd-md radius-12 border border-error mb-2 d-flex gap-1 align-center">
@@ -242,20 +242,25 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
                     <!-- Security Tab -->
                     <div id="tab-security" class="bg-block border radius-16 min-h-400 profile-tab-content d-none pd-md">
-                        <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">امنیت و رمز عبور</h2>
+                        <h2 class="font-size-3 font-bold mb-2 border-bottom pb-1">امنیت و رمز عبور</h2>
 
                         <?php if ($phone_unverified): ?>
-                            <div class="bg-orange-light pd-md radius-12 border border-orange mb-2 d-flex gap-1 align-center">
-                                <i data-lucide="smartphone" class="text-orange shrink-0"></i>
+                            <div class="pd-md radius-12 border mb-2 d-flex gap-1 align-center">
                                 <div class="grow-1">
-                                    <p class="text-orange font-bold mb-05">شماره موبایل شما تایید نشده است.</p>
-                                    <p class="font-size-0-9 mb-1">لطفاً کد تایید ارسال شده به شماره <strong><?= htmlspecialchars($_SESSION['user_phone'] ?? 'نامشخص') ?></strong> را وارد کنید.</p>
-                                    <div class="d-flex gap-05 mt-1">
-                                        <div class="input-item grow-1">
-                                            <input type="text" id="phone-verification-code" placeholder="کد ۵ رقمی" class="text-center font-bold ltr" maxlength="10">
+                                    <div class="d-flex align-center gap-05">
+                                        <i data-lucide="smartphone" class="text-orange shrink-0"></i>
+                                        <p class="text-orange font-bold mb-05">شماره موبایل شما تایید نشده است.</p>
+                                    </div>
+                                    
+                                    <p class="font-size-0-9 mb-1">کد ارسال شده به شماره <strong><?= htmlspecialchars($_SESSION['user_phone'] ?? 'نامشخص') ?></strong> را وارد کنید.</p>
+                                    <div class="d-flex-wrap gap-1 mt-1">
+                                        <div class="input-item grow-1 basis-300">
+                                            <input type="text" id="phone-verification-code" placeholder="کد ۵ رقمی" class="text-center ltr" maxlength="10">
                                         </div>
-                                        <button id="verify-phone-btn" class="btn btn-primary btn-sm radius-8">تایید شماره</button>
-                                        <button id="resend-sms-btn" class="btn btn-secondary btn-sm radius-8">ارسال مجدد</button>
+                                        <div class="d-flex sm-w-full gap-1">
+                                            <button id="verify-phone-btn" class="btn btn-primary btn-sm radius-8 sm-w-full">تایید شماره</button>
+                                            <button id="resend-sms-btn" class="btn btn-secondary btn-sm radius-8 sm-w-full">ارسال مجدد</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
