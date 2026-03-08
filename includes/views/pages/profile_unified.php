@@ -97,6 +97,9 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                         <i data-lucide="activity"></i> فعالیت‌ها
                     </button>
                     <?php if ($is_owner): ?>
+                        <button class="profile-tab-btn" data-tab="notifications">
+                            <i data-lucide="bell"></i> اعلان‌های حساب
+                        </button>
                         <div class="divider my-1"></div>
                         <button class="profile-tab-btn" data-tab="edit">
                             <i data-lucide="user-cog"></i> ویرایش پروفایل
@@ -144,6 +147,24 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                 </div>
 
                 <?php if ($is_owner): ?>
+                    <!-- Notifications Tab -->
+                    <div id="tab-notifications" class="min-h-400 profile-tab-content d-none">
+                        <div class="d-flex just-between align-center mb-2 border-bottom pb-1">
+                            <h2 class="font-size-3 font-black">اعلان‌های حساب</h2>
+                            <button id="profile-mark-all-read" class="btn btn-secondary btn-sm radius-8 d-none">
+                                <i data-lucide="check-check" class="icon-size-3 ml-05"></i>
+                                خواندن همه
+                            </button>
+                        </div>
+                        <div id="profile-notifications-list" class="mt-1 d-column gap-1">
+                            <!-- Notifications will be loaded via JS -->
+                            <div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>
+                        </div>
+                        <div id="notifications-pagination" class="mt-4 d-none">
+                             <button id="load-more-notifications" class="btn btn-secondary w-full radius-12 py-1">مشاهده بیشتر</button>
+                        </div>
+                    </div>
+
                     <!-- Edit Profile Tab -->
                     <div id="tab-edit" class="bg-block border radius-16 min-h-400 profile-tab-content d-none pd-md">
                         <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">ویرایش اطلاعات کاربری</h2>

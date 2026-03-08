@@ -683,6 +683,159 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Profile Notifications Logic
+    const profileNotificationsList = document.getElementById('profile-notifications-list');
+    const profileMarkAllRead = document.getElementById('profile-mark-all-read');
+    const loadMoreNotifBtn = document.getElementById('load-more-notifications');
+    const notifPaginationContainer = document.getElementById('notifications-pagination');
+
+    let notifPage = 1;
+    let isLoadingNotif = false;
+
+    const loadProfileNotifications = async (page = 1, append = false) => {
+        if (!profileNotificationsList || isLoadingNotif) return;
+        isLoadingNotif = true;
+
+        if (!append) {
+            profileNotificationsList.innerHTML = '<div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>';
+            if (window.lucide) window.lucide.createIcons({ root: profileNotificationsList });
+        } else {
+            loadMoreNotifBtn.disabled = true;
+            loadMoreNotifBtn.innerHTML = '<i data-lucide="loader-2" class="spin icon-size-3"></i> در حال بارگذاری...';
+            if (window.lucide) window.lucide.createIcons({ root: loadMoreNotifBtn });
+        }
+
+        try {
+            const response = await fetch(`${authState.apiBase}/notifications.php?action=list&page=${page}`);
+            const data = await response.json();
+
+            if (data.success) {
+                if (data.notifications.length === 0 && !append) {
+                    profileNotificationsList.innerHTML = '<div class="text-center py-12 text-gray"><i data-lucide="bell-off" class="icon-size-10 mb-1 opacity-20"></i><p>هیچ اعلانی یافت نشد.</p></div>';
+                    if (window.lucide) window.lucide.createIcons({ root: profileNotificationsList });
+                    notifPaginationContainer.classList.add('d-none');
+                    profileMarkAllRead.classList.add('d-none');
+                } else {
+                    const html = data.notifications.map(n => {
+                        let text = '';
+                        let icon = 'bell';
+                        if (n.type === 'mention') { text = `<strong>${n.sender_name}</strong> از شما در یک نظر نام برد.`; icon = 'at-sign'; }
+                        else if (n.type === 'reply') { text = `<strong>${n.sender_name}</strong> به نظر شما پاسخ داد.`; icon = 'message-square'; }
+                        else if (n.type === 'follow') { text = `<strong>${n.sender_name}</strong> شما را دنبال کرد.`; icon = 'user-plus'; }
+
+                        const url = n.target_info ? n.target_info.url : '#';
+                        const unreadClass = n.is_read == 0 ? 'unread border-primary-light bg-primary-light' : 'bg-block';
+
+                        return `
+                            <a href="${url}" class="d-flex gap-1 pd-md radius-16 border transition-all hover-bg-secondary notification-profile-item ${unreadClass}" data-id="${n.id}">
+                                <div class="notification-item-avatar shrink-0">
+                                    ${n.sender_avatar ? `<img src="${n.sender_avatar}" class="w-full h-full object-cover radius-50" alt="${n.sender_name}">` : `<div class="w-full h-full d-flex align-center just-center bg-secondary radius-50"><i data-lucide="${icon}" class="icon-size-5 text-gray"></i></div>`}
+                                </div>
+                                <div class="grow-1">
+                                    <div class="text-title font-size-1-1 mb-05">${text}</div>
+                                    <div class="text-gray font-size-0-9 d-flex align-center gap-05">
+                                        <i data-lucide="clock" class="icon-size-3"></i>
+                                        ${n.created_at_fa}
+                                    </div>
+                                </div>
+                                ${n.is_read == 0 ? '<div class="unread-dot bg-primary radius-50" style="width:8px; height:8px;"></div>' : ''}
+                            </a>
+                        `;
+                    }).join('');
+
+                    if (append) {
+                        profileNotificationsList.insertAdjacentHTML('beforeend', html);
+                    } else {
+                        profileNotificationsList.innerHTML = html;
+                    }
+
+                    if (window.lucide) window.lucide.createIcons({ root: profileNotificationsList });
+
+                    // Handle pagination visibility
+                    if (data.notifications.length === 20) {
+                        notifPaginationContainer.classList.remove('d-none');
+                    } else {
+                        notifPaginationContainer.classList.add('d-none');
+                    }
+
+                    // Handle Mark All button visibility
+                    if (data.unread_count > 0) {
+                        profileMarkAllRead.classList.remove('d-none');
+                    } else {
+                        profileMarkAllRead.classList.add('d-none');
+                    }
+
+                    // Add individual mark-as-read
+                    profileNotificationsList.querySelectorAll('.notification-profile-item.unread').forEach(item => {
+                        item.addEventListener('click', async (e) => {
+                            const id = item.dataset.id;
+                            const url = item.getAttribute('href');
+                            e.preventDefault();
+                            await fetchWithCSRF(`${authState.apiBase}/notifications.php?action=mark_read`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id })
+                            });
+                            window.location.href = url;
+                        });
+                    });
+                }
+            }
+        } catch (err) {
+            console.error('Error loading profile notifications:', err);
+        } finally {
+            isLoadingNotif = false;
+            loadMoreNotifBtn.disabled = false;
+            loadMoreNotifBtn.innerHTML = 'مشاهده بیشتر';
+        }
+    };
+
+    if (profileTabsContainer) {
+        profileTabsContainer.addEventListener('click', (e) => {
+            const btn = e.target.closest('.profile-tab-btn');
+            if (btn && btn.dataset.tab === 'notifications') {
+                notifPage = 1;
+                loadProfileNotifications(1, false);
+            }
+        });
+
+        // Handle initial load if tab is notifications
+        const initialTab = new URLSearchParams(window.location.search).get('tab');
+        if (initialTab === 'notifications') {
+            loadProfileNotifications(1, false);
+        }
+    }
+
+    if (loadMoreNotifBtn) {
+        loadMoreNotifBtn.addEventListener('click', () => {
+            notifPage++;
+            loadProfileNotifications(notifPage, true);
+        });
+    }
+
+    if (profileMarkAllRead) {
+        profileMarkAllRead.addEventListener('click', async () => {
+            profileMarkAllRead.disabled = true;
+            try {
+                const response = await fetchWithCSRF(`${authState.apiBase}/notifications.php?action=mark_read`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: null })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loadProfileNotifications(1, false);
+                    // Also trigger update of header notifications if applicable
+                    document.dispatchEvent(new CustomEvent('notifications:marked-read'));
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                profileMarkAllRead.disabled = false;
+            }
+        });
+    }
+
     const profileUpdateForm = document.getElementById('profile-update-form');
     if (profileUpdateForm) {
         profileUpdateForm.addEventListener('submit', async (e) => {
