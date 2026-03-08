@@ -62,15 +62,15 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                     </div>
 
                     <div class="profile-stats border-top d-flex just-around text-center py-1">
-                        <div class="stat-item">
+                        <div class="stat-item basis-100">
                             <div class="stat-value font-size-3 font-black"><?= fa_num($comment_count) ?></div>
                             <div class="stat-label text-gray font-size-1">نظر</div>
                         </div>
-                        <div class="stat-item">
+                        <div class="stat-item basis-100">
                             <div class="stat-value font-size-3 font-black"><?= fa_num($following_count) ?></div>
                             <div class="stat-label text-gray font-size-1" id="following-trigger" style="cursor:pointer">دنبال شونده</div>
                         </div>
-                        <div class="stat-item">
+                        <div class="stat-item basis-100">
                             <div class="stat-value font-size-3 font-black"><?= fa_num($follower_count) ?></div>
                             <div class="stat-label text-gray font-size-1" id="followers-trigger" style="cursor:pointer">دنبال کننده</div>
                         </div>
