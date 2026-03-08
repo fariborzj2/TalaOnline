@@ -51,6 +51,9 @@
 .bg-orange-light {
     background-color: var(--bg-orange-light);
 }
+.bg-primary-light {
+    background-color: var(--color-primary-light);
+}
 .bg-error-light {
     background-color: var(--bg-error);
 }
@@ -1039,6 +1042,31 @@ input:focus {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+/* Profile Notifications */
+.notification-profile-item {
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.notification-profile-item.unread {
+    background-color: var(--color-primary-light);
+    border-color: rgba(36, 158, 148, 0.2);
+}
+
+.border-primary-light {
+    border-color: rgba(36, 158, 148, 0.1);
+}
+
+.hover-bg-secondary:hover {
+    background-color: var(--color-secondary);
+}
+
+.unread-dot {
+    flex-shrink: 0;
+    margin-top: 5px;
 }
 
 /* Mobile Bottom Navigation */
