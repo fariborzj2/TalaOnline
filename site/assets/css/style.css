@@ -1051,10 +1051,10 @@ input:focus {
     color: inherit;
 }
 
-.notification-profile-item.unread {
+/* .notification-profile-item.unread {
     background-color: var(--color-primary-light);
     border-color: rgba(36, 158, 148, 0.2);
-}
+} */
 
 .border-primary-light {
     border-color: rgba(36, 158, 148, 0.1);
@@ -1064,35 +1064,17 @@ input:focus {
     background-color: var(--color-secondary);
 }
 
-.unread-dot {
-    flex-shrink: 0;
-    margin-top: 5px;
-}
-
-.notification-profile-wrapper {
-    transition: all 0.3s ease;
-}
-
-.btn-archive-notif {
-    opacity: 1;
-    transition: all 0.2s;
-    background: var(--color-block);
-    padding: 4px 10px;
-    border-radius: 8px;
-    border: 1px solid var(--color-border);
-    z-index: 5;
-}
-
-.btn-archive-notif:hover {
-    background: var(--bg-error);
-    border-color: var(--color-error);
-}
-
 /* Mobile Bottom Navigation */
 .mobile-nav {
     display: none;
 }
-
+.notification-profile-wrapper:last-child {
+    border: none;
+    padding-bottom: 0;
+}
+.notification-profile-wrapper:first-child{
+    padding-top: 0;
+}
 /* Mobile Header Styles */
 @media (max-width: 600px) {
     .mobile-header {

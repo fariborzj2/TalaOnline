@@ -727,26 +727,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         else if (n.type === 'follow') { text = `<strong>${n.sender_name}</strong> شما را دنبال کرد.`; icon = 'user-plus'; }
 
                         const url = n.target_info ? n.target_info.url : '#';
-                        const unreadClass = n.is_read == 0 ? 'unread border-primary-light bg-primary-light' : 'bg-block';
+                        const unreadClass = n.is_read == 0 ? 'unread' : 'bg-block';
 
                         return `
-                            <div class="relative notification-profile-wrapper">
-                                <a href="${url}" class="d-flex gap-1 pd-md radius-16 border transition-all hover-bg-secondary notification-profile-item ${unreadClass}" data-id="${n.id}">
+                            <div class="d-flex bg-block align-center notification-profile-wrapper py-1 border-bottom">
+                                <a href="${url}" class="d-flex align-center grow-1 gap-1 notification-profile-item ${unreadClass}" data-id="${n.id}">
+                                    ${n.is_read == 0 ? '<div class="bg-primary radius-50" style="width:8px; height:8px;"></div>' : '<div class="bg-secondary radius-50" style="width:8px; height:8px;"></div>'}
                                     <div class="notification-item-avatar shrink-0">
                                         ${n.sender_avatar ? `<img src="${n.sender_avatar}" class="w-full h-full object-cover radius-50" alt="${n.sender_name}">` : `<div class="w-full h-full d-flex align-center just-center bg-secondary radius-50"><i data-lucide="${icon}" class="icon-size-5 text-gray"></i></div>`}
                                     </div>
                                     <div class="grow-1">
-                                        <div class="text-title font-size-1-1 mb-05">${text}</div>
-                                        <div class="text-gray font-size-0-9 d-flex align-center gap-05">
-                                            <i data-lucide="clock" class="icon-size-3"></i>
+                                        <div class="text-title">${text}</div>
+                                        <div class="text-gray d-flex align-center gap-05">
                                             ${n.created_at_fa}
                                         </div>
                                     </div>
-                                    ${n.is_read == 0 ? '<div class="unread-dot bg-primary radius-50" style="width:8px; height:8px;"></div>' : ''}
+                                    
                                 </a>
-                                <button class="absolute bottom-1 left-1 btn-archive-notif text-gray hover-text-error d-flex align-center gap-05" data-id="${n.id}">
-                                    <i data-lucide="trash-2" class="icon-size-3"></i>
-                                    <span class="font-size-0-8 font-bold">حذف اعلان</span>
+                                <button class="btn-archive-notif" data-id="${n.id}">
+                                    <i data-lucide="trash-2" class="icon-size-3 text-error"></i>
                                 </button>
                             </div>
                         `;

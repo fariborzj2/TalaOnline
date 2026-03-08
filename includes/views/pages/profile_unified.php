@@ -131,8 +131,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
             <div>
                 <!-- Activity Tab (User's Comments) -->
                 <div id="tab-activity" class="min-h-400 profile-tab-content">
-                    <h2 class="font-size-3 font-black mb-2 border-bottom pb-1">آخرین ارسال‌ها</h2>
-                    <div id="user-comments-list" class="mt-1">
+                    <div id="user-comments-list">
                         <?php
                         $comments = $user_comments;
                         $total_count = $user_comments_data['total_count'];
@@ -149,35 +148,47 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                 <?php if ($is_owner): ?>
                     <!-- Notifications Tab -->
                     <div id="tab-notifications" class="min-h-400 profile-tab-content d-none">
-                        <div class="d-flex just-between align-center mb-1 border-bottom pb-1">
-                            <h2 class="font-size-3 font-black">اعلان‌های حساب</h2>
-                            <div class="d-flex gap-05">
-                                <button id="profile-archive-all" class="btn btn-secondary btn-sm radius-8">
-                                    <i data-lucide="archive" class="icon-size-3 ml-05"></i>
-                                    آرشیو همه
-                                </button>
-                                <button id="profile-mark-all-read" class="btn btn-secondary btn-sm radius-8 d-none">
-                                    <i data-lucide="check-check" class="icon-size-3 ml-05"></i>
-                                    خواندن همه
-                                </button>
+
+                        <div class="d-column gap-md">
+
+                            <div class="bg-block pd-md border radius-16">
+
+                                <div class="d-flex-wrap just-between align-center mb-1 border-bottom pb-1">
+                                    <h2 class="font-size-3 font-black">اعلان‌های حساب</h2>
+                                    <div class="d-flex gap-05">
+                                        <button id="profile-archive-all" class="btn btn-secondary btn-sm radius-8">
+                                            <i data-lucide="archive" class="icon-size-3 ml-05"></i>
+                                            آرشیو همه
+                                        </button>
+                                        <button id="profile-mark-all-read" class="btn btn-secondary btn-sm radius-8 d-none">
+                                            <i data-lucide="check-check" class="icon-size-3 ml-05"></i>
+                                            خواندن همه
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Notification Filters -->
+                                <div class="pill-toggle-group" id="notification-type-filters">
+                                    <button class="pill-btn active" data-type="">همه</button>
+                                    <button class="pill-btn" data-type="mention">منشن‌ها</button>
+                                    <button class="pill-btn" data-type="reply">پاسخ‌ها</button>
+                                    <button class="pill-btn" data-type="follow">دنبال‌کننده‌ها</button>
+                                </div>
+
                             </div>
+
+                            <div class="bg-block border pd-md radius-16">
+                                <div id="profile-notifications-list" class="d-column">
+                                    <!-- Notifications will be loaded via JS -->
+                                    <div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>
+                                </div>
+                                <div id="notifications-pagination" class="mt-2">
+                                    <button id="load-more-notifications" class="btn btn-secondary w-full radius-12 py-1">مشاهده بیشتر</button>
+                                </div>
+                            </div>
+
                         </div>
 
-                        <!-- Notification Filters -->
-                        <div class="pill-toggle-group mb-2 mt-1" id="notification-type-filters">
-                            <button class="pill-btn active" data-type="">همه</button>
-                            <button class="pill-btn" data-type="mention">منشن‌ها</button>
-                            <button class="pill-btn" data-type="reply">پاسخ‌ها</button>
-                            <button class="pill-btn" data-type="follow">دنبال‌کننده‌ها</button>
-                        </div>
-
-                        <div id="profile-notifications-list" class="mt-1 d-column gap-1">
-                            <!-- Notifications will be loaded via JS -->
-                            <div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>
-                        </div>
-                        <div id="notifications-pagination" class="mt-4 d-none">
-                             <button id="load-more-notifications" class="btn btn-secondary w-full radius-12 py-1">مشاهده بیشتر</button>
-                        </div>
                     </div>
 
                     <!-- Edit Profile Tab -->
