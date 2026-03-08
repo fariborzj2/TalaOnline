@@ -805,6 +805,10 @@
     .sm-hide {
         display: none;
     }
+    .sm-w-full {
+        width: 100%;
+        flex-grow: 1;
+    }
 }
 /* ================= Table Container ================= */
 .table-box {
