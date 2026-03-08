@@ -22,11 +22,7 @@ class Comments {
         $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
-                rc.content as reply_to_content,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
+                rc.content as reply_to_content
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
                 LEFT JOIN users ru ON c.reply_to_user_id = ru.id
@@ -39,14 +35,14 @@ class Comments {
 
         if (!$c) return null;
 
-        $user_reaction = null;
-        if ($user_id) {
-            $stmt = $this->pdo->prepare("SELECT reaction_type FROM comment_reactions WHERE user_id = ? AND comment_id = ?");
-            $stmt->execute([$user_id, $id]);
-            $user_reaction = $stmt->fetchColumn();
-        }
+        $stats = $this->loadReactionStats([$c['id']]);
+        $c['likes'] = $stats[$c['id']]['likes'] ?? 0;
+        $c['dislikes'] = $stats[$c['id']]['dislikes'] ?? 0;
+        $c['hearts'] = $stats[$c['id']]['hearts'] ?? 0;
+        $c['fires'] = $stats[$c['id']]['fires'] ?? 0;
 
-        $c['user_reaction'] = $user_reaction;
+        $user_reactions = $this->loadUserReactions($user_id, [$c['id']]);
+        $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
         $c['replies'] = [];
 
         // Fetch mentioned users for this single comment
@@ -100,7 +96,7 @@ class Comments {
         if ($sort === 'popular') {
             $order_by = "c.likes_count DESC, c.created_at DESC";
         } elseif ($sort === 'most_replies') {
-            $order_by = "total_replies DESC, c.created_at DESC";
+            $order_by = "(SELECT COUNT(*) FROM comments WHERE parent_id = c.id AND status = 'approved') DESC, c.created_at DESC";
         }
 
         // 1. Get top-level comments for the current page
@@ -108,10 +104,6 @@ class Comments {
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
                 rc.content as reply_to_content,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires,
                 (SELECT COUNT(*) FROM comments WHERE parent_id = c.id AND status = 'approved') as total_replies
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
@@ -135,18 +127,52 @@ class Comments {
             return ['comments' => [], 'total_pages' => $total_pages, 'total_count' => $total_top_level];
         }
 
-        // 2. Fetch first 3 replies for each top-level comment
-        $user_reactions = [];
-        if ($user_id) {
-            $stmt = $this->pdo->prepare("SELECT comment_id, reaction_type FROM comment_reactions WHERE user_id = ?");
-            $stmt->execute([$user_id]);
-            while ($row = $stmt->fetch()) {
-                $user_reactions[$row['comment_id']] = $row['reaction_type'];
-            }
+        $top_level_ids = array_column($top_level_comments, 'id');
+        $id_placeholders = implode(',', array_fill(0, count($top_level_ids), '?'));
+
+        // 2. Fetch first 3 replies for each top-level comment in bulk
+        $replies_sql = "SELECT * FROM (
+            SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+                u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
+                ru.username as reply_to_username,
+                rc.content as reply_to_content,
+                ROW_NUMBER() OVER (PARTITION BY c.parent_id ORDER BY c.likes_count DESC, c.created_at ASC) as rn
+                FROM comments c
+                LEFT JOIN users u ON c.user_id = u.id
+                LEFT JOIN users ru ON c.reply_to_user_id = ru.id
+                LEFT JOIN comments rc ON c.reply_to_id = rc.id
+                WHERE c.parent_id IN ($id_placeholders) AND c.status = 'approved'
+        ) WHERE rn <= 3";
+
+        $stmt = $this->pdo->prepare($replies_sql);
+        $stmt->execute($top_level_ids);
+        $all_replies = $stmt->fetchAll();
+
+        // 3. Bulk fetch stats and user reactions for all visible comments
+        $all_visible_ids = array_merge($top_level_ids, array_column($all_replies, 'id'));
+        $stats = $this->loadReactionStats($all_visible_ids);
+        $user_reactions = $this->loadUserReactions($user_id, $all_visible_ids);
+
+        $replies_by_parent = [];
+        $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
+
+        foreach ($all_replies as $r) {
+            $r['likes'] = $stats[$r['id']]['likes'] ?? 0;
+            $r['dislikes'] = $stats[$r['id']]['dislikes'] ?? 0;
+            $r['hearts'] = $stats[$r['id']]['hearts'] ?? 0;
+            $r['fires'] = $stats[$r['id']]['fires'] ?? 0;
+            $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
+            $r['created_at_fa'] = jalali_date($r['created_at']);
+            $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < $edit_limit);
+            unset($r['created_at']);
+            $replies_by_parent[$r['parent_id']][] = $r;
         }
 
-        $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
         foreach ($top_level_comments as &$c) {
+            $c['likes'] = $stats[$c['id']]['likes'] ?? 0;
+            $c['dislikes'] = $stats[$c['id']]['dislikes'] ?? 0;
+            $c['hearts'] = $stats[$c['id']]['hearts'] ?? 0;
+            $c['fires'] = $stats[$c['id']]['fires'] ?? 0;
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
@@ -155,14 +181,10 @@ class Comments {
             if ($target_type === 'user_profile') {
                 $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
             }
-
-            // total_replies is now fetched in the main query
-
-            // Fetch first 3 replies (don't parse mentions yet, we will do it in bulk)
-            $c['replies'] = $this->getReplies($c['id'], 0, 3, $user_id, false);
+            $c['replies'] = $replies_by_parent[$c['id']] ?? [];
         }
 
-        // 3. Bulk parse mentions
+        // 4. Bulk parse mentions
         $userMap = $this->loadMentionedUsers($top_level_comments);
         foreach ($top_level_comments as &$c) {
             $c['content_html'] = $this->parseMentions($c['content'], $userMap);
@@ -192,17 +214,13 @@ class Comments {
         $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
-                rc.content as reply_to_content,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
+                rc.content as reply_to_content
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
                 LEFT JOIN users ru ON c.reply_to_user_id = ru.id
                 LEFT JOIN comments rc ON c.reply_to_id = rc.id
                 WHERE c.parent_id = ? AND c.status = 'approved'
-                ORDER BY likes DESC, c.created_at ASC
+                ORDER BY c.likes_count DESC, c.created_at ASC
                 LIMIT ? OFFSET ?";
 
         $stmt = $this->pdo->prepare($sql);
@@ -212,14 +230,11 @@ class Comments {
         $stmt->execute();
         $replies = $stmt->fetchAll();
 
-        $user_reactions = [];
-        if ($user_id) {
-            $stmt = $this->pdo->prepare("SELECT comment_id, reaction_type FROM comment_reactions WHERE user_id = ?");
-            $stmt->execute([$user_id]);
-            while ($row = $stmt->fetch()) {
-                $user_reactions[$row['comment_id']] = $row['reaction_type'];
-            }
-        }
+        if (empty($replies)) return [];
+
+        $commentIds = array_column($replies, 'id');
+        $stats = $this->loadReactionStats($commentIds);
+        $user_reactions = $this->loadUserReactions($user_id, $commentIds);
 
         if ($parse) {
             // Bulk parse mentions for replies
@@ -233,6 +248,10 @@ class Comments {
 
         $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
         foreach ($replies as &$r) {
+            $r['likes'] = $stats[$r['id']]['likes'] ?? 0;
+            $r['dislikes'] = $stats[$r['id']]['dislikes'] ?? 0;
+            $r['hearts'] = $stats[$r['id']]['hearts'] ?? 0;
+            $r['fires'] = $stats[$r['id']]['fires'] ?? 0;
             $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
             $r['created_at_fa'] = jalali_date($r['created_at']);
             $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < $edit_limit);
@@ -251,11 +270,7 @@ class Comments {
         $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
-                rc.content as reply_to_content,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'heart') as hearts,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'fire') as fires
+                rc.content as reply_to_content
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
                 LEFT JOIN users ru ON c.reply_to_user_id = ru.id
@@ -270,19 +285,20 @@ class Comments {
         $stmt->execute();
         $comments = $stmt->fetchAll();
 
-        $user_reactions = [];
-        if ($viewer_id) {
-            $stmt = $this->pdo->prepare("SELECT comment_id, reaction_type FROM comment_reactions WHERE user_id = ?");
-            $stmt->execute([$viewer_id]);
-            while ($row = $stmt->fetch()) {
-                $user_reactions[$row['comment_id']] = $row['reaction_type'];
-            }
-        }
+        if (empty($comments)) return [];
+
+        $commentIds = array_column($comments, 'id');
+        $stats = $this->loadReactionStats($commentIds);
+        $user_reactions = $this->loadUserReactions($viewer_id, $commentIds);
 
         // Bulk parse mentions for user profile feed
         $userMap = $this->loadMentionedUsers($comments);
         $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
         foreach ($comments as &$c) {
+            $c['likes'] = $stats[$c['id']]['likes'] ?? 0;
+            $c['dislikes'] = $stats[$c['id']]['dislikes'] ?? 0;
+            $c['hearts'] = $stats[$c['id']]['hearts'] ?? 0;
+            $c['fires'] = $stats[$c['id']]['fires'] ?? 0;
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['replies'] = [];
             $c['content_html'] = $this->parseMentions($c['content'], $userMap);
@@ -689,6 +705,56 @@ class Comments {
             $map[$row['id']] = $row;
         }
         return $map;
+    }
+
+    /**
+     * Bulk load reaction stats for a list of comment IDs
+     */
+    public function loadReactionStats($commentIds) {
+        if (empty($commentIds)) return [];
+
+        $placeholders = implode(',', array_fill(0, count($commentIds), '?'));
+        $sql = "SELECT comment_id,
+                       SUM(CASE WHEN reaction_type = 'like' THEN 1 ELSE 0 END) as likes,
+                       SUM(CASE WHEN reaction_type = 'dislike' THEN 1 ELSE 0 END) as dislikes,
+                       SUM(CASE WHEN reaction_type = 'heart' THEN 1 ELSE 0 END) as hearts,
+                       SUM(CASE WHEN reaction_type = 'fire' THEN 1 ELSE 0 END) as fires
+                FROM comment_reactions
+                WHERE comment_id IN ($placeholders)
+                GROUP BY comment_id";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($commentIds);
+
+        $stats = [];
+        while ($row = $stmt->fetch()) {
+            $stats[$row['comment_id']] = [
+                'likes' => (int)$row['likes'],
+                'dislikes' => (int)$row['dislikes'],
+                'hearts' => (int)$row['hearts'],
+                'fires' => (int)$row['fires']
+            ];
+        }
+        return $stats;
+    }
+
+    /**
+     * Bulk load user reactions for a list of comment IDs
+     */
+    public function loadUserReactions($user_id, $commentIds) {
+        if (!$user_id || empty($commentIds)) return [];
+
+        $placeholders = implode(',', array_fill(0, count($commentIds), '?'));
+        $sql = "SELECT comment_id, reaction_type FROM comment_reactions WHERE user_id = ? AND comment_id IN ($placeholders)";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(array_merge([$user_id], $commentIds));
+
+        $reactions = [];
+        while ($row = $stmt->fetch()) {
+            $reactions[$row['comment_id']] = $row['reaction_type'];
+        }
+        return $reactions;
     }
 
     /**
