@@ -1069,6 +1069,22 @@ input:focus {
     margin-top: 5px;
 }
 
+.notification-profile-wrapper {
+    transition: all 0.3s ease;
+}
+
+.btn-archive-notif {
+    opacity: 0;
+    transition: all 0.2s;
+    background: var(--color-block);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid var(--color-border);
+}
+
+.notification-profile-wrapper:hover .btn-archive-notif {
+    opacity: 1;
+}
+
 /* Mobile Bottom Navigation */
 .mobile-nav {
     display: none;

@@ -174,6 +174,19 @@ class MigrationManager {
                     `status` VARCHAR(20) DEFAULT 'approved',
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `notifications` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `user_id` INTEGER,
+                    `sender_id` INTEGER,
+                    `type` VARCHAR(50),
+                    `target_id` VARCHAR(255),
+                    `is_read` TINYINT DEFAULT 0,
+                    `status` VARCHAR(20) DEFAULT 'unread',
+                    `read_at` DATETIME DEFAULT NULL,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
                 )"
             ];
         } else {
@@ -260,6 +273,11 @@ class MigrationManager {
                 'type' => 'VARCHAR(20) DEFAULT "comment"',
                 'guest_name' => 'VARCHAR(100)',
                 'updated_at' => ($driver === 'sqlite' ? 'DATETIME DEFAULT CURRENT_TIMESTAMP' : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+            ],
+            'notifications' => [
+                'status' => 'VARCHAR(20) DEFAULT "unread"',
+                'read_at' => ($driver === 'sqlite' ? 'DATETIME DEFAULT NULL' : 'TIMESTAMP NULL'),
+                'updated_at' => ($driver === 'sqlite' ? 'DATETIME DEFAULT CURRENT_TIMESTAMP' : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
             ]
         ];
 
@@ -285,6 +303,13 @@ class MigrationManager {
      * Handles complex data transitions, such as legacy role migration.
      */
     private function migrateData() {
+        // Migrate notification is_read to status
+        if ($this->tableExists('notifications')) {
+            $this->log("Syncing notification is_read to status...");
+            $this->exec("UPDATE notifications SET status = 'read' WHERE is_read = 1 AND (status = 'unread' OR status IS NULL)");
+            $this->exec("UPDATE notifications SET status = 'unread' WHERE is_read = 0 AND (status = 'read' OR status IS NULL)");
+        }
+
         // 1. Legacy Admin string to role_id migration
         $this->log("Checking for legacy admin roles...");
         $stmt = $this->pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin' AND role_id = 0");
