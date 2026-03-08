@@ -86,10 +86,10 @@ $groups = array_filter($groups, function($group) {
         <nav class="space-y-2">
             <?php foreach ($groups as $group): ?>
                 <?php if (count($group['items']) === 1 && !isset($group['pages'])): ?>
-                    <?php $item = $group['items'][0]; ?>
-                    <a href="<?= $item['url'] ?>" class="sidebar-link <?= $current_page == $item['url'] ? 'active' : '' ?>">
-                        <i data-lucide="<?= $item['icon'] ?>"></i>
-                        <span><?= $item['label'] ?></span>
+                    <?php $sidebar_item = $group['items'][0]; ?>
+                    <a href="<?= $sidebar_item['url'] ?>" class="sidebar-link <?= $current_page == $sidebar_item['url'] ? 'active' : '' ?>">
+                        <i data-lucide="<?= $sidebar_item['icon'] ?>"></i>
+                        <span><?= $sidebar_item['label'] ?></span>
                     </a>
                 <?php else: ?>
                     <?php $isOpen = is_active_group($group['pages'] ?? []); ?>
@@ -103,14 +103,14 @@ $groups = array_filter($groups, function($group) {
                         </button>
                         <div class="group-content overflow-hidden transition-all duration-300" style="max-height: <?= $isOpen ? '500px' : '0' ?>;">
                             <div class="pr-6 pt-1 pb-2 space-y-1">
-                                <?php foreach ($group['items'] as $item): ?>
-                                    <a href="<?= $item['url'] ?>" class="sidebar-sub-link <?= $current_page == $item['url'] ? 'active' : '' ?> flex items-center justify-between">
+                                <?php foreach ($group['items'] as $sidebar_item): ?>
+                                    <a href="<?= $sidebar_item['url'] ?>" class="sidebar-sub-link <?= $current_page == $sidebar_item['url'] ? 'active' : '' ?> flex items-center justify-between">
                                         <div class="flex items-center gap-3">
-                                            <i data-lucide="<?= $item['icon'] ?>" class="w-4 h-4"></i>
-                                            <span><?= $item['label'] ?></span>
+                                            <i data-lucide="<?= $sidebar_item['icon'] ?>" class="w-4 h-4"></i>
+                                            <span><?= $sidebar_item['label'] ?></span>
                                         </div>
-                                        <?php if (isset($item['badge'])): ?>
-                                            <span class="bg-indigo-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-black min-w-[20px] text-center"><?= $item['badge'] ?></span>
+                                        <?php if (isset($sidebar_item['badge'])): ?>
+                                            <span class="bg-indigo-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-black min-w-[20px] text-center"><?= $sidebar_item['badge'] ?></span>
                                         <?php endif; ?>
                                     </a>
                                 <?php endforeach; ?>
