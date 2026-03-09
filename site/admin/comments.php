@@ -76,11 +76,11 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $comments = $stmt->fetchAll();
 
-// Pre-process for mentions and dates
+// Pre-process for mentions, dates and target info
 if (!empty($comments)) {
     $userMap = $comments_logic->loadMentionedUsers($comments);
+    $comments_logic->loadTargetInfoForComments($comments);
     foreach ($comments as &$c) {
-        $c['target_info'] = $comments_logic->getTargetInfo($c['target_id'], $c['target_type']);
         $c['content_html'] = $comments_logic->parseMentions($c['content'], $userMap);
         $c['created_at_fa'] = jalali_date($c['created_at']);
     }
