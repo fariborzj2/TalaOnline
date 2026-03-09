@@ -55,7 +55,7 @@ $supply = fa_num(rand(1000, 9999)) . ',000 ' . $symbol;
             <svg viewBox="0 0 100 40" class="w-full h-full">
                 <path d="M 0 <?= rand(20,40) ?> Q 25 <?= rand(0,20) ?> 50 <?= rand(10,30) ?> T 100 <?= rand(0,40) ?>"
                       fill="none"
-                      stroke="<?= $is_positive ? '#117856' : '#c81e1e' ?>"
+                      stroke="<?= $is_positive ? 'var(--color-success)' : 'var(--color-error)' ?>"
                       stroke-width="2" />
             </svg>
         </div>
