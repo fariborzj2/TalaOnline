@@ -500,7 +500,7 @@ class CommentSystem {
                                 <div class="comment-header-btn edit-btn" title="ویرایش" data-id="${c.id}"><i data-lucide="edit-3" class="icon-size-4"></i></div>
                             ` : ''}
                             <div class="comment-header-btn report-btn" title="گزارش تخلف" data-id="${c.id}"><i data-lucide="flag" class="icon-size-4"></i></div>
-                            <div class="comment-header-btn comment-share-btn" title="کپی لینک مستقیم" data-id="${c.id}">
+                            <div class="comment-header-btn comment-share-btn" title="کپی لینک مستقیم" data-id="${c.id}" data-target-url="${c.target_info?.url || ''}">
                                 <i data-lucide="share-2" class="icon-size-3"></i>
                             </div>
                         </div>
@@ -1045,8 +1045,16 @@ class CommentSystem {
 
     handleShare(btn) {
         const id = btn.dataset.id;
-        const pageParam = (this.currentPage > 1) ? `?page=${this.currentPage}` : '';
-        const url = window.location.origin + window.location.pathname + pageParam + '#comment-' + id;
+        const targetUrl = btn.dataset.targetUrl;
+        let url;
+
+        if (targetUrl) {
+            url = window.location.origin + targetUrl + '#comment-' + id;
+        } else {
+            const pageParam = (this.currentPage > 1) ? `?page=${this.currentPage}` : '';
+            url = window.location.origin + window.location.pathname + pageParam + '#comment-' + id;
+        }
+
         navigator.clipboard.writeText(url).then(() => {
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i data-lucide="check" class="icon-size-4 text-success"></i>';
