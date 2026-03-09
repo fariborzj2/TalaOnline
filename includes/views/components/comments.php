@@ -56,7 +56,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                         <div class="comment-header-btn edit-btn" title="ویرایش" data-id="<?= $c['id'] ?>"><i data-lucide="edit-3" class="icon-size-4"></i></div>
                     <?php endif; ?>
                     <div class="comment-header-btn report-btn" title="گزارش تخلف" data-id="<?= $c['id'] ?>"><i data-lucide="flag" class="icon-size-4"></i></div>
-                    <div class="comment-header-btn comment-share-btn" title="کپی لینک مستقیم" data-id="<?= $c['id'] ?>">
+                    <div class="comment-header-btn comment-share-btn" title="کپی لینک مستقیم" data-id="<?= $c['id'] ?>" data-target-url="<?= $c['target_info']['url'] ?? '' ?>">
                         <i data-lucide="share-2" class="icon-size-3"></i>
                     </div>
                 </div>
