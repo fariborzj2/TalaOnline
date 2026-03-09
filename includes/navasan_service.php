@@ -36,44 +36,34 @@ class NavasanService {
         $data = json_decode($response, true);
         if (!$data) return false;
 
+        $today = date('Y-m-d');
+        $cache_values = [];
+        $cache_params = [];
+        $history_values = [];
+        $history_params = [];
+
         foreach ($data as $symbol => $info) {
             if (isset($info['value'])) {
-                $stmt = $this->pdo->prepare("INSERT INTO prices_cache (symbol, price, change_val, change_percent, updated_at)
-                    VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-                    ON DUPLICATE KEY UPDATE
-                    price = VALUES(price),
-                    change_val = VALUES(change_val),
-                    change_percent = VALUES(change_percent),
-                    updated_at = CURRENT_TIMESTAMP");
-
-                // Navasan change is relative to yesterday, we might need to calculate percent if not provided
-                // Looking at docs, change is a number. Percent might not be there.
-                $change = $info['change'] ?? 0;
                 $value = (float)$info['value'];
+                $change = (float)($info['change'] ?? 0);
                 $percent = ($value > 0) ? round(($change / ($value - $change)) * 100, 2) : 0;
 
-                $stmt->execute([
-                    $symbol,
-                    $info['value'],
-                    $change,
-                    $percent
-                ]);
+                $cache_values[] = "(?, ?, ?, ?, CURRENT_TIMESTAMP)";
+                array_push($cache_params, $symbol, $value, $change, $percent);
+
+                $history_values[] = "(?, ?, ?, ?, ?)";
+                array_push($history_params, $symbol, $value, $value, $value, $today);
             }
         }
 
-        // Record today's price in history and track high/low
-        $today = date('Y-m-d');
-        foreach ($data as $symbol => $info) {
-            if (isset($info['value'])) {
-                $price = $info['value'];
-                $stmt = $this->pdo->prepare("INSERT INTO prices_history (symbol, price, high, low, date)
-                    VALUES (?, ?, ?, ?, ?)
-                    ON DUPLICATE KEY UPDATE
-                    price = VALUES(price),
-                    high = GREATEST(high, VALUES(price)),
-                    low = LEAST(low, VALUES(price))");
-                $stmt->execute([$symbol, $price, $price, $price, $today]);
-            }
+        if (!empty($cache_values)) {
+            $cache_sql = "INSERT INTO prices_cache (symbol, price, change_val, change_percent, updated_at) VALUES " . implode(',', $cache_values);
+            $cache_sql .= " ON DUPLICATE KEY UPDATE price = VALUES(price), change_val = VALUES(change_val), change_percent = VALUES(change_percent), updated_at = CURRENT_TIMESTAMP";
+            $this->pdo->prepare($cache_sql)->execute($cache_params);
+
+            $history_sql = "INSERT INTO prices_history (symbol, price, high, low, date) VALUES " . implode(',', $history_values);
+            $history_sql .= " ON DUPLICATE KEY UPDATE price = VALUES(price), high = GREATEST(high, VALUES(price)), low = LEAST(low, VALUES(price))";
+            $this->pdo->prepare($history_sql)->execute($history_params);
         }
 
         return true;
@@ -146,7 +136,9 @@ class NavasanService {
                 'high' => $stats[$symbol]['high'] ?? $display_price,
                 'low' => $stats[$symbol]['low'] ?? $display_price,
                 'updated_at' => $item['updated_at'],
-                'is_overridden' => $is_overridden
+                'is_overridden' => $is_overridden,
+                'show_in_summary' => (int)($item['show_in_summary'] ?? 0),
+                'show_chart' => (int)($item['show_chart'] ?? 0)
             ];
         }
 

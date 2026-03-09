@@ -27,10 +27,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         // Enhance notifications with target info
         $comments_manager = new Comments($pdo);
+
+        $comment_ids = [];
+        foreach ($notifications as $n) {
+            if ($n['type'] === 'mention' || $n['type'] === 'reply') {
+                $comment_ids[] = $n['target_id'];
+            }
+        }
+
+        $targetInfoMap = $comments_manager->bulkGetTargetInfoByCommentIds($comment_ids);
+
         foreach ($notifications as &$n) {
             $n['created_at_fa'] = jalali_date($n['created_at']);
             if ($n['type'] === 'mention' || $n['type'] === 'reply') {
-                $n['target_info'] = $comments_manager->getTargetInfoByCommentId($n['target_id']);
+                $n['target_info'] = $targetInfoMap[$n['target_id']] ?? null;
                 if ($n['target_info'] && isset($n['target_info']['url'])) {
                     $n['target_info']['url'] .= '#comment-' . $n['target_id'];
                 }
