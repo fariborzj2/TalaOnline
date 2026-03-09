@@ -661,11 +661,17 @@ $router->add('/:category/:slug', function($params) {
 
         if ($item_db) {
             $navasan = new NavasanService($pdo);
-            $all_items = $navasan->getDashboardData();
 
-            // Create lookup for all items to quickly find current and related items
+            $symbols_to_fetch = [$item_db['symbol']];
+            if ($item_db['related_item_symbol']) {
+                $symbols_to_fetch[] = $item_db['related_item_symbol'];
+            }
+
+            $items = $navasan->getItems(['symbols' => $symbols_to_fetch]);
+
+            // Create lookup for items
             $items_lookup = [];
-            foreach ($all_items as $it) {
+            foreach ($items as $it) {
                 $items_lookup[$it['symbol']] = $it;
             }
 
@@ -742,13 +748,7 @@ $router->add('/:slug', function($params) {
 
             // Fetch Items
             $navasan = new NavasanService($pdo);
-            $all_items = $navasan->getDashboardData();
-            $items = [];
-            foreach ($all_items as $item) {
-                if ($item['category'] === $slug) {
-                    $items[] = $item;
-                }
-            }
+            $items = $navasan->getItems(['category' => $slug]);
 
             // Fetch FAQs
             $stmt = $pdo->prepare("SELECT * FROM category_faqs WHERE category_id = ? ORDER BY sort_order ASC");
@@ -793,11 +793,17 @@ $router->add('/:slug', function($params) {
 
         if ($item_db) {
             $navasan = new NavasanService($pdo);
-            $all_items = $navasan->getDashboardData();
 
-            // Create lookup for all items to quickly find current and related items
+            $symbols_to_fetch = [$item_db['symbol']];
+            if ($item_db['related_item_symbol']) {
+                $symbols_to_fetch[] = $item_db['related_item_symbol'];
+            }
+
+            $items = $navasan->getItems(['symbols' => $symbols_to_fetch]);
+
+            // Create lookup for items
             $items_lookup = [];
-            foreach ($all_items as $it) {
+            foreach ($items as $it) {
                 $items_lookup[$it['symbol']] = $it;
             }
 
