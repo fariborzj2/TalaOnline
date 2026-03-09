@@ -102,8 +102,7 @@ class Comments {
         $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
-                rc.content as reply_to_content,
-                (SELECT COUNT(*) FROM comments WHERE parent_id = c.id AND status = 'approved') as total_replies
+                rc.content as reply_to_content
                 FROM comments c
                 LEFT JOIN users u ON c.user_id = u.id
                 LEFT JOIN users ru ON c.reply_to_user_id = ru.id
@@ -147,10 +146,11 @@ class Comments {
         $stmt->execute($top_level_ids);
         $all_replies = $stmt->fetchAll();
 
-        // 3. Bulk fetch stats and user reactions for all visible comments
+        // 3. Bulk fetch stats, user reactions and reply counts
         $all_visible_ids = array_merge($top_level_ids, array_column($all_replies, 'id'));
         $stats = $this->loadReactionStats($all_visible_ids);
         $user_reactions = $this->loadUserReactions($user_id, $all_visible_ids);
+        $reply_counts = $this->loadReplyCounts($top_level_ids);
 
         $replies_by_parent = [];
         $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
@@ -174,11 +174,13 @@ class Comments {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
-
-            if ($target_type === 'user_profile') {
-                $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
-            }
+            $c['total_replies'] = $reply_counts[$c['id']] ?? 0;
             $c['replies'] = $replies_by_parent[$c['id']] ?? [];
+        }
+
+        // 4. Bulk fetch target info if in user profile
+        if ($target_type === 'user_profile') {
+            $this->loadTargetInfoForComments($top_level_comments);
         }
 
         // 4. Bulk parse mentions
@@ -258,6 +260,66 @@ class Comments {
     }
 
     /**
+     * Bulk load reply counts for a list of parent comment IDs
+     */
+    public function loadReplyCounts($commentIds) {
+        if (empty($commentIds)) return [];
+        $placeholders = implode(',', array_fill(0, count($commentIds), '?'));
+        $sql = "SELECT parent_id, COUNT(*) as total FROM comments WHERE parent_id IN ($placeholders) AND status = 'approved' GROUP BY parent_id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($commentIds);
+        $counts = [];
+        while ($row = $stmt->fetch()) {
+            $counts[$row['parent_id']] = (int)$row['total'];
+        }
+        return $counts;
+    }
+
+    /**
+     * Bulk load target info for a list of comments
+     */
+    public function loadTargetInfoForComments(&$comments) {
+        $targets = [];
+        foreach ($comments as $c) {
+            $targets[$c['target_type']][] = $c['target_id'];
+        }
+
+        $infoMap = [];
+
+        foreach ($targets as $type => $ids) {
+            $ids = array_values(array_unique($ids));
+            if (empty($ids)) continue;
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+            try {
+                if ($type === 'post') {
+                    $stmt = $this->pdo->prepare("SELECT p.id, p.title, p.slug, c.slug as cat_slug FROM blog_posts p LEFT JOIN blog_categories c ON p.category_id = c.id WHERE p.id IN ($placeholders)");
+                    $stmt->execute($ids);
+                    while ($res = $stmt->fetch()) {
+                        $infoMap["post_{$res['id']}"] = ['title' => $res['title'], 'url' => '/blog/' . ($res['cat_slug'] ?: 'uncategorized') . '/' . $res['slug']];
+                    }
+                } elseif ($type === 'item') {
+                    $stmt = $this->pdo->prepare("SELECT name, symbol, category FROM items WHERE symbol IN ($placeholders)");
+                    $stmt->execute($ids);
+                    while ($res = $stmt->fetch()) {
+                        $infoMap["item_{$res['symbol']}"] = ['title' => $res['name'], 'url' => '/' . $res['category'] . '/' . $res['symbol']];
+                    }
+                } elseif ($type === 'category') {
+                    $stmt = $this->pdo->prepare("SELECT name, slug FROM categories WHERE slug IN ($placeholders)");
+                    $stmt->execute($ids);
+                    while ($res = $stmt->fetch()) {
+                        $infoMap["category_{$res['slug']}"] = ['title' => $res['name'], 'url' => '/' . $res['slug']];
+                    }
+                }
+            } catch (Exception $e) {}
+        }
+
+        foreach ($comments as &$c) {
+            $c['target_info'] = $infoMap["{$c['target_type']}_{$c['target_id']}"] ?? null;
+        }
+    }
+
+    /**
      * Fetch all comments by a specific user (limited to recent 50)
      */
     public function getUserComments($user_id, $viewer_id = null, $limit = 50) {
@@ -302,8 +364,9 @@ class Comments {
             $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap, true);
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < $edit_limit);
-            $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
         }
+
+        $this->loadTargetInfoForComments($comments);
 
         return $comments;
     }
