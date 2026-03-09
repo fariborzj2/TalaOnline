@@ -375,7 +375,7 @@
 
 .reactions-popover {
     position: absolute;
-    bottom: -45px;
+    bottom: -40px;
     left: 0;
     background: var(--color-white);
     border: 1px solid var(--color-border);
