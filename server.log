@@ -1,4 +1,0 @@
-[Sun Mar  8 07:58:44 2026] PHP 8.3.6 Development Server (http://localhost:8000) started
-[Sun Mar  8 07:58:46 2026] [::1]:54762 Accepted
-[Sun Mar  8 07:58:47 2026] [::1]:54762 [200]: GET /api/comments.php?action=list&target_id=18ayar&target_type=item
-[Sun Mar  8 07:58:47 2026] [::1]:54762 Closing

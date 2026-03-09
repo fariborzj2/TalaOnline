@@ -10,6 +10,7 @@ class MigrationManager {
     private $is_dry_run;
     private $logs = [];
     private $app_version;
+    private $lock_fp;
 
     public function __construct(PDO $pdo, $app_version, $is_dry_run = false) {
         $this->pdo = $pdo;
@@ -268,7 +269,7 @@ class MigrationManager {
                 'points' => 'INT DEFAULT 0',
                 'level' => 'INT DEFAULT 1',
                 'is_verified' => 'TINYINT DEFAULT 0',
-                'updated_at' => ($driver === 'sqlite' ? 'DATETIME DEFAULT CURRENT_TIMESTAMP' : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+                'updated_at' => ($driver === 'sqlite' ? "DATETIME DEFAULT '2024-01-01 00:00:00'" : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
             ],
             'items' => [
                 'slug' => 'VARCHAR(255)',
@@ -278,7 +279,10 @@ class MigrationManager {
                 'h1_title' => 'VARCHAR(255)',
                 'meta_description' => 'TEXT',
                 'related_item_symbol' => 'VARCHAR(100)',
-                'updated_at' => ($driver === 'sqlite' ? 'DATETIME DEFAULT CURRENT_TIMESTAMP' : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+                'updated_at' => ($driver === 'sqlite' ? "DATETIME DEFAULT '2024-01-01 00:00:00'" : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+                'is_active' => 'TINYINT DEFAULT 1',
+                'is_manual' => 'TINYINT DEFAULT 0',
+                'manual_price' => 'VARCHAR(50)'
             ],
             'comments' => [
                 'reply_to_id' => 'INT DEFAULT NULL',
@@ -286,12 +290,12 @@ class MigrationManager {
                 'likes_count' => 'INT DEFAULT 0',
                 'type' => 'VARCHAR(20) DEFAULT "comment"',
                 'guest_name' => 'VARCHAR(100)',
-                'updated_at' => ($driver === 'sqlite' ? 'DATETIME DEFAULT CURRENT_TIMESTAMP' : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+                'updated_at' => ($driver === 'sqlite' ? "DATETIME DEFAULT '2024-01-01 00:00:00'" : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
             ],
             'notifications' => [
                 'status' => 'VARCHAR(20) DEFAULT "unread"',
                 'read_at' => ($driver === 'sqlite' ? 'DATETIME DEFAULT NULL' : 'TIMESTAMP NULL'),
-                'updated_at' => ($driver === 'sqlite' ? 'DATETIME DEFAULT CURRENT_TIMESTAMP' : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+                'updated_at' => ($driver === 'sqlite' ? "DATETIME DEFAULT '2024-01-01 00:00:00'" : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
             ]
         ];
 

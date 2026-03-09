@@ -55,7 +55,6 @@ class Comments {
         $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
         $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
 
-        unset($c['created_at']);
         return $c;
     }
 
@@ -164,7 +163,6 @@ class Comments {
             $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
             $r['created_at_fa'] = jalali_date($r['created_at']);
             $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < $edit_limit);
-            unset($r['created_at']);
             $replies_by_parent[$r['parent_id']][] = $r;
         }
 
@@ -176,7 +174,6 @@ class Comments {
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
-            unset($c['created_at']);
 
             if ($target_type === 'user_profile') {
                 $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
@@ -255,7 +252,6 @@ class Comments {
             $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
             $r['created_at_fa'] = jalali_date($r['created_at']);
             $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < $edit_limit);
-            unset($r['created_at']);
         }
 
         return $replies;
@@ -307,7 +303,6 @@ class Comments {
             $c['created_at_fa'] = jalali_date($c['created_at']);
             $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < $edit_limit);
             $c['target_info'] = $this->getTargetInfo($c['target_id'], $c['target_type']);
-            unset($c['created_at']);
         }
 
         return $comments;
