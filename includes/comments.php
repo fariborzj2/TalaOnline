@@ -386,6 +386,43 @@ class Comments {
     }
 
     /**
+     * Bulk resolve target info for multiple comment IDs
+     */
+    public function bulkGetTargetInfoByCommentIds($comment_ids) {
+        if (empty($comment_ids) || !$this->pdo) return [];
+
+        $comment_ids = array_values(array_unique($comment_ids));
+        $placeholders = implode(',', array_fill(0, count($comment_ids), '?'));
+
+        $sql = "SELECT id, target_id, target_type FROM comments WHERE id IN ($placeholders)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($comment_ids);
+        $comment_targets = $stmt->fetchAll();
+
+        if (empty($comment_targets)) return [];
+
+        // Prepare for batch target info lookup
+        $temp_comments = [];
+        foreach ($comment_targets as $ct) {
+            $temp_comments[] = [
+                'target_id' => $ct['target_id'],
+                'target_type' => $ct['target_type']
+            ];
+        }
+
+        $this->loadTargetInfoForComments($temp_comments);
+
+        $resultMap = [];
+        foreach ($comment_targets as $i => $ct) {
+            if (isset($temp_comments[$i]['target_info'])) {
+                $resultMap[$ct['id']] = $temp_comments[$i]['target_info'];
+            }
+        }
+
+        return $resultMap;
+    }
+
+    /**
      * Get target info (title and URL) for a comment
      */
     public function getTargetInfo($target_id, $target_type) {

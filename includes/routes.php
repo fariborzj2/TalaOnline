@@ -67,19 +67,11 @@ $router->add('/', function() {
             $stmt = $pdo->query("SELECT * FROM platforms WHERE is_active = 1 ORDER BY sort_order ASC");
             $platforms = $stmt->fetchAll();
 
-            // Check for items marked as show_in_summary
-            $stmt = $pdo->query("SELECT symbol FROM items WHERE show_in_summary = 1 AND is_active = 1 ORDER BY sort_order ASC LIMIT 4");
-            $summary_symbols = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-            // Check for items marked as show_chart
-            $stmt = $pdo->query("SELECT symbol FROM items WHERE show_chart = 1 AND is_active = 1 ORDER BY sort_order ASC");
-            $chart_symbols = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
             foreach ($items as $item) {
-                if (in_array($item['symbol'], $summary_symbols)) {
+                if (!empty($item['show_in_summary'])) {
                     $summary_items[] = $item;
                 }
-                if (in_array($item['symbol'], $chart_symbols)) {
+                if (!empty($item['show_chart'])) {
                     $chart_items[] = $item;
                 }
             }

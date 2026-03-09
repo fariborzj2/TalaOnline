@@ -11,14 +11,17 @@ $navasan = new NavasanService($pdo);
 
 // Check if we need to sync
 $sync_interval = (int)get_setting('api_sync_interval', 10) * 60;
-$last_sync = get_setting('last_sync_time', 0);
+$last_sync = (int)get_setting('last_sync_time', 0);
 if (time() - $last_sync > $sync_interval) {
     if ($navasan->syncPrices()) {
         set_setting('last_sync_time', time());
     }
 }
 
-$items = $navasan->getDashboardData();
+// Optimization: Fetch only relevant items for the dashboard
+// Summary needs: 18ayar, silver
+// Coins section needs: items marked with show_in_summary (to match home logic)
+$items = $navasan->getItems();
 
 // Fetch categories for filtering
 try {
