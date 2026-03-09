@@ -194,14 +194,14 @@ class CommentSystem {
                 const newComments = this.comments.filter(c => !existingIds.includes(c.id.toString()));
 
                 const html = newComments.map(c => {
-                    const itemHtml = this.renderCommentItem(c);
+                    const itemHtml = this.renderCommentItem(c, !!c.parent_id);
                     // Add fade-in class to the wrapper
                     return itemHtml.replace('class="comment-wrapper', 'class="comment-wrapper comment-fade-in');
                 }).join('');
 
                 list.insertAdjacentHTML('beforeend', html);
             } else {
-                list.innerHTML = this.comments.map(c => this.renderCommentItem(c)).join('');
+                list.innerHTML = this.comments.map(c => this.renderCommentItem(c, !!c.parent_id)).join('');
             }
         }
         if (window.lucide) lucide.createIcons({ root: list });
