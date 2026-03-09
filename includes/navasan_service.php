@@ -80,22 +80,44 @@ class NavasanService {
     }
 
     /**
-     * Get items merged with latest prices and overrides
+     * Get items merged with latest prices and overrides (Optimized fetching)
      */
-    public function getDashboardData() {
+    public function getItems($filters = []) {
         $today = date('Y-m-d');
+        $where = ["i.is_active = 1"];
+        $params = [];
 
-        // Fetch all active managed items
-        $stmt = $this->pdo->query("SELECT i.*, p.price as api_price, p.change_val, p.change_percent, p.updated_at
-                                   FROM items i
-                                   LEFT JOIN prices_cache p ON i.symbol = p.symbol
-                                   WHERE i.is_active = 1
-                                   ORDER BY i.sort_order ASC");
+        if (!empty($filters['category'])) {
+            $where[] = "i.category = ?";
+            $params[] = $filters['category'];
+        }
+
+        if (!empty($filters['symbols'])) {
+            $symbols = is_array($filters['symbols']) ? $filters['symbols'] : [$filters['symbols']];
+            $placeholders = implode(',', array_fill(0, count($symbols), '?'));
+            $where[] = "i.symbol IN ($placeholders)";
+            $params = array_merge($params, $symbols);
+        }
+
+        $where_sql = implode(" AND ", $where);
+        $sql = "SELECT i.*, p.price as api_price, p.change_val, p.change_percent, p.updated_at
+                FROM items i
+                LEFT JOIN prices_cache p ON i.symbol = p.symbol
+                WHERE $where_sql
+                ORDER BY i.sort_order ASC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
         $items = $stmt->fetchAll();
 
-        // Pre-fetch today's high/low for all symbols
-        $stmt = $this->pdo->prepare("SELECT symbol, high, low FROM prices_history WHERE date = ?");
-        $stmt->execute([$today]);
+        if (empty($items)) return [];
+
+        $symbols = array_column($items, 'symbol');
+        $placeholders = implode(',', array_fill(0, count($symbols), '?'));
+
+        // Pre-fetch today's high/low for the selected symbols
+        $stmt = $this->pdo->prepare("SELECT symbol, high, low FROM prices_history WHERE date = ? AND symbol IN ($placeholders)");
+        $stmt->execute(array_merge([$today], $symbols));
         $stats = $stmt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC);
 
         $processed = [];
@@ -129,6 +151,13 @@ class NavasanService {
         }
 
         return $processed;
+    }
+
+    /**
+     * Compatibility wrapper for getDashboardData
+     */
+    public function getDashboardData() {
+        return $this->getItems();
     }
 
     /**
