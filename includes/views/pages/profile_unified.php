@@ -25,7 +25,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
         <!-- Sidebar Navigation -->
         <div class="basis-250 grow-1 ">
             <!-- profile info -->
-            <div class="profile-card p-1 bg-block border radius-16 overflow-hidden shadow-sm sticky-card-2">
+            <div class="profile-card p-1 bg-block border radius-16 overflow-hidden sticky-card-2">
                 <div class="profile-header-gradient relative">
                     <div class="level-badge d-flex align-center gap-05">
                         <span class="font-bold">level <?= $user['level'] ?></span>

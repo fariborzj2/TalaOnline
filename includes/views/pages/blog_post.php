@@ -1,6 +1,6 @@
 <article class="blog-post-page d-flex-wrap gap-md align-stretch">
     <div class="grow-8 basis-600 d-column gap-md">
-        <div class="post-main-card bg-block border pd-md radius-16 overflow-hidden ">
+        <div class="post-main-card bg-block border pd-md radius-16 overflow-hidden">
 
             <div class="mb-1 d-flex align-center gap-05">
                 <i data-lucide="git-fork" class="icon-size-2"></i>
