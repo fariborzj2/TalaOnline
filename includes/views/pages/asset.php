@@ -123,7 +123,7 @@
             </div>
             <h2 class="font-size-2 font-black">تحلیل و بررسی <?= $item['name'] ?></h2>
         </div>
-        <div class="content-text line-height-2 font-size-1-1">
+        <div class="content-text line-height-2">
             <div id="toc-placeholder"></div>
             <?= $item['long_description'] ?>
         </div>
