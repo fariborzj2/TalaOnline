@@ -228,7 +228,7 @@ $router->add('/profile/:identifier/:slug', function($params) {
     // Fetch total comment count for stats
     $comment_count = 0;
     try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE user_id = ? AND status = 'approved' AND parent_id IS NULL");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE user_id = ? AND status = 'approved'");
         $stmt->execute([$user['id']]);
         $comment_count = $stmt->fetchColumn();
     } catch (Exception $e) {}

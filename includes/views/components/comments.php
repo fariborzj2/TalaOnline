@@ -294,7 +294,7 @@ function render_reaction($c, $type, $emoji) {
                 <p class="text-gray-400"><?= $read_only ? 'هنوز نظری ثبت نشده است.' : 'هنوز نظری ثبت نشده است. اولین تحلیل‌گر باشید!' ?></p>
             </div>
         <?php else: ?>
-            <?php foreach ($comments as $c) echo render_comment_item($c, $read_only, false, $target_type); ?>
+            <?php foreach ($comments as $c) echo render_comment_item($c, $read_only, !!($c['parent_id'] ?? false), $target_type); ?>
         <?php endif; ?>
     </div>
 
