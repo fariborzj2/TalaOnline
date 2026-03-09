@@ -6,7 +6,29 @@
 if (!defined('DB_FUNCTIONS_LOADED')) {
 
 /**
- * Get a setting value from the database
+ * Global static cache for settings to prevent redundant database queries.
+ */
+$GLOBALS['__SETTINGS_CACHE__'] = null;
+
+/**
+ * Preloads all settings from the database into a static cache.
+ */
+function preload_settings($pdo_instance = null) {
+    global $pdo;
+    $_pdo = $pdo_instance ?: $pdo;
+    if (!$_pdo) return;
+
+    try {
+        $stmt = $_pdo->query("SELECT setting_key, setting_value FROM settings");
+        $settings = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        $GLOBALS['__SETTINGS_CACHE__'] = $settings ?: [];
+    } catch (Exception $e) {
+        $GLOBALS['__SETTINGS_CACHE__'] = [];
+    }
+}
+
+/**
+ * Get a setting value from the database (optimized with static cache)
  */
 function get_setting($key_or_pdo, $default_or_key = '', $actual_default = '') {
     global $pdo;
@@ -22,20 +44,20 @@ function get_setting($key_or_pdo, $default_or_key = '', $actual_default = '') {
         $default = $default_or_key;
     }
 
+    // Use cache if available
+    if ($GLOBALS['__SETTINGS_CACHE__'] !== null) {
+        return $GLOBALS['__SETTINGS_CACHE__'][$key] ?? $default;
+    }
+
     if (!isset($_pdo) || !$_pdo) return $default;
 
-    try {
-        $stmt = $_pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-        $stmt->execute([$key]);
-        $result = $stmt->fetch();
-        return $result ? $result['setting_value'] : $default;
-    } catch (Exception $e) {
-        return $default;
-    }
+    // Performance optimization: Preload on first access if not already preloaded
+    preload_settings($_pdo);
+    return $GLOBALS['__SETTINGS_CACHE__'][$key] ?? $default;
 }
 
 /**
- * Set a setting value in the database
+ * Set a setting value in the database and updates the cache
  */
 function set_setting($key_or_pdo, $value_or_key = null, $actual_value = null) {
     global $pdo;
@@ -62,7 +84,12 @@ function set_setting($key_or_pdo, $value_or_key = null, $actual_value = null) {
             $stmt = $_pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)
                                    ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = CURRENT_TIMESTAMP");
         }
-        return $stmt->execute([$key, $value]);
+        $success = $stmt->execute([$key, $value]);
+
+        if ($success && $GLOBALS['__SETTINGS_CACHE__'] !== null) {
+            $GLOBALS['__SETTINGS_CACHE__'][$key] = $value;
+        }
+        return $success;
     } catch (Exception $e) {
         return false;
     }
@@ -152,6 +179,7 @@ if (file_exists($config_file)) {
 
     // Perform highly optimized version check
     if ($pdo) {
+        preload_settings($pdo);
         require_once __DIR__ . '/migrations.php';
         MigrationManager::runIfRequired($pdo, APP_DB_VERSION);
     }
