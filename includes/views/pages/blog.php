@@ -151,10 +151,10 @@
     .blog-card:hover img { transform: scale(1.05); }
 
     .glass-badge {
-        background: rgba(255, 255, 255, 0.2);
+        background: var(--color-white-20);
         backdrop-filter: blur(8px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        color: white;
+        border: 1px solid var(--color-white-30);
+        color: var(--color-white);
         padding: 4px 12px;
     }
 
@@ -167,13 +167,13 @@
     }
     .btn-blog-outline:hover {
         background: var(--color-primary);
-        color: white;
+        color: var(--color-white);
     }
 
     .sticky-sidebar { position: sticky; top: 1rem; }
 
     .cat-link { color: var(--color-text); }
-    .cat-link:hover { background: #f8fafc; color: var(--color-primary); }
+    .cat-link:hover { background: var(--color-gray-light); color: var(--color-primary); }
     .cat-link.active { background: var(--color-primary-light); color: var(--color-primary); }
     .cat-link.active .cat-arrow { transform: translateX(-5px); }
     .cat-arrow { transition: transform 0.3s; }
@@ -191,7 +191,7 @@
     .popular-item:hover h4 { color: var(--color-primary); }
 
     .post-overlay-gradient {
-        background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+        background: linear-gradient(to top, var(--color-black-70), transparent);
     }
 
     /* Bento Grid for Featured Posts */

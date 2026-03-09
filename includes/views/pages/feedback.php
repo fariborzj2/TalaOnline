@@ -61,5 +61,5 @@
 
 <style>
     .basis-300 { flex-basis: 300px; }
-    textarea::placeholder { color: #ccc; }
+    textarea::placeholder { color: var(--color-text-dim); }
 </style>

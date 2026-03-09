@@ -345,10 +345,10 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
     }
     .level-badge {
         position: absolute; top: 10px; left: 10px;
-        background: rgba(40, 40, 40, 0.9); color: white;
+        background: var(--color-bg-dark); color: var(--color-white);
         padding: 0 10px; 
         border-radius: 6px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        box-shadow: 0 8px 20px var(--color-shadow-md);
         z-index: 2;
     }
     .profile-avatar-wrapper {
@@ -356,18 +356,18 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
     }
     .profile-avatar-container {
         width: 60px; height: 60px; border-radius: 50%;
-        border: 1px solid white; background: #f3f4f6;
-        overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        border: 1px solid var(--color-white); background: var(--color-secondary);
+        overflow: hidden; box-shadow: 0 10px 25px var(--color-shadow-sm);
     }
     .profile-avatar { width: 100%; height: 100%; object-fit: cover; }
     .profile-avatar-placeholder {
         width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
     }
     .btn-avatar-upload {
-        position: absolute; bottom: -2px; left: -2px; background: var(--color-primary); color: white;
-        width: 24px; height: 24px; border-radius: 50%; border: 1px solid white;
+        position: absolute; bottom: -2px; left: -2px; background: var(--color-primary); color: var(--color-white);
+        width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--color-white);
         display: flex; align-items: center; justify-content: center; cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px var(--color-shadow-sm);
         padding: 3px;
     }
     .membership-date {
@@ -376,8 +376,8 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
         left: 0
     }
     .btn-follow-large {
-        background: #249E94; 
-        color: white; 
+        background: var(--color-primary);
+        color: var(--color-white);
         height: 40px;
         padding: 5px 18px;
         border-radius: 8px; 
@@ -388,10 +388,10 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
         gap: 12px;
         transition: all 0.2s; 
         cursor: pointer;
-        box-shadow: 0 4px 12px rgba(36, 158, 148, 0.2);
+        box-shadow: 0 4px 12px var(--color-primary-20);
     }
-    .btn-follow-large:hover { background: #1d827a; box-shadow: 0 6px 15px rgba(36, 158, 148, 0.3); }
-    .btn-follow-large.active { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; box-shadow: none; }
+    .btn-follow-large:hover { background: var(--color-primary-deep); box-shadow: 0 6px 15px var(--color-primary-30); }
+    .btn-follow-large.active { background: var(--color-secondary); color: var(--color-text-muted); border: 1px solid var(--color-border); box-shadow: none; }
 
     .profile-tab-btn {
         display: flex; align-items: center; gap: 12px; padding: 10px 15px; border-radius: 10px;

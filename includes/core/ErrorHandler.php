@@ -121,14 +121,27 @@ class ErrorHandler {
     private static function fallbackRender($code, $title, $message, $details) {
         echo "<!DOCTYPE html><html lang='fa' dir='rtl'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>$title</title>";
         echo "<style>
-            :root { --primary: #249E94; --bg: #F8FAFC; --text: #1E293B; --error: #E11D48; }
+            :root {
+                --primary: #249E94;
+                --bg: #F8FAFC;
+                --text: #1E293B;
+                --error: #E11D48;
+                --shadow: rgba(0, 0, 0, 0.1);
+                --shadow-soft: rgba(0,0,0,0.05);
+                --error-light: #FFF1F2;
+                --primary-dark: #0F172A;
+                --text-muted: #64748B;
+                --text-dim: #94A3B8;
+                --white-10: rgba(255,255,255,0.1);
+                --primary-20: rgba(36, 158, 148, 0.2);
+            }
             body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-            .card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); max-width: 500px; width: 100%; text-align: center; border: 1px solid rgba(0,0,0,0.05); }
-            .icon { width: 64px; height: 64px; background: #FFF1F2; color: var(--error); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 32px; font-weight: bold; }
-            h1 { font-size: 24px; font-weight: 900; margin: 0 0 12px; color: #0F172A; }
-            p { font-size: 16px; line-height: 1.6; margin: 0 0 32px; color: #64748B; font-weight: 500; }
-            pre { text-align: left; background: #0F172A; color: #94A3B8; padding: 20px; border-radius: 16px; overflow: auto; max-height: 200px; direction: ltr; font-size: 11px; margin-bottom: 32px; line-height: 1.5; border: 1px solid rgba(255,255,255,0.1); }
-            .btn { display: inline-block; background: var(--primary); color: white; padding: 12px 32px; border-radius: 12px; text-decoration: none; font-weight: bold; transition: all 0.2s; box-shadow: 0 10px 15px -3px rgba(36, 158, 148, 0.2); }
+            .card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 25px -5px var(--shadow); max-width: 500px; width: 100%; text-align: center; border: 1px solid var(--shadow-soft); }
+            .icon { width: 64px; height: 64px; background: var(--error-light); color: var(--error); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 32px; font-weight: bold; }
+            h1 { font-size: 24px; font-weight: 900; margin: 0 0 12px; color: var(--primary-dark); }
+            p { font-size: 16px; line-height: 1.6; margin: 0 0 32px; color: var(--text-muted); font-weight: 500; }
+            pre { text-align: left; background: var(--primary-dark); color: var(--text-dim); padding: 20px; border-radius: 16px; overflow: auto; max-height: 200px; direction: ltr; font-size: 11px; margin-bottom: 32px; line-height: 1.5; border: 1px solid var(--white-10); }
+            .btn { display: inline-block; background: var(--primary); color: white; padding: 12px 32px; border-radius: 12px; text-decoration: none; font-weight: bold; transition: all 0.2s; box-shadow: 0 10px 15px -3px var(--primary-20); }
             .btn:hover { opacity: 0.9; transform: translateY(-1px); }
         </style></head><body>";
         echo "<div class='card'><div class='icon'>!</div><h1>$title ($code)</h1><p>$message</p>";

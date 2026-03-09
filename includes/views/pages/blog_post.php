@@ -136,7 +136,7 @@
                                 <strong class="font-size-1 text-title"><?= htmlspecialchars($faq['question']) ?></strong>
                                 <i data-lucide="chevron-down" class="w-4 h-4 transition-all opacity-40"></i>
                             </div>
-                            <div class="faq-answer pd-md border-top d-none bg-white/50">
+                            <div class="faq-answer pd-md border-top d-none bg-secondary">
                                 <p class="font-size-1-1 line-height-2 text-subtitle"><?= nl2br(htmlspecialchars($faq['answer'])) ?></p>
                             </div>
                         </div>
@@ -245,25 +245,25 @@
         align-items: center;
         justify-content: center;
         transition: all 0.3s;
-        border: 1px solid #eee;
-        color: #888;
+        border: 1px solid var(--color-border-alt);
+        color: var(--color-text-dim);
     }
-    .share-btn:hover { transform: translateY(-3px); color: white; border-color: transparent; }
-    .share-btn.telegram:hover { background: #0088cc; }
-    .share-btn.twitter:hover { background: #1da1f2; }
-    .share-btn.whatsapp:hover { background: #25d366; }
+    .share-btn:hover { transform: translateY(-3px); color: var(--color-white); border-color: transparent; }
+    .share-btn.telegram:hover { background: var(--color-info); }
+    .share-btn.twitter:hover { background: var(--color-info); }
+    .share-btn.whatsapp:hover { background: var(--color-success-alt); }
 
     .tag-pill {
-        background: #f8fafc;
+        background: var(--color-gray-light);
         color: #64748b;
         padding: 5px 12px;
         border-radius: 8px;
         font-size: 11px;
         font-weight: 700;
-        border: 1px solid #edf2f7;
+        border: 1px solid var(--color-border);
         transition: all 0.2s;
     }
-    .tag-pill:hover { background: #edf2f7; color: var(--color-primary); }
+    .tag-pill:hover { background: var(--color-border); color: var(--color-primary); }
 
     .transition-all { transition: all 0.3s; }
     .blog-card { color: var(--color-text) }

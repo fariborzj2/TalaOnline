@@ -4,9 +4,9 @@
  */
 
 .base-editor-container {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-    background: #fff;
+    background: var(--color-white);
     /* overflow: hidden; */
     display: flex;
     flex-direction: column;
@@ -17,8 +17,8 @@
 }
 
 .base-editor-container:focus-within {
-    border-color: #249E94;
-    box-shadow: 0 0 0 3px rgba(36, 158, 148, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-10);
 }
 
 .base-editor-toolbar {
@@ -26,8 +26,8 @@
     flex-wrap: wrap;
     align-items: center;
     padding: 6px;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
+    background: var(--color-gray-light);
+    border-bottom: 1px solid var(--color-border);
     gap: 2px;
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
@@ -42,21 +42,21 @@
     border: 1px solid transparent;
     background: transparent;
     border-radius: 8px;
-    color: #64748b;
+    color: var(--color-text-muted);
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
 }
 
 .base-editor-btn:hover {
-    background: #f1f5f9;
-    color: #1e293b;
+    background: var(--color-secondary);
+    color: var(--color-text-header);
 }
 
 .base-editor-btn.active {
-    background: #e2e8f0;
-    color: #249E94;
-    border-color: rgba(36, 158, 148, 0.2);
+    background: var(--color-border);
+    color: var(--color-primary);
+    border-color: var(--color-primary-20);
 }
 
 .base-editor-btn i {
@@ -67,7 +67,7 @@
 .base-editor-divider {
     width: 1px;
     height: 20px;
-    background: #e2e8f0;
+    background: var(--color-border);
     margin: 0 6px;
 }
 
@@ -76,7 +76,7 @@
     min-height: 120px;
     outline: none;
     line-height: 1.8;
-    color: #334155;
+    color: var(--color-text-dark);
     overflow-y: auto;
     font-size: 0.95rem;
     position: relative;
@@ -85,7 +85,7 @@
 .base-editor-content:empty::before {
     content: attr(placeholder);
     position: absolute;
-    color: #94a3b8;
+    color: var(--color-text-dim);
     pointer-events: none;
     display: block; /* For empty state */
 }
@@ -97,11 +97,11 @@
 }
 
 .base-editor-content blockquote {
-    border-right: 4px solid #249E94;
+    border-right: 4px solid var(--color-primary);
     padding: 8px 16px;
     margin: 16px 0;
-    background: #f0fdfa;
-    color: #475569;
+    background: var(--color-primary-light);
+    color: var(--color-text);
     border-radius: 4px 0 0 4px;
 }
 
@@ -120,20 +120,20 @@
     justify-content: space-between;
     align-items: center;
     padding: 8px 16px;
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
+    background: var(--color-gray-light);
+    border-top: 1px solid var(--color-border);
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--color-text-dim);
     border-bottom-left-radius: 7px;
     border-bottom-right-radius: 7px;
 }
 
 .base-editor-char-counter.limit-near {
-    color: #f59e0b;
+    color: var(--color-orange);
 }
 
 .base-editor-char-counter.limit-exceeded {
-    color: #ef4444;
+    color: var(--color-error-alt);
     font-weight: bold;
 }
 
@@ -141,9 +141,9 @@
     display: none;
     padding: 16px;
     min-height: 120px;
-    background: #fff;
+    background: var(--color-white);
     line-height: 1.8;
-    color: #334155;
+    color: var(--color-text-dark);
     overflow-y: auto;
 }
 
@@ -161,12 +161,12 @@
 }
 
 .base-editor-container.disabled {
-    background: #f1f5f9;
+    background: var(--color-secondary);
 }
 
 .base-editor-container.disabled .base-editor-content {
     cursor: not-allowed;
-    color: #94a3b8;
+    color: var(--color-text-dim);
 }
 
 /* Tooltip (optional, simple CSS implementation) */
@@ -176,8 +176,8 @@
     bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
-    background: #1e293b;
-    color: #fff;
+    background: var(--color-text-header);
+    color: var(--color-white);
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 11px;

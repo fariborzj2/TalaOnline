@@ -86,7 +86,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(15, 23, 42, 0.6);
+            background-color: var(--color-modal-overlay);
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
@@ -111,7 +111,7 @@
             opacity: 0;
             transition: all 0.3s;
             text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--color-shadow-lg);
         }
         .custom-dialog-overlay.active .custom-dialog-box {
             transform: scale(1);
