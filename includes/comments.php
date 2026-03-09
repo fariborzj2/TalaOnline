@@ -141,7 +141,7 @@ class Comments {
                 LEFT JOIN users ru ON c.reply_to_user_id = ru.id
                 LEFT JOIN comments rc ON c.reply_to_id = rc.id
                 WHERE c.parent_id IN ($id_placeholders) AND c.status = 'approved'
-        ) WHERE rn <= 3";
+        ) as t WHERE rn <= 3";
 
         $stmt = $this->pdo->prepare($replies_sql);
         $stmt->execute($top_level_ids);
