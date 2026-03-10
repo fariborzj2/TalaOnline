@@ -537,16 +537,21 @@ class Comments {
                 // Reward user
                 $this->rewardUser($user_id, 10); // 10 points for comment
 
+                // Performance optimization: Pre-fetch sender name once for all notifications
+                $stmt_sender = $this->pdo->prepare("SELECT name FROM users WHERE id = ?");
+                $stmt_sender->execute([$user_id]);
+                $sender_name = $stmt_sender->fetchColumn();
+
                 // Check for mentions (uses placeholders to notify)
-                $this->handleMentions($stored_content, $comment_id, $user_id);
+                $this->handleMentions($stored_content, $comment_id, $user_id, $sender_name);
 
                 // Notify parent author
                 if ($parent_id) {
-                    $this->notifyReply($parent_id, $comment_id);
+                    $this->notifyReply($parent_id, $comment_id, $sender_name);
                 }
                 // Also notify if it's a direct reply to a user in a thread
                 if ($reply_to_user_id && $reply_to_user_id != $user_id) {
-                    $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $user_id);
+                    $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $sender_name);
                     $notif = new Notifications($this->pdo);
                     $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
                 }
@@ -880,33 +885,42 @@ class Comments {
     }
 
     /**
-     * Handle mentions and queue notifications
+     * Handle mentions and queue notifications (Optimized: Batch user lookups)
      */
-    private function handleMentions($content, $comment_id, $sender_id) {
+    private function handleMentions($content, $comment_id, $sender_id, $sender_name) {
         $notif = new Notifications($this->pdo);
 
-        // 1. Handle [user:ID] placeholders
-        preg_match_all('/\[user:(\d+)\]/', $content, $matches);
-        $userIds = array_values(array_unique($matches[1]));
+        // 1. Extract potential mention targets
+        preg_match_all('/\[user:(\d+)\]/', $content, $matches_id);
+        $userIds = array_values(array_unique($matches_id[1]));
 
-        foreach ($userIds as $uid) {
-            if ($uid != $sender_id) {
-                $this->sendNotificationEmail(['id' => $uid], 'mention', $comment_id, $sender_id);
-                $notif->create($uid, $sender_id, 'mention', $comment_id);
-            }
+        preg_match_all('/@([a-zA-Z0-9_]+)/', $content, $matches_user);
+        $usernames = array_values(array_unique($matches_user[1]));
+
+        if (empty($userIds) && empty($usernames)) return;
+
+        // 2. Batch fetch all target users in a single query
+        $where_clauses = [];
+        $params = [];
+        if (!empty($userIds)) {
+            $placeholders = implode(',', array_fill(0, count($userIds), '?'));
+            $where_clauses[] = "id IN ($placeholders)";
+            $params = array_merge($params, $userIds);
+        }
+        if (!empty($usernames)) {
+            $placeholders = implode(',', array_fill(0, count($usernames), '?'));
+            $where_clauses[] = "LOWER(username) IN ($placeholders)";
+            foreach ($usernames as $u) $params[] = strtolower($u);
         }
 
-        // 2. Legacy Support: Handle @username mentions that weren't converted (just in case)
-        preg_match_all('/@([a-zA-Z0-9_]+)/', $content, $matches);
-        $usernames = array_values(array_unique($matches[1]));
+        $stmt = $this->pdo->prepare("SELECT id, email, name FROM users WHERE " . implode(" OR ", $where_clauses));
+        $stmt->execute($params);
+        $target_users = $stmt->fetchAll();
 
-        foreach ($usernames as $username) {
-            $stmt = $this->pdo->prepare("SELECT id, email, name FROM users WHERE LOWER(username) = LOWER(?)");
-            $stmt->execute([$username]);
-            $user = $stmt->fetch();
-
-            if ($user && $user['id'] != $sender_id && !in_array($user['id'], $userIds)) {
-                $this->sendNotificationEmail($user, 'mention', $comment_id, $sender_id);
+        // 3. Process notifications
+        foreach ($target_users as $user) {
+            if ($user['id'] != $sender_id) {
+                $this->sendNotificationEmail($user, 'mention', $comment_id, $sender_name);
                 $notif->create($user['id'], $sender_id, 'mention', $comment_id);
             }
         }
@@ -915,7 +929,7 @@ class Comments {
     /**
      * Notify author of parent comment about a reply
      */
-    private function notifyReply($parent_id, $comment_id) {
+    private function notifyReply($parent_id, $comment_id, $sender_name) {
         $stmt = $this->pdo->prepare("SELECT u.id, u.email, u.name, c.user_id as sender_id
                                      FROM comments pc
                                      JOIN users u ON pc.user_id = u.id
@@ -925,27 +939,23 @@ class Comments {
         $user = $stmt->fetch();
 
         if ($user && $user['id'] != $user['sender_id']) {
-            $this->sendNotificationEmail($user, 'reply', $comment_id, $user['sender_id']);
+            $this->sendNotificationEmail($user, 'reply', $comment_id, $sender_name);
             $notif = new Notifications($this->pdo);
             $notif->create($user['id'], $user['sender_id'], 'reply', $comment_id);
         }
     }
 
     /**
-     * Send notification email
+     * Send notification email (Optimized: Accepts pre-fetched sender name)
      */
-    private function sendNotificationEmail($user, $type, $comment_id, $sender_id) {
-        // Fetch full user data if only ID is provided
+    private function sendNotificationEmail($user, $type, $comment_id, $sender_name) {
+        // Fetch full recipient data if only ID is provided (e.g. from direct reply)
         if (!isset($user['email']) || empty($user['email'])) {
             $stmt = $this->pdo->prepare("SELECT name, email FROM users WHERE id = ?");
             $stmt->execute([$user['id']]);
             $user = $stmt->fetch();
             if (!$user || empty($user['email'])) return;
         }
-
-        $stmt = $this->pdo->prepare("SELECT name FROM users WHERE id = ?");
-        $stmt->execute([$sender_id]);
-        $sender_name = $stmt->fetchColumn();
 
         $subject = ($type === 'mention') ? "از شما در یک نظر نام برده شد" : "به نظر شما پاسخ داده شد";
         $message = ($type === 'mention')
