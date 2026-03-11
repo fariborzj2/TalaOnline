@@ -843,6 +843,38 @@ class MigrationManager {
                 'action_url' => '{url}',
                 'channels' => 'webpush,email,in-app',
                 'priority' => 'high'
+            ],
+            [
+                'slug' => 'community_pulse',
+                'title' => 'نبض بازار: {symbol}',
+                'body' => 'نوسان قیمت در کنار {count} نظر جدید در ساعت اخیر؛ بحث‌های داغ را دنبال کنید.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'medium'
+            ],
+            [
+                'slug' => 'technical_break',
+                'title' => 'شکست سطح در {symbol}',
+                'body' => 'قیمت {symbol} از {label} عبور کرد و به {price} رسید.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'high'
+            ],
+            [
+                'slug' => 'blog_trending',
+                'title' => 'مطلب ترند: {title}',
+                'body' => 'این مقاله با {views} بازدید در حال رشد سریع است. مطالعه آن را از دست ندهید!',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'low'
+            ],
+            [
+                'slug' => 'social_follow',
+                'title' => 'همراه جدید!',
+                'body' => 'کاربر {follower_name} شما را دنبال کرد.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'low'
             ]
         ];
 

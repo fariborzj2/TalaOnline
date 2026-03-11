@@ -523,6 +523,13 @@ $router->add('/blog/:category_slug/:post_slug', function($params) {
                 // Update views
                 $pdo->prepare("UPDATE blog_posts SET views = views + 1 WHERE id = ?")->execute([$post['id']]);
 
+                // Trigger Content Velocity check
+                require_once __DIR__ . '/push_service.php';
+                require_once __DIR__ . '/trigger_engine.php';
+                $pushService = new PushService($pdo);
+                $triggerEngine = new TriggerEngine($pdo, $pushService);
+                $triggerEngine->handleContentVelocity($post['id'], $post['title'], $post['views'] + 1);
+
                 // Fetch all categories for this post
                 $stmt_cats = $pdo->prepare("SELECT c.* FROM blog_categories c INNER JOIN blog_post_categories pc ON c.id = pc.category_id WHERE pc.post_id = ? ORDER BY c.sort_order ASC");
                 $stmt_cats->execute([$post['id']]);
