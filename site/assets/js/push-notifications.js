@@ -74,18 +74,26 @@ class PushNotificationManager {
     }
 
     urlB64ToUint8Array(base64String) {
+        // Robust cleanup: remove whitespace, quotes, and non-base64 chars
+        base64String = base64String.replace(/[\s\n\r"']/g, '');
+
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
         const base64 = (base64String + padding)
-            .replace(/\-/g, '+')
+            .replace(/-/g, '+')
             .replace(/_/g, '/');
 
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
+        try {
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
 
-        for (let i = 0; i < rawData.length; ++i) {
-            outputArray[i] = rawData.charCodeAt(i);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        } catch (e) {
+            console.error('Base64 Decoding Error:', e, 'String:', base64String);
+            return new Uint8Array(0);
         }
-        return outputArray;
     }
 }
 
