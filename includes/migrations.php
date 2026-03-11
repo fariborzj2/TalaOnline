@@ -159,6 +159,42 @@ class MigrationManager {
                     `related_item_symbol` VARCHAR(100),
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )",
+                "CREATE TABLE IF NOT EXISTS `prices_cache` (
+                    `symbol` VARCHAR(50) PRIMARY KEY,
+                    `price` VARCHAR(50),
+                    `change_val` VARCHAR(50),
+                    `change_percent` VARCHAR(20),
+                    `high` VARCHAR(50),
+                    `low` VARCHAR(50),
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `prices_history` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `symbol` VARCHAR(50) NOT NULL,
+                    `price` VARCHAR(50) NOT NULL,
+                    `high` VARCHAR(50),
+                    `low` VARCHAR(50),
+                    `date` DATE NOT NULL,
+                    UNIQUE (`symbol`, `date`)
+                )",
+                "CREATE TABLE IF NOT EXISTS `platforms` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `name` VARCHAR(100) NOT NULL,
+                    `en_name` VARCHAR(100),
+                    `logo` VARCHAR(255),
+                    `buy_price` VARCHAR(50),
+                    `sell_price` VARCHAR(50),
+                    `fee` VARCHAR(20),
+                    `status` VARCHAR(50),
+                    `link` VARCHAR(255),
+                    `is_active` TINYINT DEFAULT 1,
+                    `sort_order` INTEGER DEFAULT 0,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `login_attempts` (
+                    `ip` VARCHAR(45) NOT NULL,
+                    `attempt_time` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
                 "CREATE TABLE IF NOT EXISTS `comment_reactions` (
                     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                     `user_id` INTEGER,
@@ -336,6 +372,105 @@ class MigrationManager {
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
                     FOREIGN KEY (`comment_id`) REFERENCES `comments`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `categories` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `slug` VARCHAR(100) NOT NULL UNIQUE,
+                    `name` VARCHAR(100) NOT NULL,
+                    `en_name` VARCHAR(100),
+                    `icon` VARCHAR(50),
+                    `logo` VARCHAR(255),
+                    `views` INT DEFAULT 0,
+                    `sort_order` INT DEFAULT 0,
+                    `page_title` VARCHAR(255),
+                    `h1_title` VARCHAR(255),
+                    `meta_description` TEXT,
+                    `meta_keywords` TEXT,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `items` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `symbol` VARCHAR(50) NOT NULL UNIQUE,
+                    `name` VARCHAR(100) NOT NULL,
+                    `en_name` VARCHAR(100),
+                    `category` VARCHAR(100),
+                    `slug` VARCHAR(100),
+                    `logo` VARCHAR(255),
+                    `description` TEXT,
+                    `long_description` TEXT,
+                    `manual_price` VARCHAR(50),
+                    `is_manual` TINYINT DEFAULT 0,
+                    `is_active` TINYINT DEFAULT 1,
+                    `views` INT DEFAULT 0,
+                    `sort_order` INT DEFAULT 0,
+                    `show_in_summary` TINYINT DEFAULT 0,
+                    `show_chart` TINYINT DEFAULT 0,
+                    `page_title` VARCHAR(255),
+                    `h1_title` VARCHAR(255),
+                    `meta_description` TEXT,
+                    `meta_keywords` TEXT,
+                    `related_item_symbol` VARCHAR(100),
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `prices_cache` (
+                    `symbol` VARCHAR(50) PRIMARY KEY,
+                    `price` VARCHAR(50),
+                    `change_val` VARCHAR(50),
+                    `change_percent` VARCHAR(20),
+                    `high` VARCHAR(50),
+                    `low` VARCHAR(50),
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `prices_history` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `symbol` VARCHAR(50) NOT NULL,
+                    `price` VARCHAR(50) NOT NULL,
+                    `high` VARCHAR(50),
+                    `low` VARCHAR(50),
+                    `date` DATE NOT NULL,
+                    UNIQUE KEY `symbol_date` (`symbol`, `date`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `platforms` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `name` VARCHAR(100) NOT NULL,
+                    `en_name` VARCHAR(100),
+                    `logo` VARCHAR(255),
+                    `buy_price` VARCHAR(50),
+                    `sell_price` VARCHAR(50),
+                    `fee` VARCHAR(20),
+                    `status` VARCHAR(50),
+                    `link` VARCHAR(255),
+                    `is_active` TINYINT DEFAULT 1,
+                    `sort_order` INT DEFAULT 0,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `login_attempts` (
+                    `ip` VARCHAR(45) NOT NULL,
+                    `attempt_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX `idx_login_attempts_ip_time` (`ip`, `attempt_time`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `settings` (
+                    `setting_key` VARCHAR(50) PRIMARY KEY,
+                    `setting_value` TEXT,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `comments` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `user_id` INT,
+                    `target_id` VARCHAR(255),
+                    `target_type` VARCHAR(50),
+                    `content` TEXT,
+                    `parent_id` INT DEFAULT NULL,
+                    `reply_to_id` INT DEFAULT NULL,
+                    `reply_to_user_id` INT DEFAULT NULL,
+                    `guest_name` VARCHAR(100) DEFAULT NULL,
+                    `guest_email` VARCHAR(100) DEFAULT NULL,
+                    `type` VARCHAR(20) DEFAULT 'comment',
+                    `image_url` VARCHAR(255) DEFAULT NULL,
+                    `likes_count` INT DEFAULT 0,
+                    `status` VARCHAR(20) DEFAULT 'approved',
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
                 "CREATE TABLE IF NOT EXISTS `notifications` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,

@@ -59,13 +59,25 @@ class NavasanService {
         }
 
         if (!empty($cache_values)) {
-            $cache_sql = "INSERT INTO prices_cache (symbol, price, change_val, change_percent, updated_at) VALUES " . implode(',', $cache_values);
-            $cache_sql .= " ON DUPLICATE KEY UPDATE price = VALUES(price), change_val = VALUES(change_val), change_percent = VALUES(change_percent), updated_at = CURRENT_TIMESTAMP";
-            $this->pdo->prepare($cache_sql)->execute($cache_params);
+            $driver = $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
-            $history_sql = "INSERT INTO prices_history (symbol, price, high, low, date) VALUES " . implode(',', $history_values);
-            $history_sql .= " ON DUPLICATE KEY UPDATE price = VALUES(price), high = GREATEST(high, VALUES(price)), low = LEAST(low, VALUES(price))";
-            $this->pdo->prepare($history_sql)->execute($history_params);
+            if ($driver === 'sqlite') {
+                $cache_sql = "INSERT INTO prices_cache (symbol, price, change_val, change_percent, updated_at) VALUES " . implode(',', $cache_values);
+                $cache_sql .= " ON CONFLICT(symbol) DO UPDATE SET price = excluded.price, change_val = excluded.change_val, change_percent = excluded.change_percent, updated_at = CURRENT_TIMESTAMP";
+                $this->pdo->prepare($cache_sql)->execute($cache_params);
+
+                $history_sql = "INSERT INTO prices_history (symbol, price, high, low, date) VALUES " . implode(',', $history_values);
+                $history_sql .= " ON CONFLICT(symbol, date) DO UPDATE SET price = excluded.price, high = MAX(high, excluded.price), low = MIN(low, excluded.price)";
+                $this->pdo->prepare($history_sql)->execute($history_params);
+            } else {
+                $cache_sql = "INSERT INTO prices_cache (symbol, price, change_val, change_percent, updated_at) VALUES " . implode(',', $cache_values);
+                $cache_sql .= " ON DUPLICATE KEY UPDATE price = VALUES(price), change_val = VALUES(change_val), change_percent = VALUES(change_percent), updated_at = CURRENT_TIMESTAMP";
+                $this->pdo->prepare($cache_sql)->execute($cache_params);
+
+                $history_sql = "INSERT INTO prices_history (symbol, price, high, low, date) VALUES " . implode(',', $history_values);
+                $history_sql .= " ON DUPLICATE KEY UPDATE price = VALUES(price), high = GREATEST(high, VALUES(price)), low = LEAST(low, VALUES(price))";
+                $this->pdo->prepare($history_sql)->execute($history_params);
+            }
 
             // Trigger Engine for Volatility
             $pushService = new PushService($this->pdo);
