@@ -547,27 +547,43 @@ class Comments {
                 // Check for mentions (uses placeholders to notify)
                 $this->handleMentions($stored_content, $comment_id, $user_id, $sender_name);
 
-                // Notify parent author
-                if ($parent_id) {
-                    $this->notifyReply($parent_id, $comment_id, $sender_name);
+                // Notify parent author and reply target
+                if ($parent_id || ($reply_to_user_id && $reply_to_user_id != $user_id)) {
+                    if ($parent_id) {
+                        $this->notifyReply($parent_id, $comment_id, $sender_name);
+                    }
+                    if ($reply_to_user_id && $reply_to_user_id != $user_id) {
+                        $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $sender_name);
+                        $notif = new Notifications($this->pdo);
+                        $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
+                    }
 
-                    // Trigger Push Notification via Engine
+                    // Consolidated Push Notifications via Engine
                     $pushService = new PushService($this->pdo);
                     $triggerEngine = new TriggerEngine($this->pdo, $pushService);
-                    $triggerEngine->handleCommentInteraction($comment_id, $parent_id, $sender_name);
+                    $triggerEngine->handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id);
                 }
-                // Also notify if it's a direct reply to a user in a thread
-                if ($reply_to_user_id && $reply_to_user_id != $user_id) {
-                    $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $sender_name);
-                    $notif = new Notifications($this->pdo);
-                    $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
+            }
 
-                    $pushService = new PushService($this->pdo);
-                    $pushService->notify($reply_to_user_id, 'social_reply', [
-                        'sender_name' => $sender_name,
-                        'url' => get_site_url() . "/thread/$comment_id"
-                    ]);
-                }
+            // Trending Discussion Trigger (Velocity Check)
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND created_at > datetime('now', '-1 hour')");
+            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+            }
+            $stmt->execute([$target_id, $target_type]);
+            $recent_count = $stmt->fetchColumn();
+
+            if ($recent_count == 20) { // Threshold for "Trending"
+                $pushService = new PushService($this->pdo);
+                $triggerEngine = new TriggerEngine($this->pdo, $pushService);
+                $info = $this->getTargetInfo($target_id, $target_type);
+
+                $triggerEngine->handleTrendingDiscussion(
+                    $target_id,
+                    $target_type,
+                    $info['title'] ?? 'یک بحث داغ',
+                    ($info['url'] ?? '/')
+                );
             }
 
             return $comment_id;
@@ -615,6 +631,23 @@ class Comments {
         // Sync likes_count for sorting performance
         $stmt = $this->pdo->prepare("UPDATE comments SET likes_count = (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'like') WHERE id = ?");
         $stmt->execute([$comment_id, $comment_id]);
+
+        // Milestone Notification (Engagement Strategy)
+        if ($reaction_type === 'like' && $author_id && $author_id != $user_id) {
+            $stmt = $this->pdo->prepare("SELECT likes_count FROM comments WHERE id = ?");
+            $stmt->execute([$comment_id]);
+            $count = $stmt->fetchColumn();
+
+            $milestones = [10, 50, 100, 500, 1000];
+            if (in_array($count, $milestones)) {
+                $pushService = new PushService($this->pdo);
+                $triggerEngine = new TriggerEngine($this->pdo, $pushService);
+                $triggerEngine->handleMilestone($author_id, $comment_id, $count);
+
+                $notif = new Notifications($this->pdo);
+                $notif->create($author_id, 0, 'milestone', $comment_id);
+            }
+        }
 
         return true;
     }
@@ -931,10 +964,16 @@ class Comments {
         $target_users = $stmt->fetchAll();
 
         // 3. Process notifications
+        $pushService = new PushService($this->pdo);
         foreach ($target_users as $user) {
             if ($user['id'] != $sender_id) {
                 $this->sendNotificationEmail($user, 'mention', $comment_id, $sender_name);
                 $notif->create($user['id'], $sender_id, 'mention', $comment_id);
+
+                $pushService->notify($user['id'], 'social_mention', [
+                    'sender_name' => $sender_name,
+                    'url' => get_site_url() . "/thread/$comment_id"
+                ]);
             }
         }
     }

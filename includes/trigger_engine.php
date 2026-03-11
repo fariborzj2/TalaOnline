@@ -46,16 +46,56 @@ class TriggerEngine {
     /**
      * Trigger: Deep Interaction (Social)
      */
-    public function handleCommentInteraction($comment_id, $parent_id, $sender_name) {
-        // This is partially handled in Comments class already, but we can extend it here for push
-        $stmt = $this->pdo->prepare("SELECT user_id FROM comments WHERE id = ?");
-        $stmt->execute([$parent_id]);
-        $target_user_id = $stmt->fetchColumn();
+    public function handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id = null) {
+        $notified_users = [];
 
-        if ($target_user_id) {
-            $this->pushService->notify($target_user_id, 'social_reply', [
+        // 1. Notify root parent author
+        if ($parent_id) {
+            $stmt = $this->pdo->prepare("SELECT user_id FROM comments WHERE id = ?");
+            $stmt->execute([$parent_id]);
+            $root_author_id = $stmt->fetchColumn();
+
+            if ($root_author_id) {
+                $this->pushService->notify($root_author_id, 'social_reply', [
+                    'sender_name' => $sender_name,
+                    'url' => get_site_url() . "/thread/$comment_id"
+                ]);
+                $notified_users[] = $root_author_id;
+            }
+        }
+
+        // 2. Notify direct reply target (if different from root author)
+        if ($reply_to_user_id && !in_array($reply_to_user_id, $notified_users)) {
+            $this->pushService->notify($reply_to_user_id, 'social_reply', [
                 'sender_name' => $sender_name,
-                'url' => get_site_url() . "/thread/$comment_id" // Placeholder URL
+                'url' => get_site_url() . "/thread/$comment_id"
+            ]);
+        }
+    }
+
+    /**
+     * Trigger: Social Milestone
+     */
+    public function handleMilestone($author_id, $comment_id, $count) {
+        return $this->pushService->notify($author_id, 'social_milestone', [
+            'count' => $count,
+            'url' => get_site_url() . "/thread/$comment_id"
+        ]);
+    }
+
+    /**
+     * Trigger: Trending Discussion
+     */
+    public function handleTrendingDiscussion($target_id, $target_type, $title, $url) {
+        // Notify segment of active users (Sample strategy: top 50 recently active)
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 ORDER BY updated_at DESC LIMIT 50");
+        $stmt->execute();
+        $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($users as $user_id) {
+            $this->pushService->notify($user_id, 'social_trending', [
+                'title' => $title,
+                'url' => get_site_url() . $url
             ]);
         }
     }

@@ -741,6 +741,76 @@ class MigrationManager {
             }
             $this->log("RBAC seeding complete.");
         }
+
+        // 3. Seed Notification Templates
+        $this->log("Ensuring notification templates are seeded...");
+        $templates = [
+            [
+                'slug' => 'asset_volatility',
+                'title' => 'نوسان شدید در {name}',
+                'body' => 'قیمت {name} ({symbol}) شاهد {type} {change}% بوده است.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email,in-app',
+                'priority' => 'high'
+            ],
+            [
+                'slug' => 'social_reply',
+                'title' => 'پاسخ جدید به نظر شما',
+                'body' => 'کاربر {sender_name} به نظر شما پاسخ داده است.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email,in-app',
+                'priority' => 'medium'
+            ],
+            [
+                'slug' => 'social_mention',
+                'title' => 'از شما نام برده شد',
+                'body' => 'کاربر {sender_name} در یک نظر از شما نام برده است.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email,in-app',
+                'priority' => 'medium'
+            ],
+            [
+                'slug' => 'social_milestone',
+                'title' => 'تبریک! محبوبیت نظر شما',
+                'body' => 'نظر شما به {count} لایک رسید. کاربران دیگر از تحلیل شما لذت می‌برند!',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'medium'
+            ],
+            [
+                'slug' => 'social_trending',
+                'title' => 'بحث داغ: {title}',
+                'body' => 'یک گفتگوی پرهیجان در مورد {title} در جریان است. شما هم بپیوندید!',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'low'
+            ],
+            [
+                'slug' => 'blog_new_post',
+                'title' => 'مقاله جدید منتشر شد',
+                'body' => 'مطلب جدیدی در دسته {category} با عنوان "{title}" منتشر گردید.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email,in-app',
+                'priority' => 'medium'
+            ],
+            [
+                'slug' => 'rehook_market_recap',
+                'title' => '{name} عزیز، دلتنگتان هستیم',
+                'body' => 'از آخرین بازدید شما بازار تغییرات زیادی داشته است. گزارش جدید بازار را مشاهده کنید.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email',
+                'priority' => 'medium'
+            ]
+        ];
+
+        foreach ($templates as $tpl) {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM notification_templates WHERE slug = ?");
+            $stmt->execute([$tpl['slug']]);
+            if ($stmt->fetchColumn() == 0) {
+                $stmt = $this->pdo->prepare("INSERT INTO notification_templates (slug, title, body, action_url, channels, priority) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$tpl['slug'], $tpl['title'], $tpl['body'], $tpl['action_url'], $tpl['channels'], $tpl['priority']]);
+            }
+        }
     }
 
     /**
