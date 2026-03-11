@@ -6,6 +6,8 @@
 // Load Composer's autoloader at the very top
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../vendor/autoload.php';
+} elseif (defined('DEV_MODE') && DEV_MODE) {
+    die("Composer autoloader not found. Please run 'composer install'.");
 }
 
 if (!defined('DB_FUNCTIONS_LOADED')) {
