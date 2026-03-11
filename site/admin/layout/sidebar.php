@@ -61,6 +61,8 @@ $groups = [
             has_permission('roles.view') ? ['label' => 'مدیریت نقش‌ها', 'url' => 'roles.php', 'icon' => 'shield'] : null,
             has_permission('settings.view') ? ['label' => 'تنظیمات عمومی', 'url' => 'settings.php', 'icon' => 'sliders'] : null,
             has_permission('settings.view') ? ['label' => 'تنظیمات ایمیل', 'url' => 'email_settings.php', 'icon' => 'mail'] : null,
+            has_permission('settings.view') ? ['label' => 'اعلان‌های سیستم', 'url' => 'notifications.php', 'icon' => 'bell'] : null,
+            has_permission('settings.view') ? ['label' => 'قالب‌های اعلان', 'url' => 'notification_templates.php', 'icon' => 'layout'] : null,
         ])
     ]
 ];

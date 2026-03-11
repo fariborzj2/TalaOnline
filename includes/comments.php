@@ -5,6 +5,8 @@
 
 require_once __DIR__ . '/mail.php';
 require_once __DIR__ . '/notifications.php';
+require_once __DIR__ . '/push_service.php';
+require_once __DIR__ . '/trigger_engine.php';
 
 class Comments {
     private $pdo;
@@ -548,12 +550,23 @@ class Comments {
                 // Notify parent author
                 if ($parent_id) {
                     $this->notifyReply($parent_id, $comment_id, $sender_name);
+
+                    // Trigger Push Notification via Engine
+                    $pushService = new PushService($this->pdo);
+                    $triggerEngine = new TriggerEngine($this->pdo, $pushService);
+                    $triggerEngine->handleCommentInteraction($comment_id, $parent_id, $sender_name);
                 }
                 // Also notify if it's a direct reply to a user in a thread
                 if ($reply_to_user_id && $reply_to_user_id != $user_id) {
                     $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $sender_name);
                     $notif = new Notifications($this->pdo);
                     $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
+
+                    $pushService = new PushService($this->pdo);
+                    $pushService->notify($reply_to_user_id, 'social_reply', [
+                        'sender_name' => $sender_name,
+                        'url' => get_site_url() . "/thread/$comment_id"
+                    ]);
                 }
             }
 
