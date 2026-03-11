@@ -937,6 +937,14 @@ class MigrationManager {
                 'action_url' => '{url}',
                 'channels' => 'webpush,email,in-app',
                 'priority' => 'high'
+            ],
+            [
+                'slug' => 'technical_level_alert',
+                'title' => 'هشدار سطح کلیدی در {symbol}',
+                'body' => 'قیمت {symbol} به سطح روانی و مهم {level} نزدیک شده است.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'high'
             ]
         ];
 

@@ -126,6 +126,24 @@ class PushService {
             }
         }
 
+        // Engagement Optimization: Predict best hour to send (based on last activity)
+        if (!isset($options['scheduled_at']) && ($options['priority'] ?? $template['priority']) === 'low') {
+            $stmt = $this->pdo->prepare("SELECT strftime('%H:%M', updated_at) FROM users WHERE id = ?");
+            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+                $stmt = $this->pdo->prepare("SELECT DATE_FORMAT(updated_at, '%H:%i') FROM users WHERE id = ?");
+            }
+            $stmt->execute([$user_id]);
+            $active_hour = $stmt->fetchColumn();
+
+            if ($active_hour) {
+                $target = new DateTime('today ' . $active_hour, new DateTimeZone($settings['timezone'] ?? 'Asia/Tehran'));
+                if ($target < new DateTime('now', new DateTimeZone($settings['timezone'] ?? 'Asia/Tehran'))) {
+                    $target->modify('+1 day');
+                }
+                $options['scheduled_at'] = $target->format('Y-m-d H:i:s');
+            }
+        }
+
         // Quiet Hours Logic
         if (!empty($settings['quiet_hours_start']) && !empty($settings['quiet_hours_end'])) {
             $now = new DateTime('now', new DateTimeZone($settings['timezone'] ?? 'UTC'));

@@ -88,6 +88,34 @@ class TriggerEngine {
     }
 
     /**
+     * Trigger: Technical Level Break (Support/Resistance)
+     * Advanced alerts for key price levels.
+     */
+    public function handleTechnicalLevelBreak($symbol, $price) {
+        // Sample: Check for historic round numbers or recent peaks
+        // In a real system, we'd have a `technical_levels` table.
+        $round_levels = [1000, 5000, 10000, 50000, 100000, 500000, 1000000];
+
+        foreach ($round_levels as $lvl) {
+            if (abs($price - $lvl) / $lvl < 0.001) { // Within 0.1% of key level
+                 // Notify interested users
+                 $stmt = $this->pdo->prepare("SELECT user_id FROM watchlist WHERE symbol = ?");
+                 $stmt->execute([$symbol]);
+                 $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+                 foreach ($users as $user_id) {
+                     $this->pushService->notify($user_id, 'technical_level_alert', [
+                         'symbol' => $symbol,
+                         'level' => number_format($lvl),
+                         'url' => get_site_url() . "/market/$symbol"
+                     ], ['priority' => 'high']);
+                 }
+                 break;
+            }
+        }
+    }
+
+    /**
      * Trigger: Social Milestone
      */
     public function handleMilestone($author_id, $comment_id, $count) {
