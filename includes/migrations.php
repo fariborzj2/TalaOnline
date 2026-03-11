@@ -327,6 +327,13 @@ class MigrationManager {
                     `vote` VARCHAR(10),
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `watchlist` (
+                    `user_id` INTEGER,
+                    `symbol` VARCHAR(50),
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`user_id`, `symbol`),
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
                 )"
             ];
         } else {
@@ -588,6 +595,13 @@ class MigrationManager {
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     INDEX `idx_sentiment_currency_date` (`currency_id`, `created_at`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `watchlist` (
+                    `user_id` INT,
+                    `symbol` VARCHAR(50),
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`user_id`, `symbol`),
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
             ];
         }
@@ -907,6 +921,22 @@ class MigrationManager {
                 'action_url' => '{url}',
                 'channels' => 'webpush,in-app',
                 'priority' => 'low'
+            ],
+            [
+                'slug' => 'watchlist_volatility',
+                'title' => 'نوسان در واچ‌لیست: {name}',
+                'body' => 'دارایی مورد علاقه شما ({symbol}) شاهد {type} {change}% بوده است.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email,in-app',
+                'priority' => 'high'
+            ],
+            [
+                'slug' => 'watchlist_news',
+                'title' => 'خبر مهم برای واچ‌لیست شما',
+                'body' => 'مطلب جدیدی مرتبط با {symbol} منتشر شد: "{title}"',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email,in-app',
+                'priority' => 'high'
             ]
         ];
 
