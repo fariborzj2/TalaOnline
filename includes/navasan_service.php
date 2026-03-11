@@ -4,6 +4,8 @@
  */
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/push_service.php';
+require_once __DIR__ . '/trigger_engine.php';
 
 class NavasanService {
     private $api_key;
@@ -64,6 +66,20 @@ class NavasanService {
             $history_sql = "INSERT INTO prices_history (symbol, price, high, low, date) VALUES " . implode(',', $history_values);
             $history_sql .= " ON DUPLICATE KEY UPDATE price = VALUES(price), high = GREATEST(high, VALUES(price)), low = LEAST(low, VALUES(price))";
             $this->pdo->prepare($history_sql)->execute($history_params);
+
+            // Trigger Engine for Volatility
+            $pushService = new PushService($this->pdo);
+            $triggerEngine = new TriggerEngine($this->pdo, $pushService);
+            foreach ($data as $symbol => $info) {
+                if (isset($info['value'])) {
+                    $value = (float)$info['value'];
+                    $change = (float)($info['change'] ?? 0);
+                    $percent = ($value > 0) ? round(($change / ($value - $change)) * 100, 2) : 0;
+                    if (abs($percent) >= 5) {
+                        $triggerEngine->handleVolatilitySpike($symbol, $percent);
+                    }
+                }
+            }
         }
 
         return true;

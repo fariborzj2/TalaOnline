@@ -274,6 +274,9 @@
                 window.__ASSET_CONFIG__ = {
                     apexChartsUrl: '<?= versioned_asset("/assets/js/vendor/apexcharts.min.js") ?>'
                 };
+                window.__PUSH_CONFIG__ = {
+                    publicKey: '<?= get_setting('webpush_public_key') ?>'
+                };
             </script>
 
             <div class="center d-flex-wrap gap-md align-stretch main-layout">
@@ -497,5 +500,6 @@
     <?php endif; ?>
     <script src="<?= versioned_asset('/assets/js/app.js') ?>"></script>
     <script src="<?= versioned_asset('/assets/js/notifications.js') ?>"></script>
+    <script src="<?= versioned_asset('/assets/js/push-notifications.js') ?>"></script>
 </body>
 </html>

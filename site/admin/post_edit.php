@@ -159,6 +159,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 LSCache::purgeAll();
             }
 
+            // Trigger Push Notification for new post
+            if (!$id && $status === 'published') {
+                require_once __DIR__ . '/../../includes/push_service.php';
+                require_once __DIR__ . '/../../includes/trigger_engine.php';
+                $pushService = new PushService($pdo);
+                $triggerEngine = new TriggerEngine($pdo, $pushService);
+
+                $stmt_cat = $pdo->prepare("SELECT name FROM blog_categories WHERE id = ?");
+                $stmt_cat->execute([$category_id]);
+                $cat_name = $stmt_cat->fetchColumn();
+
+                $triggerEngine->handleNewBlogPost($id, $title, $cat_name ?: 'وبلاگ');
+            }
+
             header("Location: posts.php?message=success");
             exit;
         } catch (Exception $e) {

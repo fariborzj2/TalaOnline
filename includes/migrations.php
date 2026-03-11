@@ -189,6 +189,90 @@ class MigrationManager {
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                )",
+                "CREATE TABLE IF NOT EXISTS `follows` (
+                    `follower_id` INTEGER,
+                    `following_id` INTEGER,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`follower_id`, `following_id`),
+                    FOREIGN KEY (`follower_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+                    FOREIGN KEY (`following_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                )",
+                "CREATE TABLE IF NOT EXISTS `email_templates` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `slug` VARCHAR(100) UNIQUE NOT NULL,
+                    `subject` VARCHAR(255),
+                    `body` TEXT,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `email_queue` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `to_email` VARCHAR(255),
+                    `subject` VARCHAR(255),
+                    `body_html` TEXT,
+                    `sender_name` VARCHAR(255),
+                    `sender_email` VARCHAR(255),
+                    `status` VARCHAR(20) DEFAULT 'pending',
+                    `attempts` INTEGER DEFAULT 0,
+                    `last_error` TEXT,
+                    `metadata` TEXT,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `push_subscriptions` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `user_id` INTEGER,
+                    `endpoint` TEXT UNIQUE NOT NULL,
+                    `p256dh` TEXT NOT NULL,
+                    `auth` TEXT NOT NULL,
+                    `content_encoding` VARCHAR(20) DEFAULT 'aes128gcm',
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                )",
+                "CREATE TABLE IF NOT EXISTS `notification_settings` (
+                    `user_id` INTEGER PRIMARY KEY,
+                    `categories` TEXT,
+                    `channels` TEXT,
+                    `frequency_limit` INTEGER DEFAULT 5,
+                    `quiet_hours_start` VARCHAR(5),
+                    `quiet_hours_end` VARCHAR(5),
+                    `timezone` VARCHAR(50) DEFAULT 'UTC',
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                )",
+                "CREATE TABLE IF NOT EXISTS `notification_templates` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `slug` VARCHAR(100) UNIQUE NOT NULL,
+                    `title` VARCHAR(255),
+                    `body` TEXT,
+                    `action_url` VARCHAR(255),
+                    `icon` VARCHAR(255),
+                    `channels` VARCHAR(100),
+                    `priority` VARCHAR(20) DEFAULT 'medium',
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `notification_analytics` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `notification_id` INTEGER,
+                    `channel` VARCHAR(20),
+                    `event_type` VARCHAR(20),
+                    `metadata` TEXT,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `notification_queue` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `user_id` INTEGER,
+                    `template_slug` VARCHAR(100),
+                    `data` TEXT,
+                    `channels` VARCHAR(100),
+                    `priority` VARCHAR(20),
+                    `scheduled_at` DATETIME,
+                    `status` VARCHAR(20) DEFAULT 'pending',
+                    `attempts` INTEGER DEFAULT 0,
+                    `last_error` TEXT,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )"
             ];
         } else {
@@ -247,6 +331,91 @@ class MigrationManager {
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `follows` (
+                    `follower_id` INT,
+                    `following_id` INT,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (`follower_id`, `following_id`),
+                    FOREIGN KEY (`follower_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+                    FOREIGN KEY (`following_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `email_templates` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `slug` VARCHAR(100) UNIQUE NOT NULL,
+                    `subject` VARCHAR(255),
+                    `body` TEXT,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `email_queue` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `to_email` VARCHAR(255),
+                    `subject` VARCHAR(255),
+                    `body_html` TEXT,
+                    `sender_name` VARCHAR(255),
+                    `sender_email` VARCHAR(255),
+                    `status` VARCHAR(20) DEFAULT 'pending',
+                    `attempts` INT DEFAULT 0,
+                    `last_error` TEXT,
+                    `metadata` TEXT,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `push_subscriptions` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `user_id` INT,
+                    `endpoint` TEXT NOT NULL,
+                    `p256dh` TEXT NOT NULL,
+                    `auth` TEXT NOT NULL,
+                    `content_encoding` VARCHAR(20) DEFAULT 'aes128gcm',
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    UNIQUE (`endpoint`(255)),
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `notification_settings` (
+                    `user_id` INT PRIMARY KEY,
+                    `categories` TEXT,
+                    `channels` TEXT,
+                    `frequency_limit` INT DEFAULT 5,
+                    `quiet_hours_start` VARCHAR(5),
+                    `quiet_hours_end` VARCHAR(5),
+                    `timezone` VARCHAR(50) DEFAULT 'UTC',
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `notification_templates` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `slug` VARCHAR(100) UNIQUE NOT NULL,
+                    `title` VARCHAR(255),
+                    `body` TEXT,
+                    `action_url` VARCHAR(255),
+                    `icon` VARCHAR(255),
+                    `channels` VARCHAR(100),
+                    `priority` VARCHAR(20) DEFAULT 'medium',
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `notification_analytics` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `notification_id` INT,
+                    `channel` VARCHAR(20),
+                    `event_type` VARCHAR(20),
+                    `metadata` TEXT,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `notification_queue` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `user_id` INT,
+                    `template_slug` VARCHAR(100),
+                    `data` TEXT,
+                    `channels` VARCHAR(100),
+                    `priority` VARCHAR(20),
+                    `scheduled_at` TIMESTAMP NULL,
+                    `status` VARCHAR(20) DEFAULT 'pending',
+                    `attempts` INT DEFAULT 0,
+                    `last_error` TEXT,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
             ];
         }

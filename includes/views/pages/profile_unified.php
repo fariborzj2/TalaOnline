@@ -108,6 +108,9 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                     <button class="profile-tab-btn" data-tab="security">
                         <i data-lucide="shield-check"></i> امنیت و رمز عبور
                     </button>
+                    <button class="profile-tab-btn" data-tab="push-settings">
+                        <i data-lucide="bell-ring"></i> تنظیمات اطلاع‌رسانی
+                    </button>
                     <div class="divider my-1"></div>
                     <button class="profile-tab-btn text-error" id="profile-logout-btn">
                         <i data-lucide="log-out"></i> خروج از حساب
@@ -300,6 +303,74 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                             </div>
                             <button type="submit" class="btn btn-primary radius-12 just-center mt-1">بروزرسانی رمز عبور</button>
                         </form>
+                    </div>
+
+                    <!-- Push Notifications Tab -->
+                    <div id="tab-push-settings" class="bg-block border radius-16 min-h-400 profile-tab-content d-none pd-md">
+                        <h2 class="font-size-3 font-bold mb-2 border-bottom pb-1">تنظیمات اطلاع‌رسانی هوشمند</h2>
+
+                        <div class="d-column gap-2 mt-2">
+                            <div class="d-flex just-between align-center p-1 bg-secondary radius-12">
+                                <div>
+                                    <p class="font-bold mb-0">اعلان‌های مرورگر (Web Push)</p>
+                                    <small class="text-gray">دریافت لحظه‌ای تغییرات قیمت و پیام‌ها</small>
+                                </div>
+                                <button id="push-toggle-btn" class="btn btn-primary btn-sm radius-8" onclick="window.pushManager.isSubscribed ? window.pushManager.unsubscribeUser() : window.pushManager.subscribeUser()">
+                                    بررسی وضعیت...
+                                </button>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <form id="notification-settings-form" class="d-column gap-1-5">
+                                <h3 class="font-size-2 font-bold">کانال‌های دریافت</h3>
+                                <div class="d-flex-wrap gap-1 mb-1">
+                                    <label class="d-flex align-center gap-05 pointer">
+                                        <input type="checkbox" name="channels[]" value="webpush" checked> مرورگر (Push)
+                                    </label>
+                                    <label class="d-flex align-center gap-05 pointer">
+                                        <input type="checkbox" name="channels[]" value="email" checked> ایمیل (Email)
+                                    </label>
+                                    <label class="d-flex align-center gap-05 pointer">
+                                        <input type="checkbox" name="channels[]" value="in-app" checked> داخل سایت (In-App)
+                                    </label>
+                                </div>
+
+                                <h3 class="font-size-2 font-bold">بخش‌های مورد علاقه</h3>
+                                <div class="d-flex-wrap gap-1">
+                                    <label class="d-flex align-center gap-05 pointer">
+                                        <input type="checkbox" name="categories[]" value="market" checked> بازار و قیمت‌ها
+                                    </label>
+                                    <label class="d-flex align-center gap-05 pointer">
+                                        <input type="checkbox" name="categories[]" value="social" checked> تعاملات اجتماعی
+                                    </label>
+                                    <label class="d-flex align-center gap-05 pointer">
+                                        <input type="checkbox" name="categories[]" value="blog" checked> اخبار و مقالات
+                                    </label>
+                                </div>
+
+                                <div class="d-column gap-05 mt-1">
+                                    <label class="font-bold font-size-1">حداکثر تعداد اعلان در روز</label>
+                                    <select name="frequency_limit" class="radius-8 border pd-05">
+                                        <option value="1">۱ عدد</option>
+                                        <option value="3">۳ عدد</option>
+                                        <option value="5" selected>۵ عدد</option>
+                                        <option value="10">۱۰ عدد</option>
+                                        <option value="0">نامحدود</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-column gap-05">
+                                    <label class="font-bold font-size-1">منطقه زمانی</label>
+                                    <select name="timezone" class="radius-8 border pd-05 ltr">
+                                        <option value="Asia/Tehran" selected>Asia/Tehran</option>
+                                        <option value="UTC">UTC</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary radius-12 just-center mt-1">ذخیره تنظیمات</button>
+                            </form>
+                        </div>
                     </div>
                 <?php endif; ?>
             </div>

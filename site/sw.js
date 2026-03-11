@@ -38,6 +38,55 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
+// Push event
+self.addEventListener('push', (event) => {
+    if (!event.data) return;
+
+    try {
+        const data = event.data.json();
+        const options = {
+            body: data.body,
+            icon: data.icon || '/assets/images/logo.png',
+            badge: '/assets/images/favicon/favicon-32x32.png',
+            data: {
+                url: data.url
+            },
+            vibrate: [100, 50, 100],
+            dir: 'rtl',
+            lang: 'fa-IR'
+        };
+
+        event.waitUntil(
+            self.registration.showNotification(data.title, options)
+        );
+    } catch (e) {
+        console.error('Push error:', e);
+    }
+});
+
+// Notification Click event
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+
+    const urlToOpen = event.notification.data.url || '/';
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+            // If a window is already open, focus it
+            for (let i = 0; i < windowClients.length; i++) {
+                const client = windowClients[i];
+                if (client.url === urlToOpen && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            // Otherwise, open a new window
+            if (clients.openWindow) {
+                return clients.openWindow(urlToOpen);
+            }
+        })
+    );
+});
+
 // Fetch event
 self.addEventListener('fetch', (event) => {
     // Only handle GET requests
