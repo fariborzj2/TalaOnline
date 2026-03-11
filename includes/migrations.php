@@ -334,6 +334,27 @@ class MigrationManager {
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     PRIMARY KEY (`user_id`, `symbol`),
                     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                )",
+                "CREATE TABLE IF NOT EXISTS `verification_locks` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `identifier_type` VARCHAR(50),
+                    `identifier_value` VARCHAR(255),
+                    `unlock_at` DATETIME,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `verification_attempts` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `type` VARCHAR(50),
+                    `identifier_type` VARCHAR(50),
+                    `identifier_value` VARCHAR(255),
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `comment_reports` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `user_id` INTEGER,
+                    `comment_id` INTEGER,
+                    `reason` TEXT,
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )"
             ];
         } else {
@@ -602,6 +623,28 @@ class MigrationManager {
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     PRIMARY KEY (`user_id`, `symbol`),
                     FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `verification_locks` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `identifier_type` VARCHAR(50),
+                    `identifier_value` VARCHAR(255),
+                    `unlock_at` TIMESTAMP NULL,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `verification_attempts` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `type` VARCHAR(50),
+                    `identifier_type` VARCHAR(50),
+                    `identifier_value` VARCHAR(255),
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX `idx_verification_attempts_lookup` (`identifier_type`, `identifier_value`, `type`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `comment_reports` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `user_id` INT,
+                    `comment_id` INT,
+                    `reason` TEXT,
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
             ];
         }
@@ -645,6 +688,7 @@ class MigrationManager {
                 'likes_count' => 'INT DEFAULT 0',
                 'type' => 'VARCHAR(20) DEFAULT "comment"',
                 'guest_name' => 'VARCHAR(100)',
+                'status' => 'VARCHAR(20) DEFAULT "approved"',
                 'updated_at' => ($driver === 'sqlite' ? "DATETIME DEFAULT '2024-01-01 00:00:00'" : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
             ],
             'notifications' => [

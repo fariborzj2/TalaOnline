@@ -21,7 +21,7 @@ class Comments {
     public function getComment($id, $user_id = null) {
         if (!$this->pdo) return null;
 
-        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url, c.status,
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
                 rc.content as reply_to_content
@@ -101,7 +101,7 @@ class Comments {
         }
 
         // 1. Get top-level comments for the current page
-        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url, c.status,
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
                 rc.content as reply_to_content
@@ -132,7 +132,7 @@ class Comments {
 
         // 2. Fetch first 3 replies for each top-level comment in bulk
         $replies_sql = "SELECT * FROM (
-            SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+            SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url, c.status,
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
                 rc.content as reply_to_content,
@@ -212,7 +212,7 @@ class Comments {
     public function getReplies($parent_id, $offset = 0, $limit = 10, $user_id = null, $parse = true) {
         if (!$this->pdo) return [];
 
-        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url, c.status,
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
                 rc.content as reply_to_content
@@ -327,7 +327,7 @@ class Comments {
     public function getUserComments($user_id, $viewer_id = null, $limit = 50) {
         if (!$this->pdo) return [];
 
-        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url,
+        $sql = "SELECT c.id, c.user_id, c.target_id, c.target_type, c.content, c.parent_id, c.created_at, c.reply_to_user_id, c.guest_name, c.type, c.image_url, c.status,
                 u.name as user_name, u.avatar as user_avatar, u.username as user_username, u.level as user_level, u.role as user_role,
                 ru.username as reply_to_username,
                 rc.content as reply_to_content
