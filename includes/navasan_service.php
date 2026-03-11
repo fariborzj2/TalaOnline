@@ -105,6 +105,9 @@ class NavasanService {
                     if (isset($stats[$symbol])) {
                         $triggerEngine->handleTechnicalBreak($symbol, $value, (float)$stats[$symbol]['high'], (float)$stats[$symbol]['low']);
                     }
+
+                    // 3. Market Anomaly Trigger
+                    $triggerEngine->handleMarketAnomaly($symbol, $value);
                 }
             }
         }

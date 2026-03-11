@@ -891,6 +891,22 @@ class MigrationManager {
                 'action_url' => '{url}',
                 'channels' => 'webpush,email',
                 'priority' => 'medium'
+            ],
+            [
+                'slug' => 'market_anomaly',
+                'title' => 'ناهنجاری بازار: {symbol}',
+                'body' => 'قیمت {symbol} دچار {type} {deviation}% نسبت به میانگین هفته شده است.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'high'
+            ],
+            [
+                'slug' => 'interest_clustering_suggest',
+                'title' => 'پیشنهاد دنبال کردن',
+                'body' => 'کاربر "{suggested_name}" علایق مشابهی با شما دارد. او را دنبال کنید!',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'low'
             ]
         ];
 
