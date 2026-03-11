@@ -1,4 +1,4 @@
-<?php
+<?php ob_start();
 /**
  * Comments API
  */
@@ -16,6 +16,7 @@ $comments_handler = new Comments($pdo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if ($action === 'list') {
+        ob_clean();
         $target_id = $_GET['target_id'] ?? '';
         $target_type = $_GET['target_type'] ?? '';
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -35,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     if ($action === 'replies') {
+        ob_clean();
         $parent_id = $_GET['parent_id'] ?? 0;
         $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
@@ -45,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     if ($action === 'thread') {
+        ob_clean();
         $comment_id = $_GET['comment_id'] ?? 0;
         if (empty($comment_id)) {
             echo json_encode(['success' => false, 'message' => 'شناسه نظر الزامی است']);
@@ -71,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'add') {
+        ob_clean();
         // Support both JSON and multipart/form-data
         if (str_contains($_SERVER['CONTENT_TYPE'] ?? '', 'multipart/form-data')) {
             $data = $_POST;
@@ -177,6 +181,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo json_encode(['success' => false, 'message' => 'خطا در ثبت نظر.']);
         }
+
+        while (ob_get_level() > 1) ob_end_clean();
+        ob_end_flush();
         exit;
     }
 
@@ -186,6 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'react') {
+        ob_clean();
         // Rate Limiting (30 per 15 mins by default)
         $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         $ip_limit = check_rate_limit('comment_react', 'ip', $ip, null, 30, 15);
@@ -222,6 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'report') {
+        ob_clean();
         $comment_id = $input['comment_id'] ?? 0;
         $reason = $input['reason'] ?? '';
         $success = $comments_handler->report($user_id, $comment_id, $reason);
@@ -230,6 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'edit') {
+        ob_clean();
         $comment_id = $input['comment_id'] ?? 0;
         $content = $input['content'] ?? '';
         $mentions = $input['mentions'] ?? [];
@@ -252,6 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($action === 'delete') {
+        ob_clean();
         $comment_id = $input['comment_id'] ?? 0;
         $success = $comments_handler->deleteComment($user_id, $comment_id);
         if ($success) {
@@ -263,4 +274,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+ob_clean();
 echo json_encode(['success' => false, 'message' => 'درخواست نامعتبر.']);
+while (ob_get_level() > 0) ob_end_flush();
