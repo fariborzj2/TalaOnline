@@ -33,6 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $success = $sentiment_handler->vote($currency_id, $user_id, $ip_address, $vote);
 
             if ($success) {
+                // Check for sentiment shift alert
+                if ($user_id) {
+                    require_once __DIR__ . '/../../includes/push_service.php';
+                    require_once __DIR__ . '/../../includes/trigger_engine.php';
+                    $pushService = new PushService($pdo);
+                    $triggerEngine = new TriggerEngine($pdo, $pushService);
+                    $triggerEngine->handleSentimentShift($user_id, $currency_id);
+                }
+
                 $results = $sentiment_handler->getResults($currency_id);
                 $response = [
                     'success' => true,

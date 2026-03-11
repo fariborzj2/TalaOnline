@@ -318,6 +318,15 @@ class MigrationManager {
                     `last_error` TEXT,
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE TABLE IF NOT EXISTS `market_sentiment` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `currency_id` VARCHAR(50) NOT NULL,
+                    `user_id` INTEGER DEFAULT NULL,
+                    `ip_address` VARCHAR(45),
+                    `vote` VARCHAR(10),
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )"
             ];
         } else {
@@ -569,6 +578,16 @@ class MigrationManager {
                     `last_error` TEXT,
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `market_sentiment` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `currency_id` VARCHAR(50) NOT NULL,
+                    `user_id` INT DEFAULT NULL,
+                    `ip_address` VARCHAR(45),
+                    `vote` ENUM('bullish', 'bearish'),
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    INDEX `idx_sentiment_currency_date` (`currency_id`, `created_at`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
             ];
         }
@@ -800,6 +819,30 @@ class MigrationManager {
                 'action_url' => '{url}',
                 'channels' => 'webpush,email',
                 'priority' => 'medium'
+            ],
+            [
+                'slug' => 'sentiment_risk',
+                'title' => 'هشدار تغییر روند در {symbol}',
+                'body' => 'نظر اکثر کاربران ({consensus}) با دیدگاه قبلی شما متفاوت است. شاید زمان بازنگری باشد!',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'medium'
+            ],
+            [
+                'slug' => 'influencer_engagement',
+                'title' => 'تحلیل شما توجه خبرگان را جلب کرد!',
+                'body' => 'کاربر سطح بالا "{actor_name}" نظر شما را پسندیده است. به مشارکت ادامه دهید!',
+                'action_url' => '{url}',
+                'channels' => 'webpush,in-app',
+                'priority' => 'medium'
+            ],
+            [
+                'slug' => 'market_opportunity',
+                'title' => 'فرصت احتمالی در {symbol}',
+                'body' => 'قیمت {symbol} کاهش یافته و همزمان تحلیل‌های مثبتی از طرف خبرگان ثبت شده است.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email,in-app',
+                'priority' => 'high'
             ]
         ];
 
