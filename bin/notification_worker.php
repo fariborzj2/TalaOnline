@@ -27,10 +27,16 @@ while (true) {
         echo "[" . date('Y-m-d H:i:s') . "] Processed $processed notifications.\n";
     }
 
-    // Run predictive checks every 1 hour
+    // Run predictive & social checks every 1 hour
     if (time() - $last_predictive_check > 3600) {
         echo "[" . date('Y-m-d H:i:s') . "] Running predictive behavioral triggers...\n";
+
+        // 1. Churn Prevention
         $triggerEngine->handleChurnPrevention();
+
+        // 2. Interest Clustering (Social suggestion)
+        $triggerEngine->handleInterestClustering();
+
         $last_predictive_check = time();
     }
 

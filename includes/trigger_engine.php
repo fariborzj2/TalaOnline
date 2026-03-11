@@ -235,6 +235,90 @@ class TriggerEngine {
     }
 
     /**
+     * Trigger: Interest Clustering
+     * Suggests users to follow each other based on similar asset interests (comments).
+     */
+    public function handleInterestClustering() {
+        // Find pairs of users who commented on same 3+ assets
+        $sql = "SELECT c1.user_id as user_a, c2.user_id as user_b, COUNT(DISTINCT c1.target_id) as common_assets
+                FROM comments c1
+                JOIN comments c2 ON c1.target_id = c2.target_id AND c1.target_type = 'item' AND c2.target_type = 'item'
+                WHERE c1.user_id < c2.user_id
+                AND c1.created_at > datetime('now', '-30 days')
+                GROUP BY c1.user_id, c2.user_id
+                HAVING common_assets >= 3
+                LIMIT 20";
+
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+             $sql = "SELECT c1.user_id as user_a, c2.user_id as user_b, COUNT(DISTINCT c1.target_id) as common_assets
+                FROM comments c1
+                JOIN comments c2 ON c1.target_id = c2.target_id AND c1.target_type = 'item' AND c2.target_type = 'item'
+                WHERE c1.user_id < c2.user_id
+                AND c1.created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
+                GROUP BY c1.user_id, c2.user_id
+                HAVING common_assets >= 3
+                LIMIT 20";
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        $pairs = $stmt->fetchAll();
+
+        foreach ($pairs as $pair) {
+            // Check if already following
+            $stmt_f = $this->pdo->prepare("SELECT 1 FROM follows WHERE follower_id = ? AND following_id = ?");
+            $stmt_f->execute([$pair['user_a'], $pair['user_b']]);
+            if (!$stmt_f->fetchColumn()) {
+                // Suggest B to A
+                $stmt_u = $this->pdo->prepare("SELECT name, username FROM users WHERE id = ?");
+                $stmt_u->execute([$pair['user_b']]);
+                $user_b = $stmt_u->fetch();
+
+                if ($user_b) {
+                    $this->pushService->notify($pair['user_a'], 'interest_clustering_suggest', [
+                        'suggested_name' => $user_b['name'],
+                        'url' => get_site_url() . "/profile/{$pair['user_b']}/{$user_b['username']}"
+                    ]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Trigger: Market Anomaly Detection
+     * Alerts when price deviates significantly (>10%) from 7-day average.
+     */
+    public function handleMarketAnomaly($symbol, $current_price) {
+        $stmt = $this->pdo->prepare("SELECT AVG(price) FROM prices_history WHERE symbol = ? AND date > datetime('now', '-7 days')");
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+            $stmt = $this->pdo->prepare("SELECT AVG(price) FROM prices_history WHERE symbol = ? AND date > DATE_SUB(NOW(), INTERVAL 7 DAY)");
+        }
+        $stmt->execute([$symbol]);
+        $avg_price = (float)$stmt->fetchColumn();
+
+        if ($avg_price > 0) {
+            $deviation = (($current_price - $avg_price) / $avg_price) * 100;
+            if (abs($deviation) >= 10) {
+                // Anomaly detected
+                $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 50");
+                $stmt->execute();
+                $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+                $type = $deviation > 0 ? 'رشد غیرعادی' : 'سقوط غیرعادی';
+
+                foreach ($users as $user_id) {
+                    $this->pushService->notify($user_id, 'market_anomaly', [
+                        'symbol' => $symbol,
+                        'type' => $type,
+                        'deviation' => abs(round($deviation, 1)),
+                        'url' => get_site_url() . "/market/$symbol"
+                    ]);
+                }
+            }
+        }
+    }
+
+    /**
      * Trigger: Technical Level Break
      * Alerts when price breaks today's High or Low.
      */
