@@ -45,17 +45,14 @@ class PushService {
         if (!$this->pdo) return false;
 
         try {
-            $stmt = $this->pdo->prepare("INSERT INTO push_subscriptions (user_id, endpoint, p256dh, auth, content_encoding)
-                                       VALUES (?, ?, ?, ?, ?)
-                                       ON CONFLICT(endpoint) DO UPDATE SET user_id = excluded.user_id, updated_at = CURRENT_TIMESTAMP");
-
-            // For MySQL fallback if needed, but we used SQLite syntax above which is what this repo seems to use for development.
-            // Actually migrations.php shows support for both.
-
             if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
                 $stmt = $this->pdo->prepare("INSERT INTO push_subscriptions (user_id, endpoint, p256dh, auth, content_encoding)
                                            VALUES (?, ?, ?, ?, ?)
                                            ON DUPLICATE KEY UPDATE user_id = VALUES(user_id), updated_at = CURRENT_TIMESTAMP");
+            } else {
+                $stmt = $this->pdo->prepare("INSERT INTO push_subscriptions (user_id, endpoint, p256dh, auth, content_encoding)
+                                           VALUES (?, ?, ?, ?, ?)
+                                           ON CONFLICT(endpoint) DO UPDATE SET user_id = excluded.user_id, updated_at = CURRENT_TIMESTAMP");
             }
 
             return $stmt->execute([
@@ -87,7 +84,7 @@ class PushService {
         $categories = json_decode($settings['categories'] ?? '[]', true);
         $category = $options['category'] ?? $template['slug'];
         if (!empty($categories) && !in_array($category, $categories)) {
-            // return true; // Pretend it succeeded but don't queue
+            return true; // Preference enforced: don't queue
         }
 
         // Logic for frequency capping, quiet hours, etc. could go here

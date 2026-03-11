@@ -159,6 +159,15 @@ class MigrationManager {
                     `related_item_symbol` VARCHAR(100),
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )",
+                "CREATE TABLE IF NOT EXISTS `comment_reactions` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `user_id` INTEGER,
+                    `comment_id` INTEGER,
+                    `reaction_type` VARCHAR(20),
+                    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+                    FOREIGN KEY (`comment_id`) REFERENCES `comments`(`id`) ON DELETE CASCADE
+                )",
                 "CREATE TABLE IF NOT EXISTS `comments` (
                     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                     `user_id` INTEGER,
@@ -318,6 +327,15 @@ class MigrationManager {
                     PRIMARY KEY (`role_id`, `permission_id`),
                     FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE,
                     FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`) ON DELETE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `comment_reactions` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `user_id` INT,
+                    `comment_id` INT,
+                    `reaction_type` VARCHAR(20),
+                    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+                    FOREIGN KEY (`comment_id`) REFERENCES `comments`(`id`) ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
                 "CREATE TABLE IF NOT EXISTS `notifications` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,

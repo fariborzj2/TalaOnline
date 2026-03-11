@@ -113,7 +113,7 @@ include __DIR__ . '/layout/header.php';
                 <div class="flex gap-4 mt-2">
                     <label class="flex items-center gap-2 text-xs font-bold"><input type="checkbox" name="channels[]" value="webpush" id="chk_webpush"> Web Push</label>
                     <label class="flex items-center gap-2 text-xs font-bold"><input type="checkbox" name="channels[]" value="email" id="chk_email"> Email</label>
-                    <label class="flex items-center gap-2 text-xs font-bold"><input type="checkbox" name="channels[]" value="app" id="chk_app"> In-App</label>
+                    <label class="flex items-center gap-2 text-xs font-bold"><input type="checkbox" name="channels[]" value="in-app" id="chk_app"> In-App</label>
                 </div>
             </div>
 
@@ -154,7 +154,7 @@ include __DIR__ . '/layout/header.php';
         const channels = t.channels.split(',');
         document.getElementById('chk_webpush').checked = channels.includes('webpush');
         document.getElementById('chk_email').checked = channels.includes('email');
-        document.getElementById('chk_app').checked = channels.includes('app');
+        document.getElementById('chk_app').checked = channels.includes('in-app');
 
         showModal();
     }
