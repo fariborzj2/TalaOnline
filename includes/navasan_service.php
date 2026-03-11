@@ -108,6 +108,9 @@ class NavasanService {
 
                     // 3. Market Anomaly Trigger
                     $triggerEngine->handleMarketAnomaly($symbol, $value);
+
+                    // 4. Technical Level Break (S/R)
+                    $triggerEngine->handleTechnicalLevelBreak($symbol, $value);
                 }
             }
         }

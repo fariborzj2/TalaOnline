@@ -24,22 +24,30 @@ class TriggerEngine {
         $stmt->execute([$symbol]);
         $name = $stmt->fetchColumn();
 
-        // In a real system, we'd find users who "follow" or "track" this asset.
-        // For now, let's assume we notify active users interested in 'market'.
-        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 100"); // Example
+        // Target users who have this symbol in their watchlist
+        $stmt = $this->pdo->prepare("SELECT user_id FROM watchlist WHERE symbol = ?");
+        $stmt->execute([$symbol]);
+        $watchlist_users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        // Fallback to general active users if watchlist is small, but prioritize watchlist
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 50");
         $stmt->execute();
-        $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $general_users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $users = array_unique(array_merge($watchlist_users, $general_users));
 
         $type = $change_percent > 0 ? 'افزایش' : 'کاهش';
 
         foreach ($users as $user_id) {
-            $this->pushService->notify($user_id, 'asset_volatility', [
+            $template = in_array($user_id, $watchlist_users) ? 'watchlist_volatility' : 'asset_volatility';
+
+            $this->pushService->notify($user_id, $template, [
                 'symbol' => $symbol,
                 'name' => $name,
                 'change' => abs($change_percent),
                 'type' => $type,
                 'url' => get_site_url() . "/market/$symbol"
-            ]);
+            ], ['priority' => in_array($user_id, $watchlist_users) ? 'high' : 'medium']);
         }
 
         // Check for Combined Opportunity Alert
@@ -76,6 +84,34 @@ class TriggerEngine {
                 'sender_name' => $sender_name,
                 'url' => get_site_url() . "/thread/$comment_id"
             ]);
+        }
+    }
+
+    /**
+     * Trigger: Technical Level Break (Support/Resistance)
+     * Advanced alerts for key price levels.
+     */
+    public function handleTechnicalLevelBreak($symbol, $price) {
+        // Sample: Check for historic round numbers or recent peaks
+        // In a real system, we'd have a `technical_levels` table.
+        $round_levels = [1000, 5000, 10000, 50000, 100000, 500000, 1000000];
+
+        foreach ($round_levels as $lvl) {
+            if (abs($price - $lvl) / $lvl < 0.001) { // Within 0.1% of key level
+                 // Notify interested users
+                 $stmt = $this->pdo->prepare("SELECT user_id FROM watchlist WHERE symbol = ?");
+                 $stmt->execute([$symbol]);
+                 $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+                 foreach ($users as $user_id) {
+                     $this->pushService->notify($user_id, 'technical_level_alert', [
+                         'symbol' => $symbol,
+                         'level' => number_format($lvl),
+                         'url' => get_site_url() . "/market/$symbol"
+                     ], ['priority' => 'high']);
+                 }
+                 break;
+            }
         }
     }
 
@@ -181,35 +217,48 @@ class TriggerEngine {
      */
     public function handleNewBlogPost($post_id, $title, $category_name, $content = '') {
         // Find mentioned assets in content for interest-based targeting
-        $symbols = [];
+        $mentioned_symbols = [];
         $stmt = $this->pdo->query("SELECT symbol FROM items WHERE is_active = 1");
         $all_symbols = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         foreach ($all_symbols as $s) {
             if (stripos($title . ' ' . $content, $s) !== false) {
-                $symbols[] = $s;
+                $mentioned_symbols[] = $s;
             }
+        }
+
+        // Targeted users: Those who have mentioned symbols in their watchlist
+        $targeted_user_ids = [];
+        if (!empty($mentioned_symbols)) {
+            $placeholders = implode(',', array_fill(0, count($mentioned_symbols), '?'));
+            $stmt = $this->pdo->prepare("SELECT DISTINCT user_id FROM watchlist WHERE symbol IN ($placeholders)");
+            $stmt->execute($mentioned_symbols);
+            $targeted_user_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
         }
 
         $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 100");
         $stmt->execute();
-        $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $general_users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $users = array_unique(array_merge($targeted_user_ids, $general_users));
 
         foreach ($users as $user_id) {
-            $template = 'blog_new_post';
+            $is_targeted = in_array($user_id, $targeted_user_ids);
+            $template = $is_targeted ? 'watchlist_news' : 'blog_new_post';
+
             $data = [
                 'title' => $title,
                 'category' => $category_name,
                 'url' => get_site_url() . "/blog/post/$post_id"
             ];
 
-            // If an asset is mentioned, use a more specific template if possible
-            if (!empty($symbols)) {
-                $data['symbol'] = $symbols[0];
-                // In a production system, we'd check if user follows this symbol
+            if (!empty($mentioned_symbols)) {
+                $data['symbol'] = $mentioned_symbols[0];
             }
 
-            $this->pushService->notify($user_id, $template, $data);
+            $this->pushService->notify($user_id, $template, $data, [
+                'priority' => $is_targeted ? 'high' : 'medium'
+            ]);
         }
     }
 

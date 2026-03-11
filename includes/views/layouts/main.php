@@ -275,7 +275,7 @@
                     apexChartsUrl: '<?= versioned_asset("/assets/js/vendor/apexcharts.min.js") ?>'
                 };
                 window.__PUSH_CONFIG__ = {
-                    publicKey: '<?= get_setting('webpush_public_key') ?>'
+                    publicKey: <?= json_encode(get_setting('webpush_public_key')) ?>
                 };
             </script>
 
