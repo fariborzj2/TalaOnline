@@ -167,6 +167,11 @@ date_default_timezone_set('Asia/Tehran');
 if (file_exists($config_file)) {
     require_once $config_file;
 
+    if (defined('DEV_MODE') && DEV_MODE) {
+        error_reporting(E_ALL);
+        ini_set('display_errors', '1');
+    }
+
     try {
         if (defined('USE_SQLITE') && USE_SQLITE) {
             $pdo = new PDO("sqlite:" . __DIR__ . '/../site/database.sqlite');
@@ -179,7 +184,9 @@ if (file_exists($config_file)) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        // Log connection failure if needed
+        if (defined('DEV_MODE') && DEV_MODE) {
+            die("Database connection failed: " . $e->getMessage());
+        }
     }
 
     // Perform highly optimized version check

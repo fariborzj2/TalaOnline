@@ -92,13 +92,34 @@ class PushService {
             return true; // Preference enforced: don't queue
         }
 
+        // Enforce user channel preferences
+        $user_channels = json_decode($settings['channels'] ?? '[]', true);
+        $template_channels = explode(',', $template['channels']);
+        $final_channels = [];
+
+        if (!empty($user_channels)) {
+            foreach ($template_channels as $tc) {
+                $tc = trim($tc);
+                if (in_array($tc, $user_channels)) {
+                    $final_channels[] = $tc;
+                }
+            }
+        } else {
+            // Default to all template channels if user has no explicit settings
+            $final_channels = $template_channels;
+        }
+
+        if (empty($final_channels)) {
+            return true; // All channels disabled by user
+        }
+
         // Logic for frequency capping, quiet hours, etc. could go here
 
         try {
             $stmt = $this->pdo->prepare("INSERT INTO notification_queue (user_id, template_slug, data, channels, priority, scheduled_at)
                                        VALUES (?, ?, ?, ?, ?, ?)");
 
-            $channels = $options['channels'] ?? $template['channels'];
+            $channels = $options['channels'] ?? implode(',', $final_channels);
             $priority = $options['priority'] ?? $template['priority'];
             $scheduled_at = $options['scheduled_at'] ?? null;
 
