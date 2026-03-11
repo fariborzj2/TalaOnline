@@ -92,33 +92,44 @@ self.addEventListener('fetch', (event) => {
     // Only handle GET requests
     if (event.request.method !== 'GET') return;
 
-    // For HTML requests, try network first, fallback to cache/offline page
+    const url = new URL(event.request.url);
+
+    // Skip non-HTTP(S) schemes (like chrome-extension://)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+    // Handle navigation requests (HTML pages)
     if (event.request.mode === 'navigate') {
         event.respondWith(
-            fetch(event.request).then((response) => {
-                // Optional: Update the cache with the fresh version
-                if (response && response.status === 200 && response.type === 'basic') {
-                    const responseToCache = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseToCache);
+            fetch(event.request)
+                .then((response) => {
+                    // Update cache for successful responses
+                    if (response && response.status === 200) {
+                        const responseToCache = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => {
+                            cache.put(event.request, responseToCache);
+                        });
+                    }
+                    return response;
+                })
+                .catch(() => {
+                    // Fallback to cache or offline page
+                    return caches.match(event.request).then((cachedResponse) => {
+                        return cachedResponse || caches.match(OFFLINE_URL);
                     });
-                }
-                return response;
-            }).catch(() => {
-                return caches.match(event.request).then((response) => {
-                    return response || caches.match(OFFLINE_URL);
-                });
-            })
+                })
         );
         return;
     }
 
-    // For other assets, try cache first, then network
+    // For other assets (CSS, JS, Images), try cache first
     event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request).then((networkResponse) => {
-                // Don't cache everything, just specific assets if needed
-                // For now, we just return the network response
+        caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+
+            return fetch(event.request).then((networkResponse) => {
+                // Only cache specific assets if needed, for now just return
                 return networkResponse;
             });
         })
