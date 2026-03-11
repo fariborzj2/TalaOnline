@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt_cat->execute([$category_id]);
                 $cat_name = $stmt_cat->fetchColumn();
 
-                $triggerEngine->handleNewBlogPost($id, $title, $cat_name ?: 'وبلاگ');
+                $triggerEngine->handleNewBlogPost($id, $title, $cat_name ?: 'وبلاگ', $content);
             }
 
             header("Location: posts.php?message=success");

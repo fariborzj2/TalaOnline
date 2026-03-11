@@ -79,16 +79,31 @@ class NavasanService {
                 $this->pdo->prepare($history_sql)->execute($history_params);
             }
 
-            // Trigger Engine for Volatility
+            // Trigger Engine for Market Events
             $pushService = new PushService($this->pdo);
             $triggerEngine = new TriggerEngine($this->pdo, $pushService);
+
+            // Get current High/Low stats for technical break trigger
+            $symbols = array_keys($data);
+            $placeholders = implode(',', array_fill(0, count($symbols), '?'));
+            $stmt = $this->pdo->prepare("SELECT symbol, high, low FROM prices_history WHERE date = ? AND symbol IN ($placeholders)");
+            $stmt->execute(array_merge([$today], $symbols));
+            $stats = $stmt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC);
+
             foreach ($data as $symbol => $info) {
                 if (isset($info['value'])) {
                     $value = (float)$info['value'];
                     $change = (float)($info['change'] ?? 0);
                     $percent = ($value > 0) ? round(($change / ($value - $change)) * 100, 2) : 0;
+
+                    // 1. Volatility Trigger
                     if (abs($percent) >= 5) {
                         $triggerEngine->handleVolatilitySpike($symbol, $percent);
+                    }
+
+                    // 2. Technical Break Trigger
+                    if (isset($stats[$symbol])) {
+                        $triggerEngine->handleTechnicalBreak($symbol, $value, (float)$stats[$symbol]['high'], (float)$stats[$symbol]['low']);
                     }
                 }
             }

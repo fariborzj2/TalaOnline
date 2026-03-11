@@ -44,6 +44,9 @@ class TriggerEngine {
 
         // Check for Combined Opportunity Alert
         $this->handleOpportunityAlert($symbol, $change_percent);
+
+        // Check for Community Pulse
+        $this->handleCommunityPulse($symbol, $change_percent);
     }
 
     /**
@@ -104,19 +107,71 @@ class TriggerEngine {
     }
 
     /**
-     * Trigger: Breaking Economic Impact (Blog)
+     * Trigger: Content Velocity (Trending Blog)
+     * Alerts users to a blog post that is gaining rapid traction.
      */
-    public function handleNewBlogPost($post_id, $title, $category_name) {
+    public function handleContentVelocity($post_id, $title, $views) {
+        // Milestone thresholds for "Trending" badge/notification
+        $milestones = [100, 500, 1000, 5000, 10000];
+        if (!in_array($views, $milestones)) return;
+
+        // Check if it's a recent post (last 48 hours) to ensure "Velocity"
+        $stmt = $this->pdo->prepare("SELECT id FROM blog_posts WHERE id = ? AND created_at > datetime('now', '-48 hours')");
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+            $stmt = $this->pdo->prepare("SELECT id FROM blog_posts WHERE id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 48 HOUR)");
+        }
+        $stmt->execute([$post_id]);
+        if (!$stmt->fetchColumn()) return;
+
+        // Notify users
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 50");
+        $stmt->execute();
+        $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($users as $user_id) {
+            $this->pushService->notify($user_id, 'blog_trending', [
+                'title' => $title,
+                'views' => number_format($views),
+                'url' => get_site_url() . "/blog/post/$post_id" // Needs real URL resolution usually
+            ]);
+        }
+    }
+
+    /**
+     * Trigger: Breaking Economic Impact (Blog)
+     * Alerts users to new blog posts, potentially filtered by interests.
+     */
+    public function handleNewBlogPost($post_id, $title, $category_name, $content = '') {
+        // Find mentioned assets in content for interest-based targeting
+        $symbols = [];
+        $stmt = $this->pdo->query("SELECT symbol FROM items WHERE is_active = 1");
+        $all_symbols = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($all_symbols as $s) {
+            if (stripos($title . ' ' . $content, $s) !== false) {
+                $symbols[] = $s;
+            }
+        }
+
         $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 100");
         $stmt->execute();
         $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         foreach ($users as $user_id) {
-            $this->pushService->notify($user_id, 'blog_new_post', [
+            $template = 'blog_new_post';
+            $data = [
                 'title' => $title,
                 'category' => $category_name,
                 'url' => get_site_url() . "/blog/post/$post_id"
-            ]);
+            ];
+
+            // If an asset is mentioned, use a more specific template if possible
+            if (!empty($symbols)) {
+                $data['symbol'] = $symbols[0];
+                // In a production system, we'd check if user follows this symbol
+            }
+
+            $this->pushService->notify($user_id, $template, $data);
         }
     }
 
@@ -138,6 +193,72 @@ class TriggerEngine {
                 'actor_name' => $actor['name'],
                 'url' => get_site_url() . "/thread/$comment_id"
             ]);
+        }
+    }
+
+    /**
+     * Trigger: Technical Level Break
+     * Alerts when price breaks today's High or Low.
+     */
+    public function handleTechnicalBreak($symbol, $price, $high, $low) {
+        $type = null;
+        if ($price >= $high && $high > 0) $type = 'high_break';
+        elseif ($price <= $low && $low > 0) $type = 'low_break';
+
+        if (!$type) return;
+
+        // Check if we already notified for this break in the last 4 hours
+        $stmt = $this->pdo->prepare("SELECT id FROM notification_queue WHERE template_slug = 'technical_break' AND data LIKE ? AND created_at > datetime('now', '-4 hours') LIMIT 1");
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+            $stmt = $this->pdo->prepare("SELECT id FROM notification_queue WHERE template_slug = 'technical_break' AND data LIKE ? AND created_at > DATE_SUB(NOW(), INTERVAL 4 HOUR) LIMIT 1");
+        }
+        $stmt->execute(['%"symbol":"' . $symbol . '"%']);
+        if ($stmt->fetchColumn()) return;
+
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 50");
+        $stmt->execute();
+        $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        $label = ($type === 'high_break') ? 'سقف روزانه' : 'کف روزانه';
+
+        foreach ($users as $user_id) {
+            $this->pushService->notify($user_id, 'technical_break', [
+                'symbol' => $symbol,
+                'label' => $label,
+                'price' => number_format($price),
+                'url' => get_site_url() . "/market/$symbol"
+            ]);
+        }
+    }
+
+    /**
+     * Trigger: Community Pulse
+     * Alerts when there is high volatility AND high comment volume for a symbol.
+     */
+    public function handleCommunityPulse($symbol, $change_percent) {
+        if (abs($change_percent) < 2) return; // Significant move
+
+        // Check comment volume in last 1 hour
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = 'item' AND created_at > datetime('now', '-1 hour')");
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = 'item' AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+        }
+        $stmt->execute([$symbol]);
+        $comment_count = $stmt->fetchColumn();
+
+        if ($comment_count >= 10) { // High pulse threshold
+            // Notify active users
+            $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 50");
+            $stmt->execute();
+            $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            foreach ($users as $user_id) {
+                $this->pushService->notify($user_id, 'community_pulse', [
+                    'symbol' => $symbol,
+                    'count' => $comment_count,
+                    'url' => get_site_url() . "/market/$symbol"
+                ]);
+            }
         }
     }
 
