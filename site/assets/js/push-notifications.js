@@ -84,11 +84,29 @@ class PushNotificationManager {
 
         try {
             const rawData = window.atob(base64);
-            const outputArray = new Uint8Array(rawData.length);
+            let outputArray = new Uint8Array(rawData.length);
 
             for (let i = 0; i < rawData.length; ++i) {
                 outputArray[i] = rawData.charCodeAt(i);
             }
+
+            // Fix for SPKI format (91 bytes) -> Raw format (65 bytes)
+            // If it's an ASN.1 SPKI structure, the raw key starts after the 26th or 27th byte.
+            if (outputArray.length === 91 && outputArray[0] === 0x30) {
+                // Return only the raw public key part (last 65 bytes)
+                return outputArray.slice(-65);
+            }
+
+            // Ensure we return a 65-byte raw public key if possible
+            if (outputArray.length > 65) {
+                // Try to find the 0x04 prefix which marks uncompressed EC points
+                for (let i = 0; i <= outputArray.length - 65; i++) {
+                    if (outputArray[i] === 0x04) {
+                        return outputArray.slice(i, i + 65);
+                    }
+                }
+            }
+
             return outputArray;
         } catch (e) {
             console.error('Base64 Decoding Error:', e, 'String:', base64String);
