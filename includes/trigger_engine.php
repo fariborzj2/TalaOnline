@@ -82,11 +82,22 @@ class TriggerEngine {
      */
     public function handleChurnPrevention() {
         // Logic to find users who haven't logged in for 3 days
+        // We also check notification_queue to ensure we don't spam them with the same template too often
         if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
-            $stmt = $this->pdo->prepare("SELECT id, name FROM users WHERE updated_at < DATE_SUB(NOW(), INTERVAL 3 DAY) AND updated_at > DATE_SUB(NOW(), INTERVAL 4 DAY)");
+            $sql = "SELECT u.id, u.name FROM users u
+                    LEFT JOIN notification_queue n ON u.id = n.user_id AND n.template_slug = 'rehook_market_recap' AND n.created_at > DATE_SUB(NOW(), INTERVAL 7 DAY)
+                    WHERE u.updated_at < DATE_SUB(NOW(), INTERVAL 3 DAY)
+                    AND u.updated_at > DATE_SUB(NOW(), INTERVAL 10 DAY)
+                    AND n.id IS NULL";
         } else {
-            $stmt = $this->pdo->prepare("SELECT id, name FROM users WHERE updated_at < datetime('now', '-3 days') AND updated_at > datetime('now', '-4 days')");
+            $sql = "SELECT u.id, u.name FROM users u
+                    LEFT JOIN notification_queue n ON u.id = n.user_id AND n.template_slug = 'rehook_market_recap' AND n.created_at > datetime('now', '-7 days')
+                    WHERE u.updated_at < datetime('now', '-3 days')
+                    AND u.updated_at > datetime('now', '-10 days')
+                    AND n.id IS NULL";
         }
+
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
         $users = $stmt->fetchAll();
 
