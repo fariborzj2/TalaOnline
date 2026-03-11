@@ -82,9 +82,10 @@ class TriggerEngine {
      */
     public function handleChurnPrevention() {
         // Logic to find users who haven't logged in for 3 days
-        $stmt = $this->pdo->prepare("SELECT id, name FROM users WHERE updated_at < datetime('now', '-3 days') AND updated_at > datetime('now', '-4 days')");
         if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
             $stmt = $this->pdo->prepare("SELECT id, name FROM users WHERE updated_at < DATE_SUB(NOW(), INTERVAL 3 DAY) AND updated_at > DATE_SUB(NOW(), INTERVAL 4 DAY)");
+        } else {
+            $stmt = $this->pdo->prepare("SELECT id, name FROM users WHERE updated_at < datetime('now', '-3 days') AND updated_at > datetime('now', '-4 days')");
         }
         $stmt->execute();
         $users = $stmt->fetchAll();

@@ -78,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->beginTransaction();
             $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
 
+            $is_new = !$id;
             if ($id) {
                 $stmt = $pdo->prepare("UPDATE blog_posts SET title = ?, slug = ?, excerpt = ?, content = ?, thumbnail = ?, category_id = ?, status = ?, is_featured = ?, meta_title = ?, meta_description = ?, meta_keywords = ?, tags = ?, created_at = ?, updated_at = ? WHERE id = ?");
                 $stmt->execute([$title, $slug, $excerpt, $content, $thumbnail, $category_id, $status, $is_featured, $meta_title, $meta_description, $meta_keywords, $tags, $created_at, $updated_at, $id]);
@@ -160,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             // Trigger Push Notification for new post
-            if (!$id && $status === 'published') {
+            if ($is_new && $status === 'published') {
                 require_once __DIR__ . '/../../includes/push_service.php';
                 require_once __DIR__ . '/../../includes/trigger_engine.php';
                 $pushService = new PushService($pdo);
