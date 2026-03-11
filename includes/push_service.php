@@ -25,8 +25,8 @@ class PushService {
             return null;
         }
 
-        $publicKey = get_setting('webpush_public_key');
-        $privateKey = get_setting('webpush_private_key');
+        $publicKey = $this->normalizeKey(get_setting('webpush_public_key'));
+        $privateKey = $this->normalizeKey(get_setting('webpush_private_key'), true);
         $subject = get_setting('webpush_subject', 'mailto:admin@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
 
         if (!$publicKey || !$privateKey) return null;
@@ -328,6 +328,38 @@ class PushService {
             ];
         }
         return $settings;
+    }
+
+    /**
+     * Normalize VAPID keys to raw URL-safe Base64 format if provided in SPKI/PKCS8/PEM
+     */
+    private function normalizeKey($key, $isPrivate = false) {
+        if (empty($key)) return '';
+
+        // Remove PEM headers/footers and whitespaces
+        $key = preg_replace('/-----BEGIN.*?-----|-----END.*?-----|[\s\n\r"\'=]/', '', $key);
+
+        // Try to decode as standard base64 (since we removed = we use a helper or add them back)
+        $padding = strlen($key) % 4;
+        $decoded = base64_decode($padding ? $key . str_repeat('=', 4 - $padding) : $key);
+
+        if (!$decoded) return $key;
+
+        $raw = $decoded;
+
+        // Public key SPKI (91 bytes) -> Raw (65 bytes)
+        if (!$isPrivate && strlen($decoded) === 91 && ord($decoded[0]) === 0x30) {
+            $raw = substr($decoded, -65);
+        }
+
+        // Private key PKCS8 (typical 118-122 bytes) -> Raw (32 bytes)
+        if ($isPrivate && (strlen($decoded) >= 118 && strlen($decoded) <= 122) && ord($decoded[0]) === 0x30) {
+             // ECDSA Private Key usually contains the 32-byte secret at offset 7
+             $raw = substr($decoded, 7, 32);
+        }
+
+        // Return URL-safe Base64
+        return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($raw));
     }
 
     private function renderString($string, $data) {
