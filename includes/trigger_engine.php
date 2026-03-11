@@ -107,6 +107,44 @@ class TriggerEngine {
     }
 
     /**
+     * Trigger: New Symbol Discovery
+     * Alerts users when a new asset is added to the market.
+     */
+    public function handleNewSymbol($symbol, $name) {
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 100");
+        $stmt->execute();
+        $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($users as $user_id) {
+            $this->pushService->notify($user_id, 'new_symbol_discovery', [
+                'symbol' => $symbol,
+                'name' => $name,
+                'url' => get_site_url() . "/market/$symbol"
+            ]);
+        }
+    }
+
+    /**
+     * Trigger: Category Expert Update
+     * Targeted notifications for users who read many articles in a specific category.
+     */
+    public function handleCategoryExpertUpdate($post_id, $title, $category_id, $category_name) {
+        // Find users who have read > 3 articles in this category (Simplified tracking: using a mock check for now)
+        // In a real system, we'd have a `user_read_history` table.
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 50");
+        $stmt->execute();
+        $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($users as $user_id) {
+            $this->pushService->notify($user_id, 'category_expert_update', [
+                'title' => $title,
+                'category' => $category_name,
+                'url' => get_site_url() . "/blog/post/$post_id"
+            ], ['priority' => 'medium']);
+        }
+    }
+
+    /**
      * Trigger: Content Velocity (Trending Blog)
      * Alerts users to a blog post that is gaining rapid traction.
      */

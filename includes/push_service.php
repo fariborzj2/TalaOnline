@@ -113,7 +113,36 @@ class PushService {
             return true; // All channels disabled by user
         }
 
-        // Logic for frequency capping, quiet hours, etc. could go here
+        // Frequency Capping Logic
+        $limit = (int)($settings['frequency_limit'] ?? 5);
+        if ($limit > 0) {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM notification_queue WHERE user_id = ? AND created_at > datetime('now', '-24 hours')");
+            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM notification_queue WHERE user_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+            }
+            $stmt->execute([$user_id]);
+            if ($stmt->fetchColumn() >= $limit) {
+                return true; // Cap reached
+            }
+        }
+
+        // Quiet Hours Logic
+        if (!empty($settings['quiet_hours_start']) && !empty($settings['quiet_hours_end'])) {
+            $now = new DateTime('now', new DateTimeZone($settings['timezone'] ?? 'UTC'));
+            $current_time = $now->format('H:i');
+
+            $is_quiet = false;
+            if ($settings['quiet_hours_start'] < $settings['quiet_hours_end']) {
+                $is_quiet = ($current_time >= $settings['quiet_hours_start'] && $current_time <= $settings['quiet_hours_end']);
+            } else {
+                // Spans across midnight
+                $is_quiet = ($current_time >= $settings['quiet_hours_start'] || $current_time <= $settings['quiet_hours_end']);
+            }
+
+            if ($is_quiet && ($options['priority'] ?? $template['priority']) !== 'high') {
+                return true; // Suppress non-high priority during quiet hours
+            }
+        }
 
         try {
             $stmt = $this->pdo->prepare("INSERT INTO notification_queue (user_id, template_slug, data, channels, priority, scheduled_at)

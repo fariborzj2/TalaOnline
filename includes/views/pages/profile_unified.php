@@ -361,6 +361,21 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                                 </div>
 
                                 <div class="d-column gap-05">
+                                    <label class="font-bold font-size-1">ساعات سکوت (عدم ارسال اعلان)</label>
+                                    <div class="d-flex align-center gap-1">
+                                        <div class="d-flex align-center gap-05">
+                                            <span class="font-size-0-8 text-gray">از:</span>
+                                            <input type="time" name="quiet_hours_start" class="radius-8 border pd-05 ltr">
+                                        </div>
+                                        <div class="d-flex align-center gap-05">
+                                            <span class="font-size-0-8 text-gray">تا:</span>
+                                            <input type="time" name="quiet_hours_end" class="radius-8 border pd-05 ltr">
+                                        </div>
+                                    </div>
+                                    <small class="text-gray">در این بازه زمانی فقط اعلان‌های حساس و فوری ارسال خواهند شد.</small>
+                                </div>
+
+                                <div class="d-column gap-05">
                                     <label class="font-bold font-size-1">منطقه زمانی</label>
                                     <select name="timezone" class="radius-8 border pd-05 ltr">
                                         <option value="Asia/Tehran" selected>Asia/Tehran</option>
