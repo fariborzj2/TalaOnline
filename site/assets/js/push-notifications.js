@@ -65,7 +65,12 @@ class PushNotificationManager {
     }
 
     async removeSubscriptionFromServer(subscription) {
-        // Optional: inform server to remove endpoint
+        const response = await fetch('/api/push-notifications.php?action=unsubscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(subscription)
+        });
+        return response.json();
     }
 
     urlB64ToUint8Array(base64String) {
@@ -108,6 +113,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     settingsForm.querySelector('[name="frequency_limit"]').value = s.frequency_limit;
                     settingsForm.querySelector('[name="timezone"]').value = s.timezone;
+                    if (s.quiet_hours_start) settingsForm.querySelector('[name="quiet_hours_start"]').value = s.quiet_hours_start;
+                    if (s.quiet_hours_end) settingsForm.querySelector('[name="quiet_hours_end"]').value = s.quiet_hours_end;
                 }
             });
 
@@ -118,7 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 categories: formData.getAll('categories[]'),
                 channels: formData.getAll('channels[]'),
                 frequency_limit: formData.get('frequency_limit'),
-                timezone: formData.get('timezone')
+                timezone: formData.get('timezone'),
+                quiet_hours_start: formData.get('quiet_hours_start'),
+                quiet_hours_end: formData.get('quiet_hours_end')
             };
 
             const response = await fetch('/api/push-notifications.php?action=save_settings', {

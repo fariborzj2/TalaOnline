@@ -875,6 +875,22 @@ class MigrationManager {
                 'action_url' => '{url}',
                 'channels' => 'webpush,in-app',
                 'priority' => 'low'
+            ],
+            [
+                'slug' => 'new_symbol_discovery',
+                'title' => 'دارایی جدید در بازار: {name}',
+                'body' => 'نماد {symbol} به لیست دارایی‌ها اضافه شد. تحلیل و قیمت آن را بررسی کنید.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email,in-app',
+                'priority' => 'medium'
+            ],
+            [
+                'slug' => 'category_expert_update',
+                'title' => 'مطالعه پیشنهادی در دسته {category}',
+                'body' => 'با توجه به علاقه شما، مقاله جدید "{title}" را از دست ندهید.',
+                'action_url' => '{url}',
+                'channels' => 'webpush,email',
+                'priority' => 'medium'
             ]
         ];
 

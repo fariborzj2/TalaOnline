@@ -78,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         try {
             $pdo->beginTransaction();
+            $is_new = !$id;
 
             if ($id) {
                 $stmt = $pdo->prepare("UPDATE items SET name = ?, en_name = ?, symbol = ?, slug = ?, category = ?, sort_order = ?, description = ?, long_description = ?, h1_title = ?, page_title = ?, meta_description = ?, meta_keywords = ?, manual_price = ?, is_manual = ?, is_active = ?, show_in_summary = ?, show_chart = ?, logo = ?, related_item_symbol = ?, updated_at = ? WHERE id = ?");
@@ -101,6 +102,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $pdo->commit();
+
+            // Trigger Push Notification for new symbol
+            if ($is_new && $is_active) {
+                require_once __DIR__ . '/../../includes/push_service.php';
+                require_once __DIR__ . '/../../includes/trigger_engine.php';
+                $pushService = new PushService($pdo);
+                $triggerEngine = new TriggerEngine($pdo, $pushService);
+                $triggerEngine->handleNewSymbol($symbol, $name);
+            }
 
             if (get_setting('lscache_purge_on_update', '1') === '1') {
                 LSCache::purgeAll();

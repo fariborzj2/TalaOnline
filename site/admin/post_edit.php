@@ -172,6 +172,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $cat_name = $stmt_cat->fetchColumn();
 
                 $triggerEngine->handleNewBlogPost($id, $title, $cat_name ?: 'وبلاگ', $content);
+
+                // Additional targeted update for category experts
+                if ($category_id) {
+                    $triggerEngine->handleCategoryExpertUpdate($id, $title, $category_id, $cat_name ?: 'وبلاگ');
+                }
             }
 
             header("Location: posts.php?message=success");
