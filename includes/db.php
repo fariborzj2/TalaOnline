@@ -3,6 +3,11 @@
  * Database Connection & Utility Functions
  */
 
+// Load Composer's autoloader at the very top
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+
 if (!defined('DB_FUNCTIONS_LOADED')) {
 
 /**
@@ -145,11 +150,6 @@ function handle_upload($file, $target_dir = 'uploads/') {
 }
 
 define('DB_FUNCTIONS_LOADED', true);
-
-// Load Composer's autoloader
-if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    require_once __DIR__ . '/../vendor/autoload.php';
-}
 
 } // end if !defined('DB_FUNCTIONS_LOADED')
 

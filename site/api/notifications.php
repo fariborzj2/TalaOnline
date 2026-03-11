@@ -49,11 +49,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             }
         }
 
-        echo json_encode([
-            'success' => true,
-            'notifications' => $notifications,
-            'unread_count' => $unread_count
-        ]);
+        try {
+            echo json_encode([
+                'success' => true,
+                'notifications' => $notifications,
+                'unread_count' => $unread_count
+            ]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error encoding response']);
+        }
         exit;
     }
 }

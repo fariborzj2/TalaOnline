@@ -20,6 +20,11 @@ class PushService {
     private function getWebPush() {
         if ($this->webPush) return $this->webPush;
 
+        if (!class_exists('Minishlink\WebPush\WebPush')) {
+            error_log("WebPush class not found. Ensure composer dependencies are installed.");
+            return null;
+        }
+
         $publicKey = get_setting('webpush_public_key');
         $privateKey = get_setting('webpush_private_key');
         $subject = get_setting('webpush_subject', 'mailto:admin@' . ($_SERVER['HTTP_HOST'] ?? 'localhost'));
