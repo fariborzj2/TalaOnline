@@ -18,7 +18,7 @@
                         $logged_username = $_SESSION['user_username'] ?? 'user';
                         $profile_url = "/profile/$logged_user_id/" . urlencode($logged_username);
                     ?>
-                    <a href="<?= $profile_url ?>?tab=notifications">مشاهده همه اعلان‌ها</a>
+                    <a href="<?= $profile_url ?>?tab=notifications" class="notification-link-dynamic">مشاهده همه اعلان‌ها</a>
                 </div>
             </div>
         </div>

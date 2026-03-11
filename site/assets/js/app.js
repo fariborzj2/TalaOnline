@@ -327,11 +327,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update profile links in modal
             const profileLinks = profileModal.querySelectorAll('.profile-link-dynamic');
             const settingsLinks = profileModal.querySelectorAll('.settings-link-dynamic');
+            const notificationLinks = document.querySelectorAll('.notification-link-dynamic');
 
             if (authState.user.id) {
                 const baseUrl = `/profile/${authState.user.id}/${encodeURIComponent(authState.user.username || 'user')}`;
                 profileLinks.forEach(link => link.href = baseUrl);
                 settingsLinks.forEach(link => link.href = baseUrl + '?tab=edit');
+                notificationLinks.forEach(link => link.href = baseUrl + '?tab=notifications');
             }
 
             if (profileAvatar && authState.user.avatar) {
@@ -345,8 +347,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Clear profile links
             const profileLinks = profileModal.querySelectorAll('.profile-link-dynamic');
             const settingsLinks = profileModal.querySelectorAll('.settings-link-dynamic');
+            const notificationLinks = document.querySelectorAll('.notification-link-dynamic');
             profileLinks.forEach(link => link.href = '#');
             settingsLinks.forEach(link => link.href = '#');
+            notificationLinks.forEach(link => link.href = '#');
 
             const profileAvatar = profileModal.querySelector('.profile-modal-avatar');
             if (profileAvatar) {
