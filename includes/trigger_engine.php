@@ -41,6 +41,9 @@ class TriggerEngine {
                 'url' => get_site_url() . "/market/$symbol"
             ]);
         }
+
+        // Check for Combined Opportunity Alert
+        $this->handleOpportunityAlert($symbol, $change_percent);
     }
 
     /**
@@ -113,6 +116,97 @@ class TriggerEngine {
                 'title' => $title,
                 'category' => $category_name,
                 'url' => get_site_url() . "/blog/post/$post_id"
+            ]);
+        }
+    }
+
+    /**
+     * Trigger: Micro-Influencer Engagement
+     * Alerts a low-level user when a high-level user interacts with their content.
+     */
+    public function handleInfluencerEngagement($actor_id, $target_user_id, $comment_id) {
+        $stmt = $this->pdo->prepare("SELECT name, level FROM users WHERE id = ?");
+        $stmt->execute([$actor_id]);
+        $actor = $stmt->fetch();
+
+        $stmt = $this->pdo->prepare("SELECT level FROM users WHERE id = ?");
+        $stmt->execute([$target_user_id]);
+        $target_level = $stmt->fetchColumn();
+
+        if ($actor && $actor['level'] >= 4 && $target_level <= 2) {
+            $this->pushService->notify($target_user_id, 'influencer_engagement', [
+                'actor_name' => $actor['name'],
+                'url' => get_site_url() . "/thread/$comment_id"
+            ]);
+        }
+    }
+
+    /**
+     * Trigger: Combined Opportunity Alert
+     * Price drop + High-level user Analysis (sentiment)
+     */
+    public function handleOpportunityAlert($symbol, $change_percent) {
+        if ($change_percent > -3) return; // Only for drops > 3%
+
+        // Check for recent (last 3h) Level 5 analysis for this symbol
+        $stmt = $this->pdo->prepare("SELECT c.id FROM comments c
+                                   JOIN users u ON c.user_id = u.id
+                                   WHERE c.target_id = ? AND c.target_type = 'item'
+                                   AND u.level = 5 AND c.created_at > datetime('now', '-3 hours')
+                                   AND c.status = 'approved' LIMIT 1");
+
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+            $stmt = $this->pdo->prepare("SELECT c.id FROM comments c
+                                       JOIN users u ON c.user_id = u.id
+                                       WHERE c.target_id = ? AND c.target_type = 'item'
+                                       AND u.level = 5 AND c.created_at > DATE_SUB(NOW(), INTERVAL 3 HOUR)
+                                       AND c.status = 'approved' LIMIT 1");
+        }
+
+        $stmt->execute([$symbol]);
+        $expert_analysis_id = $stmt->fetchColumn();
+
+        if ($expert_analysis_id) {
+            // Notify active users who have visited this symbol in the last 7 days
+            $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 100");
+            $stmt->execute();
+            $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            foreach ($users as $user_id) {
+                $this->pushService->notify($user_id, 'market_opportunity', [
+                    'symbol' => $symbol,
+                    'url' => get_site_url() . "/market/$symbol"
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Trigger: Sentiment Shift Alert
+     * Alerts user when their historical sentiment contradicts current market consensus.
+     */
+    public function handleSentimentShift($user_id, $symbol) {
+        require_once __DIR__ . '/sentiment.php';
+        $sentiment_handler = new MarketSentiment($this->pdo);
+        $results = $sentiment_handler->getResults($symbol);
+
+        // Define "Strong Consensus" as > 70%
+        $consensus = null;
+        if ($results['bullish_percent'] > 70) $consensus = 'bullish';
+        elseif ($results['bearish_percent'] > 70) $consensus = 'bearish';
+
+        if (!$consensus) return;
+
+        // Get user's latest vote for this symbol (last 30 days)
+        $stmt = $this->pdo->prepare("SELECT vote FROM market_sentiment WHERE user_id = ? AND currency_id = ? ORDER BY created_at DESC LIMIT 1");
+        $stmt->execute([$user_id, $symbol]);
+        $user_vote = $stmt->fetchColumn();
+
+        if ($user_vote && $user_vote !== $consensus) {
+            $this->pushService->notify($user_id, 'sentiment_risk', [
+                'symbol' => $symbol,
+                'consensus' => ($consensus === 'bullish' ? 'صعودی' : 'نزولی'),
+                'url' => get_site_url() . "/market/$symbol"
             ]);
         }
     }

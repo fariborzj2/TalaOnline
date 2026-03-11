@@ -625,6 +625,13 @@ class Comments {
             if ($author_id && $author_id != $user_id) {
                 $new_points = in_array($reaction_type, ['like', 'heart', 'fire']) ? 5 : -2;
                 $this->rewardUser($author_id, $new_points);
+
+                // Influencer Detection Trigger
+                if (in_array($reaction_type, ['like', 'heart', 'fire'])) {
+                    $pushService = new PushService($this->pdo);
+                    $triggerEngine = new TriggerEngine($this->pdo, $pushService);
+                    $triggerEngine->handleInfluencerEngagement($user_id, $author_id, $comment_id);
+                }
             }
         }
 
