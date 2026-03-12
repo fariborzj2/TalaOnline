@@ -337,13 +337,19 @@ class TriggerEngine {
      * Trigger: Market Anomaly Detection
      * Alerts when price deviates significantly (>10%) from 7-day average.
      */
-    public function handleMarketAnomaly($symbol, $current_price) {
-        $stmt = $this->pdo->prepare("SELECT AVG(price) FROM prices_history WHERE symbol = ? AND date > datetime('now', '-7 days')");
-        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
-            $stmt = $this->pdo->prepare("SELECT AVG(price) FROM prices_history WHERE symbol = ? AND date > DATE_SUB(NOW(), INTERVAL 7 DAY)");
+    public function handleMarketAnomaly($symbol, $current_price, $precalculated_avg = null) {
+        if ($precalculated_avg !== null && $precalculated_avg !== false) {
+            $avg_price = (float)$precalculated_avg;
+        } elseif ($precalculated_avg === false) {
+            $avg_price = 0;
+        } else {
+            $stmt = $this->pdo->prepare("SELECT AVG(price) FROM prices_history WHERE symbol = ? AND date > datetime('now', '-7 days')");
+            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+                $stmt = $this->pdo->prepare("SELECT AVG(price) FROM prices_history WHERE symbol = ? AND date > DATE_SUB(NOW(), INTERVAL 7 DAY)");
+            }
+            $stmt->execute([$symbol]);
+            $avg_price = (float)$stmt->fetchColumn();
         }
-        $stmt->execute([$symbol]);
-        $avg_price = (float)$stmt->fetchColumn();
 
         if ($avg_price > 0) {
             $deviation = (($current_price - $avg_price) / $avg_price) * 100;

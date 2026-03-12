@@ -90,6 +90,15 @@ class NavasanService {
             $stmt->execute(array_merge([$today], $symbols));
             $stats = $stmt->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC);
 
+            // Pre-fetch 7-day averages for market anomaly trigger (Performance Optimization)
+            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+                $stmt_avg = $this->pdo->prepare("SELECT symbol, AVG(price) as avg_price FROM prices_history WHERE symbol IN ($placeholders) AND date > DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY symbol");
+            } else {
+                $stmt_avg = $this->pdo->prepare("SELECT symbol, AVG(price) as avg_price FROM prices_history WHERE symbol IN ($placeholders) AND date > datetime('now', '-7 days') GROUP BY symbol");
+            }
+            $stmt_avg->execute($symbols);
+            $averages = $stmt_avg->fetchAll(PDO::FETCH_KEY_PAIR);
+
             foreach ($data as $symbol => $info) {
                 if (isset($info['value'])) {
                     $value = (float)$info['value'];
@@ -107,7 +116,7 @@ class NavasanService {
                     }
 
                     // 3. Market Anomaly Trigger
-                    $triggerEngine->handleMarketAnomaly($symbol, $value);
+                    $triggerEngine->handleMarketAnomaly($symbol, $value, $averages[$symbol] ?? false);
 
                     // 4. Technical Level Break (S/R)
                     $triggerEngine->handleTechnicalLevelBreak($symbol, $value);
