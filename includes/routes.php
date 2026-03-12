@@ -204,18 +204,25 @@ $router->add('/profile/:identifier/:slug', function($params) {
     $is_following = false;
 
     try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE following_id = ?");
-        $stmt->execute([$user['id']]);
-        $follower_count = $stmt->fetchColumn();
+        // Performance optimization:
+        // This previously executed 3 separate COUNT queries.
+        // Conditional aggregation fetches all follower and following stats in a single database round-trip.
+        $viewer_id_sql = isset($_SESSION['user_id']) && !$is_owner ? (int)$_SESSION['user_id'] : -1;
+        $sql = "SELECT
+                  SUM(CASE WHEN following_id = ? THEN 1 ELSE 0 END) as follower_count,
+                  SUM(CASE WHEN follower_id = ? THEN 1 ELSE 0 END) as following_count,
+                  MAX(CASE WHEN follower_id = ? AND following_id = ? THEN 1 ELSE 0 END) as is_following
+                FROM follows
+                WHERE following_id = ? OR follower_id = ?";
 
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ?");
-        $stmt->execute([$user['id']]);
-        $following_count = $stmt->fetchColumn();
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$user['id'], $user['id'], $viewer_id_sql, $user['id'], $user['id'], $user['id']]);
+        $stats = $stmt->fetch();
 
-        if (isset($_SESSION['user_id']) && !$is_owner) {
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM follows WHERE follower_id = ? AND following_id = ?");
-            $stmt->execute([$_SESSION['user_id'], $user['id']]);
-            $is_following = ($stmt->fetchColumn() > 0);
+        if ($stats) {
+            $follower_count = (int)$stats['follower_count'];
+            $following_count = (int)$stats['following_count'];
+            $is_following = !empty($stats['is_following']);
         }
     } catch (Exception $e) {}
 
