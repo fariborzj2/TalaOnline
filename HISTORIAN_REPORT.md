@@ -137,3 +137,33 @@ Correlated subqueries in the `SELECT` clause are often structural anti-patterns 
 
 Action:
 Future agents should actively `grep` for the pattern `SELECT.*(SELECT` to detect and eliminate database-level hidden N+1 queries across the admin dashboards.
+
+## YYYY-MM-DD — Insight
+
+⚡ HyperBolt X: Email Queue Status Batching Optimization
+
+BOTTLENECK
+In `site/admin/email_settings.php`, the system executed three separate, sequential `COUNT(*)` queries against the `email_queue` table to calculate the number of pending, sent, and failed emails. This resulted in redundant network round-trips and multiple full-table scans (or index scans) by the database engine on every settings page load.
+
+ROOT CAUSE
+The initial implementation treated each status metric as an isolated data request, overlooking the database's native conditional aggregation capabilities.
+
+OPTIMIZATION
+Refactored the three distinct queries into a single batched query using conditional aggregation (`SUM(CASE WHEN ... THEN 1 ELSE 0 END)`). This evaluates all three status conditions in a single pass over the table.
+
+EXPECTED IMPACT
+• database queries reduced from 3 -> 1 per settings page load
+• network overhead and I/O wait times minimized
+• database engine context switching and scanning overhead significantly reduced
+
+SAFETY
+The optimization preserves identical functionality. The results are fetched as an associative array and cleanly extracted with `?? 0` fallbacks, explicitly cast back to integers. This guarantees that the UI rendering logic continues to receive the exact same variable types and values as before, without regressions.
+
+VERIFICATION
+Engineers can load the `site/admin/email_settings.php` dashboard and confirm that the queue status widgets (Pending, Sent, Failed) correctly reflect the underlying table counts using only a single executed query.
+
+Learning:
+Sequential `COUNT(*)` queries on the same table with varying `WHERE` conditions are a classic backend bottleneck. They can almost always be optimized into a single scan using conditional aggregation.
+
+Action:
+Future performance sweeps should `grep` for adjacent `COUNT(*)` statements or repeated `COUNT` queries over the same table in admin dashboards, unifying them via `SUM(CASE WHEN...)`.
