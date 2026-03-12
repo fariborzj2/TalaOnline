@@ -277,3 +277,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ob_clean();
 echo json_encode(['success' => false, 'message' => 'درخواست نامعتبر.']);
 while (ob_get_level() > 0) ob_end_flush();
+exit;
