@@ -78,3 +78,32 @@ N+1 query patterns aren't just limited to ORMs fetching related entities; they o
 
 Action:
 When designing services used within loops (like `notify`, `checkAccess`, `calculateScore`), always provide a `preload` or batched API method to hydrate in-memory caches before iteration begins.
+
+## YYYY-MM-DD — Insight
+
+⚡ HyperBolt X: Prices API Query Batching
+
+BOTTLENECK
+In `site/api/prices.php`, when no specific symbol was requested, the endpoint sequentially executed two nearly identical database queries to fetch the historical data for `18ayar` and `silver` to populate the default dashboard charts.
+
+ROOT CAUSE
+The initial implementation favored simplicity, separating the concerns for fetching `gold` vs `silver` into distinct queries rather than utilizing an SQL `IN` clause to retrieve multiple targeted subsets simultaneously.
+
+OPTIMIZATION
+Replaced the sequential queries with a single batched query using `WHERE symbol IN ('18ayar', 'silver')`. The returned dataset is dynamically grouped back into the required `gold` and `silver` JSON response structure during the iteration over the result set.
+
+EXPECTED IMPACT
+• database queries reduced 2 -> 1 on default chart API load
+• database overhead and network roundtrips minimized
+
+SAFETY
+The optimization guarantees identical JSON output. The `ORDER BY date ASC` applies universally to both symbols in the result set, ensuring time-series integrity when grouping in PHP.
+
+VERIFICATION
+Engineers can request `site/api/prices.php` without parameters and confirm the `gold` and `silver` objects still contain correctly formatted arrays of dates and prices.
+
+Learning:
+When multiple independent queries target the same table with similar constraints but different identifier targets, grouping them via an `IN` clause and handling the data separation in the application layer usually yields better performance.
+
+Action:
+Consolidate sequential identical data fetches into batched lookups where appropriate.

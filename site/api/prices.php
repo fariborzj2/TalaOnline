@@ -33,24 +33,14 @@ if ($symbol) {
     ];
 
     if ($pdo) {
-        // Fetch Gold (18ayar) history
-        $stmt = $pdo->prepare("SELECT price, date FROM prices_history WHERE symbol = ? ORDER BY date ASC");
-        $stmt->execute(['18ayar']);
-        $gold_history = $stmt->fetchAll();
+        // Fetch Gold (18ayar) and Silver history in a single batched query
+        $stmt = $pdo->prepare("SELECT symbol, price, date FROM prices_history WHERE symbol IN ('18ayar', 'silver') ORDER BY date ASC");
+        $stmt->execute();
+        $history = $stmt->fetchAll();
 
-        foreach ($gold_history as $row) {
-            $response['gold'][] = [
-                'date' => $row['date'],
-                'price' => (float)$row['price']
-            ];
-        }
-
-        // Fetch Silver history
-        $stmt->execute(['silver']);
-        $silver_history = $stmt->fetchAll();
-
-        foreach ($silver_history as $row) {
-            $response['silver'][] = [
+        foreach ($history as $row) {
+            $key = $row['symbol'] === '18ayar' ? 'gold' : 'silver';
+            $response[$key][] = [
                 'date' => $row['date'],
                 'price' => (float)$row['price']
             ];
