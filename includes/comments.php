@@ -539,51 +539,59 @@ class Comments {
                 // Reward user
                 $this->rewardUser($user_id, 10); // 10 points for comment
 
-                // Performance optimization: Pre-fetch sender name once for all notifications
-                $stmt_sender = $this->pdo->prepare("SELECT name FROM users WHERE id = ?");
-                $stmt_sender->execute([$user_id]);
-                $sender_name = $stmt_sender->fetchColumn();
+                try {
+                    // Performance optimization: Pre-fetch sender name once for all notifications
+                    $stmt_sender = $this->pdo->prepare("SELECT name FROM users WHERE id = ?");
+                    $stmt_sender->execute([$user_id]);
+                    $sender_name = $stmt_sender->fetchColumn();
 
-                // Check for mentions (uses placeholders to notify)
-                $this->handleMentions($stored_content, $comment_id, $user_id, $sender_name);
+                    // Check for mentions (uses placeholders to notify)
+                    $this->handleMentions($stored_content, $comment_id, $user_id, $sender_name);
 
-                // Notify parent author and reply target
-                if ($parent_id || ($reply_to_user_id && $reply_to_user_id != $user_id)) {
-                    if ($parent_id) {
-                        $this->notifyReply($parent_id, $comment_id, $sender_name);
+                    // Notify parent author and reply target
+                    if ($parent_id || ($reply_to_user_id && $reply_to_user_id != $user_id)) {
+                        if ($parent_id) {
+                            $this->notifyReply($parent_id, $comment_id, $sender_name);
+                        }
+                        if ($reply_to_user_id && $reply_to_user_id != $user_id) {
+                            $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $sender_name);
+                            $notif = new Notifications($this->pdo);
+                            $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
+                        }
+
+                        // Consolidated Push Notifications via Engine
+                        $pushService = new PushService($this->pdo);
+                        $triggerEngine = new TriggerEngine($this->pdo, $pushService);
+                        $triggerEngine->handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id);
                     }
-                    if ($reply_to_user_id && $reply_to_user_id != $user_id) {
-                        $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $sender_name);
-                        $notif = new Notifications($this->pdo);
-                        $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
-                    }
-
-                    // Consolidated Push Notifications via Engine
-                    $pushService = new PushService($this->pdo);
-                    $triggerEngine = new TriggerEngine($this->pdo, $pushService);
-                    $triggerEngine->handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id);
+                } catch (\Throwable $e) {
+                    error_log("Comment Notification Error: " . $e->getMessage());
                 }
             }
 
-            // Trending Discussion Trigger (Velocity Check)
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND created_at > datetime('now', '-1 hour')");
-            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
-                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)");
-            }
-            $stmt->execute([$target_id, $target_type]);
-            $recent_count = $stmt->fetchColumn();
+            try {
+                // Trending Discussion Trigger (Velocity Check)
+                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND created_at > datetime('now', '-1 hour')");
+                if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+                    $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM comments WHERE target_id = ? AND target_type = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)");
+                }
+                $stmt->execute([$target_id, $target_type]);
+                $recent_count = $stmt->fetchColumn();
 
-            if ($recent_count == 20) { // Threshold for "Trending"
-                $pushService = new PushService($this->pdo);
-                $triggerEngine = new TriggerEngine($this->pdo, $pushService);
-                $info = $this->getTargetInfo($target_id, $target_type);
+                if ($recent_count == 20) { // Threshold for "Trending"
+                    $pushService = new PushService($this->pdo);
+                    $triggerEngine = new TriggerEngine($this->pdo, $pushService);
+                    $info = $this->getTargetInfo($target_id, $target_type);
 
-                $triggerEngine->handleTrendingDiscussion(
-                    $target_id,
-                    $target_type,
-                    $info['title'] ?? 'یک بحث داغ',
-                    ($info['url'] ?? '/')
-                );
+                    $triggerEngine->handleTrendingDiscussion(
+                        $target_id,
+                        $target_type,
+                        $info['title'] ?? 'یک بحث داغ',
+                        ($info['url'] ?? '/')
+                    );
+                }
+            } catch (\Throwable $e) {
+                error_log("Comment Trending Trigger Error: " . $e->getMessage());
             }
 
             return $comment_id;

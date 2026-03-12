@@ -8,6 +8,8 @@ require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 require_once __DIR__ . '/../../includes/comments.php';
 
+try {
+
 ensure_session();
 $user_id = $_SESSION['user_id'] ?? null;
 $action = $_GET['action'] ?? '';
@@ -278,3 +280,10 @@ ob_clean();
 echo json_encode(['success' => false, 'message' => 'درخواست نامعتبر.']);
 while (ob_get_level() > 0) ob_end_flush();
 exit;
+
+} catch (\Throwable $e) {
+    while (ob_get_level() > 0) ob_end_clean();
+    error_log("Comments API Error: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
+    echo json_encode(['success' => false, 'message' => 'خطای سرور رخ داد. لطفا دوباره تلاش کنید.']);
+    exit;
+}
