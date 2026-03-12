@@ -822,15 +822,28 @@ class Comments {
         preg_match_all('/@([a-zA-Z0-9_]+)/', $content, $matches);
         $usernames = array_values(array_unique($matches[1]));
 
-        foreach ($usernames as $username) {
-            $stmt = $this->pdo->prepare("SELECT id FROM users WHERE LOWER(username) = LOWER(?)");
-            $stmt->execute([$username]);
-            $uid = $stmt->fetchColumn();
-            if ($uid) {
-                // Use word boundary to avoid partial matches
-                $content = preg_replace('/@' . preg_quote($username, '/') . '\b/i', "[user:$uid]", $content);
+        if (!empty($usernames)) {
+            // Performance optimization:
+            // This computation previously executed on every mention parsed.
+            // Memoization and batching prevents N+1 queries when resolving usernames.
+            $placeholders = implode(',', array_fill(0, count($usernames), '?'));
+            $stmt = $this->pdo->prepare("SELECT id, username FROM users WHERE LOWER(username) IN ($placeholders)");
+            $stmt->execute(array_map('strtolower', $usernames));
+
+            $user_map = [];
+            while ($row = $stmt->fetch()) {
+                $user_map[strtolower($row['username'])] = $row['id'];
+            }
+
+            foreach ($usernames as $username) {
+                $uid = $user_map[strtolower($username)] ?? null;
+                if ($uid) {
+                    // Use word boundary to avoid partial matches
+                    $content = preg_replace('/@' . preg_quote($username, '/') . '\b/i', "[user:$uid]", $content);
+                }
             }
         }
+
         return $content;
     }
 
