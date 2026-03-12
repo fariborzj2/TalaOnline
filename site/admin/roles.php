@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && has_permission('roles.delete')) {
     }
 }
 
-$stmt = $pdo->query("SELECT r.*, (SELECT COUNT(*) FROM users u WHERE u.role_id = r.id) as users_count FROM roles r ORDER BY id ASC");
+$stmt = $pdo->query("SELECT r.*, COUNT(u.id) as users_count FROM roles r LEFT JOIN users u ON u.role_id = r.id GROUP BY r.id ORDER BY r.id ASC");
 $roles = $stmt->fetchAll();
 
 include __DIR__ . '/layout/header.php';
