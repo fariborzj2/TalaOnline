@@ -107,3 +107,33 @@ When multiple independent queries target the same table with similar constraints
 
 Action:
 Consolidate sequential identical data fetches into batched lookups where appropriate.
+
+## YYYY-MM-DD — Insight
+
+⚡ HyperBolt X: Role Management Correlated Subquery Optimization
+
+BOTTLENECK
+In `site/admin/roles.php`, the primary data fetching query used a correlated subquery in the `SELECT` clause to count the number of users assigned to each role: `SELECT r.*, (SELECT COUNT(*) FROM users u WHERE u.role_id = r.id) as users_count FROM roles r`. This architecture forces the database engine to execute the inner `SELECT COUNT(*)` repeatedly for every single row returned by the outer query, creating a hidden N+1 bottleneck within the database itself.
+
+ROOT CAUSE
+The query was written using a scalar subquery approach rather than leveraging standard relational aggregation (JOIN and GROUP BY).
+
+OPTIMIZATION
+Refactored the SQL query to utilize a `LEFT JOIN` combined with a `GROUP BY` clause: `SELECT r.*, COUNT(u.id) as users_count FROM roles r LEFT JOIN users u ON u.role_id = r.id GROUP BY r.id ORDER BY r.id ASC`.
+
+EXPECTED IMPACT
+• database query execution plan simplified from O(N) internal sub-executions to a single, optimized relational hash/merge join
+• decreased CPU overhead on the database engine
+• consistent query time regardless of the number of roles scaling up in the future
+
+SAFETY
+The optimization guarantees identical output. By using `LEFT JOIN` instead of `INNER JOIN`, roles with zero users are still returned in the result set. `COUNT(u.id)` correctly returns `0` for roles with no users, preserving the identical numeric response expected by the frontend table view.
+
+VERIFICATION
+Engineers can visit the `site/admin/roles.php` dashboard and verify that the "تعداد کاربران" (Number of Users) column still accurately reflects the total user count for each role without missing any empty roles.
+
+Learning:
+Correlated subqueries in the `SELECT` clause are often structural anti-patterns that mask N+1 execution inside the database engine. They should generally be rewritten into `LEFT JOIN`s with aggregation.
+
+Action:
+Future agents should actively `grep` for the pattern `SELECT.*(SELECT` to detect and eliminate database-level hidden N+1 queries across the admin dashboards.
