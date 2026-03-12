@@ -313,15 +313,42 @@ class TriggerEngine {
         $stmt->execute();
         $pairs = $stmt->fetchAll();
 
+        if (empty($pairs)) return;
+
+        // Performance optimization:
+        // These lookups previously executed on every iteration inside the loop.
+        // Batching the database queries prevents N+1 query patterns.
+
+        // 1. Bulk check existing follows
+        $follow_conditions = [];
+        $follow_params = [];
         foreach ($pairs as $pair) {
-            // Check if already following
-            $stmt_f = $this->pdo->prepare("SELECT 1 FROM follows WHERE follower_id = ? AND following_id = ?");
-            $stmt_f->execute([$pair['user_a'], $pair['user_b']]);
-            if (!$stmt_f->fetchColumn()) {
+            $follow_conditions[] = "(follower_id = ? AND following_id = ?)";
+            $follow_params[] = $pair['user_a'];
+            $follow_params[] = $pair['user_b'];
+        }
+        $where_clause = implode(' OR ', $follow_conditions);
+        $stmt_f = $this->pdo->prepare("SELECT follower_id, following_id FROM follows WHERE $where_clause");
+        $stmt_f->execute($follow_params);
+        $existing_follows = [];
+        while ($row = $stmt_f->fetch()) {
+            $existing_follows[$row['follower_id'] . '_' . $row['following_id']] = true;
+        }
+
+        // 2. Bulk fetch suggested users
+        $unique_users_b = array_values(array_unique(array_column($pairs, 'user_b')));
+        $placeholders = implode(',', array_fill(0, count($unique_users_b), '?'));
+        $stmt_u = $this->pdo->prepare("SELECT id, name, username FROM users WHERE id IN ($placeholders)");
+        $stmt_u->execute($unique_users_b);
+        $users_map = [];
+        while ($row = $stmt_u->fetch()) {
+            $users_map[$row['id']] = $row;
+        }
+
+        foreach ($pairs as $pair) {
+            if (!isset($existing_follows[$pair['user_a'] . '_' . $pair['user_b']])) {
                 // Suggest B to A
-                $stmt_u = $this->pdo->prepare("SELECT name, username FROM users WHERE id = ?");
-                $stmt_u->execute([$pair['user_b']]);
-                $user_b = $stmt_u->fetch();
+                $user_b = $users_map[$pair['user_b']] ?? null;
 
                 if ($user_b) {
                     $this->pushService->notify($pair['user_a'], 'interest_clustering_suggest', [
