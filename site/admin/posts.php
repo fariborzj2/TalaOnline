@@ -47,8 +47,7 @@ if (!in_array($sort, $allowed_sorts)) $sort = 'created_at';
 $total_posts = $pdo->query("SELECT COUNT(*) FROM blog_posts")->fetchColumn();
 $total_pages = ceil($total_posts / $per_page);
 
-$stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug,
-    (SELECT GROUP_CONCAT(DISTINCT cat.name) FROM blog_categories cat INNER JOIN blog_post_categories pc ON cat.id = pc.category_id WHERE pc.post_id = p.id) as all_categories
+$stmt = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug
     FROM blog_posts p
     LEFT JOIN blog_categories c ON p.category_id = c.id
     ORDER BY p.$sort $order
@@ -57,6 +56,29 @@ $stmt->bindValue(':limit', $per_page, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $posts = $stmt->fetchAll();
+
+// Performance optimization:
+// The main query previously used a correlated subquery in the SELECT clause to fetch all_categories,
+// which acts as a hidden N+1 query executing per row.
+// Batching the categories lookup separately prevents this database engine overhead.
+if (!empty($posts)) {
+    $post_ids = array_column($posts, 'id');
+    $placeholders = implode(',', array_fill(0, count($post_ids), '?'));
+    $cat_stmt = $pdo->prepare("SELECT pc.post_id, GROUP_CONCAT(DISTINCT cat.name) as all_categories
+                               FROM blog_categories cat
+                               INNER JOIN blog_post_categories pc ON cat.id = pc.category_id
+                               WHERE pc.post_id IN ($placeholders)
+                               GROUP BY pc.post_id");
+    $cat_stmt->execute($post_ids);
+    $cat_map = [];
+    while ($row = $cat_stmt->fetch()) {
+        $cat_map[$row['post_id']] = $row['all_categories'];
+    }
+    foreach ($posts as &$p) {
+        $p['all_categories'] = $cat_map[$p['id']] ?? null;
+    }
+    unset($p);
+}
 
 function sort_link($field, $label) {
     global $sort, $order, $page;
