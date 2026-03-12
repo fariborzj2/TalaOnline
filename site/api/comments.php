@@ -217,13 +217,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             record_rate_limit_attempt('comment_react', 'ip', $ip);
             record_rate_limit_attempt('comment_react', 'user', $user_id);
 
+            // Performance optimization:
+            // This computation previously executed 4 correlated subqueries.
+            // Conditional aggregation prevents N+1 and evaluates all counts in a single pass.
             $stmt = $pdo->prepare("SELECT
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'like') as likes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'dislike') as dislikes,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'heart') as hearts,
-                (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = ? AND reaction_type = 'fire') as fires");
-            $stmt->execute([$comment_id, $comment_id, $comment_id, $comment_id]);
+                SUM(CASE WHEN reaction_type = 'like' THEN 1 ELSE 0 END) as likes,
+                SUM(CASE WHEN reaction_type = 'dislike' THEN 1 ELSE 0 END) as dislikes,
+                SUM(CASE WHEN reaction_type = 'heart' THEN 1 ELSE 0 END) as hearts,
+                SUM(CASE WHEN reaction_type = 'fire' THEN 1 ELSE 0 END) as fires
+                FROM comment_reactions
+                WHERE comment_id = ?");
+            $stmt->execute([$comment_id]);
             $counts = $stmt->fetch();
+
+            // Ensure integer defaults for JSON consistency
+            $counts['likes'] = (int)($counts['likes'] ?? 0);
+            $counts['dislikes'] = (int)($counts['dislikes'] ?? 0);
+            $counts['hearts'] = (int)($counts['hearts'] ?? 0);
+            $counts['fires'] = (int)($counts['fires'] ?? 0);
             echo json_encode(['success' => true, 'counts' => $counts, 'user_reaction' => $reaction_type]);
         } else {
             echo json_encode(['success' => false]);
