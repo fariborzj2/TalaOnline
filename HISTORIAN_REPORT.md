@@ -48,3 +48,33 @@ Iterative database queries inside loops during form submissions are a common bot
 
 Action:
 Future agents should look for similar N+1 query patterns in form handlers and synchronization logic (e.g., categorizing items, mapping relations) and replace them with batched pre-fetching strategies.
+
+## YYYY-MM-DD — Insight
+
+⚡ HyperBolt X: PushService N+1 Optimization (getUserSettings)
+
+BOTTLENECK
+The `PushService::notify` method dynamically fetched user notification settings via `PushService::getUserSettings` (`SELECT * FROM notification_settings WHERE user_id = ?`). However, in `TriggerEngine`, many events (like market anomalies or new blog posts) target tens or hundreds of users in a single loop (`foreach ($users as $user_id)`). This caused a severe N+1 query problem, hitting the database once per notified user.
+
+ROOT CAUSE
+The `getUserSettings` method was designed for a single user context and did not natively support batch loading. The calling loops iterated imperatively without giving the underlying service a chance to pre-fetch relationships or configs.
+
+OPTIMIZATION
+Introduced a `preloadUserSettings(array $user_ids)` method in `PushService` that fetches settings for all provided users in a single batched `IN (...)` query. It caches the results (and safely marks non-existent settings as `false` to avoid re-fetching). `TriggerEngine` was updated to call this preload method before iterating over user arrays in bulk events. `getUserSettings` now returns from cache immediately.
+
+EXPECTED IMPACT
+• database queries per bulk notification event reduced from N to 1 (where N is the number of targeted users)
+• significant reduction in database connection and processing overhead during background worker execution
+• improved multi-channel notification throughput
+
+SAFETY
+Identical behavior is preserved. The `preloadUserSettings` checks which IDs are not yet in cache, fetching only the missing ones. Missing rows are assigned `false` in the array so `getUserSettings` still correctly provides the default structure, avoiding infinite query loops or missing defaults.
+
+VERIFICATION
+When `handleMarketAnomaly` or other bulk triggers fire, the system logs will show a single `SELECT * FROM notification_settings WHERE user_id IN (...)` rather than sequentially polling for every user.
+
+Learning:
+N+1 query patterns aren't just limited to ORMs fetching related entities; they often hide in service classes that perform granular checks (like configurations, permissions, or settings) during iterative processes.
+
+Action:
+When designing services used within loops (like `notify`, `checkAccess`, `calculateScore`), always provide a `preload` or batched API method to hydrate in-memory caches before iteration begins.

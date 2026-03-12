@@ -9,9 +9,44 @@ use Minishlink\WebPush\Subscription;
 class PushService {
     private $pdo;
     private $webPush;
+    private $userSettingsCache = [];
 
     public function __construct($pdo) {
         $this->pdo = $pdo;
+    }
+
+    /**
+     * Preload notification settings for a list of users to prevent N+1 queries.
+     */
+    public function preloadUserSettings(array $user_ids) {
+        $user_ids = array_unique(array_filter($user_ids));
+
+        // Find which ones we don't have in cache yet
+        $to_fetch = [];
+        foreach ($user_ids as $uid) {
+            if (!array_key_exists($uid, $this->userSettingsCache)) {
+                $to_fetch[] = $uid;
+            }
+        }
+
+        if (empty($to_fetch)) return;
+
+        $placeholders = implode(',', array_fill(0, count($to_fetch), '?'));
+        $stmt = $this->pdo->prepare("SELECT * FROM notification_settings WHERE user_id IN ($placeholders)");
+        $stmt->execute($to_fetch);
+
+        $fetched = [];
+        while ($row = $stmt->fetch()) {
+            $fetched[$row['user_id']] = $row;
+            $this->userSettingsCache[$row['user_id']] = $row;
+        }
+
+        // Mark missing ones as "default" (null/false, or default structure) so we don't fetch them again
+        foreach ($to_fetch as $uid) {
+            if (!isset($fetched[$uid])) {
+                $this->userSettingsCache[$uid] = false;
+            }
+        }
     }
 
     /**
@@ -326,9 +361,13 @@ class PushService {
     }
 
     private function getUserSettings($user_id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM notification_settings WHERE user_id = ?");
-        $stmt->execute([$user_id]);
-        $settings = $stmt->fetch();
+        if (!array_key_exists($user_id, $this->userSettingsCache)) {
+            $stmt = $this->pdo->prepare("SELECT * FROM notification_settings WHERE user_id = ?");
+            $stmt->execute([$user_id]);
+            $this->userSettingsCache[$user_id] = $stmt->fetch();
+        }
+
+        $settings = $this->userSettingsCache[$user_id];
 
         if (!$settings) {
             return [

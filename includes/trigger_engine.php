@@ -38,6 +38,7 @@ class TriggerEngine {
 
         $type = $change_percent > 0 ? 'افزایش' : 'کاهش';
 
+        $this->pushService->preloadUserSettings($users);
         foreach ($users as $user_id) {
             $template = in_array($user_id, $watchlist_users) ? 'watchlist_volatility' : 'asset_volatility';
 
@@ -103,7 +104,8 @@ class TriggerEngine {
                  $stmt->execute([$symbol]);
                  $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-                 foreach ($users as $user_id) {
+                 $this->pushService->preloadUserSettings($users);
+        foreach ($users as $user_id) {
                      $this->pushService->notify($user_id, 'technical_level_alert', [
                          'symbol' => $symbol,
                          'level' => number_format($lvl),
@@ -134,6 +136,7 @@ class TriggerEngine {
         $stmt->execute();
         $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+        $this->pushService->preloadUserSettings($users);
         foreach ($users as $user_id) {
             $this->pushService->notify($user_id, 'social_trending', [
                 'title' => $title,
@@ -151,6 +154,7 @@ class TriggerEngine {
         $stmt->execute();
         $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+        $this->pushService->preloadUserSettings($users);
         foreach ($users as $user_id) {
             $this->pushService->notify($user_id, 'new_symbol_discovery', [
                 'symbol' => $symbol,
@@ -171,6 +175,7 @@ class TriggerEngine {
         $stmt->execute();
         $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+        $this->pushService->preloadUserSettings($users);
         foreach ($users as $user_id) {
             $this->pushService->notify($user_id, 'category_expert_update', [
                 'title' => $title,
@@ -202,6 +207,7 @@ class TriggerEngine {
         $stmt->execute();
         $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+        $this->pushService->preloadUserSettings($users);
         foreach ($users as $user_id) {
             $this->pushService->notify($user_id, 'blog_trending', [
                 'title' => $title,
@@ -242,6 +248,7 @@ class TriggerEngine {
 
         $users = array_unique(array_merge($targeted_user_ids, $general_users));
 
+        $this->pushService->preloadUserSettings($users);
         foreach ($users as $user_id) {
             $is_targeted = in_array($user_id, $targeted_user_ids);
             $template = $is_targeted ? 'watchlist_news' : 'blog_new_post';
@@ -388,7 +395,8 @@ class TriggerEngine {
 
                 $type = $deviation > 0 ? 'رشد غیرعادی' : 'سقوط غیرعادی';
 
-                foreach ($users as $user_id) {
+                $this->pushService->preloadUserSettings($users);
+        foreach ($users as $user_id) {
                     $this->pushService->notify($user_id, 'market_anomaly', [
                         'symbol' => $symbol,
                         'type' => $type,
@@ -425,6 +433,7 @@ class TriggerEngine {
 
         $label = ($type === 'high_break') ? 'سقف روزانه' : 'کف روزانه';
 
+        $this->pushService->preloadUserSettings($users);
         foreach ($users as $user_id) {
             $this->pushService->notify($user_id, 'technical_break', [
                 'symbol' => $symbol,
@@ -456,7 +465,8 @@ class TriggerEngine {
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-            foreach ($users as $user_id) {
+            $this->pushService->preloadUserSettings($users);
+        foreach ($users as $user_id) {
                 $this->pushService->notify($user_id, 'community_pulse', [
                     'symbol' => $symbol,
                     'count' => $comment_count,
@@ -497,7 +507,8 @@ class TriggerEngine {
             $stmt->execute();
             $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-            foreach ($users as $user_id) {
+            $this->pushService->preloadUserSettings($users);
+        foreach ($users as $user_id) {
                 $this->pushService->notify($user_id, 'market_opportunity', [
                     'symbol' => $symbol,
                     'url' => get_site_url() . "/market/$symbol"
@@ -560,6 +571,7 @@ class TriggerEngine {
         $stmt->execute();
         $users = $stmt->fetchAll();
 
+        $this->pushService->preloadUserSettings(array_column($users, 'id'));
         foreach ($users as $user) {
             $this->pushService->notify($user['id'], 'rehook_market_recap', [
                 'name' => $user['name'],
