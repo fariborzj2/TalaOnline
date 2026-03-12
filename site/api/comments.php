@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                    ? 'نظر شما ثبت شد و پس از تایید مدیر نمایش داده خواهد شد.'
                    : 'نظر شما با موفقیت ثبت شد.';
 
-            echo json_encode([
+            $response = json_encode([
                 'success' => true,
                 'id' => $id,
                 'comment' => $new_comment,
@@ -181,11 +181,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'message' => $msg
             ]);
         } else {
-            echo json_encode(['success' => false, 'message' => 'خطا در ثبت نظر.']);
+            $response = json_encode(['success' => false, 'message' => 'خطا در ثبت نظر.']);
         }
 
-        while (ob_get_level() > 1) ob_end_clean();
-        ob_end_flush();
+        while (ob_get_level() > 0) ob_end_clean();
+        echo $response;
         exit;
     }
 
