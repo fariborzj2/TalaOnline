@@ -309,10 +309,20 @@ class PushService {
         return $notif->create($user_id, 0, $type, $target_id);
     }
 
+    private $templateCache = [];
+
     private function getTemplate($slug) {
+        if (isset($this->templateCache[$slug])) {
+            return $this->templateCache[$slug];
+        }
+
+        // Performance optimization:
+        // This computation previously executed on every render.
+        // Memoization prevents recomputation when inputs remain unchanged.
         $stmt = $this->pdo->prepare("SELECT * FROM notification_templates WHERE slug = ?");
         $stmt->execute([$slug]);
-        return $stmt->fetch();
+        $this->templateCache[$slug] = $stmt->fetch();
+        return $this->templateCache[$slug];
     }
 
     private function getUserSettings($user_id) {
