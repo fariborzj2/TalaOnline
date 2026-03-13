@@ -98,7 +98,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
         /* Modal scroll fix */
         .modal-container {
-            @apply max-h-[90vh] overflow-y-auto;
+            @apply max-h-[90vh] overflow-y-auto overscroll-contain;
         }
 
         /* Input with icon fix */
