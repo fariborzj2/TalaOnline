@@ -758,8 +758,8 @@ class MigrationManager {
             if ($this->tableExists($t)) {
                 if ($this->driver === 'mysql') {
                     // In MySQL 8.0 strict mode, '0000-00-00 00:00:00' comparison or updates can fail.
-                    // We use a safe update for NULLs. Invalid dates should ideally not exist in newer versions.
-                    $this->exec("UPDATE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL");
+                    // We use a safe update for NULLs and CAST for zero dates to avoid strict mode errors.
+                    $this->exec("UPDATE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL OR CAST(updated_at AS CHAR(20)) = '0000-00-00 00:00:00'");
                 } else {
                     $this->exec("UPDATE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE updated_at = '0000-00-00 00:00:00' OR updated_at IS NULL");
                 }
