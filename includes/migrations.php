@@ -754,15 +754,32 @@ class MigrationManager {
 
         // 2. Data cleanup: Fix zero dates
         $tables = ['users', 'items', 'categories', 'comments', 'settings'];
+        if ($this->driver === 'mysql') {
+            // In MySQL 8.0 strict mode, '0000-00-00 00:00:00' comparison or updates can fail.
+            // Temporarily disable strict mode requirements for zero dates during cleanup.
+            try {
+                $stmt = $this->pdo->query("SELECT @@SESSION.sql_mode");
+                $originalMode = $stmt->fetchColumn();
+                $relaxedMode = str_replace(['NO_ZERO_IN_DATE', 'NO_ZERO_DATE', 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES'], '', $originalMode);
+                $relaxedMode = trim(preg_replace('/,,+/', ',', $relaxedMode), ',');
+                $this->pdo->exec("SET SESSION sql_mode = '$relaxedMode'");
+            } catch (Exception $e) {
+                $originalMode = null;
+                $this->log("Notice: Could not modify sql_mode for data cleanup: " . $e->getMessage());
+            }
+        }
+
         foreach ($tables as $t) {
             if ($this->tableExists($t)) {
-                if ($this->driver === 'mysql') {
-                    // In MySQL 8.0 strict mode, '0000-00-00 00:00:00' comparison or updates can fail.
-                    // We use a safe update for NULLs and CAST for zero dates to avoid strict mode errors.
-                    $this->exec("UPDATE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL OR CAST(updated_at AS CHAR(20)) = '0000-00-00 00:00:00'");
-                } else {
-                    $this->exec("UPDATE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE updated_at = '0000-00-00 00:00:00' OR updated_at IS NULL");
-                }
+                $this->exec("UPDATE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE updated_at = '0000-00-00 00:00:00' OR updated_at IS NULL");
+            }
+        }
+
+        if ($this->driver === 'mysql' && isset($originalMode)) {
+            try {
+                $this->pdo->exec("SET SESSION sql_mode = '$originalMode'");
+            } catch (Exception $e) {
+                // Ignore restore errors silently
             }
         }
     }
