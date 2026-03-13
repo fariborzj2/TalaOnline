@@ -15,7 +15,7 @@ if (!is_dir($cache_dir)) {
     mkdir($cache_dir, 0755, true);
 }
 
-$hash = md5($url);
+$hash = hash('sha256', $url);
 $cache_file = $cache_dir . $hash . '.webp';
 
 // Cache for 1 month
