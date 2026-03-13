@@ -59,10 +59,44 @@ class TriggerEngine {
     }
 
     /**
+     * Resolve Comment URL dynamically based on target_type
+     */
+    private function resolveCommentUrl($comment_id) {
+        $stmt = $this->pdo->prepare("SELECT target_id, target_type FROM comments WHERE id = ?");
+        $stmt->execute([$comment_id]);
+        $target = $stmt->fetch();
+
+        $target_url = "/thread/$comment_id"; // fallback
+
+        if ($target && $target['target_type'] === 'item') {
+            $stmt = $this->pdo->prepare("SELECT category, slug, symbol FROM items WHERE symbol = ?");
+            $stmt->execute([$target['target_id']]);
+            $item = $stmt->fetch();
+            if ($item) {
+                $slug = $item['slug'] ?: $item['symbol'];
+                $cat = $item['category'] ? "{$item['category']}/" : "";
+                $target_url = "/$cat$slug#comment-$comment_id";
+            }
+        } elseif ($target && $target['target_type'] === 'blog') {
+            $stmt = $this->pdo->prepare("SELECT slug FROM blog_posts WHERE id = ?");
+            $stmt->execute([$target['target_id']]);
+            $slug = $stmt->fetchColumn();
+            if ($slug) {
+                $target_url = "/blog/post/$slug#comment-$comment_id";
+            } else {
+                $target_url = "/blog/post/{$target['target_id']}#comment-$comment_id";
+            }
+        }
+        return get_site_url() . $target_url;
+    }
+
+    /**
      * Trigger: Deep Interaction (Social)
      */
     public function handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id = null, $sender_id = null) {
         $notified_users = [];
+
+        $target_url = $this->resolveCommentUrl($parent_id ?: $comment_id);
 
         // 1. Notify root parent author
         if ($parent_id) {
@@ -73,7 +107,7 @@ class TriggerEngine {
             if ($root_author_id && $root_author_id != $sender_id) {
                 $this->pushService->notify($root_author_id, 'social_reply', [
                     'sender_name' => $sender_name,
-                    'url' => get_site_url() . "/thread/$comment_id"
+                    'url' => $target_url
                 ], ['category' => 'social']);
                 $notified_users[] = $root_author_id;
             }
@@ -83,7 +117,7 @@ class TriggerEngine {
         if ($reply_to_user_id && $reply_to_user_id != $sender_id && !in_array($reply_to_user_id, $notified_users)) {
             $this->pushService->notify($reply_to_user_id, 'social_reply', [
                 'sender_name' => $sender_name,
-                'url' => get_site_url() . "/thread/$comment_id"
+                'url' => $target_url
             ], ['category' => 'social']);
         }
     }
@@ -121,9 +155,10 @@ class TriggerEngine {
      * Trigger: Social Milestone
      */
     public function handleMilestone($author_id, $comment_id, $count) {
+        $target_url = $this->resolveCommentUrl($comment_id);
         return $this->pushService->notify($author_id, 'social_milestone', [
             'count' => $count,
-            'url' => get_site_url() . "/thread/$comment_id"
+            'url' => $target_url
         ]);
     }
 
@@ -283,9 +318,10 @@ class TriggerEngine {
         $target_level = $stmt->fetchColumn();
 
         if ($actor && $actor['level'] >= 4 && $target_level <= 2) {
+            $target_url = $this->resolveCommentUrl($comment_id);
             $this->pushService->notify($target_user_id, 'influencer_engagement', [
                 'actor_name' => $actor['name'],
-                'url' => get_site_url() . "/thread/$comment_id"
+                'url' => $target_url
             ]);
         }
     }
