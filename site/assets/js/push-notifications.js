@@ -94,7 +94,10 @@ class PushNotificationManager {
             // If it's an ASN.1 SPKI structure, the raw key starts after the 26th or 27th byte.
             if (outputArray.length === 91 && outputArray[0] === 0x30) {
                 // Return only the raw public key part (last 65 bytes)
-                return outputArray.slice(-65);
+                const rawKey = outputArray.slice(-65);
+                if (rawKey[0] === 0x04) {
+                    return rawKey;
+                }
             }
 
             // Ensure we return a 65-byte raw public key if possible
