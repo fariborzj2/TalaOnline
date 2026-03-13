@@ -24,7 +24,12 @@ file_put_contents($lock_file, time());
 set_time_limit(240);
 ignore_user_abort(true);
 
+$processed_count = 0;
 try {
+    if (!$pdo) {
+        throw new Exception("Database connection not available.");
+    }
+
     // Fetch pending emails
     $stmt = $pdo->prepare("SELECT * FROM email_queue WHERE status = 'pending' AND attempts < 3 ORDER BY created_at ASC LIMIT 10");
     $stmt->execute();
@@ -50,16 +55,20 @@ try {
         if ($success) {
             $pdo->prepare("UPDATE email_queue SET status = 'sent', updated_at = CURRENT_TIMESTAMP WHERE id = ?")->execute([$email['id']]);
         } else {
-            // Log attempt failure
+            // Log attempt failure and mark as failed if attempts >= 2 (so next time it hits 3 and stops)
             $error_msg = Mail::getLastError() ?: 'Sending failed';
-            $pdo->prepare("UPDATE email_queue SET attempts = attempts + 1, last_error = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
-                ->execute([$error_msg, $email['id']]);
+            $new_status = ($email['attempts'] >= 2) ? 'failed' : 'pending';
+
+            $pdo->prepare("UPDATE email_queue SET status = ?, attempts = attempts + 1, last_error = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+                ->execute([$new_status, $error_msg, $email['id']]);
         }
+        $processed_count++;
     }
 } catch (Exception $e) {
     error_log("Worker Error: " . $e->getMessage());
+    echo "Worker Error: " . $e->getMessage() . "\n";
 } finally {
     if (file_exists($lock_file)) unlink($lock_file);
 }
 
-echo "Processed " . count($emails) . " emails.";
+echo "Processed $processed_count emails.\n";
