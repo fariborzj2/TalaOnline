@@ -4,76 +4,23 @@ require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 check_permission("categories.view");
 
-// Schema Self-Healing for Categories
-try {
-    $pdo->query("SELECT id FROM categories LIMIT 1");
-} catch (Exception $e) {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS categories (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        slug VARCHAR(50) UNIQUE NOT NULL,
-        name VARCHAR(100) NOT NULL,
-        en_name VARCHAR(100) DEFAULT NULL,
-        icon VARCHAR(50) DEFAULT 'coins',
-        description TEXT DEFAULT NULL,
-        sort_order INT DEFAULT 0
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
-}
+// Ensure schema is up to date (this handles new columns and category_faqs)
+require_once __DIR__ . '/../../includes/migrations.php';
+MigrationManager::runIfRequired($pdo, APP_DB_VERSION);
 
-// Check if new columns exist, if not add them (for existing tables)
-try {
-    $columns = $pdo->query("DESCRIBE categories")->fetchAll(PDO::FETCH_COLUMN);
-    if (!in_array('en_name', $columns)) {
-        $pdo->exec("ALTER TABLE categories ADD COLUMN en_name VARCHAR(100) DEFAULT NULL AFTER name");
-    }
-    if (!in_array('icon', $columns)) {
-        $pdo->exec("ALTER TABLE categories ADD COLUMN icon VARCHAR(50) DEFAULT 'coins' AFTER en_name");
-    }
-    if (!in_array('description', $columns)) {
-        $pdo->exec("ALTER TABLE categories ADD COLUMN description TEXT DEFAULT NULL AFTER icon");
-    }
-    if (!in_array('h1_title', $columns)) {
-        $pdo->exec("ALTER TABLE categories ADD COLUMN h1_title VARCHAR(255) DEFAULT NULL AFTER description");
-    }
-    if (!in_array('page_title', $columns)) {
-        $pdo->exec("ALTER TABLE categories ADD COLUMN page_title VARCHAR(255) DEFAULT NULL AFTER h1_title");
-    }
-    if (!in_array('meta_description', $columns)) {
-        $pdo->exec("ALTER TABLE categories ADD COLUMN meta_description TEXT DEFAULT NULL AFTER page_title");
-    }
-    if (!in_array('meta_keywords', $columns)) {
-        $pdo->exec("ALTER TABLE categories ADD COLUMN meta_keywords TEXT DEFAULT NULL AFTER meta_description");
-    }
-    if (!in_array('short_description', $columns)) {
-        $pdo->exec("ALTER TABLE categories ADD COLUMN short_description TEXT DEFAULT NULL AFTER description");
-    }
-    if (!in_array('updated_at', $columns)) {
-        $pdo->exec("ALTER TABLE categories ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
-    }
-} catch (Exception $e) {}
+$categories = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->fetchAll();
 
-// Create FAQs table
-try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS category_faqs (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        category_id INT NOT NULL,
-        question TEXT NOT NULL,
-        answer TEXT NOT NULL,
-        sort_order INT DEFAULT 0,
-        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
-} catch (Exception $e) {}
-
-// Populate initial categories
-try {
-    $stmt = $pdo->query("SELECT COUNT(*) FROM categories");
-    if ($stmt->fetchColumn() == 0) {
+// Populate initial categories if empty
+if (empty($categories)) {
+    try {
         $pdo->exec("INSERT INTO categories (slug, name, en_name, icon, sort_order) VALUES
             ('gold', 'طلا و جواهرات', 'gold market', 'coins', 1),
             ('coin', 'مسکوکات طلا', 'gold coins', 'circle-dollar-sign', 2),
             ('currency', 'ارزهای رایج', 'foreign currency', 'banknote', 3),
             ('crypto', 'ارزهای دیجیتال', 'cryptocurrency', 'bitcoin', 4)");
-    }
-} catch (Exception $e) {}
+        $categories = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->fetchAll();
+    } catch (Exception $e) {}
+}
 
 $message = '';
 $error = '';
@@ -100,9 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         echo json_encode(['success' => true]);
         exit;
     }
-}
 
-$categories = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->fetchAll();
+    // Refresh categories after action
+    $categories = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC")->fetchAll();
+}
 
 $page_title = 'مدیریت دسته‌بندی‌ها';
 $page_subtitle = 'مدیریت دسته‌بندی‌های ارز، طلا و سکه';
