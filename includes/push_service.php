@@ -122,7 +122,19 @@ class PushService {
 
         // Check if category is enabled for user
         $categories = json_decode($settings['categories'] ?? '[]', true);
-        $category = $options['category'] ?? $template['slug'];
+
+        $category = $options['category'] ?? null;
+        if (!$category) {
+            $slug = $template['slug'];
+            if (str_starts_with($slug, 'social_') || in_array($slug, ['interest_clustering_suggest', 'influencer_engagement'])) {
+                $category = 'social';
+            } elseif (str_starts_with($slug, 'blog_') || $slug === 'category_expert_update') {
+                $category = 'blog';
+            } else {
+                $category = 'market';
+            }
+        }
+
         if (!empty($categories) && !in_array($category, $categories)) {
             return true; // Preference enforced: don't queue
         }

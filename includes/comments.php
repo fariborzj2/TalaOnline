@@ -562,7 +562,7 @@ class Comments {
                         // Consolidated Push Notifications via Engine
                         $pushService = new PushService($this->pdo);
                         $triggerEngine = new TriggerEngine($this->pdo, $pushService);
-                        $triggerEngine->handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id);
+                        $triggerEngine->handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id, $user_id);
                     }
                 } catch (\Throwable $e) {
                     error_log("Comment Notification Error: " . $e->getMessage());
