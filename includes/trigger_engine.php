@@ -61,7 +61,7 @@ class TriggerEngine {
     /**
      * Trigger: Deep Interaction (Social)
      */
-    public function handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id = null) {
+    public function handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id = null, $sender_id = null) {
         $notified_users = [];
 
         // 1. Notify root parent author
@@ -70,21 +70,21 @@ class TriggerEngine {
             $stmt->execute([$parent_id]);
             $root_author_id = $stmt->fetchColumn();
 
-            if ($root_author_id) {
+            if ($root_author_id && $root_author_id != $sender_id) {
                 $this->pushService->notify($root_author_id, 'social_reply', [
                     'sender_name' => $sender_name,
                     'url' => get_site_url() . "/thread/$comment_id"
-                ]);
+                ], ['category' => 'social']);
                 $notified_users[] = $root_author_id;
             }
         }
 
-        // 2. Notify direct reply target (if different from root author)
-        if ($reply_to_user_id && !in_array($reply_to_user_id, $notified_users)) {
+        // 2. Notify direct reply target (if different from root author and not the sender)
+        if ($reply_to_user_id && $reply_to_user_id != $sender_id && !in_array($reply_to_user_id, $notified_users)) {
             $this->pushService->notify($reply_to_user_id, 'social_reply', [
                 'sender_name' => $sender_name,
                 'url' => get_site_url() . "/thread/$comment_id"
-            ]);
+            ], ['category' => 'social']);
         }
     }
 

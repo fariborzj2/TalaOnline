@@ -180,6 +180,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'total_count' => $count,
                 'message' => $msg
             ]);
+
+            // For local/test environments where the worker isn't running continuously,
+            // process a small batch of notifications inline after the response is prepared.
+            try {
+                require_once __DIR__ . '/../../includes/push_service.php';
+                $pushService = new PushService($pdo);
+                $pushService->processQueue(5);
+            } catch (\Throwable $e) {}
+
         } else {
             $response = json_encode(['success' => false, 'message' => 'خطا در ثبت نظر.']);
         }
