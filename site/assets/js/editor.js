@@ -258,7 +258,14 @@ class BaseEditor {
         }
 
         // 3. Fix nesting
-        this.editor.querySelectorAll('p ul, p ol, p blockquote').forEach(nested => {
+        let hasNested = true;
+        while (hasNested) {
+            let nested = this.editor.querySelector('p ul, p ol, p blockquote');
+            if (!nested) {
+                hasNested = false;
+                break;
+            }
+
             const p = nested.closest('p');
             if (p && p.contains(nested)) {
                 const parent = p.parentNode;
@@ -283,7 +290,7 @@ class BaseEditor {
                 }
                 changed = true;
             }
-        });
+        }
 
         // 4. Ensure blockquote children are paragraphs
         this.editor.querySelectorAll('blockquote').forEach(bq => {
