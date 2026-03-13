@@ -50,6 +50,7 @@ class PushNotificationTest {
         $this->testQuietHours();
         $this->testEngagementOptimization();
         $this->testQueueProcessing();
+        $this->testAllTemplates();
         $this->testHeavyLoad();
 
         echo "\nTest Suite Complete.\n";
@@ -116,6 +117,68 @@ class PushNotificationTest {
              echo "❌ Template data serialization failed.\n";
         }
         $this->pdo->exec("DELETE FROM notification_queue");
+    }
+
+    private function testAllTemplates() {
+        echo "\nTesting All Configured Templates (Rendering & Queueing)...\n";
+
+        // Fetch all templates configured by migrations
+        $stmt = $this->pdo->query("SELECT slug, channels FROM notification_templates");
+        $templates = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $total = count($templates);
+        $success = 0;
+
+        // Create a dummy user specifically for this test, with all channels enabled
+        $this->pdo->exec("INSERT INTO users (id, name, email) VALUES (5, 'Template Test User', 'template@example.com')");
+        // Opt-in to all categories, all channels, no freq limit
+        $this->pdo->exec("INSERT INTO notification_settings (user_id, categories, channels, frequency_limit, timezone) VALUES (5, '[\"market\",\"social\",\"blog\"]', '[\"webpush\",\"email\",\"in-app\"]', 1000, 'UTC')");
+
+        $mock_data = [
+            'name' => 'TestName', 'symbol' => 'TST', 'type' => 'TestType', 'change' => '100',
+            'url' => '#test', 'sender_name' => 'Sender', 'count' => '99', 'title' => 'TestTitle',
+            'category' => 'TestCategory', 'consensus' => 'Bullish', 'actor_name' => 'VIPUser',
+            'level' => '1000', 'price' => '2000', 'label' => 'Support', 'views' => '50k',
+            'follower_name' => 'NewFan', 'suggested_name' => 'SuggestUser', 'deviation' => '500'
+        ];
+
+        foreach ($templates as $tpl) {
+            $slug = $tpl['slug'];
+
+            // Queue notification
+            $queued = $this->pushService->notify(5, $slug, $mock_data);
+
+            if (!$queued) {
+                echo "❌ Failed to queue template: $slug\n";
+                continue;
+            }
+
+            // Verify in DB
+            $item = $this->pdo->query("SELECT * FROM notification_queue WHERE user_id = 5 AND template_slug = '$slug' AND status = 'pending'")->fetch(PDO::FETCH_ASSOC);
+
+            if ($item) {
+                $success++;
+            } else {
+                echo "❌ Template $slug was not stored correctly.\n";
+            }
+        }
+
+        // Some templates are low priority and might be scheduled instead of queued for immediate execution
+        // depending on engagement optimization. We update scheduled_at to NULL so they process immediately.
+        $this->pdo->exec("UPDATE notification_queue SET scheduled_at = NULL WHERE user_id = 5");
+
+        // Process them immediately to verify send execution
+        // Webpush is configured globally for tests with dummy keys but we must ignore failures for webpush
+        // because we are testing queue generation and layout binding. We count them as processed if they transition to sent/failed.
+
+        $this->pushService->processQueue(100);
+        $processed = $this->pdo->query("SELECT COUNT(*) FROM notification_queue WHERE user_id = 5 AND status != 'pending'")->fetchColumn();
+
+        if ($success === $total && $processed === $total) {
+             echo "✅ Successfully tested all $total templates (Queued and Processed).\n";
+        } else {
+             echo "❌ Template Test failed. Queued: $success/$total, Processed: $processed/$total.\n";
+        }
     }
 
     private function testSubscription() {
