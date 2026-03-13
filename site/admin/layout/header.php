@@ -103,9 +103,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
         /* Input with icon fix */
         .input-icon-wrapper {
-            @apply relative;
+            @apply relative w-full;
         }
-        .input-icon-wrapper input {
+        .input-icon-wrapper input, .input-icon-wrapper select, .input-icon-wrapper textarea {
             @apply !pr-12;
         }
         .input-icon-wrapper .icon {
