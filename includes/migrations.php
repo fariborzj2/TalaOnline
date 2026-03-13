@@ -771,7 +771,14 @@ class MigrationManager {
 
         foreach ($tables as $t) {
             if ($this->tableExists($t)) {
-                $this->exec("UPDATE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE updated_at = '0000-00-00 00:00:00' OR updated_at IS NULL");
+                if ($this->driver === 'mysql') {
+                    // In MySQL 8.0 strict mode, '0000-00-00 00:00:00' comparison or updates can fail.
+                    // We use a safe update for NULLs, and CAST for zero dates to bypass strict comparison limits.
+                    $this->exec("UPDATE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL");
+                    $this->exec("UPDATE IGNORE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE CAST(updated_at AS CHAR(20)) = '0000-00-00 00:00:00'");
+                } else {
+                    $this->exec("UPDATE `$t` SET updated_at = CURRENT_TIMESTAMP WHERE updated_at = '0000-00-00 00:00:00' OR updated_at IS NULL");
+                }
             }
         }
 
