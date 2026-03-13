@@ -44,7 +44,14 @@ if (!$data || $info['http_code'] !== 200) {
 $img = imagecreatefromstring($data);
 if (!$img) {
     // Fallback: serve original data if conversion fails
-    header('Content-Type: ' . ($info['content_type'] ?? 'image/jpeg'));
+    // Prevent XSS by restricting Content-Type to safe image formats
+    $raw_type = $info['content_type'] ?? '';
+    $mime_type = strtolower(trim(explode(';', $raw_type)[0]));
+
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+    $safe_type = in_array($mime_type, $allowed_types, true) ? $mime_type : 'image/jpeg';
+
+    header('Content-Type: ' . $safe_type);
     echo $data;
     exit;
 }
