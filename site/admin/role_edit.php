@@ -36,6 +36,10 @@ while ($row = $stmt->fetch()) {
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $name = $_POST['name'] ?? '';
     $slug = $_POST['slug'] ?? '';
     $description = $_POST['description'] ?? '';
@@ -80,6 +84,7 @@ include __DIR__ . '/layout/header.php';
 
 <div class="max-w-4xl mx-auto">
     <form method="POST" class="space-y-6">
+        <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
         <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
             <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50/30">
                 <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">

@@ -9,6 +9,10 @@ $page_subtitle = 'تعریف و مدیریت سطوح دسترسی سیستم';
 $header_action = has_permission('roles.create') ? '<a href="role_edit.php" class="btn-v3 btn-v3-primary"><i data-lucide="plus" class="w-4 h-4"></i> افزودن نقش جدید</a>' : '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && has_permission('roles.delete')) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $action = $_POST['action'] ?? '';
     $id = $_POST['id'] ?? 0;
 
@@ -63,6 +67,7 @@ include __DIR__ . '/layout/header.php';
 
                             <?php if (has_permission('roles.delete') && $role['id'] > 2): ?>
                             <form method="POST" class="inline">
+                                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $role['id'] ?>">
                                 <button type="button" onclick="confirmDelete(this.form)" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">

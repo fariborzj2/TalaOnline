@@ -28,6 +28,10 @@ $available_roles = $stmt->fetchAll();
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
     $phone = convert_to_en_num($_POST['phone'] ?? '');
@@ -103,6 +107,7 @@ include __DIR__ . '/layout/header.php';
         <?php endif; ?>
 
         <form method="POST" class="p-8 space-y-6">
+            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="form-group">
                     <label>نام و نام خانوادگی</label>

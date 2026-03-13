@@ -6,6 +6,10 @@ check_permission("settings.view");
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $blog_main_title = $_POST['blog_main_title'];
     $blog_main_description = $_POST['blog_main_description'];
     $blog_main_keywords = $_POST['blog_main_keywords'];
@@ -54,6 +58,7 @@ include __DIR__ . '/layout/header.php';
 <?php endif; ?>
 
 <form method="POST" class="max-w-4xl space-y-8 pb-10">
+    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
     <!-- Blog SEO Settings -->
     <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
         <div class="px-8 py-6 border-b border-slate-100 flex items-center gap-4 bg-slate-50/30">

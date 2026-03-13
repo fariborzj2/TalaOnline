@@ -15,6 +15,10 @@ if (isset($_GET['error'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $api_key = $_POST['api_key'];
     $api_sync_interval = $_POST['api_sync_interval'];
     $home_category_limit = $_POST['home_category_limit'];
@@ -132,6 +136,7 @@ include __DIR__ . '/layout/header.php';
 <?php endif; ?>
 
 <form method="POST" class="pb-10">
+    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
     <div class="flex flex-col lg:flex-row gap-8 items-start">
         <!-- Settings Sidebar -->
         <aside class="w-full lg:w-72 flex-shrink-0 lg:sticky top-24">
@@ -864,6 +869,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Step 1: Init Import
             const formData = new FormData();
             formData.append('backup_file', fileInput.files[0]);
+            formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
 
             progressStatus.innerText = 'در حال آپلود و تحلیل فایل...';
             const initRes = await fetch('backup_handler.php?action=init_import', {
@@ -878,6 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let done = false;
             while (!done) {
                 const stepFormData = new FormData();
+                stepFormData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
                 const stepRes = await fetch('backup_handler.php?action=execute_step', {
                     method: 'POST',
                     body: stepFormData

@@ -8,8 +8,16 @@ $action = $_GET['action'] ?? '';
 if ($action === 'export') {
     export_database($pdo);
 } elseif ($action === 'init_import' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
+        exit;
+    }
     init_import();
 } elseif ($action === 'execute_step' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        echo json_encode(['success' => false, 'error' => 'Invalid CSRF token']);
+        exit;
+    }
     execute_step($pdo);
 }
 

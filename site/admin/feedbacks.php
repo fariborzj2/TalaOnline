@@ -22,6 +22,10 @@ $error = '';
 
 // Handle Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $action = $_POST['action'];
 
     if ($action === 'delete') {
@@ -117,6 +121,7 @@ include __DIR__ . '/layout/header.php';
                                 <i data-lucide="eye" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                             </button>
                             <form method="POST" class="inline" onsubmit="handleDelete(event, this, 'پیام')">
+                                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $fb['id'] ?>">
                                 <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
@@ -179,6 +184,7 @@ include __DIR__ . '/layout/header.php';
 
             <div class="flex items-center gap-4 pt-4 border-t border-slate-50">
                 <form method="POST" class="flex-grow" id="toggleReadForm">
+                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <input type="hidden" name="action" value="toggle_read">
                     <input type="hidden" name="id" id="fb-id">
                     <input type="hidden" name="status" id="fb-status">

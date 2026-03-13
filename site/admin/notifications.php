@@ -8,6 +8,10 @@ $message = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     check_permission("settings.edit");
 
     $settings = [
@@ -31,6 +35,7 @@ include __DIR__ . '/layout/header.php';
 
 <div class="glass-card rounded-xl p-8 border border-slate-200">
     <form method="POST" class="max-w-4xl space-y-8">
+        <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="space-y-2">
                 <label class="text-xs font-black text-slate-700">فعال‌سازی اعلان‌های وب</label>

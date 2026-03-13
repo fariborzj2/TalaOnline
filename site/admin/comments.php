@@ -12,6 +12,10 @@ $comments_logic = new Comments($pdo);
 
 // Handle Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     check_permission("comments.edit");
     $action = $_POST['action'];
 
@@ -216,6 +220,7 @@ include __DIR__ . '/layout/header.php';
                             <div class="flex items-center justify-center gap-2">
                                 <?php if ($c['status'] !== 'approved'): ?>
                                     <form method="POST" class="inline">
+                                        <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                         <input type="hidden" name="action" value="update_status">
                                         <input type="hidden" name="id" value="<?= $c['id'] ?>">
                                         <input type="hidden" name="status" value="approved">
@@ -231,6 +236,7 @@ include __DIR__ . '/layout/header.php';
 
                                 <?php if ($c['status'] !== 'spam'): ?>
                                     <form method="POST" class="inline">
+                                        <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                         <input type="hidden" name="action" value="update_status">
                                         <input type="hidden" name="id" value="<?= $c['id'] ?>">
                                         <input type="hidden" name="status" value="spam">
@@ -241,6 +247,7 @@ include __DIR__ . '/layout/header.php';
                                 <?php endif; ?>
 
                                 <form method="POST" class="inline" onsubmit="handleDelete(event, this, 'نظر')">
+                                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="id" value="<?= $c['id'] ?>">
                                     <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn" title="حذف دائمی">
@@ -392,6 +399,7 @@ include __DIR__ . '/layout/header.php';
         if (c.status !== 'approved') {
             actionsContainer.innerHTML += `
                 <form method="POST" class="inline">
+                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <input type="hidden" name="action" value="update_status">
                     <input type="hidden" name="id" value="${c.id}">
                     <input type="hidden" name="status" value="approved">
@@ -403,6 +411,7 @@ include __DIR__ . '/layout/header.php';
         if (c.status !== 'spam') {
             actionsContainer.innerHTML += `
                 <form method="POST" class="inline">
+                    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                     <input type="hidden" name="action" value="update_status">
                     <input type="hidden" name="id" value="${c.id}">
                     <input type="hidden" name="status" value="spam">

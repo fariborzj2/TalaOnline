@@ -8,6 +8,10 @@ $message = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $content = $_POST['about_us_content'] ?? '';
     if (set_setting('about_us_content', $content)) {
         $message = 'محتوای صفحه «درباره ما» با موفقیت بروزرسانی شد.';
@@ -60,6 +64,7 @@ include __DIR__ . '/layout/editor.php';
     </div>
     <div class="p-8">
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
             <div class="form-group mb-6">
                 <label class="mb-4">محتوای متنی صفحه</label>
                 <textarea name="about_us_content" id="about_us_editor"><?= htmlspecialchars($about_us_content) ?></textarea>
