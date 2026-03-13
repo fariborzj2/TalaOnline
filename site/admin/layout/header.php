@@ -106,10 +106,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
             @apply relative;
         }
         .input-icon-wrapper input {
-            @apply !pr-12;
+            @apply !pr-12 relative z-0;
         }
         .input-icon-wrapper .icon {
-            @apply absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center;
+            @apply absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none flex items-center justify-center z-10;
         }
 
         /* LTR Inputs */
