@@ -163,14 +163,14 @@ include __DIR__ . '/layout/header.php';
                             </td>
                             <td class="text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button onclick='openEditModal(<?= json_encode($feed) ?>)' class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn">
+                                    <button onclick='openEditModal(<?= json_encode($feed) ?>)' class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-indigo-50 rounded-lg transition-all flex items-center justify-center group/btn" title="ویرایش" aria-label="ویرایش">
                                         <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                                     </button>
                                     <form method="POST" class="inline" onsubmit="handleDelete(event, this, 'فید')">
                                         <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= $feed['id'] ?>">
-                                        <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
+                                        <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn" title="حذف" aria-label="حذف">
                                             <i data-lucide="trash-2" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                                         </button>
                                     </form>
