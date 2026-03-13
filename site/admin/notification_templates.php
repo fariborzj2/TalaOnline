@@ -6,6 +6,8 @@ check_permission("settings.view");
 
 require_once __DIR__ . '/../../includes/push_service.php';
 require_once __DIR__ . '/../../includes/trigger_engine.php';
+require_once __DIR__ . '/../../includes/notifications.php';
+require_once __DIR__ . '/../../includes/mail.php';
 
 $message = '';
 if (isset($_POST['action']) && $_POST['action'] === 'save') {
