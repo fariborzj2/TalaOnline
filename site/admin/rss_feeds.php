@@ -23,6 +23,10 @@ $error = '';
 
 // Handle Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $action = $_POST['action'];
     $rssService = new RssService($pdo);
 
@@ -163,6 +167,7 @@ include __DIR__ . '/layout/header.php';
                                         <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                                     </button>
                                     <form method="POST" class="inline" onsubmit="handleDelete(event, this, 'فید')">
+                                        <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= $feed['id'] ?>">
                                         <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
@@ -191,6 +196,7 @@ include __DIR__ . '/layout/header.php';
                 تنظیمات نمایش
             </h3>
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                 <input type="hidden" name="action" value="update_news_count">
                 <div class="space-y-4">
                     <div>
@@ -217,6 +223,7 @@ include __DIR__ . '/layout/header.php';
                 </button>
             </div>
             <form method="POST" id="feedForm" class="p-8 space-y-6">
+                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                 <input type="hidden" name="action" id="formAction" value="add">
                 <input type="hidden" name="id" id="feedId">
 

@@ -16,6 +16,10 @@ $error = '';
 
 // Handle Actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $action = $_POST['action'];
 
     if ($action === 'add' || $action === 'edit') {
@@ -193,6 +197,7 @@ include __DIR__ . '/layout/header.php';
                     <td class="text-center">
                         <?php $active = $p['is_active'] ?? 1; ?>
                         <form method="POST" class="inline">
+                            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                             <input type="hidden" name="action" value="toggle_status">
                             <input type="hidden" name="id" value="<?= $p['id'] ?>">
                             <input type="hidden" name="is_active" value="<?= $active ? 0 : 1 ?>">
@@ -208,6 +213,7 @@ include __DIR__ . '/layout/header.php';
                                 <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                             </button>
                             <form method="POST" class="inline" onsubmit="handleDelete(event, this, 'پلتفرم')">
+                                <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $p['id'] ?>">
                                 <button type="submit" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
@@ -242,6 +248,7 @@ include __DIR__ . '/layout/header.php';
         </div>
 
         <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
             <input type="hidden" name="action" id="formAction" value="add">
             <input type="hidden" name="id" id="platform-id">
 

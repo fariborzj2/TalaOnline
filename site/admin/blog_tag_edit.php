@@ -17,6 +17,10 @@ $message = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+
     $action = $_POST['action'] ?? '';
 
     if ($action === 'save') {
@@ -49,6 +53,7 @@ include __DIR__ . '/layout/header.php';
 
 <form method="POST">
     <input type="hidden" name="action" value="save">
+    <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Main Column -->
