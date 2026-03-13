@@ -105,7 +105,7 @@ class TriggerEngine {
                  $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
                  $this->pushService->preloadUserSettings($users);
-        foreach ($users as $user_id) {
+                 foreach ($users as $user_id) {
                      $this->pushService->notify($user_id, 'technical_level_alert', [
                          'symbol' => $symbol,
                          'level' => number_format($lvl),
@@ -396,7 +396,7 @@ class TriggerEngine {
                 $type = $deviation > 0 ? 'رشد غیرعادی' : 'سقوط غیرعادی';
 
                 $this->pushService->preloadUserSettings($users);
-        foreach ($users as $user_id) {
+                foreach ($users as $user_id) {
                     $this->pushService->notify($user_id, 'market_anomaly', [
                         'symbol' => $symbol,
                         'type' => $type,
@@ -466,7 +466,7 @@ class TriggerEngine {
             $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
             $this->pushService->preloadUserSettings($users);
-        foreach ($users as $user_id) {
+            foreach ($users as $user_id) {
                 $this->pushService->notify($user_id, 'community_pulse', [
                     'symbol' => $symbol,
                     'count' => $comment_count,
@@ -508,7 +508,7 @@ class TriggerEngine {
             $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
             $this->pushService->preloadUserSettings($users);
-        foreach ($users as $user_id) {
+            foreach ($users as $user_id) {
                 $this->pushService->notify($user_id, 'market_opportunity', [
                     'symbol' => $symbol,
                     'url' => get_site_url() . "/market/$symbol"

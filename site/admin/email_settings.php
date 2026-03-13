@@ -76,9 +76,15 @@ $site_address = get_setting('site_address');
 $templates = $pdo->query("SELECT * FROM email_templates ORDER BY id ASC")->fetchAll();
 
 // Get queue status
-$queue_pending = $pdo->query("SELECT COUNT(*) FROM email_queue WHERE status = 'pending'")->fetchColumn();
-$queue_sent = $pdo->query("SELECT COUNT(*) FROM email_queue WHERE status = 'sent'")->fetchColumn();
-$queue_failed = $pdo->query("SELECT COUNT(*) FROM email_queue WHERE status = 'failed' OR attempts >= 3")->fetchColumn();
+$queue_stats = $pdo->query("SELECT
+    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_count,
+    SUM(CASE WHEN status = 'sent' THEN 1 ELSE 0 END) as sent_count,
+    SUM(CASE WHEN status = 'failed' OR attempts >= 3 THEN 1 ELSE 0 END) as failed_count
+FROM email_queue")->fetch(PDO::FETCH_ASSOC);
+
+$queue_pending = (int)($queue_stats['pending_count'] ?? 0);
+$queue_sent = (int)($queue_stats['sent_count'] ?? 0);
+$queue_failed = (int)($queue_stats['failed_count'] ?? 0);
 
 $page_title = 'تنظیمات ایمیل';
 $page_subtitle = 'مدیریت پیکربندی ارسال ایمیل و ویرایش قالب‌های اطلاع‌رسانی سیستم';
