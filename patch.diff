@@ -1,0 +1,8 @@
+--- site/admin/layout/header.php
++++ site/admin/layout/header.php
+@@ -99,4 +99,5 @@
+         /* Modal scroll fix */
+         .modal-container {
+             @apply max-h-[90vh] overflow-y-auto;
++            overscroll-behavior: contain;
+         }
