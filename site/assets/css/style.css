@@ -417,12 +417,18 @@ input:focus {
     text-align: right !important;
     direction: rtl !important;
 }
+.apexcharts-tooltip-series-group {
+    direction: rtl !important;
+    text-align: right !important;
+    justify-content: right !important;
+}
 .apexcharts-tooltip-title {
     text-align: right !important;
     padding: 2px 10px !important;
 }
 .apexcharts-tooltip-text {
     text-align: right !important;
+    direction: rtl !important;
 }
 .apexcharts-xaxis-label , .apexcharts-xaxistooltip {
     direction: rtl;
