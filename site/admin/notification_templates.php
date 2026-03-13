@@ -4,6 +4,9 @@ require_once __DIR__ . '/../../includes/db.php';
 require_once __DIR__ . '/../../includes/helpers.php';
 check_permission("settings.view");
 
+require_once __DIR__ . '/../../includes/push_service.php';
+require_once __DIR__ . '/../../includes/trigger_engine.php';
+
 $message = '';
 if (isset($_POST['action']) && $_POST['action'] === 'save') {
     $id = $_POST['id'] ?? null;
@@ -22,6 +25,31 @@ if (isset($_POST['action']) && $_POST['action'] === 'save') {
         $stmt->execute([$slug, $title, $body, $action_url, $channels, $priority]);
     }
     $message = 'قالب با موفقیت ذخیره شد.';
+} elseif (isset($_POST['action']) && $_POST['action'] === 'test_template') {
+    $slug = $_POST['slug'] ?? '';
+    if ($slug && isset($_SESSION['user_id'])) {
+        $pushService = new PushService($pdo);
+        // Mock data covering all placeholder possibilities
+        $mock_data = [
+            'name' => 'تست دارایی', 'symbol' => 'TST', 'type' => 'افزایش', 'change' => '10.5',
+            'url' => '#test', 'sender_name' => 'کاربر تستی', 'count' => '99', 'title' => 'عنوان تستی',
+            'category' => 'دسته بندی تست', 'consensus' => 'صعودی', 'actor_name' => 'کاربر ویژه',
+            'level' => '1000', 'price' => '2000', 'label' => 'حمایت', 'views' => '500',
+            'follower_name' => 'دنبال‌کننده تستی', 'suggested_name' => 'پیشنهاد تستی', 'deviation' => '5'
+        ];
+
+        $queued = $pushService->notify($_SESSION['user_id'], $slug, $mock_data);
+        if ($queued) {
+            // Force immediate processing for the logged-in admin user to see the result
+            $pdo->exec("UPDATE notification_queue SET scheduled_at = NULL WHERE user_id = " . (int)$_SESSION['user_id']);
+            $pushService->processQueue(10);
+            $_SESSION['success'] = "اعلان تستی با موفقیت برای شما ارسال شد.";
+        } else {
+            $_SESSION['error'] = "خطا در صف‌بندی اعلان. ممکن است در تنظیمات پروفایل خود این دسته از اعلان‌ها را غیرفعال کرده باشید.";
+        }
+    }
+    header("Location: notification_templates.php");
+    exit;
 }
 
 $templates = $pdo->query("SELECT * FROM notification_templates ORDER BY id DESC")->fetchAll();
@@ -29,6 +57,27 @@ $templates = $pdo->query("SELECT * FROM notification_templates ORDER BY id DESC"
 $page_title = 'مدیریت قالب‌های اعلان';
 include __DIR__ . '/layout/header.php';
 ?>
+
+<?php if ($message): ?>
+    <div class="mb-4 px-4 py-3 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-bold border border-emerald-100 flex items-center gap-2">
+        <i data-lucide="check-circle" class="w-4 h-4"></i>
+        <?= htmlspecialchars($message) ?>
+    </div>
+<?php endif; ?>
+<?php if (isset($_SESSION['success'])): ?>
+    <div class="mb-4 px-4 py-3 bg-emerald-50 text-emerald-600 rounded-lg text-sm font-bold border border-emerald-100 flex items-center gap-2">
+        <i data-lucide="check-circle" class="w-4 h-4"></i>
+        <?= htmlspecialchars($_SESSION['success']) ?>
+    </div>
+    <?php unset($_SESSION['success']); ?>
+<?php endif; ?>
+<?php if (isset($_SESSION['error'])): ?>
+    <div class="mb-4 px-4 py-3 bg-rose-50 text-rose-600 rounded-lg text-sm font-bold border border-rose-100 flex items-center gap-2">
+        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+        <?= htmlspecialchars($_SESSION['error']) ?>
+    </div>
+    <?php unset($_SESSION['error']); ?>
+<?php endif; ?>
 
 <div class="glass-card rounded-xl overflow-hidden border border-slate-200">
     <table class="w-full admin-table">
@@ -56,8 +105,13 @@ include __DIR__ . '/layout/header.php';
                         <?= $t['priority'] ?>
                     </span>
                 </td>
-                <td>
+                <td class="flex items-center gap-2">
                     <button onclick='editTemplate(<?= json_encode($t) ?>)' class="btn-v3 btn-v3-outline !py-1 text-[10px]">ویرایش</button>
+                    <form method="POST" class="inline">
+                        <input type="hidden" name="action" value="test_template">
+                        <input type="hidden" name="slug" value="<?= htmlspecialchars($t['slug']) ?>">
+                        <button type="submit" class="btn-v3 bg-slate-100 hover:bg-slate-200 text-slate-600 !py-1 text-[10px]" title="ارسال تست به خودتان">تست</button>
+                    </form>
                 </td>
             </tr>
             <?php endforeach; ?>
