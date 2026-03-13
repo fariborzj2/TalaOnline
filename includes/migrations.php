@@ -135,6 +135,14 @@ class MigrationManager {
                     `meta_keywords` TEXT,
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
                 )",
+                "CREATE TABLE IF NOT EXISTS `category_faqs` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                    `category_id` INTEGER NOT NULL,
+                    `question` TEXT NOT NULL,
+                    `answer` TEXT NOT NULL,
+                    `sort_order` INTEGER DEFAULT 0,
+                    FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE
+                )",
                 "CREATE TABLE IF NOT EXISTS `items` (
                     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                     `symbol` VARCHAR(50) NOT NULL UNIQUE,
@@ -424,6 +432,14 @@ class MigrationManager {
                     `meta_description` TEXT,
                     `meta_keywords` TEXT,
                     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `category_faqs` (
+                    `id` INT AUTO_INCREMENT PRIMARY KEY,
+                    `category_id` INT NOT NULL,
+                    `question` TEXT NOT NULL,
+                    `answer` TEXT NOT NULL,
+                    `sort_order` INT DEFAULT 0,
+                    FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
                 "CREATE TABLE IF NOT EXISTS `items` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,
