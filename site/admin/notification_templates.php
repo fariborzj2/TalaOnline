@@ -10,6 +10,12 @@ require_once __DIR__ . '/../../includes/notifications.php';
 require_once __DIR__ . '/../../includes/mail.php';
 
 $message = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Invalid CSRF token');
+    }
+}
+
 if (isset($_POST['action']) && $_POST['action'] === 'save') {
     $id = $_POST['id'] ?? null;
     $slug = $_POST['slug'];
@@ -111,6 +117,7 @@ include __DIR__ . '/layout/header.php';
                     <button onclick='editTemplate(<?= json_encode($t) ?>)' class="btn-v3 btn-v3-outline !py-1 text-[10px]">ویرایش</button>
                     <form method="POST" class="inline">
                         <input type="hidden" name="action" value="test_template">
+                        <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                         <input type="hidden" name="slug" value="<?= htmlspecialchars($t['slug']) ?>">
                         <button type="submit" class="btn-v3 bg-slate-100 hover:bg-slate-200 text-slate-600 !py-1 text-[10px]" title="ارسال تست به خودتان">تست</button>
                     </form>
@@ -131,6 +138,7 @@ include __DIR__ . '/layout/header.php';
 
         <form method="POST" class="space-y-4">
             <input type="hidden" name="action" value="save">
+            <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
             <input type="hidden" name="id" id="tpl_id">
 
             <div class="grid grid-cols-2 gap-4">
