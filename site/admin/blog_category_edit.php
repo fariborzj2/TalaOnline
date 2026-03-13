@@ -17,11 +17,11 @@ $message = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
-        die('Invalid CSRF token');
-    }
-
     $action = $_POST['action'] ?? '';
+
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        die('Security violation: Invalid CSRF token.');
+    }
 
     if ($action === 'save') {
         $name = $_POST['name'] ?? '';
