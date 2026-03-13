@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($recipients)) {
             $error = 'هیچ کاربری با معیارهای انتخاب شده یافت نشد.';
         } else {
-            $count = 0;
+            $batch_data = [];
             foreach ($recipients as $recipient) {
                 $personalized_body = str_replace('{name}', $recipient['name'], $body);
                 $personalized_subject = str_replace('{name}', $recipient['name'], $subject);
@@ -54,11 +54,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $wrapped_body = Mail::getProfessionalLayout($personalized_body);
 
-                if (Mail::queueRaw($recipient['email'], $personalized_subject, $wrapped_body, ['type' => 'bulk'])) {
-                    $count++;
-                }
+                $batch_data[] = [
+                    'to' => $recipient['email'],
+                    'subject' => $personalized_subject,
+                    'body_html' => $wrapped_body
+                ];
             }
-            $message = "تعداد $count ایمیل در صف ارسال قرار گرفت. این ایمیل‌ها به زودی توسط سیستم در پس‌زمینه ارسال خواهند شد.";
+
+            // Performance optimization:
+            // This computation previously executed an INSERT query on every iteration for bulk emails.
+            // Batching prevents N+1 inserts and heavily reduces database overhead.
+            $count = Mail::queueRawBatch($batch_data, ['type' => 'bulk']);
+
+            if ($count > 0) {
+                $message = "تعداد $count ایمیل در صف ارسال قرار گرفت. این ایمیل‌ها به زودی توسط سیستم در پس‌زمینه ارسال خواهند شد.";
+            } else {
+                $error = 'خطا در افزودن ایمیل‌ها به صف ارسال رخ داد.';
+            }
         }
     } catch (Exception $e) {
         $error = 'خطا در ارسال ایمیل: ' . $e->getMessage();

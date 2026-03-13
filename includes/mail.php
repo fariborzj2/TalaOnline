@@ -60,6 +60,56 @@ class Mail {
     }
 
     /**
+     * Batch queue raw emails to avoid N+1 inserts
+     */
+    public static function queueRawBatch($emails, $options = []) {
+        global $pdo;
+        $sender_email = $options['sender_email'] ?? get_setting('mail_sender_email', 'noreply@' . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost'));
+        $sender_name = $options['sender_name'] ?? get_setting('mail_sender_name', get_setting('site_title', 'Tala Online'));
+        $type = $options['type'] ?? 'bulk';
+
+        if (empty($emails)) return 0;
+
+        $metadata = json_encode(['type' => $type]);
+        $count = 0;
+
+        // Chunk sizes to prevent SQL query length limits (SQLite allows 999 vars by default)
+        // 6 fields per insert, so max ~160 rows per query for SQLite safety. Let's use 100.
+        $chunks = array_chunk($emails, 100);
+
+        try {
+            $pdo->beginTransaction();
+            foreach ($chunks as $chunk) {
+                $placeholders = [];
+                $params = [];
+
+                foreach ($chunk as $emailData) {
+                    $placeholders[] = "(?, ?, ?, ?, ?, ?)";
+                    $params[] = $emailData['to'];
+                    $params[] = $emailData['subject'];
+                    $params[] = $emailData['body_html'];
+                    $params[] = $sender_name;
+                    $params[] = $sender_email;
+                    $params[] = $metadata;
+                    $count++;
+                }
+
+                $sql = "INSERT INTO email_queue (to_email, subject, body_html, sender_name, sender_email, metadata) VALUES " . implode(", ", $placeholders);
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($params);
+            }
+            $pdo->commit();
+            return $count;
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log("Batch Queue Error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Prepare subject and body from template
      */
     private static function prepareTemplateData($template_slug, $data) {
