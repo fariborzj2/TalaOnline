@@ -258,32 +258,39 @@ class BaseEditor {
         }
 
         // 3. Fix nesting
-        this.editor.querySelectorAll('p ul, p ol, p blockquote').forEach(nested => {
-            const p = nested.closest('p');
-            if (p && p.contains(nested)) {
-                const parent = p.parentNode;
-                const nextSibling = p.nextSibling;
+        let hasNested = true;
+        let nestingIterations = 0;
+        while (hasNested && nestingIterations < 100) {
+            hasNested = false;
+            nestingIterations++;
+            this.editor.querySelectorAll('p ul, p ol, p blockquote').forEach(nested => {
+                const p = nested.closest('p');
+                if (p && p.contains(nested)) {
+                    const parent = p.parentNode;
+                    const nextSibling = p.nextSibling;
 
-                // Split p at nested
-                const range = document.createRange();
-                range.setStartAfter(nested);
-                range.setEndAfter(p.lastChild);
-                const afterContent = range.extractContents();
+                    // Split p at nested
+                    const range = document.createRange();
+                    range.setStartAfter(nested);
+                    range.setEndAfter(p.lastChild);
+                    const afterContent = range.extractContents();
 
-                parent.insertBefore(nested, nextSibling);
+                    parent.insertBefore(nested, nextSibling);
 
-                if (afterContent.textContent.trim() || afterContent.querySelector('br')) {
-                    const nextP = document.createElement('p');
-                    nextP.appendChild(afterContent);
-                    parent.insertBefore(nextP, nested.nextSibling);
+                    if (afterContent.textContent.trim() || afterContent.querySelector('br')) {
+                        const nextP = document.createElement('p');
+                        nextP.appendChild(afterContent);
+                        parent.insertBefore(nextP, nested.nextSibling);
+                    }
+
+                    if (!p.textContent.trim() && !p.querySelector('br')) {
+                        p.remove();
+                    }
+                    changed = true;
+                    hasNested = true;
                 }
-
-                if (!p.textContent.trim() && !p.querySelector('br')) {
-                    p.remove();
-                }
-                changed = true;
-            }
-        });
+            });
+        }
 
         // 4. Ensure blockquote children are paragraphs
         this.editor.querySelectorAll('blockquote').forEach(bq => {
