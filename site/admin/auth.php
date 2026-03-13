@@ -31,18 +31,29 @@ function has_permission($permission_slug) {
     // We fetch the slug of the role once or use the ID from session if we are sure ID 1 is always super_admin
     if ($_SESSION['user_role_id'] == 1) return true;
 
-    try {
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*)
-            FROM role_permissions rp
-            JOIN permissions p ON rp.permission_id = p.id
-            WHERE rp.role_id = ? AND p.slug = ?
-        ");
-        $stmt->execute([$_SESSION['user_role_id'], $permission_slug]);
-        return $stmt->fetchColumn() > 0;
-    } catch (Exception $e) {
-        return false;
+    static $permissions_cache = null;
+
+    if ($permissions_cache === null) {
+        // Performance optimization:
+        // This computation previously executed on every permission check (15+ per page load).
+        // Memoization prevents recomputation and avoids N+1 query overhead.
+        try {
+            $stmt = $pdo->prepare("
+                SELECT p.slug
+                FROM role_permissions rp
+                JOIN permissions p ON rp.permission_id = p.id
+                WHERE rp.role_id = ?
+            ");
+            $stmt->execute([$_SESSION['user_role_id']]);
+            // Flip the array to allow O(1) checks using isset()
+            $permissions_cache = array_flip($stmt->fetchAll(PDO::FETCH_COLUMN));
+        } catch (Exception $e) {
+            $permissions_cache = [];
+            return false;
+        }
     }
+
+    return isset($permissions_cache[$permission_slug]);
 }
 
 /**
