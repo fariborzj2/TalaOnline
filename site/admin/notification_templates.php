@@ -34,7 +34,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'save') {
         // Mock data covering all placeholder possibilities
         $mock_data = [
             'name' => 'تست دارایی', 'symbol' => 'TST', 'type' => 'افزایش', 'change' => '10.5',
-            'url' => '#test', 'sender_name' => 'کاربر تستی', 'count' => '99', 'title' => 'عنوان تستی',
+            'url' => get_site_url(), 'sender_name' => 'کاربر تستی', 'count' => '99', 'title' => 'عنوان تستی',
             'category' => 'دسته بندی تست', 'consensus' => 'صعودی', 'actor_name' => 'کاربر ویژه',
             'level' => '1000', 'price' => '2000', 'label' => 'حمایت', 'views' => '500',
             'follower_name' => 'دنبال‌کننده تستی', 'suggested_name' => 'پیشنهاد تستی', 'deviation' => '5'
