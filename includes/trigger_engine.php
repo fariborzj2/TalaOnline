@@ -107,7 +107,8 @@ class TriggerEngine {
             if ($root_author_id && $root_author_id != $sender_id) {
                 $this->pushService->notify($root_author_id, 'social_reply', [
                     'sender_name' => $sender_name,
-                    'url' => $target_url
+                    'url' => $target_url,
+                    'comment_id' => $comment_id
                 ], ['category' => 'social', 'sender_id' => $sender_id]);
                 $notified_users[] = $root_author_id;
             }
@@ -117,7 +118,8 @@ class TriggerEngine {
         if ($reply_to_user_id && $reply_to_user_id != $sender_id && !in_array($reply_to_user_id, $notified_users)) {
             $this->pushService->notify($reply_to_user_id, 'social_reply', [
                 'sender_name' => $sender_name,
-                'url' => $target_url
+                'url' => $target_url,
+                'comment_id' => $comment_id
             ], ['category' => 'social', 'sender_id' => $sender_id]);
         }
     }
