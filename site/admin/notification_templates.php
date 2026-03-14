@@ -46,7 +46,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'save') {
             'follower_name' => 'دنبال‌کننده تستی', 'suggested_name' => 'پیشنهاد تستی', 'deviation' => '5'
         ];
 
-        $queued = $pushService->notify($_SESSION['user_id'], $slug, $mock_data);
+        $queued = $pushService->notify($_SESSION['user_id'], $slug, $mock_data, ['ignore_limits' => true]);
         if ($queued) {
             // Force immediate processing for the logged-in admin user to see the result
             $pdo->exec("UPDATE notification_queue SET scheduled_at = NULL WHERE user_id = " . (int)$_SESSION['user_id']);

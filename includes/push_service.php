@@ -135,7 +135,9 @@ class PushService {
             }
         }
 
-        if (!empty($categories) && !in_array($category, $categories)) {
+        $ignore_limits = !empty($options['ignore_limits']);
+
+        if (!$ignore_limits && !empty($categories) && !in_array($category, $categories)) {
             return true; // Preference enforced: don't queue
         }
 
@@ -144,7 +146,7 @@ class PushService {
         $template_channels = explode(',', $template['channels']);
         $final_channels = [];
 
-        if (!empty($user_channels)) {
+        if (!empty($user_channels) && !$ignore_limits) {
             foreach ($template_channels as $tc) {
                 $tc = trim($tc);
                 if (in_array($tc, $user_channels)) {
@@ -152,7 +154,7 @@ class PushService {
                 }
             }
         } else {
-            // Default to all template channels if user has no explicit settings
+            // Default to all template channels if user has no explicit settings or limits ignored
             $final_channels = $template_channels;
         }
 
@@ -162,7 +164,7 @@ class PushService {
 
         // Frequency Capping Logic
         $limit = (int)($settings['frequency_limit'] ?? 5);
-        if ($limit > 0) {
+        if ($limit > 0 && !$ignore_limits) {
             $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM notification_queue WHERE user_id = ? AND created_at > datetime('now', '-24 hours')");
             if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
                 $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM notification_queue WHERE user_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
@@ -174,7 +176,7 @@ class PushService {
         }
 
         // Engagement Optimization: Predict best hour to send (based on last activity)
-        if (!isset($options['scheduled_at']) && ($options['priority'] ?? $template['priority']) === 'low') {
+        if (!$ignore_limits && !isset($options['scheduled_at']) && ($options['priority'] ?? $template['priority']) === 'low') {
             $stmt = $this->pdo->prepare("SELECT strftime('%H:%M', updated_at) FROM users WHERE id = ?");
             if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
                 $stmt = $this->pdo->prepare("SELECT DATE_FORMAT(updated_at, '%H:%i') FROM users WHERE id = ?");
@@ -192,7 +194,7 @@ class PushService {
         }
 
         // Quiet Hours Logic
-        if (!empty($settings['quiet_hours_start']) && !empty($settings['quiet_hours_end'])) {
+        if (!$ignore_limits && !empty($settings['quiet_hours_start']) && !empty($settings['quiet_hours_end'])) {
             $now = new DateTime('now', new DateTimeZone($settings['timezone'] ?? 'UTC'));
             $current_time = $now->format('H:i');
 
