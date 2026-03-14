@@ -323,7 +323,7 @@ class PushService {
             'body' => $body,
             'url' => $action_url,
             'icon' => $icon
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
 
         foreach ($subscriptions as $sub) {
             $subscription = Subscription::create([
@@ -342,6 +342,8 @@ class PushService {
                     // Cleanup expired subscription
                     $stmt = $this->pdo->prepare("DELETE FROM push_subscriptions WHERE endpoint = ?");
                     $stmt->execute([$report->getEndpoint()]);
+                } else {
+                    error_log("WebPush Failed for {$report->getEndpoint()}: " . $report->getReason());
                 }
             }
         }
@@ -393,7 +395,7 @@ class PushService {
         if (!$settings) {
             return [
                 'categories' => json_encode(['market', 'social', 'blog']),
-                'frequency_limit' => 5,
+                'frequency_limit' => 20,
                 'timezone' => 'Asia/Tehran'
             ];
         }
