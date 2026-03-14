@@ -729,6 +729,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (n.type === 'mention') { text = `<strong>${n.sender_name}</strong> از شما در یک نظر نام برد.`; icon = 'at-sign'; }
                         else if (n.type === 'reply') { text = `<strong>${n.sender_name}</strong> به نظر شما پاسخ داد.`; icon = 'message-square'; }
                         else if (n.type === 'follow') { text = `<strong>${n.sender_name}</strong> شما را دنبال کرد.`; icon = 'user-plus'; }
+                        else if (n.custom_title || n.custom_body) {
+                            text = n.custom_title ? `<strong>${n.custom_title}</strong><br><span class="text-gray text-xs mt-1 block">${n.custom_body}</span>` : n.custom_body;
+                            icon = n.custom_icon || 'bell';
+                        }
 
                         const url = n.target_info ? n.target_info.url : '#';
                         const unreadClass = n.is_read == 0 ? 'unread' : 'bg-block';
