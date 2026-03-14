@@ -512,8 +512,7 @@ include __DIR__ . '/layout/editor.php';
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        initTinyMCE('#item-description');
-        initTinyMCE('#item-long_description');
+        initTinyMCE('#item-description, #item-long_description');
 
         // Initialize Persian Datepicker
         const initialDate = $('#updated_at_value').val();
