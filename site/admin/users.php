@@ -90,7 +90,7 @@ include __DIR__ . '/layout/header.php';
                     <td class="text-center">
                         <div class="flex items-center justify-center gap-2">
                             <?php if (has_permission('users.edit')): ?>
-                            <a href="user_edit.php?id=<?= $user['id'] ?>" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-amber-600 hover:border-amber-100 hover:bg-amber-50 rounded-lg transition-all flex items-center justify-center group/btn" title="ویرایش">
+                            <a href="user_edit.php?id=<?= $user['id'] ?>" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-amber-600 hover:border-amber-100 hover:bg-amber-50 rounded-lg transition-all flex items-center justify-center group/btn" title="ویرایش" aria-label="ویرایش">
                                 <i data-lucide="edit-3" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                             </a>
                             <?php endif; ?>
@@ -100,7 +100,7 @@ include __DIR__ . '/layout/header.php';
                                 <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $user['id'] ?>">
-                                <button type="button" onclick="confirmDelete(this.form)" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn">
+                                <button type="button" onclick="confirmDelete(this.form)" class="w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 hover:bg-rose-50 rounded-lg transition-all flex items-center justify-center group/btn" title="حذف" aria-label="حذف">
                                     <i data-lucide="trash-2" class="w-4 h-4 group-hover/btn:scale-110 transition-transform"></i>
                                 </button>
                             </form>
