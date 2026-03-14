@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tala-online-v5';
+const CACHE_NAME = 'tala-online-v6';
 const OFFLINE_URL = '/offline.php';
 
 const ASSETS_TO_CACHE = [
@@ -96,6 +96,9 @@ self.addEventListener('fetch', (event) => {
 
     // Skip non-HTTP(S) schemes (like chrome-extension://)
     if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+    // Skip cross-origin requests to prevent ServiceWorker NetworkErrors on CDNs
+    if (url.origin !== self.location.origin) return;
 
     // Handle navigation requests (HTML pages)
     if (event.request.mode === 'navigate') {
