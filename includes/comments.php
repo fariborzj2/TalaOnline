@@ -505,6 +505,9 @@ class Comments {
             } else {
                 // It's a direct reply to a main comment
                 $reply_to_id = $parent_id;
+                if (!$reply_to_user_id) {
+                    $reply_to_user_id = $parent['user_id'];
+                }
             }
         }
 
@@ -984,7 +987,8 @@ class Comments {
             if ($user['id'] != $sender_id) {
                 $pushService->notify($user['id'], 'social_mention', [
                     'sender_name' => $sender_name,
-                    'url' => get_site_url() . "/thread/$comment_id"
+                    'url' => get_site_url() . "/thread/$comment_id",
+                    'comment_id' => $comment_id
                 ], ['sender_id' => $sender_id, 'category' => 'social']);
             }
         }
