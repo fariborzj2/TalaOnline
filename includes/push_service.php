@@ -289,7 +289,7 @@ class PushService {
                 } elseif ($channel === 'email') {
                     $this->sendEmail($user_id, $title, $body, $action_url);
                 } elseif ($channel === 'in-app') {
-                    $this->sendInApp($user_id, $template['slug'], $queue_item['id'], $sender_id, $data);
+                    $this->sendInApp($user_id, $template['slug'], $queue_item['id'], $sender_id);
                 }
 
                 $this->logAnalytics($queue_item['id'], $channel, 'sent');
@@ -360,17 +360,8 @@ class PushService {
         return false;
     }
 
-    private function sendInApp($user_id, $type, $target_id, $sender_id = 0, $data = []) {
+    private function sendInApp($user_id, $type, $target_id, $sender_id = 0) {
         $notif = new Notifications($this->pdo);
-
-        if ($type === 'social_reply') {
-            $type = 'reply';
-            $target_id = $data['comment_id'] ?? $target_id;
-        } elseif ($type === 'social_mention') {
-            $type = 'mention';
-            $target_id = $data['comment_id'] ?? $target_id;
-        }
-
         return $notif->create($user_id, $sender_id, $type, $target_id);
     }
 
