@@ -29,13 +29,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $comments_manager = new Comments($pdo);
 
         $comment_ids = [];
+        $queue_ids = [];
         foreach ($notifications as $n) {
             if ($n['type'] === 'mention' || $n['type'] === 'reply') {
                 $comment_ids[] = $n['target_id'];
+            } elseif ($n['type'] !== 'follow') {
+                $queue_ids[] = (int)$n['target_id'];
             }
         }
 
         $targetInfoMap = $comments_manager->bulkGetTargetInfoByCommentIds($comment_ids);
+
+        $queueDataMap = [];
+        if (!empty($queue_ids)) {
+            $placeholders = implode(',', array_fill(0, count($queue_ids), '?'));
+            $stmt = $pdo->prepare("SELECT nq.id, nq.data, nt.title, nt.body, nt.action_url, nt.icon
+                                   FROM notification_queue nq
+                                   LEFT JOIN notification_templates nt ON nq.template_slug = nt.slug
+                                   WHERE nq.id IN ($placeholders)");
+            $stmt->execute($queue_ids);
+            while ($row = $stmt->fetch()) {
+                $data = json_decode($row['data'], true) ?: [];
+                $title = $row['title'] ?? '';
+                $body = $row['body'] ?? '';
+                $url = $row['action_url'] ?? '#';
+
+                foreach ($data as $key => $value) {
+                    $title = str_replace('{' . $key . '}', $value, $title);
+                    $body = str_replace('{' . $key . '}', $value, $body);
+                    $url = str_replace('{' . $key . '}', $value, $url);
+                }
+                $queueDataMap[$row['id']] = [
+                    'title' => $title,
+                    'body' => $body,
+                    'url' => $url,
+                    'icon' => $row['icon']
+                ];
+            }
+        }
 
         foreach ($notifications as &$n) {
             $n['created_at_fa'] = jalali_date($n['created_at']);
@@ -46,6 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 }
             } elseif ($n['type'] === 'follow') {
                 $n['target_info'] = ['url' => "/profile/{$n['sender_id']}/{$n['sender_username']}"];
+            } else {
+                if (isset($queueDataMap[$n['target_id']])) {
+                    $qd = $queueDataMap[$n['target_id']];
+                    $n['custom_title'] = $qd['title'];
+                    $n['custom_body'] = $qd['body'];
+                    $n['custom_icon'] = $qd['icon'] ?: 'bell';
+                    $n['target_info'] = ['url' => $qd['url']];
+                }
             }
         }
 
