@@ -372,8 +372,7 @@ include __DIR__ . '/layout/editor.php';
     renderKeywords();
 
     $(document).ready(function() {
-        initTinyMCE('#cat-description');
-        initTinyMCE('#cat-short_description');
+        initTinyMCE('#cat-description, #cat-short_description');
 
         // Initialize Persian Datepicker
         const initialDate = $('#updated_at_value').val();
