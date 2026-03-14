@@ -841,7 +841,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <!-- Hidden Import Input -->
-<input type="file" id="importFile" accept=".sql" class="hidden" onchange="document.getElementById('fileNameDisplay').innerText = this.files[0].name">
+<input type="file" id="importFile" accept=".sql" class="hidden" onchange="document.getElementById('fileNameDisplay').textContent = this.files[0].name">
 
 <script>
     async function startImport() {
@@ -871,7 +871,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('backup_file', fileInput.files[0]);
             formData.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
 
-            progressStatus.innerText = 'در حال آپلود و تحلیل فایل...';
+            progressStatus.textContent = 'در حال آپلود و تحلیل فایل...';
             const initRes = await fetch('backup_handler.php?action=init_import', {
                 method: 'POST',
                 body: formData
@@ -895,13 +895,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const percent = Math.round((stepData.current / stepData.total) * 100);
                 progressBar.style.width = percent + '%';
-                progressPercent.innerText = percent + '%';
-                progressStatus.innerText = `در حال اجرا: ${stepData.current} از ${stepData.total} دستور`;
+                progressPercent.textContent = percent + '%';
+                progressStatus.textContent = `در حال اجرا: ${stepData.current} از ${stepData.total} دستور`;
 
                 done = stepData.done;
             }
 
-            progressStatus.innerText = 'بازگردانی با موفقیت انجام شد. در حال انتقال...';
+            progressStatus.textContent = 'بازگردانی با موفقیت انجام شد. در حال انتقال...';
             setTimeout(() => {
                 window.location.href = 'settings.php?message=backup_imported';
             }, 1000);

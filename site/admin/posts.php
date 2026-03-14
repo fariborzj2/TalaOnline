@@ -282,7 +282,7 @@ include __DIR__ . '/layout/header.php';
         const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-results)'));
 
         rows.forEach(row => {
-            const text = row.innerText.toLowerCase();
+            const text = row.textContent.toLowerCase();
             if (text.includes(searchTerm)) {
                 row.style.display = '';
                 filteredCount++;
@@ -290,7 +290,7 @@ include __DIR__ . '/layout/header.php';
                 row.style.display = 'none';
             }
         });
-        itemCountSpan.innerText = filteredCount;
+        itemCountSpan.textContent = filteredCount;
     });
 
     async function handleDelete(event, form, name) {

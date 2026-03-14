@@ -210,7 +210,7 @@ include __DIR__ . '/layout/header.php';
         let visibleCount = 0;
 
         originalRows.forEach(row => {
-            const text = row.innerText.toLowerCase();
+            const text = row.textContent.toLowerCase();
             if (text.includes(searchTerm)) {
                 row.style.display = '';
                 visibleCount++;
@@ -219,7 +219,7 @@ include __DIR__ . '/layout/header.php';
             }
         });
 
-        itemCountSpan.innerText = visibleCount;
+        itemCountSpan.textContent = visibleCount;
     });
 
     async function handleDelete(event, form, name) {
@@ -236,10 +236,10 @@ include __DIR__ . '/layout/header.php';
 
     function viewFeedback(fb) {
         document.getElementById('fb-id').value = fb.id;
-        document.getElementById('fb-name').innerText = fb.name || 'ناشناس';
-        document.getElementById('fb-email').innerText = fb.email || 'بدون ایمیل';
-        document.getElementById('fb-subject').innerText = fb.subject || 'بدون موضوع';
-        document.getElementById('fb-message').innerText = fb.message;
+        document.getElementById('fb-name').textContent = fb.name || 'ناشناس';
+        document.getElementById('fb-email').textContent = fb.email || 'بدون ایمیل';
+        document.getElementById('fb-subject').textContent = fb.subject || 'بدون موضوع';
+        document.getElementById('fb-message').textContent = fb.message;
 
         // Use a hidden span or similar to get the formatted date from the row if possible,
         // or just accept raw for the modal for now.

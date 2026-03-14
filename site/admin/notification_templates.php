@@ -195,7 +195,7 @@ include __DIR__ . '/layout/header.php';
 
 <script>
     function addTemplate() {
-        document.getElementById('modalTitle').innerText = 'افزودن قالب جدید';
+        document.getElementById('modalTitle').textContent = 'افزودن قالب جدید';
         document.getElementById('tpl_id').value = '';
         document.getElementById('tpl_slug').value = '';
         document.getElementById('tpl_title').value = '';
@@ -207,7 +207,7 @@ include __DIR__ . '/layout/header.php';
     }
 
     function editTemplate(t) {
-        document.getElementById('modalTitle').innerText = 'ویرایش قالب';
+        document.getElementById('modalTitle').textContent = 'ویرایش قالب';
         document.getElementById('tpl_id').value = t.id;
         document.getElementById('tpl_slug').value = t.slug;
         document.getElementById('tpl_title').value = t.title;

@@ -484,13 +484,13 @@ include __DIR__ . '/layout/editor.php';
                 .replace(/\s+/g, '-')
                 .replace(/-+/g, '-');
             slugInput.value = slug;
-            slugPreview.innerText = slug || '...';
+            slugPreview.textContent = slug || '...';
         }
     });
 
     slugInput.addEventListener('input', () => {
         slugInput.dataset.manual = true;
-        slugPreview.innerText = slugInput.value || '...';
+        slugPreview.textContent = slugInput.value || '...';
     });
 
     const categoryPreview = document.getElementById('category-preview');
@@ -516,7 +516,7 @@ include __DIR__ . '/layout/editor.php';
                     catEl.classList.remove('bg-indigo-50', 'text-indigo-600', 'border-indigo-100');
                     catEl.classList.add('bg-amber-50', 'text-amber-600', 'border-amber-100');
                     catEl.title = 'دسته اصلی';
-                    categoryPreview.innerText = option.dataset.slug;
+                    categoryPreview.textContent = option.dataset.slug;
                 }
 
                 const textNode = document.createTextNode(option.dataset.name);
@@ -539,7 +539,7 @@ include __DIR__ . '/layout/editor.php';
             });
 
             hidden.value = selectedIds.join(',');
-            if (selectedIds.length === 0) categoryPreview.innerText = 'uncategorized';
+            if (selectedIds.length === 0) categoryPreview.textContent = 'uncategorized';
             if (window.refreshIcons) window.refreshIcons();
         }
 

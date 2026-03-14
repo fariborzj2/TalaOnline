@@ -143,7 +143,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'success') {
         const rows = Array.from(tableBody.querySelectorAll('tr'));
 
         rows.forEach(row => {
-            const text = row.innerText.toLowerCase();
+            const text = row.textContent.toLowerCase();
             if (text.includes(searchTerm)) {
                 row.style.display = '';
                 filteredCount++;
@@ -151,7 +151,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'success') {
                 row.style.display = 'none';
             }
         });
-        itemCountSpan.innerText = filteredCount;
+        itemCountSpan.textContent = filteredCount;
     });
 
     async function handleDelete(event, form, name) {
