@@ -548,18 +548,8 @@ class Comments {
                     // Check for mentions (uses placeholders to notify)
                     $this->handleMentions($stored_content, $comment_id, $user_id, $sender_name);
 
-                    // Notify parent author and reply target
+                    // Notify parent author and reply target via TriggerEngine (which handles templates & channels)
                     if ($parent_id || ($reply_to_user_id && $reply_to_user_id != $user_id)) {
-                        if ($parent_id) {
-                            $this->notifyReply($parent_id, $comment_id, $sender_name);
-                        }
-                        if ($reply_to_user_id && $reply_to_user_id != $user_id) {
-                            $this->sendNotificationEmail(['id' => $reply_to_user_id], 'reply', $comment_id, $sender_name);
-                            $notif = new Notifications($this->pdo);
-                            $notif->create($reply_to_user_id, $user_id, 'reply', $comment_id);
-                        }
-
-                        // Consolidated Push Notifications via Engine
                         $pushService = new PushService($this->pdo);
                         $triggerEngine = new TriggerEngine($this->pdo, $pushService);
                         $triggerEngine->handleCommentInteraction($comment_id, $parent_id, $sender_name, $reply_to_user_id, $user_id);
@@ -658,9 +648,6 @@ class Comments {
                 $pushService = new PushService($this->pdo);
                 $triggerEngine = new TriggerEngine($this->pdo, $pushService);
                 $triggerEngine->handleMilestone($author_id, $comment_id, $count);
-
-                $notif = new Notifications($this->pdo);
-                $notif->create($author_id, 0, 'milestone', $comment_id);
             }
         }
 
@@ -995,33 +982,11 @@ class Comments {
         $pushService = new PushService($this->pdo);
         foreach ($target_users as $user) {
             if ($user['id'] != $sender_id) {
-                $this->sendNotificationEmail($user, 'mention', $comment_id, $sender_name);
-                $notif->create($user['id'], $sender_id, 'mention', $comment_id);
-
                 $pushService->notify($user['id'], 'social_mention', [
                     'sender_name' => $sender_name,
                     'url' => get_site_url() . "/thread/$comment_id"
-                ]);
+                ], ['sender_id' => $sender_id, 'category' => 'social']);
             }
-        }
-    }
-
-    /**
-     * Notify author of parent comment about a reply
-     */
-    private function notifyReply($parent_id, $comment_id, $sender_name) {
-        $stmt = $this->pdo->prepare("SELECT u.id, u.email, u.name, c.user_id as sender_id
-                                     FROM comments pc
-                                     JOIN users u ON pc.user_id = u.id
-                                     JOIN comments c ON c.id = ?
-                                     WHERE pc.id = ?");
-        $stmt->execute([$comment_id, $parent_id]);
-        $user = $stmt->fetch();
-
-        if ($user && $user['id'] != $user['sender_id']) {
-            $this->sendNotificationEmail($user, 'reply', $comment_id, $sender_name);
-            $notif = new Notifications($this->pdo);
-            $notif->create($user['id'], $user['sender_id'], 'reply', $comment_id);
         }
     }
 

@@ -219,6 +219,11 @@ class PushService {
             $priority = $options['priority'] ?? $template['priority'];
             $scheduled_at = $options['scheduled_at'] ?? null;
 
+            // Preserve sender_id in data if provided
+            if (isset($options['sender_id'])) {
+                $data['_sender_id'] = $options['sender_id'];
+            }
+
             return $stmt->execute([
                 $user_id,
                 $template_slug,
@@ -274,6 +279,8 @@ class PushService {
         $action_url = $this->renderString($template['action_url'], $data);
         $icon = $template['icon'] ?: get_setting('site_logo_url');
 
+        $sender_id = $data['_sender_id'] ?? 0;
+
         foreach ($channels as $channel) {
             $channel = trim($channel);
             try {
@@ -282,7 +289,7 @@ class PushService {
                 } elseif ($channel === 'email') {
                     $this->sendEmail($user_id, $title, $body, $action_url);
                 } elseif ($channel === 'in-app') {
-                    $this->sendInApp($user_id, $template['slug'], $queue_item['id']);
+                    $this->sendInApp($user_id, $template['slug'], $queue_item['id'], $sender_id);
                 }
 
                 $this->logAnalytics($queue_item['id'], $channel, 'sent');
@@ -353,9 +360,9 @@ class PushService {
         return false;
     }
 
-    private function sendInApp($user_id, $type, $target_id) {
+    private function sendInApp($user_id, $type, $target_id, $sender_id = 0) {
         $notif = new Notifications($this->pdo);
-        return $notif->create($user_id, 0, $type, $target_id);
+        return $notif->create($user_id, $sender_id, $type, $target_id);
     }
 
     private $templateCache = [];
