@@ -44,20 +44,32 @@ self.addEventListener('push', (event) => {
 
     try {
         const data = event.data.json();
+
+        // Ensure absolute URLs for icons to prevent Firefox resolution issues
+        const baseUrl = self.location.origin;
+        let iconUrl = data.icon || '/assets/images/logo.png';
+        if (!iconUrl.startsWith('http')) {
+            iconUrl = baseUrl + (iconUrl.startsWith('/') ? '' : '/') + iconUrl;
+        }
+
+        let badgeUrl = baseUrl + '/assets/images/favicon/favicon-32x32.png';
+
         const options = {
-            body: data.body,
-            icon: data.icon || '/assets/images/logo.png',
-            badge: '/assets/images/favicon/favicon-32x32.png',
+            body: data.body || '',
+            icon: iconUrl,
+            badge: badgeUrl,
             data: {
-                url: data.url
+                url: data.url || '/'
             },
             vibrate: [100, 50, 100],
             dir: 'rtl',
             lang: 'fa-IR'
         };
 
+        const title = data.title || 'اعلان جدید';
+
         event.waitUntil(
-            self.registration.showNotification(data.title, options)
+            self.registration.showNotification(title, options)
         );
     } catch (e) {
         console.error('Push error:', e);
