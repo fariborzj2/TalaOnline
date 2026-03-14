@@ -108,7 +108,7 @@ class TriggerEngine {
                 $this->pushService->notify($root_author_id, 'social_reply', [
                     'sender_name' => $sender_name,
                     'url' => $target_url
-                ], ['category' => 'social']);
+                ], ['category' => 'social', 'sender_id' => $sender_id]);
                 $notified_users[] = $root_author_id;
             }
         }
@@ -118,7 +118,7 @@ class TriggerEngine {
             $this->pushService->notify($reply_to_user_id, 'social_reply', [
                 'sender_name' => $sender_name,
                 'url' => $target_url
-            ], ['category' => 'social']);
+            ], ['category' => 'social', 'sender_id' => $sender_id]);
         }
     }
 

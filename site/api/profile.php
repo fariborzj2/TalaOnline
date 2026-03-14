@@ -375,17 +375,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([$user_id, $following_id]);
                 $following = true;
 
-                // Create notification
-                $notif = new Notifications($pdo);
-                $notif->create($following_id, $user_id, 'follow', $user_id);
-
                 // Push Notification
                 require_once __DIR__ . '/../../includes/push_service.php';
                 $pushService = new PushService($pdo);
                 $pushService->notify($following_id, 'social_follow', [
                     'follower_name' => $_SESSION['user_name'] ?? 'یک کاربر جدید',
                     'url' => get_site_url() . "/profile/$user_id/" . ($_SESSION['user_username'] ?? 'user')
-                ]);
+                ], ['sender_id' => $user_id]);
             }
 
             // Get new count
