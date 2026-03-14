@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . "/../../includes/helpers.php";
 check_permission("platforms.view");
 
 // Schema Self-Healing
@@ -15,7 +16,7 @@ $message = '';
 $error = '';
 
 // Handle Actions
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action'])) {
     if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
         die('Invalid CSRF token');
     }
@@ -170,7 +171,7 @@ include __DIR__ . '/layout/header.php';
                     <td class="text-center font-black text-slate-400 row-order"><?= $p['sort_order'] ?></td>
                     <td>
                         <div class="w-10 h-10 rounded-lg bg-slate-100 p-2 flex items-center justify-center">
-                            <img src="../<?= htmlspecialchars($p['logo']) ?>" alt="" class="w-full h-full object-contain">
+                            <img src="../<?= htmlspecialchars($p['logo'] ?? '') ?>" alt="" class="w-full h-full object-contain">
                         </div>
                     </td>
                     <td>
@@ -191,7 +192,7 @@ include __DIR__ . '/layout/header.php';
                     </td>
                     <td>
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-indigo-50 text-indigo-600 border border-indigo-100 ltr-input">
-                            <?= htmlspecialchars($p['fee']) ?>%
+                            <?= htmlspecialchars($p['fee'] ?? '') ?>%
                         </span>
                     </td>
                     <td class="text-center">
@@ -354,27 +355,27 @@ include __DIR__ . '/layout/header.php';
         const sortBy = sortSelect.value;
 
         let filteredRows = originalRows.filter(row => {
-            const text = row.innerText.toLowerCase();
+            const text = row.textContent.toLowerCase();
             return text.includes(searchTerm);
         });
 
         // Sort
         filteredRows.sort((a, b) => {
             if (sortBy === 'name') {
-                const nameA = a.querySelector('td:nth-child(3) p:first-child').innerText;
-                const nameB = b.querySelector('td:nth-child(3) p:first-child').innerText;
+                const nameA = a.querySelector('td:nth-child(3) p:first-child').textContent;
+                const nameB = b.querySelector('td:nth-child(3) p:first-child').textContent;
                 return nameA.localeCompare(nameB, 'fa');
             } else if (sortBy === 'buy_desc') {
-                const priceA = parseFloat(a.querySelector('td:nth-child(4) .text-emerald-600').innerText.replace(/,/g, '')) || 0;
-                const priceB = parseFloat(b.querySelector('td:nth-child(4) .text-emerald-600').innerText.replace(/,/g, '')) || 0;
+                const priceA = parseFloat(a.querySelector('td:nth-child(4) .text-emerald-600').textContent.replace(/,/g, '')) || 0;
+                const priceB = parseFloat(b.querySelector('td:nth-child(4) .text-emerald-600').textContent.replace(/,/g, '')) || 0;
                 return priceB - priceA;
             } else if (sortBy === 'fee_asc') {
-                const feeA = parseFloat(a.querySelector('td:nth-child(5) span').innerText) || 0;
-                const feeB = parseFloat(b.querySelector('td:nth-child(5) span').innerText) || 0;
+                const feeA = parseFloat(a.querySelector('td:nth-child(5) span').textContent) || 0;
+                const feeB = parseFloat(b.querySelector('td:nth-child(5) span').textContent) || 0;
                 return feeA - feeB;
             } else {
-                const orderA = parseInt(a.querySelector('td:first-child').innerText) || 0;
-                const orderB = parseInt(b.querySelector('td:first-child').innerText) || 0;
+                const orderA = parseInt(a.querySelector('.row-order').textContent) || 0;
+                const orderB = parseInt(b.querySelector('.row-order').textContent) || 0;
                 return orderA - orderB;
             }
         });
@@ -382,7 +383,7 @@ include __DIR__ . '/layout/header.php';
         // Re-render
         tableBody.innerHTML = '';
         filteredRows.forEach(row => tableBody.appendChild(row));
-        itemCountSpan.innerText = filteredRows.length;
+        itemCountSpan.textContent = filteredRows.length;
     }
 
     searchInput.addEventListener('input', updateTable);
@@ -408,7 +409,7 @@ include __DIR__ . '/layout/header.php';
                 if(data.success) {
                     // Update visual order numbers
                     tableBody.querySelectorAll('tr').forEach((tr, index) => {
-                        tr.querySelector('.row-order').innerText = index;
+                        tr.querySelector('.row-order').textContent = index;
                     });
                 }
             });
@@ -425,7 +426,7 @@ include __DIR__ . '/layout/header.php';
 
     function openAddModal() {
         document.getElementById('formAction').value = 'add';
-        document.getElementById('modalTitle').innerText = 'افزودن پلتفرم جدید';
+        document.getElementById('modalTitle').textContent = 'افزودن پلتفرم جدید';
         document.getElementById('modalIcon').setAttribute('data-lucide', 'plus');
         document.getElementById('platform-id').value = '';
         document.getElementById('platform-name').value = '';
@@ -444,7 +445,7 @@ include __DIR__ . '/layout/header.php';
 
     function editPlatform(p) {
         document.getElementById('formAction').value = 'edit';
-        document.getElementById('modalTitle').innerText = 'ویرایش پلتفرم';
+        document.getElementById('modalTitle').textContent = 'ویرایش پلتفرم';
         document.getElementById('modalIcon').setAttribute('data-lucide', 'edit-2');
         document.getElementById('platform-id').value = p.id;
         document.getElementById('platform-name').value = p.name;

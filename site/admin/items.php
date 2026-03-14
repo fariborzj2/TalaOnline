@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../includes/db.php';
+require_once __DIR__ . "/../../includes/helpers.php";
 check_permission("assets.view");
 
 // Schema Self-Healing
@@ -48,7 +49,7 @@ $message = '';
 $error = '';
 
 // Handle Actions
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['action'])) {
     if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
         die('Invalid CSRF token');
     }
@@ -212,7 +213,7 @@ include __DIR__ . '/layout/header.php';
                     <td>
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-slate-100 p-2 flex items-center justify-center shrink-0">
-                                <img src="../<?= htmlspecialchars($item['logo']) ?>" alt="" class="w-full h-full object-contain">
+                                <img src="../<?= htmlspecialchars($item['logo'] ?? '') ?>" alt="" class="w-full h-full object-contain">
                             </div>
                             <div>
                                 <p class="font-black text-slate-900"><?= htmlspecialchars($item['name'] ?? '') ?></p>
@@ -309,7 +310,7 @@ include __DIR__ . '/layout/header.php';
         const filterCat = categorySelect.value;
 
         let filteredRows = originalRows.filter(row => {
-            const text = row.innerText.toLowerCase();
+            const text = row.textContent.toLowerCase();
             const matchesSearch = text.includes(searchTerm);
             const matchesCat = filterCat === 'all' || row.dataset.category === filterCat;
             return matchesSearch && matchesCat;
@@ -318,16 +319,16 @@ include __DIR__ . '/layout/header.php';
         // Sort
         filteredRows.sort((a, b) => {
             if (sortBy === 'name') {
-                const nameA = a.querySelector('td:nth-child(3) p:first-child').innerText;
-                const nameB = b.querySelector('td:nth-child(3) p:first-child').innerText;
+                const nameA = a.querySelector('td:nth-child(3) p:first-child').textContent;
+                const nameB = b.querySelector('td:nth-child(3) p:first-child').textContent;
                 return nameA.localeCompare(nameB, 'fa');
             } else if (sortBy === 'price_desc' || sortBy === 'price_asc') {
-                const priceA = parseFloat(a.querySelector('td:nth-child(5) .font-black').innerText.replace(/,/g, '')) || 0;
-                const priceB = parseFloat(b.querySelector('td:nth-child(5) .font-black').innerText.replace(/,/g, '')) || 0;
+                const priceA = parseFloat(a.querySelector('td:nth-child(5) .font-black').textContent.replace(/,/g, '')) || 0;
+                const priceB = parseFloat(b.querySelector('td:nth-child(5) .font-black').textContent.replace(/,/g, '')) || 0;
                 return sortBy === 'price_desc' ? priceB - priceA : priceA - priceB;
             } else {
-                const orderA = parseInt(a.querySelector('td:first-child').innerText) || 0;
-                const orderB = parseInt(b.querySelector('td:first-child').innerText) || 0;
+                const orderA = parseInt(a.querySelector('.row-order').textContent) || 0;
+                const orderB = parseInt(b.querySelector('.row-order').textContent) || 0;
                 return orderA - orderB;
             }
         });
@@ -335,7 +336,7 @@ include __DIR__ . '/layout/header.php';
         // Re-render
         tableBody.innerHTML = '';
         filteredRows.forEach(row => tableBody.appendChild(row));
-        itemCountSpan.innerText = filteredRows.length;
+        itemCountSpan.textContent = filteredRows.length;
     }
 
     searchInput.addEventListener('input', updateTable);
@@ -362,7 +363,7 @@ include __DIR__ . '/layout/header.php';
                 if(data.success) {
                     // Update visual order numbers
                     tableBody.querySelectorAll('tr').forEach((tr, index) => {
-                        tr.querySelector('.row-order').innerText = index;
+                        tr.querySelector('.row-order').textContent = index;
                     });
                 }
             });

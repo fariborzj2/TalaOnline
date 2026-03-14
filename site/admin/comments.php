@@ -369,11 +369,11 @@ include __DIR__ . '/layout/header.php';
     }
 
     function viewComment(c) {
-        document.getElementById('modal-name').innerText = c.user_name || (c.guest_name || 'ناشناس');
-        document.getElementById('modal-username').innerText = c.user_id ? '@' + c.user_username : (c.guest_email || 'مهمان');
+        document.getElementById('modal-name').textContent = c.user_name || (c.guest_name || 'ناشناس');
+        document.getElementById('modal-username').textContent = c.user_id ? '@' + c.user_username : (c.guest_email || 'مهمان');
         document.getElementById('modal-avatar').src = c.user_avatar ? '../' + c.user_avatar : '../assets/images/default-avatar.png';
         document.getElementById('modal-content').innerHTML = c.content_html || c.content;
-        document.getElementById('modal-date').innerText = c.created_at_fa || c.created_at;
+        document.getElementById('modal-date').textContent = c.created_at_fa || c.created_at;
 
         const imageContainer = document.getElementById('modal-image-container');
         const analysisImage = document.getElementById('modal-analysis-image');
@@ -386,7 +386,7 @@ include __DIR__ . '/layout/header.php';
 
         const targetLink = document.getElementById('modal-target-link');
         if (c.target_info) {
-            targetLink.innerText = c.target_info.title;
+            targetLink.textContent = c.target_info.title;
             targetLink.href = '../' + c.target_info.url.replace(/^\//, '');
             targetLink.parentElement.classList.remove('hidden');
         } else {

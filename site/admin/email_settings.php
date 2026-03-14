@@ -460,7 +460,7 @@ async function testSMTP() {
     resultsDiv.classList.remove('hidden');
     statusBox.className = 'p-4 rounded-xl border flex flex-col gap-3 bg-slate-50 border-slate-200';
     statusIcon.innerHTML = '<div class="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>';
-    statusMsg.innerText = 'در حال برقراری ارتباط با سرور SMTP... (لطفاً منتظر بمانید)';
+    statusMsg.textContent = 'در حال برقراری ارتباط با سرور SMTP... (لطفاً منتظر بمانید)';
     debugContainer.classList.add('hidden');
 
     try {
@@ -474,23 +474,23 @@ async function testSMTP() {
         if (result.success) {
             statusBox.className = 'p-4 rounded-xl border flex flex-col gap-3 bg-emerald-50 border-emerald-100 text-emerald-700';
             statusIcon.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>';
-            statusMsg.innerText = result.message;
+            statusMsg.textContent = result.message;
         } else {
             statusBox.className = 'p-4 rounded-xl border flex flex-col gap-3 bg-rose-50 border-rose-100 text-rose-700';
             statusIcon.innerHTML = '<i data-lucide="x" class="w-4 h-4 text-rose-600"></i>';
-            statusMsg.innerText = result.message;
+            statusMsg.textContent = result.message;
         }
 
         if (result.debug) {
             debugContainer.classList.remove('hidden');
-            debugLog.innerText = result.debug;
+            debugLog.textContent = result.debug;
         }
 
         lucide.createIcons();
     } catch (e) {
         statusBox.className = 'p-4 rounded-xl border flex flex-col gap-3 bg-rose-50 border-rose-100 text-rose-700';
         statusIcon.innerHTML = '<i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>';
-        statusMsg.innerText = 'خطا در اجرای تست: ' + e.message;
+        statusMsg.textContent = 'خطا در اجرای تست: ' + e.message;
         lucide.createIcons();
     }
 }

@@ -106,10 +106,10 @@
 
             dialogIcon.setAttribute('data-lucide', config.icon);
             dialogIconContainer.className = `w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center ${config.color}`;
-            dialogTitle.innerText = config.title;
-            dialogMessage.innerText = message;
+            dialogTitle.textContent = config.title;
+            dialogMessage.textContent = message;
             dialogConfirmBtn.className = `btn-v3 text-white w-full !py-3 !text-sm transition-all ${config.btn}`;
-            dialogConfirmBtn.innerText = 'متوجه شدم';
+            dialogConfirmBtn.textContent = 'متوجه شدم';
             dialogCancelBtn.classList.add('hidden');
 
             window.refreshIcons();
@@ -128,10 +128,10 @@
         return new Promise((resolve) => {
             dialogIcon.setAttribute('data-lucide', 'help-circle');
             dialogIconContainer.className = `w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center bg-indigo-50 text-indigo-600`;
-            dialogTitle.innerText = title;
-            dialogMessage.innerText = message;
+            dialogTitle.textContent = title;
+            dialogMessage.textContent = message;
             dialogConfirmBtn.className = `btn-v3 btn-v3-primary w-full !py-3 !text-sm`;
-            dialogConfirmBtn.innerText = 'بله، انجام شود';
+            dialogConfirmBtn.textContent = 'بله، انجام شود';
             dialogCancelBtn.classList.remove('hidden');
 
             window.refreshIcons();

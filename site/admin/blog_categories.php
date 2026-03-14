@@ -155,7 +155,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'success') {
         const rows = Array.from(tableBody.querySelectorAll('tr:not(.no-results)'));
 
         rows.forEach(row => {
-            const text = row.innerText.toLowerCase();
+            const text = row.textContent.toLowerCase();
             if (text.includes(searchTerm)) {
                 row.style.display = '';
                 filteredCount++;
@@ -163,7 +163,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'success') {
                 row.style.display = 'none';
             }
         });
-        itemCountSpan.innerText = filteredCount;
+        itemCountSpan.textContent = filteredCount;
     });
 
     // Initialize Sortable
@@ -187,7 +187,7 @@ if (isset($_GET['message']) && $_GET['message'] === 'success') {
                     if(data.success) {
                         tableBody.querySelectorAll('tr').forEach((tr, index) => {
                             const orderTd = tr.querySelector('.row-order');
-                            if (orderTd) orderTd.innerText = index;
+                            if (orderTd) orderTd.textContent = index;
                         });
                     }
                 });

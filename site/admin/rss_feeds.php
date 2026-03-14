@@ -268,7 +268,7 @@ include __DIR__ . '/layout/header.php';
     const activeToggle = document.getElementById('activeToggle');
 
     function openAddModal() {
-        modalTitle.innerText = 'افزودن فید جدید';
+        modalTitle.textContent = 'افزودن فید جدید';
         formAction.value = 'add';
         form.reset();
         activeToggle.classList.add('hidden');
@@ -277,7 +277,7 @@ include __DIR__ . '/layout/header.php';
     }
 
     function openEditModal(feed) {
-        modalTitle.innerText = 'ویرایش فید منبع';
+        modalTitle.textContent = 'ویرایش فید منبع';
         formAction.value = 'edit';
         feedId.value = feed.id;
         feedName.value = feed.name;
