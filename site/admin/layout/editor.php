@@ -16,6 +16,10 @@ $tinymce_key = get_setting('tinymce_api_key', 'no-api-key');
 
 <script>
   function initTinyMCE(selector) {
+    if (typeof tinymce === 'undefined') {
+        console.warn('TinyMCE is not loaded. Cannot initialize on ' + selector);
+        return;
+    }
     tinymce.init({
       selector: selector,
       plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
