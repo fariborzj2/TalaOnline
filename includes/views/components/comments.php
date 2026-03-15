@@ -273,9 +273,15 @@ function render_reaction($c, $type, $emoji) {
         <?php if ($target_type !== 'post'): ?>
             <div class="filter-group-container">
                 <div class="pill-toggle-group filter-toggle-group">
-                    <button class="pill-btn filter-btn active" data-filter="all">همه</button>
-                    <button class="pill-btn filter-btn" data-filter="comment">نظرات</button>
-                    <button class="pill-btn filter-btn" data-filter="analysis">تحلیل‌ها</button>
+                    <?php if ($target_type === 'explore'): ?>
+                        <button class="pill-btn filter-btn" data-filter="all">همه</button>
+                        <button class="pill-btn filter-btn" data-filter="comment">نظرات</button>
+                        <button class="pill-btn filter-btn active" data-filter="analysis">تحلیل‌ها</button>
+                    <?php else: ?>
+                        <button class="pill-btn filter-btn active" data-filter="all">همه</button>
+                        <button class="pill-btn filter-btn" data-filter="comment">نظرات</button>
+                        <button class="pill-btn filter-btn" data-filter="analysis">تحلیل‌ها</button>
+                    <?php endif; ?>
                 </div>
             </div>
         <?php endif; ?>

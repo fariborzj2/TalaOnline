@@ -51,7 +51,7 @@ class CommentSystem {
 
         this.readOnly = options.readOnly || (['user_profile', 'explore'].includes(this.targetType));
         this.guestCommentEnabled = ds.guestComment === '1';
-        this.filterType = 'all';
+        this.filterType = this.targetType === 'explore' ? 'analysis' : 'all';
         this.sort = 'newest';
         this.threadModalId = 'comment-thread-modal';
         this.isInsideModal = false;
