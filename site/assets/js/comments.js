@@ -14,6 +14,10 @@ class CommentSystem {
         this.currentUsername = window.__AUTH_STATE__?.user?.username;
         this.csrfToken = window.__AUTH_STATE__?.csrfToken;
 
+        document.addEventListener('auth:csrf-updated', (e) => {
+            this.csrfToken = e.detail;
+        });
+
         // Highly resilient initial data lookup
         let initialData = null;
         if (window.__COMMENTS_INITIAL_DATA__) {

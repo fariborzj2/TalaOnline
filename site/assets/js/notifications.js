@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('mark-all-read-mobile')
     ];
 
+    document.addEventListener('auth:csrf-updated', (e) => {
+        authState.csrfToken = e.detail;
+    });
+
     const fetchWithCSRF = async (url, options = {}) => {
         const headers = options.headers || {};
         if (authState.csrfToken) {

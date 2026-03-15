@@ -282,6 +282,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let authState = window.__AUTH_STATE__ || { isLoggedIn: false, user: null, csrfToken: '' };
 
+    // Fetch fresh CSRF token for guest users to prevent cached invalid tokens
+    if (!authState.isLoggedIn) {
+        fetch(`${authState.apiBase || '/api'}/auth.php?action=get_csrf`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.csrfToken) {
+                    authState.csrfToken = data.csrfToken;
+                    // Dispatch event so other scripts (like comments.js) can pick up the new token
+                    document.dispatchEvent(new CustomEvent('auth:csrf-updated', { detail: authState.csrfToken }));
+                }
+            })
+            .catch(err => console.error('Failed to fetch fresh CSRF token:', err));
+    }
+
     const fetchWithCSRF = async (url, options = {}) => {
         const headers = options.headers || {};
         if (authState.csrfToken) {

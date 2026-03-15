@@ -222,6 +222,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+elseif ($action === 'get_csrf') {
+    echo json_encode(['success' => true, 'csrfToken' => csrf_token()]);
+    exit;
+}
 elseif ($action === 'get_user') {
     if (isset($_SESSION['user_id'])) {
         echo json_encode([
