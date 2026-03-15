@@ -10,7 +10,7 @@
  */
 
 $is_logged_in = isset($_SESSION['user_id']);
-$read_only = $read_only ?? ($target_type === 'user_profile');
+$read_only = $read_only ?? in_array($target_type, ['user_profile', 'explore']);
 $guest_view_enabled = get_setting('comments_guest_view', '1') === '1';
 $guest_comment_enabled = get_setting('comments_guest_comment_' . $target_type, '0') === '1';
 
@@ -101,7 +101,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                         <i data-lucide="reply" class="icon-size-4"></i>
                         <span>پاسخ</span>
                     </div>
-                <?php elseif ($target_type === 'user_profile' && !$is_reply): ?>
+                <?php elseif (in_array($target_type, ['user_profile', 'explore']) && !$is_reply): ?>
                     <div class="view-thread-btn comment-footer-btn" data-id="<?= $c['id'] ?>">
                         <i data-lucide="message-circle" class="icon-size-3"></i>
                         <span><?= ($c['total_replies'] ?? 0) > 0 ? fa_num($c['total_replies']) . ' پاسخ' : 'بدون پاسخ' ?></span>
@@ -134,7 +134,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
 
         <div id="reply-form-container-<?= $c['id'] ?>"></div>
 
-        <?php if ($has_replies && ($target_type !== 'user_profile')): ?>
+        <?php if ($has_replies && !in_array($target_type, ['user_profile', 'explore'])): ?>
             <div class="replies-container" id="replies-container-<?= $c['id'] ?>">
                 <div class="replies-list">
                     <?php if (!empty($c['replies'])) foreach ($c['replies'] as $reply) echo render_comment_item($reply, $read_only, true, $target_type); ?>
@@ -166,7 +166,7 @@ function render_reaction($c, $type, $emoji) {
      data-target-id="<?= $target_id ?>"
      data-target-type="<?= $target_type ?>"
      data-guest-comment="<?= $guest_comment_enabled ? '1' : '0' ?>"
-     data-per-page="<?= (int)($target_type === 'user_profile' ? 10 : get_setting('comments_per_page', '20')) ?>"
+     data-per-page="<?= (int)(in_array($target_type, ['user_profile', 'explore']) ? 10 : get_setting('comments_per_page', '20')) ?>"
      data-total-pages="<?= (int)($total_pages ?? 1) ?>"
      data-total-count="<?= (int)($total_count ?? 0) ?>"
      data-current-page="<?= (int)($current_page ?? 1) ?>">
@@ -305,7 +305,7 @@ function render_reaction($c, $type, $emoji) {
     </div>
 
     <?php if (($total_pages ?? 1) > 1): ?>
-        <div class="pagination <?= ($target_type === 'user_profile') ? 'd-none' : '' ?>" id="comments-pagination">
+        <div class="pagination <?= (in_array($target_type, ['user_profile', 'explore'])) ? 'd-none' : '' ?>" id="comments-pagination">
             <?php
             $pagination_items = get_pagination_window($current_page, $total_pages);
 
