@@ -843,17 +843,26 @@ class MigrationManager {
             $this->exec("CREATE INDEX IF NOT EXISTS idx_comments_target_status ON comments(target_id, target_type, status, parent_id, created_at)");
             $this->exec("CREATE INDEX IF NOT EXISTS idx_comments_parent_likes_created ON comments(parent_id, status, likes_count, created_at)");
             $this->exec("CREATE INDEX IF NOT EXISTS idx_reactions_comment_type ON comment_reactions(comment_id, reaction_type)");
+            $this->exec("CREATE INDEX IF NOT EXISTS idx_queue_processing ON notification_queue(status, scheduled_at, priority)");
+            $this->exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_queue_dedup ON notification_queue(dedup_hash)");
+            $this->exec("CREATE INDEX IF NOT EXISTS idx_dedup_expires ON notification_deduplication(expires_at)");
         } else {
             // MySQL logic with existence checks
             $indexes = [
                 'idx_comments_target_status' => "comments(target_id, target_type, status, parent_id, created_at)",
                 'idx_comments_parent_likes_created' => "comments(parent_id, status, likes_count, created_at)",
-                'idx_reactions_comment_type' => "comment_reactions(comment_id, reaction_type)"
+                'idx_reactions_comment_type' => "comment_reactions(comment_id, reaction_type)",
+                'idx_queue_processing' => "notification_queue(status, scheduled_at, priority)",
+                'idx_queue_dedup' => "notification_queue(dedup_hash)",
+                'idx_dedup_expires' => "notification_deduplication(expires_at)"
             ];
 
             foreach ($indexes as $name => $def) {
                 try {
-                    $this->exec("ALTER TABLE " . explode('(', $def)[0] . " ADD INDEX $name (" . explode('(', $def)[1]);
+                    $table = explode('(', $def)[0];
+                    $columns = explode('(', $def)[1];
+                    $indexType = strpos($name, 'unique') !== false || $name === 'idx_queue_dedup' ? 'UNIQUE INDEX' : 'INDEX';
+                    $this->exec("ALTER TABLE $table ADD $indexType $name ($columns");
                 } catch (Exception $e) {}
             }
         }
