@@ -520,6 +520,9 @@ class PushService {
     }
 
     private function sendInApp($user_id, $type, $target_id, $sender_id = 0) {
+        if (!class_exists('Notifications')) {
+            require_once __DIR__ . '/notifications.php';
+        }
         $notif = new Notifications($this->pdo);
         return $notif->create($user_id, $sender_id, $type, $target_id);
     }
