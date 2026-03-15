@@ -158,7 +158,7 @@ define('DB_FUNCTIONS_LOADED', true);
 
 $config_file = __DIR__ . '/../config.php';
 if (!defined('APP_DB_VERSION')) {
-    define('APP_DB_VERSION', 16); // Current Production Version
+    define('APP_DB_VERSION', 17); // Current Production Version
 }
 
 // Initialize $pdo as null to prevent "undefined variable" errors
