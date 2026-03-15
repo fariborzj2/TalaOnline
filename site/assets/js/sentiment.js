@@ -11,7 +11,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const predictionMode = document.getElementById('sentiment-prediction-mode');
     const resultMode = document.getElementById('sentiment-result-mode');
     const closeBtns = document.querySelectorAll('.sentiment-close-trigger');
-    const csrfToken = window.__AUTH_STATE__?.csrfToken;
+    let csrfToken = window.__AUTH_STATE__?.csrfToken;
+
+    document.addEventListener('auth:csrf-updated', (e) => {
+        csrfToken = e.detail;
+    });
 
     let isTriggered = false;
     let hasVoted = false;
