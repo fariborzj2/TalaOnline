@@ -348,7 +348,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                                         <div class="d-flex align-center just-between w-full">
                                             <div>
                                                 <div class="font-bold mb-05">بازار و قیمت‌ها</div>
-                                                <div class="text-gray font-size-0-9">با فعال‌سازی اعلان‌های سیستمی، از کلیه ورودها، خروج‌ها و گزارش‌های حساب خود مطلع خواهید شد.</div>
+                                                <div class="text-gray font-size-0-9">دریافت لحظه‌ای هشدارهای تغییرات مهم قیمت، نوسانات بازار و وضعیت دارایی‌ها.</div>
                                             </div>
                                             <label class="toggle-switch-label">
                                                 <input type="checkbox" name="categories[]" value="market" class="toggle-switch-input" checked>
@@ -361,7 +361,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                                         <div class="d-flex align-center just-between w-full">
                                             <div>
                                                 <div class="font-bold mb-05">تعاملات اجتماعی</div>
-                                                <div class="text-gray font-size-0-9">با فعال‌سازی اعلان‌های واریز و برداشت، از جزئیات تمام تراکنش‌ها و وضعیت آنها مطلع خواهید شد.</div>
+                                                <div class="text-gray font-size-0-9">اطلاع از دنبال‌کنندگان جدید، لایک‌ها، پاسخ‌ها و منشن‌های شما در بخش نظرات.</div>
                                             </div>
                                             <label class="toggle-switch-label">
                                                 <input type="checkbox" name="categories[]" value="social" class="toggle-switch-input" checked>
@@ -373,8 +373,8 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
 
                                         <div class="d-flex align-center just-between w-full">
                                             <div>
-                                                <div class="font-bold mb-05">تعاملات اجتماعی</div>
-                                                <div class="text-gray font-size-0-9">با فعال‌سازی اعلان‌های واریز و برداشت، از جزئیات تمام تراکنش‌ها و وضعیت آنها مطلع خواهید شد.</div>
+                                                <div class="font-bold mb-05">اخبار و مقالات</div>
+                                                <div class="text-gray font-size-0-9">باخبر شدن از جدیدترین مقالات آموزشی، اخبار مهم اقتصادی و تحلیل‌های بازار.</div>
                                             </div>
                                             <label class="toggle-switch-label">
                                                 <input type="checkbox" name="categories[]" value="blog" class="toggle-switch-input" checked>
