@@ -340,6 +340,41 @@ function is_username_available($username, $exclude_user_id = null) {
  * Checks if an action is rate limited
  * @return true|int Returns true if not limited, or number of seconds to wait if limited
  */
+/**
+ * Token Bucket Rate Limiter
+ * Returns true if allowed, false if rate limited.
+ */
+function check_token_bucket($pdo, $user_id, $action_type, $capacity = 10, $refill_rate_per_hour = 2) {
+    if (!$pdo) return true;
+
+    // 1. Get current bucket state
+    $stmt = $pdo->prepare("SELECT tokens, last_refill FROM rate_limits WHERE user_id = ? AND action_type = ?");
+    $stmt->execute([$user_id, $action_type]);
+    $bucket = $stmt->fetch();
+
+    $now = time();
+
+    if (!$bucket) {
+        // First time, grant full capacity minus 1 for this action
+        $stmt = $pdo->prepare("INSERT INTO rate_limits (user_id, action_type, tokens, last_refill) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$user_id, $action_type, $capacity - 1, $now]);
+        return true;
+    }
+
+    // 2. Calculate refill
+    $hours_passed = ($now - $bucket['last_refill']) / 3600;
+    $new_tokens = min((float)$capacity, $bucket['tokens'] + ($hours_passed * $refill_rate_per_hour));
+
+    if ($new_tokens >= 1) {
+        // Consume 1 token
+        $stmt = $pdo->prepare("UPDATE rate_limits SET tokens = ?, last_refill = ? WHERE user_id = ? AND action_type = ?");
+        $stmt->execute([$new_tokens - 1, $now, $user_id, $action_type]);
+        return true;
+    }
+
+    return false; // Rate limit exceeded
+}
+
 function check_rate_limit($action_type, $identifier_type, $identifier_value, $limit_prefix = null, $default_max = 5, $default_window = 15) {
     global $pdo;
     if (!$pdo) return true;

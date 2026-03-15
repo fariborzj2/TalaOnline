@@ -187,17 +187,28 @@ class TriggerEngine {
      * Alerts users when a new asset is added to the market.
      */
     public function handleNewSymbol($symbol, $name) {
-        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 100");
+        $stmt = $this->pdo->prepare("SELECT id FROM users WHERE is_verified = 1 LIMIT 100000"); // Up to 100k users
         $stmt->execute();
         $users = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         $this->pushService->preloadUserSettings($users);
+
+        $payloads = [];
         foreach ($users as $user_id) {
-            $this->pushService->notify($user_id, 'new_symbol_discovery', [
-                'symbol' => $symbol,
-                'name' => $name,
-                'url' => get_site_url() . "/market/$symbol"
-            ]);
+            $payloads[] = [
+                'user_id' => $user_id,
+                'template_slug' => 'new_symbol_discovery',
+                'data' => [
+                    'symbol' => $symbol,
+                    'name' => $name,
+                    'url' => get_site_url() . "/market/$symbol"
+                ],
+                'priority' => 'medium'
+            ];
+        }
+
+        if (!empty($payloads)) {
+            $this->pushService->notifyBatch($payloads);
         }
     }
 
