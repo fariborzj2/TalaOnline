@@ -143,6 +143,16 @@ class PushService {
 
         if (!$template) return false;
 
+        // Payload Schema Validation
+        preg_match_all('/\{([a-zA-Z0-9_]+)\}/', $template['title'] . ' ' . $template['body'] . ' ' . $template['action_url'], $matches);
+        $required_vars = array_unique($matches[1]);
+        foreach ($required_vars as $var) {
+            if (!array_key_exists($var, $data)) {
+                error_log("PushService: Missing required variable '{$var}' for template '{$template_slug}'");
+                return false;
+            }
+        }
+
         // Check if category is enabled for user
         $categories = json_decode($settings['categories'] ?? '[]', true);
 
@@ -281,10 +291,28 @@ class PushService {
             $values = [];
             $params = [];
             foreach ($chunk as $p) {
+                $template_slug = $p['template_slug'];
+                $template = $this->getTemplate($template_slug);
+                if (!$template) continue;
+
+                $data = $p['data'] ?? [];
+
+                // Payload Schema Validation
+                preg_match_all('/\{([a-zA-Z0-9_]+)\}/', $template['title'] . ' ' . $template['body'] . ' ' . $template['action_url'], $matches);
+                $required_vars = array_unique($matches[1]);
+                $is_valid = true;
+                foreach ($required_vars as $var) {
+                    if (!array_key_exists($var, $data)) {
+                        error_log("PushService: Missing required variable '{$var}' for template '{$template_slug}' in batch");
+                        $is_valid = false;
+                        break;
+                    }
+                }
+                if (!$is_valid) continue;
+
                 // Determine channels - simplified for batch: defaulting to template or all main if not specified
                 $channels = $p['channels'] ?? 'webpush,email,in-app';
                 $priority = $p['priority'] ?? 'medium';
-                $data = $p['data'] ?? [];
 
                 $channel_list = explode(',', $channels);
                 foreach ($channel_list as $channel) {
@@ -324,6 +352,15 @@ class PushService {
             $stmt = $this->pdo->prepare("UPDATE notification_queue SET status = 'pending', worker_id = NULL WHERE status = 'processing' AND locked_at < datetime('now', '-5 minutes')");
         }
         $stmt->execute();
+
+        // Database Cleanup: Occasional cleanup of old processed items
+        if (rand(1, 100) === 1) {
+            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+                $this->pdo->exec("DELETE FROM notification_queue WHERE status IN ('sent', 'dead_letter') AND updated_at < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            } else {
+                $this->pdo->exec("DELETE FROM notification_queue WHERE status IN ('sent', 'dead_letter') AND updated_at < datetime('now', '-30 days')");
+            }
+        }
 
         $worker_id = uniqid('worker_', true);
         $now = date('Y-m-d H:i:s');
