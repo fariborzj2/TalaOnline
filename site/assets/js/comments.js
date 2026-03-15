@@ -576,14 +576,19 @@ class CommentSystem {
 
     renderThreadRootReference(c) {
         const contentSnippet = c.content_edit || c.content || '';
-        const plainText = contentSnippet.replace(/<[^>]*>?/gm, '').substring(0, 150);
-        const dots = contentSnippet.length > 150 ? '...' : '';
+        const tmp = document.createElement('div');
+        tmp.innerHTML = contentSnippet;
+        let plainText = tmp.textContent || tmp.innerText || '';
+        plainText = plainText.replace(/\s+/g, ' ').trim();
+
+        const previewText = plainText.substring(0, 150);
+        const dots = plainText.length > 150 ? '...' : '';
 
         return `
             <div class="thread-root-reference mb-1" id="comment-${c.id}">
                 <div class="reply-preview-block">
                     <div>در پاسخ به <a href="/profile/${c.user_id}/${c.user_username || 'user'}" class="reply-preview-author">@${c.user_username || 'user'}</a></div>
-                    <div class="reply-preview-content font-size-0-9 text-gray-600">${plainText}${dots}</div>
+                    <div class="reply-preview-content font-size-0-9 text-gray-600">${previewText}${dots}</div>
                 </div>
             </div>
         `;
@@ -627,7 +632,11 @@ class CommentSystem {
 
         let replyPreview = '';
         if (!isMinimal && c.reply_to_content) {
-            const plainText = c.reply_to_content.replace(/<[^>]*>?/gm, '');
+            const tmp = document.createElement('div');
+            tmp.innerHTML = c.reply_to_content;
+            let plainText = tmp.textContent || tmp.innerText || '';
+            plainText = plainText.replace(/\s+/g, ' ').trim();
+
             const previewText = plainText.substring(0, 100);
             const dots = plainText.length > 100 ? '...' : '';
 

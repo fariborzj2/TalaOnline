@@ -72,7 +72,8 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
             <div class="comment-content">
                 <?php if (!empty($c['reply_to_content'])): ?>
                     <?php
-                        $plain_reply_content = strip_tags($c['reply_to_content']);
+                        $plain_reply_content = html_entity_decode(strip_tags($c['reply_to_content']), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        $plain_reply_content = trim(preg_replace('/\s+/', ' ', $plain_reply_content));
                         $preview_reply_content = mb_substr($plain_reply_content, 0, 100);
                         $reply_dots = mb_strlen($plain_reply_content) > 100 ? '...' : '';
                     ?>
