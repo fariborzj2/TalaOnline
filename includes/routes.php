@@ -172,6 +172,73 @@ $router->add('/about-us', function() {
     ]);
 });
 
+$router->add('/profile', function() {
+    global $pdo;
+
+    // Optional: We can pre-fetch some comments or just let the JS fetch them.
+    // The comments.php component can handle it, or we can seed initial data.
+    $explore_comments = [];
+    $explore_comments_data = [
+        'total_count' => 0,
+        'total_pages' => 1,
+        'current_page' => 1,
+    ];
+
+    if ($pdo) {
+        try {
+            // Fetch initial recent comments across the site to seed the page
+            $stmt = $pdo->prepare("
+                SELECT c.*, u.username as user_username, u.name as user_name, u.avatar as user_avatar, u.level as user_level,
+                       (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes_count
+                FROM comments c
+                LEFT JOIN users u ON c.user_id = u.id
+                WHERE c.status = 'approved' AND c.parent_id IS NULL
+                ORDER BY c.created_at DESC
+                LIMIT 10
+            ");
+            $stmt->execute();
+            $explore_comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Fetch total count for pagination info
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM comments WHERE status = 'approved' AND parent_id IS NULL");
+            $stmt->execute();
+            $total = $stmt->fetchColumn();
+
+            $explore_comments_data = [
+                'total_count' => $total,
+                'total_pages' => ceil($total / 10),
+                'current_page' => 1,
+            ];
+
+            // Decorate comments with current user's reaction
+            if (isset($_SESSION['user_id'])) {
+                $c_ids = array_column($explore_comments, 'id');
+                if ($c_ids) {
+                    $in_str = implode(',', array_fill(0, count($c_ids), '?'));
+                    $r_stmt = $pdo->prepare("SELECT comment_id, reaction_type FROM comment_reactions WHERE user_id = ? AND comment_id IN ($in_str)");
+                    $params = array_merge([$_SESSION['user_id']], $c_ids);
+                    $r_stmt->execute($params);
+                    $reactions = [];
+                    while ($row = $r_stmt->fetch()) {
+                        $reactions[$row['comment_id']] = $row['reaction_type'];
+                    }
+                    foreach ($explore_comments as &$c) {
+                        $c['user_reaction'] = $reactions[$c['id']] ?? null;
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            // Silently ignore for now
+        }
+    }
+
+    return View::renderPage('explore', [
+        'page_title' => 'اکسپلور',
+        'explore_comments' => $explore_comments,
+        'explore_comments_data' => $explore_comments_data
+    ]);
+});
+
 $router->add('/profile/:identifier/:slug', function($params) {
     global $pdo;
     $id = $params['identifier'];

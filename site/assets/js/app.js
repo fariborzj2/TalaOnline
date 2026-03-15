@@ -517,7 +517,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     closeModal();
                     await showAlert('ثبت نام با موفقیت انجام شد. لطفاً ایمیل خود را چک کنید.', 'success');
                     fetch(`${authState.apiBase}/mail_worker.php`).catch(() => {});
-                    location.href = '/profile';
+                    // redirect to personal profile
+                    location.href = `/profile/${data.user.id}/${data.user.username}`;
                 } else {
                     showAlert(data.message || 'خطا در ثبت نام', 'error');
                 }
