@@ -241,7 +241,7 @@ class Mail {
 
                                     ' . (get_setting('site_address') ? '<p style="margin: 15px 0 0 0; font-size: 10px; color: #94a3b8; opacity: 0.8;">' . nl2br(htmlspecialchars(get_setting('site_address'))) . '</p>' : '') . '
 
-                                    <p style="margin: 20px 0 0 0; font-size: 10px; color: #cbd5e1;"><a href="' . $base_url . '/profile" style="color: #cbd5e1; text-decoration: underline;">مدیریت تنظیمات کاربری و لغو اشتراک</a></p>
+                                    <p style="margin: 20px 0 0 0; font-size: 10px; color: #cbd5e1;">برای مدیریت تنظیمات کاربری و لغو اشتراک وارد حساب کاربری خود شوید.</p>
                                 </td>
                             </tr>
                         </table>
@@ -368,7 +368,7 @@ class Mail {
 
                 $unsubscribe_url = get_setting('mail_unsubscribe_url');
                 if (empty($unsubscribe_url)) {
-                    $unsubscribe_url = get_site_url() . '/profile';
+                    $unsubscribe_url = get_site_url() . '/';
                 }
                 $mail->addCustomHeader('List-Unsubscribe', '<' . $unsubscribe_url . '>, <mailto:' . $sender_email . '?subject=unsubscribe>');
             }
