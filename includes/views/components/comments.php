@@ -71,9 +71,14 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
 
             <div class="comment-content">
                 <?php if (!empty($c['reply_to_content'])): ?>
+                    <?php
+                        $plain_reply_content = strip_tags($c['reply_to_content']);
+                        $preview_reply_content = mb_substr($plain_reply_content, 0, 100);
+                        $reply_dots = mb_strlen($plain_reply_content) > 100 ? '...' : '';
+                    ?>
                     <div class="reply-preview-block">
                         <div>در پاسخ به <a href="/profile/<?= $c['reply_to_user_id'] ?>/<?= urlencode($c['reply_to_username'] ?? 'user') ?>" class="reply-preview-author">@<?= htmlspecialchars($c['reply_to_username'] ?? 'user') ?></a></div>
-                        <div class="reply-preview-content"><?= htmlspecialchars(mb_substr($c['reply_to_content'], 0, 100)) . (mb_strlen($c['reply_to_content']) > 100 ? '...' : '') ?></div>
+                        <div class="reply-preview-content"><?= htmlspecialchars($preview_reply_content) . $reply_dots ?></div>
                     </div>
                 <?php endif; ?>
                 <div class="comment-body-text"><?= $c['content_html'] ?></div>

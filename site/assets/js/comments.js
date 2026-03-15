@@ -624,12 +624,20 @@ class CommentSystem {
 
     renderCommentBody(c, isMinimal = false) {
         const isExpert = c.user_role === 'admin' || c.user_role === 'editor';
-        const replyPreview = !isMinimal && c.reply_to_content ? `
+
+        let replyPreview = '';
+        if (!isMinimal && c.reply_to_content) {
+            const plainText = c.reply_to_content.replace(/<[^>]*>?/gm, '');
+            const previewText = plainText.substring(0, 100);
+            const dots = plainText.length > 100 ? '...' : '';
+
+            replyPreview = `
             <div class="reply-preview-block">
                 <div>در پاسخ به <a href="/profile/${c.reply_to_user_id}/${c.reply_to_username || 'user'}" class="reply-preview-author">@${c.reply_to_username || 'user'}</a></div>
-                <div class="reply-preview-content">${c.reply_to_content.substring(0, 100)}${c.reply_to_content.length > 100 ? '...' : ''}</div>
+                <div class="reply-preview-content">${previewText}${dots}</div>
             </div>
-        ` : '';
+            `;
+        }
 
         let imageHtml = '';
         if (c.type === 'analysis' && c.image_url) {
