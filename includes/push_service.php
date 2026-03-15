@@ -123,11 +123,6 @@ class PushService {
         $time_window = floor(time() / 300) * 300;
         $dedup_hash = hash('sha256', $user_id . '_' . $template_slug . '_' . json_encode($data) . '_' . $time_window);
 
-        // Clean up old hashes occasionally
-        if (rand(1, 100) === 1) {
-            $this->pdo->exec("DELETE FROM notification_deduplication WHERE expires_at <= CURRENT_TIMESTAMP");
-        }
-
         $stmt = $this->pdo->prepare("SELECT 1 FROM notification_deduplication WHERE hash = ? AND expires_at > CURRENT_TIMESTAMP");
         $stmt->execute([$dedup_hash]);
         if ($stmt->fetchColumn()) {
@@ -353,15 +348,6 @@ class PushService {
         }
         $stmt->execute();
 
-        // Database Cleanup: Occasional cleanup of old processed items
-        if (rand(1, 100) === 1) {
-            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
-                $this->pdo->exec("DELETE FROM notification_queue WHERE status IN ('sent', 'dead_letter') AND updated_at < DATE_SUB(NOW(), INTERVAL 30 DAY)");
-            } else {
-                $this->pdo->exec("DELETE FROM notification_queue WHERE status IN ('sent', 'dead_letter') AND updated_at < datetime('now', '-30 days')");
-            }
-        }
-
         $worker_id = uniqid('worker_', true);
         $now = date('Y-m-d H:i:s');
 
@@ -401,6 +387,12 @@ class PushService {
                 $processed++;
             }
         }
+
+        // Flush any queued WebPush notifications asynchronously
+        if ($this->webPush) {
+            $this->flushWebPush();
+        }
+
         return $processed;
     }
 
@@ -490,10 +482,20 @@ class PushService {
                 'contentEncoding' => $sub['content_encoding'],
             ]);
 
+            // We only queue here. The worker will flush them concurrently later.
             $webPush->queueNotification($subscription, $payload);
         }
 
-        foreach ($webPush->flush() as $report) {
+        return true;
+    }
+
+    /**
+     * Flushes queued WebPush notifications asynchronously to utilize concurrent sending
+     */
+    private function flushWebPush() {
+        if (!$this->webPush) return;
+
+        foreach ($this->webPush->flush() as $report) {
             if (!$report->isSuccess()) {
                 if ($report->isSubscriptionExpired()) {
                     // Cleanup expired subscription
@@ -504,7 +506,6 @@ class PushService {
                 }
             }
         }
-        return true;
     }
 
     private function sendEmail($user_id, $title, $body, $action_url) {
@@ -528,6 +529,31 @@ class PushService {
     }
 
     private $templateCache = [];
+
+    /**
+     * Dedicated maintenance task to clean up old database records securely and predictably.
+     * Should be executed via a scheduled cron job.
+     */
+    public function runMaintenanceCleanup() {
+        if (!$this->pdo) return false;
+
+        try {
+            // Clean up expired deduplication hashes
+            $this->pdo->exec("DELETE FROM notification_deduplication WHERE expires_at <= CURRENT_TIMESTAMP");
+
+            // Clean up old processed queue items (older than 30 days)
+            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+                $this->pdo->exec("DELETE FROM notification_queue WHERE status IN ('sent', 'dead_letter') AND updated_at < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            } else {
+                $this->pdo->exec("DELETE FROM notification_queue WHERE status IN ('sent', 'dead_letter') AND updated_at < datetime('now', '-30 days')");
+            }
+
+            return true;
+        } catch (Exception $e) {
+            error_log("PushService Maintenance Error: " . $e->getMessage());
+            return false;
+        }
+    }
 
     private function getTemplate($slug) {
         if (isset($this->templateCache[$slug])) {
