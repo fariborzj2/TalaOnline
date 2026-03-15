@@ -1,12 +1,12 @@
 <div class="section">
     <div class="d-flex-wrap gap-md align-stretch profile-container">
         <!-- Main Content Feed (Twitter Style) -->
-        <div class="basis-600 grow-1 max-w-800 mx-auto bg-block border radius-16 overflow-hidden">
-            <div class="pd-md border-bottom bg-secondary sticky top-0 z-10">
-                <h1 class="font-size-4 font-bold m-0">اکسپلور</h1>
+        <div class="basis-600 grow-1 max-w-800 mx-auto overflow-hidden">
+            <div class="py-1 border-bottom bg-secondary sticky top-0 z-10">
+                <strong class="font-size-4 font-bold m-0">اکسپلور</strong>
                 <p class="text-gray font-size-1 mt-05 mb-0">جدیدترین تحلیل‌ها و نظرات کاربران</p>
             </div>
-            <div id="explore-feed" class="pd-md">
+            <div id="explore-feed" class="py-2">
                 <?php
                 // We use the CommentSystem to render the explore feed.
                 // We mock target_type='explore' so the component doesn't filter by a specific item.
