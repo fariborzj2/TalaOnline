@@ -310,78 +310,112 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                         <h2 class="font-size-3 font-bold mb-2 border-bottom pb-1">تنظیمات اطلاع‌رسانی هوشمند</h2>
 
                         <div class="d-column gap-2 mt-2">
-                            <div class="d-flex just-between align-center p-1 bg-secondary radius-12">
+                            <div class="d-flex-wrap just-between align-center p-2 bg-secondary radius-12 gap-1">
                                 <div>
-                                    <p class="font-bold mb-0">اعلان‌های مرورگر (Web Push)</p>
+                                    <p class="font-bold mb-05 font-size-1-2">اعلان‌های مرورگر (Web Push)</p>
                                     <small class="text-gray">دریافت لحظه‌ای تغییرات قیمت و پیام‌ها</small>
                                 </div>
-                                <button id="push-toggle-btn" class="btn btn-primary btn-sm radius-8" onclick="window.pushManager.isSubscribed ? window.pushManager.unsubscribeUser() : window.pushManager.subscribeUser()">
+                                <button id="push-toggle-btn" class="btn btn-primary radius-8" onclick="window.pushManager.isSubscribed ? window.pushManager.unsubscribeUser() : window.pushManager.subscribeUser()">
                                     بررسی وضعیت...
                                 </button>
                             </div>
 
-                            <div class="divider"></div>
-
                             <form id="notification-settings-form" class="d-column gap-1-5">
-                                <h3 class="font-size-2 font-bold">کانال‌های دریافت</h3>
-                                <div class="d-flex-wrap gap-1 mb-1">
-                                    <label class="d-flex align-center gap-05 pointer">
-                                        <input type="checkbox" name="channels[]" value="webpush" checked> مرورگر (Push)
-                                    </label>
-                                    <label class="d-flex align-center gap-05 pointer">
-                                        <input type="checkbox" name="channels[]" value="email" checked> ایمیل (Email)
-                                    </label>
-                                    <label class="d-flex align-center gap-05 pointer">
-                                        <input type="checkbox" name="channels[]" value="in-app" checked> داخل سایت (In-App)
-                                    </label>
+                                <div class="d-column gap-1 border-bottom pb-1-5">
+                                    <h3 class="font-size-1-2 font-bold mb-1">کانال‌های دریافت</h3>
+                                    <div class="d-flex-wrap gap-2">
+                                        <label class="toggle-switch-label">
+                                            <input type="checkbox" name="channels[]" value="webpush" class="toggle-switch-input" checked>
+                                            <div class="toggle-switch-dot"></div>
+                                            مرورگر (Push)
+                                        </label>
+                                        <label class="toggle-switch-label">
+                                            <input type="checkbox" name="channels[]" value="email" class="toggle-switch-input" checked>
+                                            <div class="toggle-switch-dot"></div>
+                                            ایمیل (Email)
+                                        </label>
+                                        <label class="toggle-switch-label">
+                                            <input type="checkbox" name="channels[]" value="in-app" class="toggle-switch-input" checked>
+                                            <div class="toggle-switch-dot"></div>
+                                            داخل سایت (In-App)
+                                        </label>
+                                    </div>
                                 </div>
 
-                                <h3 class="font-size-2 font-bold">بخش‌های مورد علاقه</h3>
-                                <div class="d-flex-wrap gap-1">
-                                    <label class="d-flex align-center gap-05 pointer">
-                                        <input type="checkbox" name="categories[]" value="market" checked> بازار و قیمت‌ها
-                                    </label>
-                                    <label class="d-flex align-center gap-05 pointer">
-                                        <input type="checkbox" name="categories[]" value="social" checked> تعاملات اجتماعی
-                                    </label>
-                                    <label class="d-flex align-center gap-05 pointer">
-                                        <input type="checkbox" name="categories[]" value="blog" checked> اخبار و مقالات
-                                    </label>
-                                </div>
-
-                                <div class="d-column gap-05 mt-1">
-                                    <label class="font-bold font-size-1">حداکثر تعداد اعلان در روز</label>
-                                    <select name="frequency_limit" class="radius-8 border pd-05">
-                                        <option value="1">۱ عدد</option>
-                                        <option value="3">۳ عدد</option>
-                                        <option value="5" selected>۵ عدد</option>
-                                        <option value="10">۱۰ عدد</option>
-                                        <option value="0">نامحدود</option>
-                                    </select>
-                                </div>
-
-                                <div class="d-column gap-05">
-                                    <label class="font-bold font-size-1">ساعات سکوت (عدم ارسال اعلان)</label>
-                                    <div class="d-flex align-center gap-1">
-                                        <div class="d-flex align-center gap-05">
-                                            <span class="font-size-0-8 text-gray">از:</span>
-                                            <input type="time" name="quiet_hours_start" class="radius-8 border pd-05 ltr">
+                                <div class="d-column gap-1 border-bottom pb-1-5">
+                                    <h3 class="font-size-1-2 font-bold mb-1">بخش‌های مورد علاقه</h3>
+                                    <div class="d-column gap-1-5">
+                                        <div class="d-flex align-center just-between w-full">
+                                            <div>
+                                                <div class="font-bold mb-05">بازار و قیمت‌ها</div>
+                                                <div class="text-gray font-size-0-9">با فعال‌سازی اعلان‌های سیستمی، از کلیه ورودها، خروج‌ها و گزارش‌های حساب خود مطلع خواهید شد.</div>
+                                            </div>
+                                            <label class="toggle-switch-label">
+                                                <input type="checkbox" name="categories[]" value="market" class="toggle-switch-input" checked>
+                                                <div class="toggle-switch-dot"></div>
+                                            </label>
                                         </div>
-                                        <div class="d-flex align-center gap-05">
-                                            <span class="font-size-0-8 text-gray">تا:</span>
-                                            <input type="time" name="quiet_hours_end" class="radius-8 border pd-05 ltr">
+
+                                        <div class="divider"></div>
+
+                                        <div class="d-flex align-center just-between w-full">
+                                            <div>
+                                                <div class="font-bold mb-05">تعاملات اجتماعی</div>
+                                                <div class="text-gray font-size-0-9">با فعال‌سازی اعلان‌های واریز و برداشت، از جزئیات تمام تراکنش‌ها و وضعیت آنها مطلع خواهید شد.</div>
+                                            </div>
+                                            <label class="toggle-switch-label">
+                                                <input type="checkbox" name="categories[]" value="social" class="toggle-switch-input" checked>
+                                                <div class="toggle-switch-dot"></div>
+                                            </label>
+                                        </div>
+
+                                        <div class="divider"></div>
+
+                                        <div class="d-flex align-center just-between w-full">
+                                            <div>
+                                                <div class="font-bold mb-05">تعاملات اجتماعی</div>
+                                                <div class="text-gray font-size-0-9">با فعال‌سازی اعلان‌های واریز و برداشت، از جزئیات تمام تراکنش‌ها و وضعیت آنها مطلع خواهید شد.</div>
+                                            </div>
+                                            <label class="toggle-switch-label">
+                                                <input type="checkbox" name="categories[]" value="blog" class="toggle-switch-input" checked>
+                                                <div class="toggle-switch-dot"></div>
+                                            </label>
                                         </div>
                                     </div>
-                                    <small class="text-gray">در این بازه زمانی فقط اعلان‌های حساس و فوری ارسال خواهند شد.</small>
                                 </div>
 
-                                <div class="d-column gap-05">
-                                    <label class="font-bold font-size-1">منطقه زمانی</label>
-                                    <select name="timezone" class="radius-8 border pd-05 ltr">
-                                        <option value="Asia/Tehran" selected>Asia/Tehran</option>
-                                        <option value="UTC">UTC</option>
-                                    </select>
+                                <div class="d-column gap-1 border-bottom pb-1-5">
+                                    <h3 class="font-size-1-2 font-bold mb-05">حداکثر تعداد اعلان در روز</h3>
+                                    <div class="segmented-control">
+                                        <input type="radio" id="freq-unlimited" name="frequency_limit" value="0" class="segmented-control-input">
+                                        <label for="freq-unlimited" class="segmented-control-label">نامحدود</label>
+
+                                        <input type="radio" id="freq-20" name="frequency_limit" value="20" class="segmented-control-input">
+                                        <label for="freq-20" class="segmented-control-label">۲۰ عدد</label>
+
+                                        <input type="radio" id="freq-10" name="frequency_limit" value="10" class="segmented-control-input">
+                                        <label for="freq-10" class="segmented-control-label">۱۰ عدد</label>
+
+                                        <input type="radio" id="freq-5" name="frequency_limit" value="5" class="segmented-control-input" checked>
+                                        <label for="freq-5" class="segmented-control-label">۵ عدد</label>
+                                    </div>
                                 </div>
+
+                                <div class="d-column gap-1">
+                                    <h3 class="font-size-1-2 font-bold mb-05">عدم ارسال اعلان</h3>
+                                    <div class="d-flex-wrap align-center gap-1">
+                                        <div class="d-flex align-center gap-1 bg-secondary border radius-8 pd-05 px-1 grow-1">
+                                            <span class="font-size-0-9 text-gray">از ساعت</span>
+                                            <input type="time" name="quiet_hours_start" class="border-none bg-transparent ltr grow-1 outline-none text-left">
+                                        </div>
+                                        <div class="d-flex align-center gap-1 bg-secondary border radius-8 pd-05 px-1 grow-1">
+                                            <span class="font-size-0-9 text-gray">تا ساعت</span>
+                                            <input type="time" name="quiet_hours_end" class="border-none bg-transparent ltr grow-1 outline-none text-left">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="timezone" value="Asia/Tehran">
 
                                 <button type="submit" class="btn btn-primary radius-12 just-center mt-1">ذخیره تنظیمات</button>
                             </form>
@@ -500,6 +534,83 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
         .profile-header-gradient { height: 140px; }
         .profile-avatar-container { width: 90px; height: 90px; }
         .profile-avatar-wrapper { bottom: -30px; right: 20px; }
+    }
+
+    /* Custom Toggle Switch */
+    .toggle-switch-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+    .toggle-switch-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+    .toggle-switch-dot {
+        width: 44px;
+        height: 24px;
+        background-color: var(--color-gray-light, #e2e8f0);
+        border-radius: 9999px;
+        position: relative;
+        transition: background-color 0.3s ease;
+        flex-shrink: 0;
+    }
+    .toggle-switch-dot::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        right: 2px; /* RTL specific */
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    .toggle-switch-input:checked + .toggle-switch-dot {
+        background-color: var(--color-primary);
+    }
+    .toggle-switch-input:checked + .toggle-switch-dot::after {
+        transform: translateX(-20px); /* RTL specific */
+    }
+
+    /* Segmented Control */
+    .segmented-control {
+        display: flex;
+        width: 100%;
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .segmented-control-label {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--color-text);
+        background-color: transparent;
+        border-right: 1px solid var(--color-border);
+        transition: all 0.2s;
+    }
+    .segmented-control-label:first-of-type {
+        border-right: none;
+    }
+    .segmented-control-input {
+        display: none;
+    }
+    .segmented-control-input:checked + .segmented-control-label {
+        background-color: var(--color-primary);
+        color: white;
     }
 </style>
 
