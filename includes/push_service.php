@@ -114,6 +114,29 @@ class PushService {
     public function notify($user_id, $template_slug, $data = [], $options = []) {
         if (!$this->pdo) return false;
 
+        // Deduplication Mechanism (5-minute window)
+        $time_window = floor(time() / 300) * 300;
+        $dedup_hash = hash('sha256', $user_id . '_' . $template_slug . '_' . json_encode($data) . '_' . $time_window);
+
+        // Clean up old hashes occasionally
+        if (rand(1, 100) === 1) {
+            $this->pdo->exec("DELETE FROM notification_deduplication WHERE expires_at <= CURRENT_TIMESTAMP");
+        }
+
+        $stmt = $this->pdo->prepare("SELECT 1 FROM notification_deduplication WHERE hash = ? AND expires_at > CURRENT_TIMESTAMP");
+        $stmt->execute([$dedup_hash]);
+        if ($stmt->fetchColumn()) {
+            return true; // Silently drop duplicate
+        }
+
+        $expires_at = date('Y-m-d H:i:s', time() + 300);
+        $stmt = $this->pdo->prepare("INSERT INTO notification_deduplication (hash, expires_at) VALUES (?, ?)");
+        try {
+            $stmt->execute([$dedup_hash, $expires_at]);
+        } catch (PDOException $e) {
+            return true; // Another worker just inserted it. Drop duplicate.
+        }
+
         // Check user settings
         $settings = $this->getUserSettings($user_id);
         $template = $this->getTemplate($template_slug);
@@ -162,15 +185,11 @@ class PushService {
             return true; // All channels disabled by user
         }
 
-        // Frequency Capping Logic
+        // Frequency Capping Logic (Token Bucket)
         $limit = (int)($settings['frequency_limit'] ?? 5);
         if ($limit > 0 && !$ignore_limits) {
-            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM notification_queue WHERE user_id = ? AND created_at > datetime('now', '-24 hours')");
-            if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
-                $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM notification_queue WHERE user_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
-            }
-            $stmt->execute([$user_id]);
-            if ($stmt->fetchColumn() >= $limit) {
+            // Using check_token_bucket with capacity=$limit and refill=($limit/24) per hour
+            if (!check_token_bucket($this->pdo, $user_id, 'push_notify_' . $category, $limit, $limit / 24)) {
                 return true; // Cap reached
             }
         }
@@ -212,29 +231,84 @@ class PushService {
         }
 
         try {
-            $stmt = $this->pdo->prepare("INSERT INTO notification_queue (user_id, template_slug, data, channels, priority, scheduled_at)
-                                       VALUES (?, ?, ?, ?, ?, ?)");
-
-            $channels = $options['channels'] ?? implode(',', $final_channels);
-            $priority = $options['priority'] ?? $template['priority'];
-            $scheduled_at = $options['scheduled_at'] ?? null;
-
             // Preserve sender_id in data if provided
             if (isset($options['sender_id'])) {
                 $data['_sender_id'] = $options['sender_id'];
             }
 
-            return $stmt->execute([
-                $user_id,
-                $template_slug,
-                json_encode($data),
-                $channels,
-                $priority,
-                $scheduled_at
-            ]);
+            $priority = $options['priority'] ?? $template['priority'];
+            $scheduled_at = $options['scheduled_at'] ?? null;
+            $data_json = json_encode($data);
+
+            if (isset($options['channels'])) {
+                $final_channels = explode(',', $options['channels']);
+            }
+
+            $all_success = true;
+            $stmt = $this->pdo->prepare("INSERT INTO notification_queue (user_id, template_slug, data, channels, priority, scheduled_at)
+                                       VALUES (?, ?, ?, ?, ?, ?)");
+
+            foreach ($final_channels as $channel) {
+                $channel = trim($channel);
+                if (empty($channel)) continue;
+
+                $success = $stmt->execute([
+                    $user_id,
+                    $template_slug,
+                    $data_json,
+                    $channel,
+                    $priority,
+                    $scheduled_at
+                ]);
+                if (!$success) {
+                    $all_success = false;
+                }
+            }
+            return $all_success;
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Queue a batch of notifications for users
+     */
+    public function notifyBatch(array $payloads, $options = []) {
+        if (!$this->pdo || empty($payloads)) return false;
+
+        $chunks = array_chunk($payloads, 100);
+        foreach ($chunks as $chunk) {
+            $values = [];
+            $params = [];
+            foreach ($chunk as $p) {
+                // Determine channels - simplified for batch: defaulting to template or all main if not specified
+                $channels = $p['channels'] ?? 'webpush,email,in-app';
+                $priority = $p['priority'] ?? 'medium';
+                $data = $p['data'] ?? [];
+
+                $channel_list = explode(',', $channels);
+                foreach ($channel_list as $channel) {
+                    $channel = trim($channel);
+                    if (empty($channel)) continue;
+                    $values[] = "(?, ?, ?, ?, ?, NULL)";
+                    $params[] = $p['user_id'];
+                    $params[] = $p['template_slug'];
+                    $params[] = json_encode($data);
+                    $params[] = $channel;
+                    $params[] = $priority;
+                }
+            }
+            if (empty($values)) continue;
+            $sql = "INSERT INTO notification_queue (user_id, template_slug, data, channels, priority, scheduled_at) VALUES " . implode(',', $values);
+            try {
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute($params);
+            } catch (Exception $e) {
+                // Log batch error but continue other chunks
+                error_log("Batch insert failed: " . $e->getMessage());
+            }
+        }
+        return true;
     }
 
     /**
@@ -243,13 +317,45 @@ class PushService {
     public function processQueue($limit = 50) {
         if (!$this->pdo) return 0;
 
-        $stmt = $this->pdo->prepare("SELECT * FROM notification_queue
+        // Crash Recovery: Reclaim jobs locked for more than 5 minutes
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+            $stmt = $this->pdo->prepare("UPDATE notification_queue SET status = 'pending', worker_id = NULL WHERE status = 'processing' AND locked_at < DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
+        } else {
+            $stmt = $this->pdo->prepare("UPDATE notification_queue SET status = 'pending', worker_id = NULL WHERE status = 'processing' AND locked_at < datetime('now', '-5 minutes')");
+        }
+        $stmt->execute();
+
+        $worker_id = uniqid('worker_', true);
+        $now = date('Y-m-d H:i:s');
+
+        // 1. Atomically Lock Rows
+        // First, find IDs we want to lock
+        $stmt = $this->pdo->prepare("SELECT id FROM notification_queue
                                    WHERE status = 'pending'
                                    AND (scheduled_at IS NULL OR scheduled_at <= CURRENT_TIMESTAMP)
                                    ORDER BY priority = 'high' DESC, created_at ASC
                                    LIMIT ?");
         $stmt->bindValue(1, $limit, PDO::PARAM_INT);
         $stmt->execute();
+        $ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        if (empty($ids)) return 0;
+
+        // Lock them
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $params = array_merge([$worker_id, $now], $ids);
+
+        $updateStmt = $this->pdo->prepare("UPDATE notification_queue
+                                         SET status = 'processing', worker_id = ?, locked_at = ?
+                                         WHERE id IN ($placeholders) AND status = 'pending'");
+        $updateStmt->execute($params);
+        $locked_count = $updateStmt->rowCount(); // How many we actually claimed
+
+        if ($locked_count === 0) return 0;
+
+        // 2. Fetch locked rows
+        $stmt = $this->pdo->prepare("SELECT * FROM notification_queue WHERE worker_id = ? AND status = 'processing'");
+        $stmt->execute([$worker_id]);
         $items = $stmt->fetchAll();
 
         $processed = 0;
@@ -300,12 +406,26 @@ class PushService {
             }
         }
 
-        $status = $success ? 'sent' : 'failed';
         $attempts = $queue_item['attempts'] + 1;
         $last_error = !empty($errors) ? implode(' | ', $errors) : null;
+        $scheduled_at = $queue_item['scheduled_at'];
 
-        $stmt = $this->pdo->prepare("UPDATE notification_queue SET status = ?, attempts = ?, last_error = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
-        $stmt->execute([$status, $attempts, $last_error, $queue_item['id']]);
+        if ($success) {
+            $status = 'sent';
+        } else {
+            if ($attempts < 3) {
+                $status = 'pending';
+                // Backoff: attempt 1 = +1 min, attempt 2 = +4 mins, attempt 3 = +9 mins
+                $delay_minutes = pow($attempts, 2);
+                $scheduled_at = date('Y-m-d H:i:s', time() + ($delay_minutes * 60));
+            } else {
+                // Dead Letter Queue / Hard Fail
+                $status = 'dead_letter';
+            }
+        }
+
+        $stmt = $this->pdo->prepare("UPDATE notification_queue SET status = ?, attempts = ?, last_error = ?, scheduled_at = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+        $stmt->execute([$status, $attempts, $last_error, $scheduled_at, $queue_item['id']]);
 
         return $success;
     }

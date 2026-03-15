@@ -324,8 +324,25 @@ class MigrationManager {
                     `status` VARCHAR(20) DEFAULT 'pending',
                     `attempts` INTEGER DEFAULT 0,
                     `last_error` TEXT,
+                    `locked_at` DATETIME NULL,
+                    `worker_id` VARCHAR(50) NULL,
+                    `dedup_hash` VARCHAR(64) NULL,
                     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
                     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+                )",
+                "CREATE INDEX IF NOT EXISTS `idx_queue_processing` ON `notification_queue` (`status`, `scheduled_at`, `priority`)",
+                "CREATE UNIQUE INDEX IF NOT EXISTS `idx_queue_dedup` ON `notification_queue` (`dedup_hash`)",
+                "CREATE TABLE IF NOT EXISTS `notification_deduplication` (
+                    `hash` VARCHAR(64) PRIMARY KEY,
+                    `expires_at` DATETIME NOT NULL
+                )",
+                "CREATE INDEX IF NOT EXISTS `idx_dedup_expires` ON `notification_deduplication` (`expires_at`)",
+                "CREATE TABLE IF NOT EXISTS `rate_limits` (
+                    `user_id` INTEGER NOT NULL,
+                    `action_type` VARCHAR(50) NOT NULL,
+                    `tokens` INTEGER DEFAULT 0,
+                    `last_refill` INTEGER NOT NULL,
+                    PRIMARY KEY (`user_id`, `action_type`)
                 )",
                 "CREATE TABLE IF NOT EXISTS `market_sentiment` (
                     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -620,8 +637,25 @@ class MigrationManager {
                     `status` VARCHAR(20) DEFAULT 'pending',
                     `attempts` INT DEFAULT 0,
                     `last_error` TEXT,
+                    `locked_at` TIMESTAMP NULL,
+                    `worker_id` VARCHAR(50) NULL,
+                    `dedup_hash` VARCHAR(64) NULL,
                     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    INDEX `idx_queue_processing` (`status`, `scheduled_at`, `priority`),
+                    UNIQUE INDEX `idx_queue_dedup` (`dedup_hash`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `notification_deduplication` (
+                    `hash` VARCHAR(64) PRIMARY KEY,
+                    `expires_at` TIMESTAMP NOT NULL,
+                    INDEX `idx_dedup_expires` (`expires_at`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+                "CREATE TABLE IF NOT EXISTS `rate_limits` (
+                    `user_id` INT NOT NULL,
+                    `action_type` VARCHAR(50) NOT NULL,
+                    `tokens` INT DEFAULT 0,
+                    `last_refill` INT NOT NULL,
+                    PRIMARY KEY (`user_id`, `action_type`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
                 "CREATE TABLE IF NOT EXISTS `market_sentiment` (
                     `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -711,6 +745,12 @@ class MigrationManager {
                 'status' => 'VARCHAR(20) DEFAULT "unread"',
                 'read_at' => ($driver === 'sqlite' ? 'DATETIME DEFAULT NULL' : 'TIMESTAMP NULL'),
                 'updated_at' => ($driver === 'sqlite' ? "DATETIME DEFAULT '2024-01-01 00:00:00'" : 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+            ],
+            'notification_queue' => [
+                'channels' => 'VARCHAR(100)',
+                'locked_at' => ($driver === 'sqlite' ? 'DATETIME NULL' : 'TIMESTAMP NULL'),
+                'worker_id' => 'VARCHAR(50) NULL',
+                'dedup_hash' => 'VARCHAR(64) NULL'
             ]
         ];
 
