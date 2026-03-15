@@ -140,7 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         cb.checked = channels.includes(cb.value);
                     });
 
-                    settingsForm.querySelector('[name="frequency_limit"]').value = s.frequency_limit;
+                    const freqRadio = settingsForm.querySelector(`[name="frequency_limit"][value="${s.frequency_limit}"]`);
+                    if (freqRadio) freqRadio.checked = true;
                     settingsForm.querySelector('[name="timezone"]').value = s.timezone;
                     if (s.quiet_hours_start) settingsForm.querySelector('[name="quiet_hours_start"]').value = s.quiet_hours_start;
                     if (s.quiet_hours_end) settingsForm.querySelector('[name="quiet_hours_end"]').value = s.quiet_hours_end;
