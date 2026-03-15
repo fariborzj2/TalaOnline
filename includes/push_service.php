@@ -114,6 +114,11 @@ class PushService {
     public function notify($user_id, $template_slug, $data = [], $options = []) {
         if (!$this->pdo) return false;
 
+        // Inject sender_id if provided into data to ensure deduplication hash matches final stored data
+        if (isset($options['sender_id'])) {
+            $data['_sender_id'] = $options['sender_id'];
+        }
+
         // Deduplication Mechanism (5-minute window)
         $time_window = floor(time() / 300) * 300;
         $dedup_hash = hash('sha256', $user_id . '_' . $template_slug . '_' . json_encode($data) . '_' . $time_window);
@@ -241,11 +246,6 @@ class PushService {
         }
 
         try {
-            // Preserve sender_id in data if provided
-            if (isset($options['sender_id'])) {
-                $data['_sender_id'] = $options['sender_id'];
-            }
-
             $priority = $options['priority'] ?? $template['priority'];
             $scheduled_at = $options['scheduled_at'] ?? null;
             $data_json = json_encode($data);
