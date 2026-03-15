@@ -40,7 +40,7 @@ class CommentSystem {
         }
 
         const ds = this.container.dataset;
-        const perPage = parseInt(ds.perPage) || (this.targetType === 'user_profile' ? 10 : 20);
+        const perPage = parseInt(ds.perPage) || (['user_profile', 'explore'].includes(this.targetType) ? 10 : 20);
         this.comments = options.initialComments || initialData?.comments || [];
         this.totalCount = parseInt(initialData?.total_count || ds.totalCount || 0) || 0;
 
@@ -49,7 +49,7 @@ class CommentSystem {
         this.totalPages = parseInt(initialData?.total_pages || ds.totalPages || 0) || Math.ceil(this.totalCount / perPage) || 1;
         this.currentPage = parseInt(initialData?.current_page || ds.currentPage || 1) || 1;
 
-        this.readOnly = options.readOnly || (this.targetType === 'user_profile');
+        this.readOnly = options.readOnly || (['user_profile', 'explore'].includes(this.targetType));
         this.guestCommentEnabled = ds.guestComment === '1';
         this.filterType = 'all';
         this.sort = 'newest';
@@ -90,8 +90,8 @@ class CommentSystem {
         this.initTagMentions();
         this.handleAnchorScroll();
 
-        // Enable infinite scroll EXCLUSIVELY for user profiles
-        if (this.targetType === 'user_profile') {
+        // Enable infinite scroll EXCLUSIVELY for user profiles and explore
+        if (['user_profile', 'explore'].includes(this.targetType)) {
             this.initInfiniteScroll();
         }
     }
@@ -115,7 +115,7 @@ class CommentSystem {
     }
 
     async loadMore(page) {
-        if (this.targetType !== 'user_profile' || this.isLoading || page > this.totalPages || page <= this.currentPage) return;
+        if (!['user_profile', 'explore'].includes(this.targetType) || this.isLoading || page > this.totalPages || page <= this.currentPage) return;
         this.isLoading = true;
         this.updateSentinelVisibility();
 
@@ -214,9 +214,9 @@ class CommentSystem {
     updatePagination() {
         const pagination = document.getElementById('comments-pagination');
 
-        // Lazy loading is EXCLUSIVELY for user profiles.
+        // Lazy loading is EXCLUSIVELY for user profiles and explore.
         // For all other types, we show the standard pagination.
-        if (this.targetType === 'user_profile') {
+        if (['user_profile', 'explore'].includes(this.targetType)) {
             if (pagination) pagination.classList.add('d-none');
             return;
         }
@@ -454,7 +454,7 @@ class CommentSystem {
 
     renderCommentItem(c, isReply = false) {
         const hasReplies = !isReply && ((c.replies && c.replies.length > 0) || (c.total_replies > 0));
-        const showInlineReplies = hasReplies && (this.targetType !== 'user_profile' || this.isInsideModal);
+        const showInlineReplies = hasReplies && (!['user_profile', 'explore'].includes(this.targetType) || this.isInsideModal);
 
         if (this.isInsideModal && isReply) {
             return this.renderModalReplyItem(c);
@@ -527,7 +527,7 @@ class CommentSystem {
                             <i data-lucide="reply" class="icon-size-4"></i>
                             <span>پاسخ</span>
                         </div>
-                        ` : (this.targetType === 'user_profile' && !this.isInsideModal ? `
+                        ` : (['user_profile', 'explore'].includes(this.targetType) && !this.isInsideModal ? `
                         <div class="view-thread-btn comment-footer-btn" data-id="${c.id}">
                             <i data-lucide="message-circle" class="icon-size-3"></i>
                             <span>${c.total_replies > 0 ? this.toPersianDigits(c.total_replies) + ' پاسخ' : 'بدون پاسخ'}</span>
@@ -1427,7 +1427,7 @@ class CommentSystem {
     }
 
     checkSentinelVisibility() {
-        if (this.targetType !== 'user_profile' || this.isLoading || this.currentPage >= this.totalPages) return;
+        if (!['user_profile', 'explore'].includes(this.targetType) || this.isLoading || this.currentPage >= this.totalPages) return;
 
         const sentinel = document.getElementById('comments-sentinel');
         if (!sentinel) return;
@@ -1447,7 +1447,7 @@ class CommentSystem {
         const sentinel = document.getElementById('comments-sentinel');
         if (!sentinel) return;
 
-        if (this.targetType !== 'user_profile' || this.currentPage >= this.totalPages || this.totalCount === 0) {
+        if (!['user_profile', 'explore'].includes(this.targetType) || this.currentPage >= this.totalPages || this.totalCount === 0) {
             sentinel.style.display = 'none';
         } else {
             sentinel.style.display = 'flex';

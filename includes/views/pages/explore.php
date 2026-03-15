@@ -17,7 +17,7 @@
                 $current_page = $explore_comments_data['current_page'] ?? 1;
                 $target_id = 0;
                 $target_type = 'explore';
-                $read_only = false;
+                $read_only = true;
                 include __DIR__ . '/../components/comments.php';
                 ?>
             </div>

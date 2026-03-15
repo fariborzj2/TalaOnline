@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $filter_type = $_GET['filter_type'] ?? 'all';
         $sort = $_GET['sort'] ?? 'newest';
         $per_page = (int)get_setting('comments_per_page', '20');
-        if ($target_type === 'user_profile') $per_page = 10;
+        if (in_array($target_type, ['user_profile', 'explore'])) $per_page = 10;
 
         if ((empty($target_id) && $target_type !== 'explore') || empty($target_type)) {
             echo json_encode(['success' => false, 'message' => 'پارامترهای نامعتبر']);
