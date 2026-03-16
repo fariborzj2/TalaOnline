@@ -7,6 +7,10 @@
   "start_url": "/?utm_source=pwa",
   "display": "standalone",
   "orientation": "portrait",
+  "prefer_related_applications": false,
+  "display_override": [
+      "fullscreen"
+  ],
   "background_color": "#f1f5f9",
   "theme_color": "#ffffff",
   "icons": [

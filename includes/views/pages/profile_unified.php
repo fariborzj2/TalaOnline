@@ -184,7 +184,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                             <div class="bg-block border pd-md radius-16">
                                 <div id="profile-notifications-list" class="d-column">
                                     <!-- Notifications will be loaded via JS -->
-                                    <div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>
+                                    <div class="text-center py-8"><i data-lucide="loader-2" class="spin mr-auto ml-auto text-primary"></i></div>
                                 </div>
                                 <div id="notifications-pagination" class="mt-2">
                                     <button id="load-more-notifications" class="btn btn-secondary w-full radius-12 py-1">مشاهده بیشتر</button>
@@ -310,9 +310,9 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                         <h2 class="font-size-3 font-bold mb-2 border-bottom pb-1">تنظیمات اطلاع‌رسانی هوشمند</h2>
 
                         <div class="d-column gap-2 mt-2">
-                            <div class="d-flex-wrap just-between align-center p-2 bg-secondary radius-12 gap-1">
-                                <div>
-                                    <p class="font-bold mb-05 font-size-1-2">اعلان‌های مرورگر (Web Push)</p>
+                            <div class="d-flex-wrap just-between align-center py-1 bg-secondary radius-12 gap-1">
+                                <div class="line-height-2">
+                                    <p class="font-bold font-size-1-2">اعلان‌های مرورگر (Web Push)</p>
                                     <small class="text-gray">دریافت لحظه‌ای تغییرات قیمت و پیام‌ها</small>
                                 </div>
                                 <button id="push-toggle-btn" class="btn btn-primary radius-8" onclick="window.pushManager.isSubscribed ? window.pushManager.unsubscribeUser() : window.pushManager.subscribeUser()">
@@ -404,11 +404,11 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
                                 <div class="d-column gap-1">
                                     <h3 class="font-size-1-2 font-bold mb-05">عدم ارسال اعلان</h3>
                                     <div class="d-flex-wrap align-center gap-1">
-                                        <div class="d-flex align-center gap-1 bg-secondary border radius-8 pd-05 px-1 grow-1">
+                                        <div class="input-item basis-200">
                                             <span class="font-size-0-9 text-gray">از ساعت</span>
                                             <input type="time" name="quiet_hours_start" class="border-none bg-transparent ltr grow-1 outline-none text-left">
                                         </div>
-                                        <div class="d-flex align-center gap-1 bg-secondary border radius-8 pd-05 px-1 grow-1">
+                                        <div class="input-item basis-200">
                                             <span class="font-size-0-9 text-gray">تا ساعت</span>
                                             <input type="time" name="quiet_hours_end" class="border-none bg-transparent ltr grow-1 outline-none text-left">
                                         </div>
@@ -435,7 +435,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
             <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
         </div>
         <div class="pd-md overflow-y-auto max-h-400" id="followers-list">
-            <div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>
+            <div class="text-center py-8"><i data-lucide="loader-2" class="spin mr-auto ml-auto text-primary"></i></div>
         </div>
     </div>
 </div>
@@ -448,7 +448,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
             <button class="close-modal pointer"><i data-lucide="x" class="icon-size-4"></i></button>
         </div>
         <div class="pd-md overflow-y-auto max-h-400" id="following-list">
-            <div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>
+            <div class="text-center py-8"><i data-lucide="loader-2" class="spin mr-auto ml-auto text-primary"></i></div>
         </div>
     </div>
 </div>
@@ -593,7 +593,7 @@ $phone_unverified = $is_owner && (get_setting('mobile_verification_enabled') ===
     .segmented-control-label {
         flex: 1;
         text-align: center;
-        padding: 10px 0;
+        padding: 5px 0;
         cursor: pointer;
         font-weight: 600;
         font-size: 0.9rem;

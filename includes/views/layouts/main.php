@@ -166,7 +166,7 @@
         .dialog-title { font-size: 1.2rem; color: var(--color-title); margin-bottom: 8px; }
         .dialog-message { font-size: 0.9rem; color: var(--color-text); line-height: 1.6; margin-bottom: 25px; font-weight: 600; }
         .dialog-actions { display: flex; flex-direction: column; gap: 10px; }
-        .btn-dialog { padding: 12px; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s; width: 100%; border: none; cursor: pointer; }
+        .btn-dialog { height: 40px; padding: 7px 12px; border-radius: 10px; font-size: 0.9rem; transition: all 0.2s; width: 100%; border: none; cursor: pointer; }
         .btn-dialog-primary { background: var(--color-primary); color: white; }
         .btn-dialog-outline { background: var(--color-secondary); color: var(--color-text); border: 1px solid var(--color-border); }
         .btn-dialog-primary:hover { opacity: 0.9; }
@@ -310,7 +310,7 @@
             <span>ماشین حساب</span>
         </a>
         <div class="mobile-nav-home">
-            <a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>">
+            <a href="/" class="<?= $current_path == '/' ? 'active' : '' ?>" aria-lable="طلا آنلاین">
                 <i data-lucide="house"></i>
             </a>
         </div>

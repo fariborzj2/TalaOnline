@@ -803,7 +803,9 @@
 .ltr {
     direction: ltr;
 }
-
+.opacity-20 {
+    opacity: 0.2;
+}
 @media (max-width: 600px) {
     .sm-hide {
         display: none;

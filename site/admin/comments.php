@@ -86,7 +86,7 @@ if (!empty($comments)) {
     $comments_logic->loadTargetInfoForComments($comments);
     foreach ($comments as &$c) {
         $c['content_html'] = $comments_logic->parseMentions($c['content'], $userMap);
-        $c['created_at_fa'] = jalali_date($c['created_at']);
+        $c['created_at_fa'] = jalali_date($c['created_at'],'time');
     }
 }
 

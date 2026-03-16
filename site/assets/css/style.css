@@ -1594,3 +1594,10 @@ body.offline-page .sidebar {
         font-size: 0.9rem;
     }
 }
+.spin {
+    animation: spin-loader 1.3s infinite;
+}
+@keyframes spin-loader {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

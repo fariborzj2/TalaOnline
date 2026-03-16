@@ -53,7 +53,7 @@ class Comments {
         $c['mentioned_users'] = $this->extractMentionedUsers($c['content'], $userMap);
         $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap, true);
 
-        $c['created_at_fa'] = jalali_date($c['created_at']);
+        $c['created_at_fa'] = jalali_date($c['created_at'],'time');
         $edit_limit = (int)get_setting('comments_edit_time_limit', '300');
         $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
 
@@ -166,7 +166,7 @@ class Comments {
             $r['hearts'] = $stats[$r['id']]['hearts'] ?? 0;
             $r['fires'] = $stats[$r['id']]['fires'] ?? 0;
             $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
-            $r['created_at_fa'] = jalali_date($r['created_at']);
+            $r['created_at_fa'] = jalali_date($r['created_at'],'time');
             $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < $edit_limit);
             $replies_by_parent[$r['parent_id']][] = $r;
         }
@@ -177,7 +177,7 @@ class Comments {
             $c['hearts'] = $stats[$c['id']]['hearts'] ?? 0;
             $c['fires'] = $stats[$c['id']]['fires'] ?? 0;
             $c['user_reaction'] = $user_reactions[$c['id']] ?? null;
-            $c['created_at_fa'] = jalali_date($c['created_at']);
+            $c['created_at_fa'] = jalali_date($c['created_at'],'time');
             $c['can_edit'] = ($user_id && $c['user_id'] == $user_id && (time() - strtotime($c['created_at'])) < $edit_limit);
             $c['total_replies'] = $reply_counts[$c['id']] ?? 0;
             $c['replies'] = $replies_by_parent[$c['id']] ?? [];
@@ -257,7 +257,7 @@ class Comments {
             $r['hearts'] = $stats[$r['id']]['hearts'] ?? 0;
             $r['fires'] = $stats[$r['id']]['fires'] ?? 0;
             $r['user_reaction'] = $user_reactions[$r['id']] ?? null;
-            $r['created_at_fa'] = jalali_date($r['created_at']);
+            $r['created_at_fa'] = jalali_date($r['created_at'],'time');
             $r['can_edit'] = ($user_id && $r['user_id'] == $user_id && (time() - strtotime($r['created_at'])) < $edit_limit);
         }
 
@@ -367,7 +367,7 @@ class Comments {
             $c['content_html'] = $this->parseMentions($c['content'], $userMap);
             $c['mentioned_users'] = $this->extractMentionedUsers($c['content'], $userMap);
             $c['content_edit'] = $this->convertPlaceholdersToMentions($c['content'], $userMap, true);
-            $c['created_at_fa'] = jalali_date($c['created_at']);
+            $c['created_at_fa'] = jalali_date($c['created_at'],'time');
             $c['can_edit'] = ($viewer_id && $c['user_id'] == $viewer_id && (time() - strtotime($c['created_at'])) < $edit_limit);
         }
 

@@ -47,7 +47,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                             </span>
                         <?php endif; ?>
 
-                        <span class="comment-date"><?= jalali_date($c['created_at']) ?></span>
+                        <span class="comment-date"><?= jalali_date($c['created_at'],'time') ?></span>
                     </div>
                 </div>
                 <div class="header-actions">
@@ -101,7 +101,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                         <i data-lucide="reply" class="icon-size-4"></i>
                         <span>پاسخ</span>
                     </div>
-                <?php elseif (in_array($target_type, ['user_profile', 'explore']) && !$is_reply): ?>
+                <?php elseif (in_array($target_type, ['user_profile', 'explore']) &&  !$is_reply): ?>
                     <div class="view-thread-btn comment-footer-btn" data-id="<?= $c['id'] ?>">
                         <i data-lucide="message-circle" class="icon-size-3"></i>
                         <span><?= ($c['total_replies'] ?? 0) > 0 ? fa_num($c['total_replies']) . ' پاسخ' : 'بدون پاسخ' ?></span>
@@ -140,7 +140,7 @@ function render_comment_item($c, $read_only = false, $is_reply = false, $target_
                     <?php if (!empty($c['replies'])) foreach ($c['replies'] as $reply) echo render_comment_item($reply, $read_only, true, $target_type); ?>
                 </div>
                 <?php if (($c['total_replies'] ?? 0) > 3): ?>
-                    <button class="btn btn-sm btn-secondary w-full mt-2 view-more-replies"
+                    <button class="mb-2 view-more-replies text-primary font-bold"
                             data-id="<?= $c['id'] ?>"
                             data-total="<?= $c['total_replies'] ?>">
                         مشاهده پاسخ‌های بیشتر (<?= fa_num($c['total_replies'] - 3) ?>)

@@ -614,7 +614,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadUserList = async (action, username, containerId) => {
         const container = document.getElementById(containerId);
         if (!container) return;
-        container.innerHTML = '<div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>';
+        container.innerHTML = '<div class="text-center py-8"><i data-lucide="loader-2" class="spin mr-auto ml-auto text-primary"></i></div>';
         if (window.lucide) window.lucide.createIcons({ root: container });
 
         try {
@@ -719,11 +719,11 @@ document.addEventListener('DOMContentLoaded', function() {
         isLoadingNotif = true;
 
         if (!append) {
-            profileNotificationsList.innerHTML = '<div class="text-center py-8"><i data-lucide="loader-2" class="spin text-primary"></i></div>';
+            profileNotificationsList.innerHTML = '<div class="text-center py-8"><i data-lucide="loader-2" class="spin mr-auto ml-auto text-primary"></i></div>';
             if (window.lucide) window.lucide.createIcons({ root: profileNotificationsList });
         } else {
             loadMoreNotifBtn.disabled = true;
-            loadMoreNotifBtn.innerHTML = '<i data-lucide="loader-2" class="spin icon-size-3"></i> در حال بارگذاری...';
+            loadMoreNotifBtn.innerHTML = '<i data-lucide="loader-2" class="spin mr-auto ml-auto icon-size-3"></i> در حال بارگذاری...';
             if (window.lucide) window.lucide.createIcons({ root: loadMoreNotifBtn });
         }
 
@@ -733,7 +733,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (data.success) {
                 if (data.notifications.length === 0 && !append) {
-                    profileNotificationsList.innerHTML = '<div class="text-center py-12 text-gray"><i data-lucide="bell-off" class="icon-size-10 mb-1 opacity-20"></i><p>هیچ اعلانی یافت نشد.</p></div>';
+                    profileNotificationsList.innerHTML = '<div class="text-center  py-12 text-gray"><i data-lucide="bell-off" class="icon-size-10 mb-1 opacity-20 mr-auto ml-auto"></i><p>هیچ اعلانی یافت نشد.</p></div>';
                     if (window.lucide) window.lucide.createIcons({ root: profileNotificationsList });
                     notifPaginationContainer.classList.add('d-none');
                     profileMarkAllRead.classList.add('d-none');

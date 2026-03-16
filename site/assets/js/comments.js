@@ -564,7 +564,7 @@ class CommentSystem {
                             ${c.replies ? c.replies.map(r => this.renderCommentItem(r, true)).join('') : ''}
                         </div>
                         ${c.total_replies > 3 ? `
-                            <button class="btn btn-sm btn-secondary w-full mt-2 view-more-replies" data-id="${c.id}" data-total="${c.total_replies}">
+                            <button class="mb-2 view-more-replies text-primary font-bold" data-id="${c.id}" data-total="${c.total_replies}">
                                 مشاهده پاسخ‌های بیشتر (${this.toPersianDigits(c.total_replies - 3)})
                             </button>
                         ` : ''}
@@ -1400,7 +1400,7 @@ class CommentSystem {
             sentinel.className = 'infinite-scroll-sentinel py-4 text-center d-column align-center gap-1';
             sentinel.innerHTML = `
                 <div class="sentinel-loader d-none">
-                    <i data-lucide="loader-2" class="spin text-primary w-8 h-8"></i>
+                    <i data-lucide="loader-2" class="spin mr-auto ml-auto text-primary w-8 h-8"></i>
                     <p class="text-gray-400 font-size-0-9">در حال بارگذاری نظرات بیشتر...</p>
                 </div>
             `;

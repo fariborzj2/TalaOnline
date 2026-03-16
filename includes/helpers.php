@@ -84,9 +84,9 @@ function jalali_date($date = 'now', $format = 'long', $as_tag = false) {
         if ($format === 'weekday') {
             $pattern = 'EEEE d MMMM y'; // Tuesday 28 Bahman 1404
         } elseif ($format === 'time') {
-            $pattern = 'd MMMM y | HH:mm';
+            $pattern = 'd MMMM y . HH:mm';
         } elseif ($format === 'full') {
-            $pattern = 'EEEE d MMMM y ساعت HH:mm';
+            $pattern = 'EEEE d MMMM y ساعت';
         } elseif ($format === 'compact') {
             $pattern = 'yyyy/MM/dd';
         } elseif ($format === 'day_month') {
