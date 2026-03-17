@@ -185,6 +185,13 @@ $router->add('/profile', function() {
         'current_page' => 1,
     ];
 
+    $stats = [
+        'users' => 0,
+        'comments' => 0,
+        'analyses' => 0
+    ];
+    $suggested_users = [];
+
     if ($pdo) {
         try {
             $user_id = $_SESSION['user_id'] ?? null;
@@ -196,6 +203,38 @@ $router->add('/profile', function() {
                 'total_pages' => $data['total_pages'] ?? 1,
                 'current_page' => 1,
             ];
+
+            // Fetch Stats
+            $stmt = $pdo->query("SELECT COUNT(*) FROM users");
+            $stats['users'] = $stmt->fetchColumn();
+
+            $stmt = $pdo->query("SELECT COUNT(*) FROM comments");
+            $stats['comments'] = $stmt->fetchColumn();
+
+            $stmt = $pdo->query("SELECT COUNT(*) FROM comments WHERE is_analysis = 1");
+            $stats['analyses'] = $stmt->fetchColumn();
+
+            // Fetch Suggested Users
+            if ($user_id) {
+                // Exclude current user and users they are already following
+                $stmt = $pdo->prepare("
+                    SELECT id, name, username, avatar, level, points
+                    FROM users
+                    WHERE id != ? AND id NOT IN (SELECT following_id FROM follows WHERE follower_id = ?)
+                    ORDER BY points DESC, level DESC
+                    LIMIT 5
+                ");
+                $stmt->execute([$user_id, $user_id]);
+            } else {
+                $stmt = $pdo->query("
+                    SELECT id, name, username, avatar, level, points
+                    FROM users
+                    ORDER BY points DESC, level DESC
+                    LIMIT 5
+                ");
+            }
+            $suggested_users = $stmt->fetchAll();
+
         } catch (Exception $e) {
             // Silently ignore for now
         }
@@ -204,7 +243,9 @@ $router->add('/profile', function() {
     return View::renderPage('explore', [
         'page_title' => 'اکسپلور',
         'explore_comments' => $explore_comments,
-        'explore_comments_data' => $explore_comments_data
+        'explore_comments_data' => $explore_comments_data,
+        'stats' => $stats,
+        'suggested_users' => $suggested_users
     ]);
 });
 
