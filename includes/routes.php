@@ -208,10 +208,10 @@ $router->add('/profile', function() {
             $stmt = $pdo->query("SELECT COUNT(*) FROM users");
             $stats['users'] = $stmt->fetchColumn();
 
-            $stmt = $pdo->query("SELECT COUNT(*) FROM comments");
+            $stmt = $pdo->query("SELECT COUNT(*) FROM comments WHERE status = 'approved'");
             $stats['comments'] = $stmt->fetchColumn();
 
-            $stmt = $pdo->query("SELECT COUNT(*) FROM comments WHERE type = 'analysis'");
+            $stmt = $pdo->query("SELECT COUNT(*) FROM comments WHERE type = 'analysis' AND status = 'approved'");
             $stats['analyses'] = $stmt->fetchColumn();
 
             // Fetch Suggested Users
