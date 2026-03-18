@@ -211,7 +211,7 @@ $router->add('/profile', function() {
             $stmt = $pdo->query("SELECT COUNT(*) FROM comments");
             $stats['comments'] = $stmt->fetchColumn();
 
-            $stmt = $pdo->query("SELECT COUNT(*) FROM comments WHERE is_analysis = 1");
+            $stmt = $pdo->query("SELECT COUNT(*) FROM comments WHERE type = 'analysis'");
             $stats['analyses'] = $stmt->fetchColumn();
 
             // Fetch Suggested Users
