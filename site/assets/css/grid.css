@@ -267,6 +267,9 @@
 .mb-5 {
     margin-bottom: 50px;
 }
+.mb-md {
+    margin-bottom: var(--pd-block);
+}
 .mt-05 {
     margin-top: 5px;
 }
